@@ -1,0 +1,59 @@
+<?php
+
+namespace App\Models;
+
+use Spatie\Activitylog\LogOptions;
+use illuminate\Database\Eloquent\Model;
+use App\Support\Dataviewer;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Illuminate\Database\Eloquent\SoftDeletes;
+// use Cviebrock\EloquentSluggable\Sluggable;
+
+class Sertifikat extends Model
+{
+    use Dataviewer, LogsActivity, SoftDeletes;
+    protected $table = 'sertifikat';
+
+    protected $fillable = [
+        'kode_sertifikat', 'name', 'tipe', 'gambar_depan', 'gambar_belakang', 'created_at', 'updated_at', 'deleted_at'
+    ];
+
+    protected $allowedFilters = [
+        'id', 'kode_sertifikat', 'name', 'tipe'
+    ];
+
+    protected $orderable = [
+        'id', 'kode_sertifikat', 'name', 'tipe'
+    ];
+
+    public static function initialize()
+    {
+        return [
+            'kode_sertifikat' => '', 'name' => '', 'tipe' => '', 'gambar_depan' => '', 'gambar_belakang' => ''
+        ];
+    }
+
+    public static $rules = [
+        'kode_sertifikat' => 'required',
+        'name' => 'required',
+        'tipe' => 'required'
+    ];
+
+    public function sluggable(): array
+    {
+        return [
+            'slug' => [
+                'source' => 'name',
+                'onUpdate' => true
+            ]
+        ];
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logFillable()
+            ->logOnlyDirty();
+    }
+
+}

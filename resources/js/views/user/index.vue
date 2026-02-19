@@ -1,0 +1,92 @@
+<template>
+	<div>
+		<!-- Page header -->
+		<page-header 
+		:title="title" 
+		:titleDesc="titleDesc" 
+		:titleIcon="titleIcon"></page-header>
+		
+		<!-- page container -->
+		<div class="page-container">
+			<div class="page-content">
+				<div class="content-wrapper">
+
+					<!-- message -->
+					<message v-if="itemDataStat === 'fail'" :title="'Oops terjadi kesalahan:'" :errorData="itemData">
+					</message>
+
+					<!-- select data -->
+					<select-cu 
+						:kelas="kelas"
+						:path="selectCuPath"
+						:isPus="true"
+						v-if="currentUser.id_cu == 0"></select-cu>
+
+					<!-- table data -->
+					<table-data 
+						:title="title" 
+						:kelas="kelas"></table-data>
+						
+				</div>
+			</div>
+		</div>
+		
+		
+
+	</div>
+</template>
+
+<script>
+	import { useAuthStore } from '../../stores/auth';
+	import { useUserStore } from '../../stores/user';
+	import pageHeader from "../../components/pageHeader.vue";
+	import message from "../../components/message.vue";
+	import selectCu from "../../components/selectCu.vue";
+	import tableData from "./table.vue";
+	
+	export default {
+		name: 'UserIndex',
+		components: {
+			pageHeader,
+			message,
+			selectCu,
+			tableData,
+		},
+		data() {
+			return {
+				authStore: useAuthStore(),
+				userStore: useUserStore(),
+				title: 'User',
+				kelas: 'user',
+				titleDesc: 'Mengelola data user',
+				titleIcon: 'icon-users',
+				selectCuPath: 'userCu',
+			}
+		},
+		created(){
+			this.checkUser('index_user',this.$route.params.cu);
+		},
+		methods: {
+			checkUser(permission,id_cu){
+				if(this.currentUser){
+					if(!this.currentUser.can || !this.currentUser.can[permission]){
+						this.$router.push('/notFound');
+					}
+					if(!id_cu || this.currentUser.id_cu){
+						if(this.currentUser.id_cu != 0 && this.currentUser.id_cu != id_cu){
+							this.$router.push('/notFound');
+						}
+					}
+				}
+			}
+		},
+		computed:{
+			currentUser() {
+				return this.authStore.currentUser;
+			},
+			itemDataStat() {
+				return this.userStore.dataStatS;
+			}
+		},
+	}
+</script>

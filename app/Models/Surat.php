@@ -1,0 +1,79 @@
+<?php
+namespace App\Models;
+
+use Spatie\Activitylog\LogOptions;
+use illuminate\Database\Eloquent\Model;
+use App\Support\Dataviewer;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class Surat extends Model {
+    
+    use Dataviewer, LogsActivity,  SoftDeletes;
+
+    protected $table = 'surat';
+
+    protected $dates = ['deleted_at'];
+    
+    public static $rules = [
+        'id_surat_kode' => 'required',
+        'id_surat_kategori' => 'required',
+        'name' => 'required'
+    ];
+
+    protected $fillable = [
+        'id_cu','id_surat_kode','id_surat_kategori','id_surat_kode_temp','id_dokumen','name','format','tipe','hal','keterangan','tujuan','periode','created_at','updated_at','deleted_at'
+    ];
+
+    protected $allowedFilters = [
+        'id','id_cu','id_surat_kode','id_surat_kategori','id_surat_kode_temp','id_dokumen','name','hal','keterangan','periode','created_at','updated_at','deleted_at',
+
+        'cu.name',
+    ];
+
+    protected $orderable = [
+        'id','id_cu','id_surat_kode','id_surat_kategori','id_surat_kode_temp','id_dokumen','name','hal','keterangan','periode','created_at','updated_at','deleted_at',
+
+        'cu.name',
+    ];
+    
+    public static function initialize(){
+        return [
+            'id_cu' => '','id_surat_kategori' =>'','id_dokumen' =>'', 'name' => '','hal' => '', 'keterangan' => '',  'id_surat_kode' => '','periode' => '',
+        ];
+    }
+
+    public function kategori()
+    {
+        return $this->belongsTo('App\Models\SuratKategori','id_surat_kategori','id');
+    }
+
+    public function tipe()
+    {
+        return $this->belongsTo('App\Models\SuratKode','id_surat_kode','id');
+    }
+
+    public function Cu()
+    {
+        return $this->belongsTo('App\Models\Cu','id_cu','id')->select('id','no_ba','name');
+    }
+
+    public function temp()
+    {
+        return $this->belongsTo('App\Models\SuratKodeTemp','id','id_surat');
+    }
+
+    public function dokumen()
+    {
+        return $this->belongsTo('App\Models\Dokumen','id_dokumen','id');
+    }
+    
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logFillable()
+            ->logOnlyDirty();
+    }
+
+}

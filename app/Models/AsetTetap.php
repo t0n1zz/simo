@@ -1,0 +1,109 @@
+<?php
+
+namespace App\Models;
+
+use Spatie\Activitylog\LogOptions;
+use DB;
+use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Support\Dataviewer;
+use Spatie\Activitylog\Traits\LogsActivity;
+
+class AsetTetap extends BaseEloquent
+{
+
+    use Dataviewer, LogsActivity, SoftDeletes;
+
+    protected $table = 'aset_tetap';
+    protected $dates = ['deleted_at'];
+
+    public static $rules = [
+        'name' => 'required',
+        'kode' => 'sometimes|required|unique:aset_tetap',
+        'aset_tetap_golongan_id' => 'required',
+        'aset_tetap_kelompok_id' => 'required',
+        'aset_tetap_jenis_id' => 'required',
+        'aset_tetap_lokasi_id' => 'required',
+        'aktivis_id' => 'required',
+        'aktivis_id_pembeli' => 'required',
+        'merk' => 'required',
+        'tipe' => 'required',
+        'kondisi' => 'required',
+        'tanggal' => 'required',
+        'harga' => 'required',
+    ];
+
+    public static function boot()
+    {
+        parent::boot();
+    }
+
+    protected $fillable = [
+        'aset_id', 'aktivis_id', 'kode', 'name', 'aset_tetap_golongan_id', 'aset_tetap_kelompok_id', 'aset_tetap_jenis_id', 'merk', 'tipe', 'aset_tetap_lokasi_id', 'kondisi', 'gambar', 'aktivis_id_pembeli', 'tanggal', 'harga', 'pokok_penyusutan', 'bulan_penyusutan', 'sisa_penyusutan', 'nota', 'keterangan', 'sisa_bulan_penyusutan',
+    ];
+
+    protected $allowedFilters = [
+        'aset_id', 'aktivis_id', 'kode', 'name', 'aset_tetap_golongan_id', 'aset_tetap_kelompok_id', 'aset_tetap_jenis_id', 'merk', 'tipe', 'aset_tetap_lokasi_id', 'kondisi', 'gambar', 'created_at', 'updated_at', 'hapus_dari_laporan', 'aktivis_id_pembeli', 'tanggal', 'harga', 'pokok_penyusutan', 'bulan_penyusutan', 'sisa_penyusutan', 'nota', 'keterangan', 'sisa_bulan_penyusutan',
+
+        'aktivis.name', 'golongan.name', 'kelompok.name', 'jenis.name', 'lokasi.name', 'pembeli.name'
+    ];
+
+    protected $orderable = [
+        'aset_id', 'aktivis_id', 'kode', 'name', 'aset_tetap_golongan_id', 'aset_tetap_kelompok_id', 'aset_tetap_jenis_id', 'merk', 'tipe', 'aset_tetap_lokasi_id', 'kondisi', 'gambar', 'created_at', 'updated_at', 'hapus_dari_laporan',  'aktivis_id_pembeli', 'tanggal', 'harga', 'pokok_penyusutan', 'bulan_penyusutan', 'sisa_penyusutan', 'nota', 'keterangan', 'sisa_bulan_penyusutan',
+    ];
+
+    public static function initialize()
+    {
+        return [
+            'aset_id' => '', 'aktivis_id' => '', 'kode' => '', 'name' => '', 'aset_tetap_golongan_id' => '', 'aset_tetap_kelompok_id' => '', 'aset_tetap_jenis_id' => '', 'merk' => '', 'tipe' => '', 'aset_tetap_lokasi_id' => '', 'kondisi' => '', 'gambar' => '', 'aktivis_id_pembeli' => '', 'tanggal' => '', 'harga' => '', 'pokok_penyusutan' => '', 'bulan_penyusutan' => '', 'sisa_penyusutan' => '', 'nota' => '', 'keterangan' => '', 'sisa_bulan_penyusutan' => '',
+        ];
+    }
+
+    public function aset()
+    {
+        return $this->belongsTo('App\Models\AsetTetap', 'aset_id', 'id');
+    }
+
+    public function hasAset()
+    {
+        return $this->hasMany('App\Models\AsetTetap', 'aset_id', 'id');
+    }
+
+    public function aktivis()
+    {
+        return $this->belongsTo('App\Models\Aktivis', 'aktivis_id', 'id');
+    }
+
+    public function pembeli()
+    {
+        return $this->belongsTo('App\Models\Aktivis', 'aktivis_id_pembeli', 'id');
+    }
+
+    public function golongan()
+    {
+        return $this->belongsTo('App\Models\AsetTetapGolongan', 'aset_tetap_golongan_id', 'id');
+    }
+
+    public function kelompok()
+    {
+        return $this->belongsTo('App\Models\AsetTetapKelompok', 'aset_tetap_kelompok_id', 'id');
+    }
+
+    public function jenis()
+    {
+        return $this->belongsTo('App\Models\AsetTetapJenis', 'aset_tetap_jenis_id', 'id');
+    }
+
+    public function lokasi()
+    {
+        return $this->belongsTo('App\Models\AsetTetapLokasi', 'aset_tetap_lokasi_id', 'id');
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logFillable()
+            ->logOnlyDirty();
+    }
+
+}
