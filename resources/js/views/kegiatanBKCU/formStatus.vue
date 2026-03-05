@@ -1,10 +1,11 @@
 <template>
 	<div>
+		<VeeForm :form="formStatus" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
 		<!-- message -->
-		<message v-if="errors && errors.any && errors.any('formStatus') && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors && errors.items">
+		<message v-if="errors && errors.any && errors.any() && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors && errors.items">
 		</message>
 
-		<form @submit.prevent="save" data-vv-scope="formStatus">
+		<form @submit.prevent="handleSubmit(onValid)">
       <!-- status -->
       <div class="form-group">
 
@@ -12,7 +13,7 @@
         <h5>Status Pertemuan:</h5>
 
         <!-- select -->
-        <select name="status" data-width="100%" class="form-control" v-model="formStatus.status" @change="changeStatus($event.target.value)"> 
+        <select name="status" data-width="100%" class="form-control" v-model="formStatus.status" @change="changeStatus($event.target.value)">
           <option disabled value="">Silahkan pilih status diklat</option>
           <option value="1">Menunggu</option>
           <option value="2">Pendaftaran Buka</option>
@@ -27,19 +28,21 @@
       </div>
 
       <!-- keterangan batal -->
-      <div class="form-group" :class="{'has-error' : errors && errors.has && errors.has('formStatus.keterangan')}" v-if="formStatus.status == 6">
+      <div class="form-group" :class="{'has-error' : errors && errors.has && errors.has('keterangan')}" v-if="formStatus.status == 6">
 
         <!-- title -->
-        <h5 :class="{ 'text-danger' : errors && errors.has && errors.has('formStatus.keterangan')}">
+        <h5 :class="{ 'text-danger' : errors && errors.has && errors.has('keterangan')}">
           Keterangan:
         </h5>
 
         <!-- textarea -->
-        <textarea rows="5" type="text" name="keterangan" class="form-control" placeholder="Silahkan masukkan keterangan " v-validate="'required|min:5'" data-vv-as="Keterangan" v-model="formStatus.keterangan"></textarea>
+        <Field name="keterangan" v-slot="{ field }" :rules="'required|min:5'" label="Keterangan">
+          <textarea rows="5" type="text" class="form-control" placeholder="Silahkan masukkan keterangan " v-bind="field" v-model="formStatus.keterangan"></textarea>
+        </Field>
 
         <!-- error message -->
-        <small class="text-muted text-danger" v-if="errors && errors.has && errors.has('formStatus.keterangan')">
-          <i class="icon-arrow-small-right"></i> {{ errors && errors.first && errors.first('formStatus.keterangan') }}
+        <small class="text-muted text-danger" v-if="errors && errors.has && errors.has('keterangan')">
+          <i class="icon-arrow-small-right"></i> {{ errors && errors.first && errors.first('keterangan') }}
         </small>
         <small class="text-muted" v-else>&nbsp;
         </small>
@@ -64,8 +67,9 @@
 
         <button class="btn btn-light btn-block pb-2" @click.prevent="tutup">
           <i class="icon-cross"></i> Tutup</button>
-      </div> 
-    </form>	
+      </div>
+    </form>
+		</VeeForm>
 
 	</div>
 </template>
@@ -76,12 +80,16 @@
 	import { useAuthStore } from '../../stores/auth';
 	import message from "../../components/message.vue";
 	import formInfo from "../../components/formInfo.vue";
+	import VeeForm from "../../components/VeeForm.vue";
+	import { Field } from 'vee-validate';
 
 	export default {
 		props: ['kelas','id','status','keteranganBatal'],
 		components: {
 			formInfo,
-			message
+			message,
+			VeeForm,
+			Field
 		},
 		data() {
 			return {
@@ -89,16 +97,8 @@
 				formStatus: {
 					status: '',
 					keterangan: ''
-        },
-        // SHIM: Add dummy errors object for VeeValidate 2 compatibility in Vue 3
-        errors: {
-          any: () => false,
-          has: () => false,
-          first: () => '',
-          collect: () => [],
-          items: []
-        },
-        penjelasanStatus: '',
+				},
+				penjelasanStatus: '',
 				submited: false,
 			}
 		},
@@ -109,11 +109,12 @@
 		watch: {
 		},
 		methods: {
-      save(){
-				this.$validator.validateAll('formStatus').then((result) => {
-					this.updateStatus([this.id, this.formStatus]);
-				});
-      },
+			onValid() {
+				this.updateStatus([this.id, this.formStatus]);
+			},
+			onInvalid() {
+				this.submited = true;
+			},
       changeStatus(value){
 				if(value == 1){
 					this.penjelasanStatus = 'Pertemuan masih belum dimulai dan belum menerima pendaftaran';

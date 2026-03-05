@@ -1,6 +1,7 @@
 <template>
 	<div>
-		<form @submit.prevent="save" data-vv-scope="formKeahlian">
+		<VeeForm :form="formKeahlian" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
+		<form @submit.prevent="handleSubmit(onValid)">
 
 			<div class="form-group">
 
@@ -12,13 +13,19 @@
 				<div class="input-group">
 
 					<!-- select -->
-					<select class="form-control" name="id" v-model="formKeahlian.keahlian_id" data-width="100%" :disabled="modelKeahlian.length === 0" v-validate="'required'" data-vv-as="Keahlian" @change="changeKeahlian($event.target.value)">
-						<option disabled value="">
-							<span v-if="modelKeahlianStat === 'loading'">Mohon tunggu...</span>
-							<span v-else>Silahkan pilih jenis keahlian</span>
-						</option>
-						<option v-for="keahlian in modelKeahlian" v-if="keahlian" :value="keahlian.id">{{ keahlian.name }}</option>
-					</select>
+					<Field name="formKeahlian.keahlian_id" rules="required" v-model="formKeahlian.keahlian_id" v-slot="{ field }">
+						<select class="form-control" data-width="100%" v-bind="field" :disabled="modelKeahlian.length === 0" @change="changeKeahlian($event.target.value)">
+							<option disabled value="">
+								<span v-if="modelKeahlianStat === 'loading'">Mohon tunggu...</span>
+								<span v-else>Silahkan pilih jenis keahlian</span>
+							</option>
+							<template v-for="keahlian in modelKeahlian" :key="keahlian ? keahlian.id : undefined">
+								<option v-if="keahlian" :value="keahlian.id">
+									{{ keahlian.name }}
+								</option>
+							</template>
+						</select>
+					</Field>
 
 				</div>
 
@@ -48,72 +55,80 @@
 				<i class="icon-cross"></i> Tutup</button>
 		</div>
 
-		</form> 
+		</form>
+		</VeeForm>
 
 	</div>
 </template>
 
 <script>
 	import _ from 'lodash';
-	import { mapGetters } from 'vuex';
-	import message from "../../components/message.vue";
+	import { useAuthStore } from '../../stores/auth';
+	import { useKeahlianStore } from '../../stores/keahlian';
+	import message from '../../components/message.vue';
+	import VeeForm from '../../components/VeeForm.vue';
+	import { Field } from 'vee-validate';
 
 	export default {
-		props: ['mode','selected'],
+		props: ['mode', 'selected'],
 		components: {
 			message,
+			VeeForm,
+			Field,
 		},
 		data() {
 			return {
+				authStore: useAuthStore(),
+				keahlianStore: useKeahlianStore(),
 				title: '',
-				formKeahlian:{
+				formKeahlian: {
 					id: '',
-					keahlian_id:'',
+					keahlian_id: '',
 					name: '',
 					deskripsi: '',
 				},
 				submited: false,
-			}
+			};
 		},
-		created(){
-			this.$store.dispatch('keahlian/get');
-			if(this.mode == 'edit'){
+		created() {
+			this.keahlianStore.get();
+			if (this.mode === 'edit') {
 				this.formKeahlian = Object.assign({}, this.selected);
 			}
 		},
 		methods: {
-			save(){
-				this.$validator.validateAll('formKeahlian').then((result) => {
-					if (result) {
-						if(this.mode == 'edit'){
-							this.$emit('editKeahlian',this.formKeahlian);
-						}else{
-							this.$emit('createKeahlian',this.formKeahlian);
-						}
-						this.submited = false;
-					}else{
-						this.submited = true;
-					}	
-				});
+			onValid() {
+				if (this.mode === 'edit') {
+					this.$emit('editKeahlian', this.formKeahlian);
+				} else {
+					this.$emit('createKeahlian', this.formKeahlian);
+				}
+				this.submited = false;
 			},
-			changeKeahlian(value){
-				let valKeahlian = {};
-				valKeahlian = _.find(this.modelKeahlian, { id: Number(value) });
-				this.formKeahlian.name = valKeahlian.name;
-				this.formKeahlian.deskripsi = valKeahlian.deskripsi;
+			onInvalid() {
+				this.submited = true;
 			},
-			tutup(){
+			changeKeahlian(value) {
+				const valKeahlian = _.find(this.modelKeahlian, { id: Number(value) });
+				if (valKeahlian) {
+					this.formKeahlian.name = valKeahlian.name;
+					this.formKeahlian.deskripsi = valKeahlian.deskripsi;
+				}
+			},
+			tutup() {
 				this.$emit('tutup');
-			}
+			},
 		},
 		computed: {
-			...mapGetters('auth',{
-				currentUser: 'currentUser'
-			}),
-			...mapGetters('keahlian',{
-				modelKeahlian: 'dataS',
-				modelKeahlianStat: 'dataStatS',
-			}),
-		}
+			currentUser() {
+				return this.authStore.currentUser;
+			},
+			modelKeahlian() {
+				return this.keahlianStore.dataS;
+			},
+			modelKeahlianStat() {
+				return this.keahlianStore.dataStatS;
+			},
+		},
 	}
 </script>

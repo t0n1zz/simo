@@ -2,20 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use DB;
-use Hash;
-use Date;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Input;
-use App\Http\Controllers\Controller;
 use App\Models\User;
-use Response;
+use Date;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-	/**
+    /**
      * Create a new AuthController instance.
      *
      * @return void
@@ -35,15 +28,16 @@ class AuthController extends Controller
         $credentials = request(['username', 'password']);
 
         // Attempt to authenticate user
-        if (!auth()->attempt($credentials)) {
+        if (! auth()->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
         $user = auth()->user();
 
         // Check if user account is active
-        if($user->status == 0){
+        if ($user->status == 0) {
             auth()->logout();
+
             return response()->json(['error' => 'Maaf akun anda tidak aktif'], 401);
         }
 
@@ -51,7 +45,25 @@ class AuthController extends Controller
         $user->login = Date::now();
         $user->update();
 
-        // Generate Sanctum token
+        // Generate Sanctum token (expiration from config/sanctum.php)
+        $token = $user->createToken('api-token')->plainTextToken;
+
+        return $this->respondWithToken($token);
+    }
+
+    /**
+     * Refresh the current token (issue new token, revoke old one).
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function refresh()
+    {
+        $user = auth()->user();
+
+        // Revoke current token
+        $user->currentAccessToken()->delete();
+
+        // Issue new token
         $token = $user->createToken('api-token')->plainTextToken;
 
         return $this->respondWithToken($token);
@@ -79,30 +91,33 @@ class AuthController extends Controller
         return response()->json(['message' => 'Successfully logged out']);
     }
 
-
-
     /**
      * Get the token array structure.
      *
-     * @param  string $token
-     *
+     * @param  string  $token
      * @return \Illuminate\Http\JsonResponse
      */
     protected function respondWithToken($token)
     {
         $user = auth()->user();
-        $userData = User::with('pus','cu','aktivis.pekerjaan_aktif.cu')->findOrFail($user->id);
-        
+        $userData = User::with('pus', 'cu', 'aktivis.pekerjaan_aktif.cu')->findOrFail($user->id);
+
+        $expiresAt = null;
+        $expirationMinutes = config('sanctum.expiration');
+        if ($expirationMinutes !== null) {
+            $expiresAt = now()->addMinutes($expirationMinutes)->timestamp;
+        }
+
         return response()->json([
             'access_token' => $token,
             'user' => $userData,
-            'token_type' => 'bearer'
+            'token_type' => 'bearer',
+            'expires_at' => $expiresAt,
         ]);
     }
-		
+
     public function guard()
     {
-        return Auth::Guard('api');
+        return Auth::guard('api');
     }
-
 }

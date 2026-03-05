@@ -188,79 +188,94 @@
 </template>
 
 <script>
-	import { mapGetters } from 'vuex';
 	import Cleave from 'vue-cleave-component';
+	import { useProvincesStore } from '../../stores/provinces';
+	import { useRegenciesStore } from '../../stores/regencies';
+	import { useDistrictsStore } from '../../stores/districts';
+	import { useVillagesStore } from '../../stores/villages';
 
 	export default {
-		props:['form'],
+		props: ['form'],
 		components: {
-			Cleave
+			Cleave,
 		},
 		data() {
 			return {
+				provincesStore: useProvincesStore(),
+				regenciesStore: useRegenciesStore(),
+				districtsStore: useDistrictsStore(),
+				villagesStore: useVillagesStore(),
 				cleaveOption: {
-          date:{
-            date: true,
-            datePattern: ['Y','m','d'],
-            delimiter: '-'
-          },
-          number12: {
-            numeral: true,
-            numeralIntegerScale: 12,
-            numeralDecimalScale: 0,
+					date: {
+						date: true,
+						datePattern: ['Y', 'm', 'd'],
+						delimiter: '-',
+					},
+					number12: {
+						numeral: true,
+						numeralIntegerScale: 12,
+						numeralDecimalScale: 0,
 						stripLeadingZeroes: false,
-						delimiter: ''
+						delimiter: '',
 					},
 					number3: {
-            numeral: true,
-            numeralIntegerScale: 3,
-            numeralDecimalScale: 0,
-            stripLeadingZeroes: false
-          },
-          numeric: {
-            numeral: true,
-            numeralThousandsGroupStyle: 'thousand',
-            numeralDecimalScale: 2,
-            numeralDecimalMark: ',',
-            delimiter: '.'
-          }
-        }
-			}
+						numeral: true,
+						numeralIntegerScale: 3,
+						numeralDecimalScale: 0,
+						stripLeadingZeroes: false,
+					},
+					numeric: {
+						numeral: true,
+						numeralThousandsGroupStyle: 'thousand',
+						numeralDecimalScale: 2,
+						numeralDecimalMark: ',',
+						delimiter: '.',
+					},
+				},
+			};
 		},
-		created(){
+		created() {
 			this.fetch();
 		},
 		methods: {
-			fetch(){
-				this.$store.dispatch('provinces/get');
+			fetch() {
+				this.provincesStore.get();
 			},
-			changeProvinces(id){
-				this.$store.dispatch('regencies/getProvinces', id);
+			changeProvinces(id) {
+				this.regenciesStore.indexProvinces(id);
 			},
-			changeRegencies(id){
-				this.$store.dispatch('districts/getRegencies', id);
+			changeRegencies(id) {
+				this.districtsStore.indexRegencies(id);
 			},
-			changeDistricts(id){
-				this.$store.dispatch('villages/getDistricts', id);
+			changeDistricts(id) {
+				this.villagesStore.indexDistricts(id);
 			},
 		},
 		computed: {
-			...mapGetters('provinces',{
-				modelProvinces: 'dataS',
-				modelProvincesStat: 'dataStatS'
-			}),
-			...mapGetters('regencies',{
-				modelRegencies: 'dataS',
-				modelRegenciesStat: 'dataStatS'
-			}),
-			...mapGetters('districts',{
-				modelDistricts: 'dataS',
-				modelDistrictsStat: 'dataStatS'
-			}),
-			...mapGetters('villages',{
-				modelVillages: 'dataS',
-				modelVillagesStat: 'dataStatS'
-			}),
-		}
+			modelProvinces() {
+				return this.provincesStore.dataS;
+			},
+			modelProvincesStat() {
+				return this.provincesStore.dataStatS;
+			},
+			modelRegencies() {
+				return this.regenciesStore.dataS;
+			},
+			modelRegenciesStat() {
+				return this.regenciesStore.dataStatS;
+			},
+			modelDistricts() {
+				return this.districtsStore.dataS;
+			},
+			modelDistrictsStat() {
+				return this.districtsStore.dataStatS;
+			},
+			modelVillages() {
+				return this.villagesStore.dataS;
+			},
+			modelVillagesStat() {
+				return this.villagesStore.dataStatS;
+			},
+		},
 	}
 </script>

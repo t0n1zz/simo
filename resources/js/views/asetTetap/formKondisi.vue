@@ -4,7 +4,8 @@
 			<card-data :itemData="selectedItem"></card-data>
 		</div>
 
-		<form @submit.prevent="save" data-vv-scope="formData">
+		<VeeForm :form="formData" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
+		<form @submit.prevent="handleSubmit(onValid)">
 
 		<div class="row">
 
@@ -19,15 +20,17 @@
 					</h6>
 
 					<!-- select -->
-					<select class="form-control" name="kondisi" v-model="formData.kondisi" data-width="100%" v-validate="'required'" data-vv-as="Kondisi">
-						<option disabled value="">Silahkan pilih kondisi</option>
-						<option value="Baik">Baik</option>
-						<option value="Diperbaiki">Diperbaiki</option>
-						<option value="Rusak">Rusak</option>
-						<option value="Dijual">Dijual</option>
-						<option value="Hilang">Hilang</option>
-						<option value="Disewa">Disewa</option>
-					</select>
+					<Field name="formData.kondisi" rules="required" v-model="formData.kondisi" v-slot="{ field }">
+						<select class="form-control" data-width="100%" v-bind="field">
+							<option disabled value="">Silahkan pilih kondisi</option>
+							<option value="Baik">Baik</option>
+							<option value="Diperbaiki">Diperbaiki</option>
+							<option value="Rusak">Rusak</option>
+							<option value="Dijual">Dijual</option>
+							<option value="Hilang">Hilang</option>
+							<option value="Disewa">Disewa</option>
+						</select>
+					</Field>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('formData.kondisi')">
@@ -62,6 +65,7 @@
 		</div> 
 
 		</form>
+		</VeeForm>
 
 	</div>
 </template>
@@ -78,6 +82,8 @@
 	import wajibBadge from "../../components/wajibBadge.vue";
 	import cardData from "./card.vue";
 	import formInfo from "../../components/formInfo.vue";
+	import VeeForm from '../../components/VeeForm.vue';
+	import { Field } from 'vee-validate';
 
 	export default {
 		props: ['kelas','selectedItem'],
@@ -88,7 +94,9 @@
 			infoIcon,
 			wajibBadge,
 			cardData,
-			formInfo
+			formInfo,
+			VeeForm,
+			Field
 		},
 		setup() {
 			const authStore = useAuthStore();
@@ -134,14 +142,11 @@
 			},
 		},
 		methods: {
-			save(){
-				this.$validator.validateAll('formData').then((result) => {
-					if (result) {
-						this.asetTetapStore.updateKondisi([this.selectedItem.id, this.formData]);
-					}else{
-						this.submited = true;
-					}	
-				});
+			onValid() {
+				this.asetTetapStore.updateKondisi([this.selectedItem.id, this.formData]);
+			},
+			onInvalid() {
+				this.submited = true;
 			},
 			fetch(){
 				this.asetTetapKondisiStore.resetDataS();
@@ -162,7 +167,7 @@
 				return this.asetTetapKondisiStore.dataStatS;
 			},
 			updateKondisiResponse() {
-				return this.asetTetapKondisiStore.update;
+				return this.asetTetapKondisiStore.updateData;
 			},
 			updateKondisiStat() {
 				return this.asetTetapKondisiStore.updateStat;

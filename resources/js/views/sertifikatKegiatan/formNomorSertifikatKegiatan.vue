@@ -7,64 +7,77 @@
 		<div class="page-content pt-0">
 			<div class="content-wrapper">
 				<div class="content">
-					<!-- message -->
-					<message v-if="errors.any('formNomorSertifikatKegiatan') && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors.items">
-					</message>
+				<VeeForm :form="formNomorSertifikatKegiatan" v-slot="{ errors, handleSubmit }">
 
-					<form @submit.prevent="save" enctype="multipart/form-data" data-vv-scope="formNomorSertifikatKegiatan">
+				<!-- message -->
+				<message v-if="errors.any('form') && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors.items">
+				</message>
+
+				<form @submit.prevent="handleSubmit(onValid, onInvalid)" enctype="multipart/form-data">
 						<div class="card">
 							<div class="card-body">	
 								<div class="row">
 									<div class="col-md-12">
-										<div class="form-group" :class="{'has-error' : errors.has('formNomorSertifikatKegiatan.nama_kegiatan')}">
+										<div class="form-group" :class="{'has-error' : errors.has('form.nama_kegiatan')}">
 
 											<!-- title -->
-											<h5 :class="{ 'text-danger' : errors.has('formNomorSertifikatKegiatan.nama_kegiatan')}">
-												<i class="icon-cross2" v-if="errors.has('formNomorSertifikatKegiatan.nama_kegiatan')"></i>
+											<h5 :class="{ 'text-danger' : errors.has('form.nama_kegiatan')}">
+												<i class="icon-cross2" v-if="errors.has('form.nama_kegiatan')"></i>
 												Nama Kegiatan: <wajib-badge></wajib-badge>
 											</h5>
 
 											<!-- text -->
-											<input type="text" 
-											name="nama_kegiatan" 
-											class="form-control disabled-visible" 
-											placeholder="Silahkan masukkan nama kegiatan" 
-											v-validate="'required'" 
-											v-model="formNomorSertifikatKegiatan.nama_kegiatan"
-											data-vv-as="Nama Kegiatan"
-											:disabled="isDisabled()">
+											<Field
+												name="nama_kegiatan"
+												rules="required"
+												v-model="formNomorSertifikatKegiatan.nama_kegiatan"
+												v-slot="{ field }"
+											>
+												<input 
+													type="text" 
+													class="form-control disabled-visible" 
+													placeholder="Silahkan masukkan nama kegiatan" 
+													v-bind="field"
+													:disabled="isDisabled()">
+											</Field>
 											
 
 											<!-- error message -->
-											<small class="text-muted text-danger" v-if="errors.has('formNomorSertifikatKegiatan.nama_kegiatan')">
-												<i class="icon-arrow-small-right"></i> {{ errors.first('formNomorSertifikatKegiatan.nama_kegiatan') }}
+											<small class="text-muted text-danger" v-if="errors.has('form.nama_kegiatan')">
+												<i class="icon-arrow-small-right"></i> {{ errors.first('form.nama_kegiatan') }}
 											</small>
 											<small class="text-muted" v-else>&nbsp;
 											</small>
 										</div>
 									</div>
 									<div class="col-md-12">
-										<div class="form-group" :class="{'has-error' : errors.has('formNomorSertifikatKegiatan.periode')}">
+										<div class="form-group" :class="{'has-error' : errors.has('form.periode')}">
 
 											<!-- title -->
-												<h5 :class="{ 'text-danger' : errors.has('formNomorSertifikatKegiatan.periode')}">
-												<i class="icon-cross2" v-if="errors.has('formNomorSertifikatKegiatan.periode')"></i>
+												<h5 :class="{ 'text-danger' : errors.has('form.periode')}">
+												<i class="icon-cross2" v-if="errors.has('form.periode')"></i>
 													Periode: <wajib-badge></wajib-badge> <info-icon :message="'Format: tahun. Contoh: 2025'"></info-icon></h5>
 
 														<!-- input -->
-														<cleave 
-														name="periode"
-														v-model="formNomorSertifikatKegiatan.periode" 
-														class="form-control disabled-visible" 
-														:raw="false" 
-														:options="cleaveOption.year" 
-														placeholder="Silahkan masukkan periode"
-														v-validate="'required'" data-vv-as="Periode"
-														:disabled="isDisabled()"></cleave>
+														<Field
+															name="periode"
+															rules="required"
+															v-model="formNomorSertifikatKegiatan.periode"
+															v-slot="{ field }"
+														>
+															<cleave 
+																class="form-control disabled-visible" 
+																:raw="false" 
+																:options="cleaveOption.year" 
+																placeholder="Silahkan masukkan periode"
+																v-bind="field"
+																:disabled="isDisabled()"
+															></cleave>
+														</Field>
 
 														<!-- error message -->
-														<small class="text-muted text-danger" v-if="errors.has('formNomorSertifikatKegiatan.periode')">
-														<i class="icon-arrow-small-right"></i> {{ errors.first('formNomorSertifikatKegiatan.periode') }}
+														<small class="text-muted text-danger" v-if="errors.has('form.periode')">
+														<i class="icon-arrow-small-right"></i> {{ errors.first('form.periode') }}
 														</small>
 														<small class="text-muted" v-else>&nbsp;</small>	
 										</div>
@@ -72,29 +85,33 @@
 
 									<div class="col-md-12">			
 										<!-- jumlah-->
-										<div class="form-group" :class="{'has-error' : errors.has('formNomorSertifikatKegiatan.jumlah_nomor_sertifikat')}">
+										<div class="form-group" :class="{'has-error' : errors.has('form.jumlah_nomor_sertifikat')}">
 											<!-- title -->
-												<h5 :class="{ 'text-danger' : errors.has('formNomorSertifikatKegiatan.jumlah_nomor_sertifikat')}">
-												<i class="icon-cross2" v-if="errors.has('formNomorSertifikatKegiatan.jumlah_nomor_sertifikat')"></i>
+												<h5 :class="{ 'text-danger' : errors.has('form.jumlah_nomor_sertifikat')}">
+												<i class="icon-cross2" v-if="errors.has('form.jumlah_nomor_sertifikat')"></i>
 													Jumlah Nomor Sertifikat: <wajib-badge></wajib-badge></h5>
 
-														<cleave
-														name="jumlah_nomor_sertifikat"
-														v-model="formNomorSertifikatKegiatan.jumlah_nomor_sertifikat"
-														v-validate="'required|numeric|min_value:1'"
-														class="form-control disabled-visible"
-														:raw="false"
-														:options="cleaveOption.number3"
-														placeholder="0"
-														data-vv-as="Jumlah Nomor Sertifikat"
-														:disabled="isDisabled()"
-														readonly
-														></cleave>
+														<Field
+															name="jumlah_nomor_sertifikat"
+															rules="required|numeric|min:1"
+															v-model="formNomorSertifikatKegiatan.jumlah_nomor_sertifikat"
+															v-slot="{ field }"
+														>
+															<cleave
+																class="form-control disabled-visible"
+																:raw="false"
+																:options="cleaveOption.number3"
+																placeholder="0"
+																v-bind="field"
+																:disabled="isDisabled()"
+																readonly
+															></cleave>
+														</Field>
 
 
 														<!-- error message -->
-														<small class="text-muted text-danger" v-if="errors.has('formNomorSertifikatKegiatan.jumlah_nomor_sertifikat')">
-														<i class="icon-arrow-small-right"></i> {{ errors.first('formNomorSertifikatKegiatan.jumlah_nomor_sertifikat') }}
+														<small class="text-muted text-danger" v-if="errors.has('form.jumlah_nomor_sertifikat')">
+														<i class="icon-arrow-small-right"></i> {{ errors.first('form.jumlah_nomor_sertifikat') }}
 														</small>
 														<small class="text-muted" v-else>&nbsp;</small>			
 										</div>
@@ -116,28 +133,24 @@
 											<tbody>
 												<tr v-for="(peserta, index) in formNomorSertifikatKegiatan.peserta" :key="peserta._uid">
 													<td class="col-md-4">
-														<div :class="{ 'has-error': errors.has(`formNomorSertifikatKegiatan.nama_peserta.${index}`) }">
+														<div :class="{ 'has-error': errors.has(`form.peserta.${index}.nama`) }">
 															<input
 																type="text"
 																v-model="formNomorSertifikatKegiatan.peserta[index].nama"
-																v-validate="'required'"
-																:data-vv-as="'Nama Peserta'"
 																class="form-control disabled-visible"
-																:name="`formNomorSertifikatKegiatan.nama_peserta.${index}`"
-																placeholder="Masukkan nama peserta"
+																:placeholder="'Masukkan nama peserta'"
 																:disabled="isDisabled()"
+																:name="`form.peserta.${index}.nama`"
 															/>
 														</div>
 													</td>
 													<td class="col-md-4">
-														<div :class="{ 'has-error': errors.has(`formNomorSertifikatKegiatan.keterangan.${index}`) }">
+														<div>
 															<input
 																type="text"
 																v-model="formNomorSertifikatKegiatan.peserta[index].keterangan"
-																:data-vv-as="'Keterangan'"
 																class="form-control disabled-visible"
-																:name="`formNomorSertifikatKegiatan.keterangan.${index}`"
-																placeholder="Masukkan keterangan"
+																:placeholder="'Masukkan keterangan'"
 																:disabled="isDisabled()"
 															/>
 														</div>
@@ -146,11 +159,8 @@
 														<input  
 																type="text"
 																v-model="formNomorSertifikatKegiatan.peserta[index].nomor"
-																v-validate="'required'"
-																:data-vv-as="'Nomor'"
 																class="form-control disabled-visible"
-																:name="`formNomorSertifikatKegiatan.nomor.${index}`"
-																placeholder="Nomor"
+																:placeholder="'Nomor'"
 																:disabled="isDisabled()"
 															/>
 													</td>
@@ -185,13 +195,14 @@
 									<div class="card card-body">
 										<form-button  v-if="this.$route.meta.mode !== 'detail'"
 											:cancelState="cancelState"
-											:formValidation="'formNomorSertifikatKegiatan'"
+											:formValidation="'form'"
 											@cancelClick="back"></form-button>
 										<button type="button" class="btn btn-default" v-else @click="back()">
 											<i class="icon-arrow-left13"></i> Back
 										</button>
 									</div>
 					</form>	
+					</VeeForm>
 				</div>
 			</div>
 		</div>
@@ -218,6 +229,8 @@
 	import formInfo from "../../components/formInfo.vue";
 	import appModal from '../../components/modal.vue';
 	import Cleave from 'vue-cleave-component';
+	import { Field } from 'vee-validate';
+	import VeeForm from '../../components/VeeForm.vue';
 	export default {
 		components: {
 			pageHeader,
@@ -230,6 +243,8 @@
 			wajibBadge,
 			wajibUkuran,
 			Cleave,
+			VeeForm,
+			Field,
 		},
 		data() {
 			return {
@@ -415,19 +430,17 @@
 
 				this.formNomorSertifikatKegiatan.peserta = pesertaBaru;
 			},
-			save() {
+			onValid() {
 				const formData = toMulipartedForm(this.formNomorSertifikatKegiatan, this.mode);
-				this.$validator.validateAll('formNomorSertifikatKegiatan').then((result) => {
-					if (result) {
-						if (this.$route.meta.mode == 'edit') {
-							this.updateNomorSertifikatKegiatan([this.$route.params.id,formData]);
-						} else {
-							this.storeNomorSertifikatKegiatan([this.currentUser.id, formData]);
-						}
-					}else{
-						this.submited = true;
-					}	
-				});
+				if (this.$route.meta.mode == 'edit') {
+					this.updateNomorSertifikatKegiatan([this.$route.params.id,formData]);
+				} else {
+					this.storeNomorSertifikatKegiatan([this.currentUser.id, formData]);
+				}
+				this.submited = false;
+			},
+			onInvalid() {
+				this.submited = true;
 			},
 			back(){
 				this.$router.push({name: this.kelas+ 'GetNomor'});

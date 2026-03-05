@@ -9,7 +9,7 @@ export const useSaranStore = defineStore('saran', {
         dataStat: '',
         dataStatS: '',
         countStat: '',
-        update: [],
+        updateData: [],
         updateStat: '',
         rules: [],
         options: [],
@@ -22,7 +22,7 @@ export const useSaranStore = defineStore('saran', {
         getDataStat: (state) => state.dataStat,
         getDataStatS: (state) => state.dataStatS,
         getCountStat: (state) => state.countStat,
-        getUpdate: (state) => state.update,
+        getUpdate: (state) => state.updateData,
         getUpdateStat: (state) => state.updateStat,
         getRules: (state) => state.rules,
         getOptions: (state) => state.options,
@@ -62,13 +62,13 @@ export const useSaranStore = defineStore('saran', {
             try {
                 const response = await SaranAPI.store(form);
                 if (response.data.saved) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -78,13 +78,13 @@ export const useSaranStore = defineStore('saran', {
             try {
                 const response = await SaranAPI.destroy(id);
                 if (response.data.deleted) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },

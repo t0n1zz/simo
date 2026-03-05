@@ -75,9 +75,11 @@
 							<span v-if="props.item.tanggal_cair" v-html="$filters.age(props.item.tanggal_cair)"></span>
 							<span v-else>-</span>
 						</td>
-						<td v-for="column in columnData" v-if="column.id">
+						<template v-for="column in columnData" :key="column ? column.id : undefined">
+						<td v-if="column && column.id">
 							<check-value :value="props.item[column.id]" valueType="currency"></check-value>
 						</td>
+						</template>
 						<td>
 							<check-value :value="props.item.total" valueType="currency"></check-value>
 						</td>

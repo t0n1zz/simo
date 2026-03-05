@@ -305,7 +305,7 @@
 				return this.asetTetapKelompokStore.dataStatS;
 			},
 			updateMessage() {
-				return this.asetTetapKelompokStore.update;
+				return this.asetTetapKelompokStore.updateData;
 			},
 			updateStat() {
 				return this.asetTetapKelompokStore.updateStat;

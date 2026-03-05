@@ -8,12 +8,14 @@
 			<div class="content-wrapper">
 				<div class="content">
 
+					<VeeForm :form="form" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
+
 					<!-- message -->
 					<message v-if="errors.any('form') && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors.items">
 					</message>
 
 					<!-- main panel -->
-					<form @submit.prevent="save" data-vv-scope="form">
+					<form @submit.prevent="handleSubmit(onValid)">
 
 						<!-- informasi -->
 						<div class="card">
@@ -45,7 +47,9 @@
 												Nama: <wajib-badge></wajib-badge></h5>
 
 											<!-- text -->
-											<input type="text" name="name" class="form-control" placeholder="Silahkan masukkan nama kubn" v-validate="'required|min:5'" data-vv-as="Nama" v-model="form.name">
+											<Field name="name" rules="required|min:5" v-model="form.name" v-slot="{ field }">
+												<input type="text" class="form-control" placeholder="Silahkan masukkan nama kubn" v-bind="field">
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.name')">
@@ -68,13 +72,17 @@
 											<div class="input-group">
 
 												<!-- select -->
-												<select class="form-control" name="id_usaha" v-model="form.id_usaha" data-width="100%" :disabled="modelUsaha.length === 0" v-validate="'required'" data-vv-as="Jenis Usaha">
-													<option disabled value="">
-														<span v-if="modelUsahaStat === 'loading'">Mohon tunggu...</span>
-														<span v-else>Silahkan pilih jenis usaha</span>
-													</option>
-													<option v-for="usaha in modelUsaha" v-if="usaha" :value="usaha.id">{{usaha.name}}</option>
-												</select>
+												<Field name="id_usaha" rules="required" v-model="form.id_usaha" v-slot="{ field }">
+													<select class="form-control" data-width="100%" v-bind="field" :disabled="modelUsaha.length === 0">
+														<option disabled value="">
+															<span v-if="modelUsahaStat === 'loading'">Mohon tunggu...</span>
+															<span v-else>Silahkan pilih jenis usaha</span>
+														</option>
+														<template v-for="usaha in modelUsaha" :key="usaha ? usaha.id : undefined">
+															<option v-if="usaha" :value="usaha.id">{{ usaha.name }}</option>
+														</template>
+													</select>
+												</Field>
 
 											</div>
 
@@ -97,10 +105,14 @@
 											</h5>
 
 											<!-- select -->
-											<select class="form-control" name="id_cu" v-model="form.id_cu" data-width="100%" @change="changeCU($event.target.value)" v-validate="'required'" data-vv-as="CU" :disabled="modelCU.length === 0">
-												<option disabled value="">Silahkan pilih CU</option>
-												<option v-for="cu in modelCU" :value="cu.id">{{cu.name}}</option>
-											</select>
+											<Field name="id_cu" rules="required" v-model="form.id_cu" v-slot="{ field }">
+												<select class="form-control" data-width="100%" v-bind="field" @change="changeCU($event.target.value)" :disabled="modelCU.length === 0">
+													<option disabled value="">Silahkan pilih CU</option>
+													<template v-for="cu in modelCU" :key="cu ? cu.id : undefined">
+														<option v-if="cu" :value="cu.id">{{ cu.name }}</option>
+													</template>
+												</select>
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.id_cu')">
@@ -121,13 +133,17 @@
 											</h5>
 
 											<!-- select -->
-										<select class="form-control" name="id_tp" v-model="form.id_tp" data-width="100%" v-validate="'required'" data-vv-as="TP" :disabled="modelTp.length === 0">
-											<option disabled value="">
-												<span v-if="modelTpStat === 'loading'">Mohon tunggu...</span>
-												<span v-else>Silahkan pilih TP/KP</span>
-											</option>
-											<option v-for="(tp, index) in modelTp" :value="tp.id" :key="index">{{tp.name}}</option>
-										</select>
+											<Field name="id_tp" rules="required" v-model="form.id_tp" v-slot="{ field }">
+												<select class="form-control" data-width="100%" v-bind="field" :disabled="modelTp.length === 0">
+													<option disabled value="">
+														<span v-if="modelTpStat === 'loading'">Mohon tunggu...</span>
+														<span v-else>Silahkan pilih TP/KP</span>
+													</option>
+													<template v-for="(tp, index) in modelTp" :key="tp ? tp.id : index">
+														<option v-if="tp" :value="tp.id">{{ tp.name }}</option>
+													</template>
+												</select>
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.id_tp')">
@@ -149,8 +165,10 @@
 												Tanggal Berdiri: <wajib-badge></wajib-badge></h5>
 
 											<!-- input -->
-											<date-picker @dateSelected="form.tanggal_berdiri = $event" :defaultDate="form.tanggal_berdiri"></date-picker>	
-											<input v-model="form.tanggal_berdiri" name="tanggal_berdiri" v-show="false" v-validate="'required'" data-vv-as="Tgl. berdiri"/>
+											<date-picker @dateSelected="form.tanggal_berdiri = $event" :defaultDate="form.tanggal_berdiri"></date-picker>
+											<Field name="tanggal_berdiri" rules="required" v-model="form.tanggal_berdiri" v-slot="{ field }">
+												<input type="hidden" v-bind="field" />
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.tanggal_berdiri')">
@@ -339,11 +357,13 @@
 											</h5>
 
 											<!-- select -->
-											<select class="form-control"  name="tipe_anggota" v-model="form.tipe_anggota" data-width="100%" v-validate="'required'" data-vv-as="Tipe Data Anggota">
-												<option disabled value="">Silahkan pilih tipe anggota</option>
-												<option value="manual">Manual: Hanya memasukan angka total anggota saja</option>
-												<option value="integrasi">Integrasi: Memilih anggota dari database anggota CU</option>
-											</select>
+											<Field name="tipe_anggota" rules="required" v-model="form.tipe_anggota" v-slot="{ field }">
+												<select class="form-control" data-width="100%" v-bind="field">
+													<option disabled value="">Silahkan pilih tipe anggota</option>
+													<option value="manual">Manual: Hanya memasukan angka total anggota saja</option>
+													<option value="integrasi">Integrasi: Memilih anggota dari database anggota CU</option>
+												</select>
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.tipe_anggota')">
@@ -362,13 +382,14 @@
 												Jumlah Anggota: <wajib-badge></wajib-badge></h5>
 
 											<!-- text -->
-											<cleave 
-												name="jmlh_anggota"
-												v-model="form.jmlh_anggota" 
-												class="form-control" 
+											<Field name="jmlh_anggota" rules="required" v-model="form.jmlh_anggota" v-slot="{ field }">
+												<input type="hidden" v-bind="field" />
+											</Field>
+											<cleave
+												v-model="form.jmlh_anggota"
+												class="form-control"
 												:options="cleaveOption.number12"
-												placeholder="Silahkan masukkan jumlah anggota"
-												v-validate="'required'" data-vv-as="Jumlah Anggota"></cleave>
+												placeholder="Silahkan masukkan jumlah anggota"></cleave>
 											
 
 											<!-- error message -->
@@ -483,6 +504,8 @@
 						</div>
 
 					</form>
+
+					</VeeForm>
 				</div>
 			</div>
 		</div>
@@ -553,6 +576,8 @@
 	import DatePicker from "../../components/datePicker.vue";
 	import formAnggota from "./formAnggota.vue";
 	import formDiklat from "./formDiklat.vue";
+	import VeeForm from '../../components/VeeForm.vue';
+	import { Field } from 'vee-validate';
 
 	export default {
 		components: {
@@ -567,7 +592,9 @@
 			dataTable,
 			DatePicker,
 			formAnggota,
-			formDiklat
+			formDiklat,
+			VeeForm,
+			Field
 		},
 		data() {
 			return {
@@ -785,25 +812,22 @@
 				this.selectedItemDiklat = {};
 				this.modalTutup(); 
 			},
-			save() {
+			onValid() {
 				this.form.anggota = this.itemDataAnggota;
 				this.form.diklat = this.itemDataDiklat;
 				this.state = '';
-				
+
 				const formData = toMulipartedForm(this.form, this.$route.meta.mode);
-				this.$validator.validateAll('form').then((result) => {
-					if (result) {
-						if(this.$route.meta.mode == 'edit'){
-							this.kubnStore.update([this.$route.params.id, formData]);
-						}else{
-							this.kubnStore.store(formData);
-						}
-						this.submited = false;
-					}else{
-						window.scrollTo(0, 0);
-						this.submited = true;
-					}
-				});
+				if(this.$route.meta.mode == 'edit'){
+					this.kubnStore.update([this.$route.params.id, formData]);
+				}else{
+					this.kubnStore.store(formData);
+				}
+				this.submited = false;
+			},
+			onInvalid() {
+				window.scrollTo(0, 0);
+				this.submited = true;
 			},
 			back(){
 				if(this.$route.meta.mode == 'edit' && this.currentUser.id_cu == 0){
@@ -938,7 +962,7 @@
 				return this.kubnStore.options;
 			},
 			updateResponse() {
-				return this.kubnStore.update;
+				return this.kubnStore.updateData;
 			},
 			updateStat() {
 				return this.kubnStore.updateStat;

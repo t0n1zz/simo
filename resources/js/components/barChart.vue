@@ -74,7 +74,9 @@
 						<select class="form-control" data-width="100%" v-model="dataShown[index].name" @change="changeColumn($event.target.value,index)" :disabled="itemDataStat === 'loading'">
 							<option disabled value="">Silahkan pilih data</option>
 							<slot></slot>
-							<option v-for="column in columnData" :value="column.name" v-if="column.isChart" v-html="column.title"></option>
+							<template v-for="(column, colIndex) in columnData" :key="colIndex">
+							<option v-if="column && column.isChart" :value="column.name" v-html="column.title"></option>
+						</template>
 						</select>
 						<div class="input-group-append" v-if="dataShown.length > 1">
 							<button class="btn btn-light" @click="removeColumn(index)" :disabled="itemDataStat === 'loading'">

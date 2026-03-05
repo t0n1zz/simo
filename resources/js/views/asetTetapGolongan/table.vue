@@ -279,7 +279,7 @@
 				return this.asetTetapGolonganStore.dataStatS;
 			},
 			updateMessage() {
-				return this.asetTetapGolonganStore.update;
+				return this.asetTetapGolonganStore.updateData;
 			},
 			updateStat() {
 				return this.asetTetapGolonganStore.updateStat;

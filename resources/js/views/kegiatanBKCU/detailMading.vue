@@ -51,8 +51,9 @@
 		},
 		methods: {
       fetchStatistik(){
-				this.$store.dispatch(this.kelas + '/indexPesertaCountCu', this.item.id);
-				this.$store.dispatch(this.kelas + '/indexPesertaHadirCountCu', this.item.id);
+				const kegiatanBKCUStore = useKegiatanBKCUStore();
+				kegiatanBKCUStore.indexPesertaCountCu(this.item.id);
+				kegiatanBKCUStore.indexPesertaHadirCountCu(this.item.id);
 			},
 		},
 		computed: {
@@ -66,7 +67,7 @@
 				itemDataPesertaTerdaftarCUStat: 'dataStatS6',
 				itemDataPesertaHadirCU: 'dataS7',
 				itemDataPesertaHadirCUStat: 'dataStatS7',
-        updateResponse: 'update',
+        updateResponse: 'updateData',
 				updateStat: 'updateStat',
 			}),
 		}

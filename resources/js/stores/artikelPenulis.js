@@ -9,7 +9,7 @@ export const useArtikelPenulisStore = defineStore('artikelPenulis', {
         dataStat: '',
         dataStatS: '',
         countStat: '',
-        update: [], // update data
+        updateData: [], // update data
         updateStat: '',
         rules: [], // laravel rules
         options: [], // laravel options
@@ -95,13 +95,13 @@ export const useArtikelPenulisStore = defineStore('artikelPenulis', {
             try {
                 const response = await ArtikelPenulisAPI.store(form);
                 if (response.data.saved) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -131,13 +131,13 @@ export const useArtikelPenulisStore = defineStore('artikelPenulis', {
             try {
                 const response = await ArtikelPenulisAPI.update(id, form);
                 if (response.data.saved) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -149,13 +149,13 @@ export const useArtikelPenulisStore = defineStore('artikelPenulis', {
             try {
                 const response = await ArtikelPenulisAPI.destroy(id);
                 if (response.data.deleted) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },

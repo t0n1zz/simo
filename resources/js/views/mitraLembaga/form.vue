@@ -8,12 +8,15 @@
 			<div class="content-wrapper">
 				<div class="content">
 
-					<!-- message -->
-					<message v-if="errors.any('form') && submited" :title="'Oops terjadi kesalahan'" :errorItem="errors.items">
-					</message>
+					<VeeForm :form="form" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
 
-					<!-- main panel -->
-					<form @submit.prevent="save" enctype="multipart/form-data" data-vv-scope="form">
+						<!-- message -->
+						<message v-if="errors.any('form') && submited" :title="'Oops terjadi kesalahan'"
+							:errorItem="errors.items">
+						</message>
+
+						<!-- main panel -->
+						<form @submit.prevent="handleSubmit(onValid)" enctype="multipart/form-data">
 					
 						<!-- informasi umum -->
 						<div class="card">
@@ -45,7 +48,10 @@
 												Nama:</h5>
 
 											<!-- text -->
-											<input type="text" name="name" class="form-control" placeholder="Silahkan masukkan nama CU" v-validate="'required|min:5'" data-vv-as="Nama" v-model="form.name">
+											<Field name="name" rules="required|min:5" v-model="form.name" v-slot="{ field }">
+												<input type="text" class="form-control" placeholder="Silahkan masukkan nama CU"
+													v-bind="field">
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.name')">
@@ -66,14 +72,22 @@
 											</h5>
 
 											<!-- select -->
-											<select class="form-control" name="id_cu" v-model="form.id_cu" data-width="100%" v-validate="'required'" data-vv-as="CU" :disabled="modelCU.length === 0">
-												<option disabled value="">
-													<span v-if="modelCUStat === 'loading'">Mohon tunggu...</span>
-													<span v-else>Silahkan pilih CU</span>
-												</option>
-												<option value="0"><span v-if="currentUser.pus">{{currentUser.pus.name}}</span> <span v-else>PUSKOPCUINA</span></option>
-												<option v-for="(cu, index) in modelCU" :value="cu.id" :key="index">{{cu.name}}</option>
-											</select>
+											<Field name="id_cu" rules="required" v-model="form.id_cu" v-slot="{ field }">
+												<select class="form-control" data-width="100%" v-bind="field"
+													:disabled="modelCU.length === 0">
+													<option disabled value="">
+														<span v-if="modelCUStat === 'loading'">Mohon tunggu...</span>
+														<span v-else>Silahkan pilih CU</span>
+													</option>
+													<option value="0">
+														<span v-if="currentUser.pus">{{currentUser.pus.name}}</span>
+														<span v-else>PUSKOPCUINA</span>
+													</option>
+													<option v-for="(cu, index) in modelCU" :value="cu.id" :key="index">
+														{{cu.name}}
+													</option>
+												</select>
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.id_cu')">
@@ -93,8 +107,10 @@
 												Bidang:</h6>
 
 											<!-- text -->
-											<input type="text" name="bidang" class="form-control" placeholder="Silahkan masukkan bidang" v-validate="'required'"
-											 data-vv-as="Bidang" v-model="form.bidang">
+											<Field name="bidang" rules="required" v-model="form.bidang" v-slot="{ field }">
+												<input type="text" class="form-control" placeholder="Silahkan masukkan bidang"
+													v-bind="field">
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.bidang')">
@@ -191,13 +207,20 @@
 											</h5>
 
 											<!-- select -->
-											<select class="form-control" name="id_provinces" v-model="form.id_provinces" data-width="100%" v-validate="'required'" data-vv-as="Provinsi" :disabled="modelProvinces.length === 0" @change="changeProvinces($event.target.value)">
-												<option disabled value="">
-													<span v-if="modelProvincesStat === 'loading'">Mohon tunggu...</span>
-													<span v-else>Silahkan pilih provinsi</span>
-												</option>
-												<option v-for="provinces in modelProvinces" :value="provinces.id">{{provinces.name}}</option>
-											</select>
+											<Field name="id_provinces" rules="required" v-model="form.id_provinces"
+												v-slot="{ field }">
+												<select class="form-control" data-width="100%" v-bind="field"
+													:disabled="modelProvinces.length === 0"
+													@change="changeProvinces($event.target.value)">
+													<option disabled value="">
+														<span v-if="modelProvincesStat === 'loading'">Mohon tunggu...</span>
+														<span v-else>Silahkan pilih provinsi</span>
+													</option>
+													<option v-for="provinces in modelProvinces" :value="provinces.id">
+														{{provinces.name}}
+													</option>
+												</select>
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.id_provinces')">
@@ -298,7 +321,11 @@
 												Alamat:</h5>
 
 											<!-- text -->
-											<input type="text" name="alamat" class="form-control" placeholder="Silahkan masukkan alamat" v-validate="'required|min:5'" data-vv-as="Alamat" v-model="form.alamat">
+											<Field name="alamat" rules="required|min:5" v-model="form.alamat"
+												v-slot="{ field }">
+												<input type="text" class="form-control"
+													placeholder="Silahkan masukkan alamat" v-bind="field">
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.alamat')">
@@ -413,7 +440,10 @@
 												Website:</h5>
 
 											<!-- text -->
-											<input type="text" name="website" class="form-control" placeholder="Silahkan masukkan alamat website" v-model="form.website" v-validate="'url'" data-vv-as="Website">
+											<Field name="website" rules="url" v-model="form.website" v-slot="{ field }">
+												<input type="text" class="form-control"
+													placeholder="Silahkan masukkan alamat website" v-bind="field">
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.website')">
@@ -437,9 +467,11 @@
 								:cancelState="cancelState"
 								:formValidation="'form'"
 								@cancelClick="back"></form-button>
-						</div>	
+						</div>
 
 					</form>
+
+					</VeeForm>
 
 				</div>
 			</div>
@@ -472,6 +504,8 @@
 	import formInfo from "../../components/formInfo.vue";
 	import Cleave from 'vue-cleave-component';
 	import wajibBadge from "../../components/wajibBadge.vue";
+	import VeeForm from '../../components/VeeForm.vue';
+	import { Field } from 'vee-validate';
 
 	export default {
 		components: {
@@ -483,6 +517,8 @@
 			formInfo,
 			wajibBadge,
 			Cleave,
+			VeeForm,
+			Field,
 		},
 		data() {
 			return {
@@ -567,6 +603,20 @@
 			}
     },
 		methods: {
+			onValid(values) {
+				const payload = { ...this.form, ...values, id_cu: this.currentUser.id_cu };
+				const formData = toMulipartedForm(payload, this.$route.meta.mode);
+				if (this.$route.meta.mode == 'edit') {
+					this.mitraLembagaStore.update([this.$route.params.id, formData]);
+				} else {
+					this.mitraLembagaStore.store(formData);
+				}
+				this.submited = false;
+			},
+			onInvalid() {
+				window.scrollTo(0, 0);
+				this.submited = true;
+			},
 			fetch(){
 				if(this.$route.meta.mode == 'edit'){
 					this.mitraLembagaStore.edit(this.$route.params.id);	
@@ -581,22 +631,6 @@
 				}
 
 				this.provincesStore.get();
-			},
-			save() {
-				const formData = toMulipartedForm(this.form, this.$route.meta.mode);
-				this.$validator.validateAll('form').then((result) => {
-					if (result) {
-						if(this.$route.meta.mode == 'edit'){
-							this.mitraLembagaStore.update([this.$route.params.id, formData]);
-						}else{
-						this.mitraLembagaStore.store(formData);
-					}
-						this.submited = false;
-					}else{
-						window.scrollTo(0, 0);
-						this.submited = true;
-					}
-				});
 			},
 			back(){
 				if(this.currentUser.id_cu == 0){
@@ -644,7 +678,7 @@
 				formStat: 'dataStat',
 				rules: 'rules',
 				options: 'options',
-				updateResponse: 'update',
+				updateResponse: 'updateData',
 				updateStat: 'updateStat'
 			}),
 			...mapState(useCuStore, {

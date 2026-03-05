@@ -1,10 +1,6 @@
 <template>
 	<div>
-		<!-- message -->
-		<message v-if="errors && errors.any && errors.any('formJawaban') && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors && errors.items">
-		</message>
-
-    <message v-if="message.show" @close="messageClose" :title="'Oops terjadi kesalahan'" :errorData="message.content" :showDebug="false">
+		<message v-if="message.show" @close="messageClose" :title="'Oops terjadi kesalahan'" :errorData="message.content" :showDebug="false">
 		</message>
 
     <!-- data pertanyaan -->
@@ -208,12 +204,15 @@
                 </div>
               </div>
             </div>
-            <form @submit.prevent="save" enctype="multipart/form-data" data-vv-scope="formJawaban" v-else>
+            <VeeForm v-else :form="formJawaban" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
+            <message v-if="errors && errors.any && errors.any() && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors && errors.items">
+            </message>
+            <form @submit.prevent="handleSubmit(onValidJawaban)" enctype="multipart/form-data">
 
               <div class="form-group" >
-                <h5>Jawaban:</h5> 
+                <h5>Jawaban:</h5>
 
-                <textarea rows="5" type="text" name="keterangan" class="form-control" placeholder="Silahkan masukkan jawaban " v-model="formJawaban.keterangan"></textarea>         
+                <textarea rows="5" type="text" name="keterangan" class="form-control" placeholder="Silahkan masukkan jawaban " v-model="formJawaban.keterangan"></textarea>
               </div>
 
               <div class="form-group">
@@ -224,24 +223,26 @@
                 </h5>
 
                 <!-- format -->
-                <div class="form-group" :class="{'has-error' : errors && errors.has && errors.has('formJawaban.format')}" v-if="mode == 'create'">
+                <div class="form-group" :class="{'has-error' : errors && errors.has && errors.has('format')}" v-if="mode == 'create'">
 
                   <!-- title -->
-                  <h5 :class="{ 'text-danger' : errors && errors.has && errors.has('formJawaban.format')}">
-                    <i class="icon-cross2" v-if="errors && errors.has && errors.has('formJawaban.format')"></i>
+                  <h5 :class="{ 'text-danger' : errors && errors.has && errors.has('format')}">
+                    <i class="icon-cross2" v-if="errors && errors.has && errors.has('format')"></i>
                     Pilih Format:
                   </h5>
 
                   <!-- select -->
-                  <select class="form-control" name="format" v-model="formJawaban.format" data-width="100%" v-validate="'required'" data-vv-as="format">
-                    <option disabled value="">Silahkan pilih format</option>
-                    <option value="upload">Upload</option>
-                    <option value="link">Link</option>
-                  </select>
+                  <Field name="format" v-slot="{ field }" :rules="'required'" label="Format">
+                    <select class="form-control" data-width="100%" v-bind="field" v-model="formJawaban.format">
+                      <option disabled value="">Silahkan pilih format</option>
+                      <option value="upload">Upload</option>
+                      <option value="link">Link</option>
+                    </select>
+                  </Field>
 
                   <!-- error message -->
-                  <small class="text-muted text-danger" v-if="errors && errors.has && errors.has('formJawaban.format')">
-                    <i class="icon-arrow-small-right"></i> {{ errors && errors.first && errors.first('formJawaban.format') }}
+                  <small class="text-muted text-danger" v-if="errors && errors.has && errors.has('format')">
+                    <i class="icon-arrow-small-right"></i> {{ errors && errors.first && errors.first('format') }}
                   </small>
                   <small class="text-muted" v-else>&nbsp;</small>
                 </div>
@@ -270,6 +271,7 @@
               <button type="submit" class="btn btn-warning btn-block pb-2">
                 <i class="icon-paperplane"></i> Kirim Jawaban</button>
             </form>
+            </VeeForm>
           </div>
 
           <div v-else>
@@ -280,12 +282,13 @@
         </div>
 
          <!-- ubah -->
-        <form @submit.prevent="save" data-vv-scope="formData" v-else-if="isShowUbah">
+        <VeeForm v-else-if="isShowUbah" :form="formData" :on-invalid-submit="() => {}" v-slot="{ handleSubmit }">
+        <form @submit.prevent="handleSubmit(onValidEdit)">
 
           <div class="form-group">
-            <h5>Jawaban:</h5> 
+            <h5>Jawaban:</h5>
 
-            <textarea rows="5" type="text" name="keterangan" class="form-control" placeholder="Silahkan masukkan jawaban " v-model="formData.keterangan"></textarea>         
+            <textarea rows="5" type="text" name="keterangan" class="form-control" placeholder="Silahkan masukkan jawaban " v-model="formData.keterangan"></textarea>
           </div>
 
           <h5>
@@ -314,7 +317,8 @@
             </div>
           </div>
         </form>
-      
+        </VeeForm>
+
         <!-- hapus -->
         <div v-else-if="isShowHapus">
           <div class="card card-body text-center">
@@ -364,17 +368,21 @@
 	import { useKegiatanBKCUStore } from '../../stores/kegiatanBKCU';
 	import { toMulipartedForm } from '../../helpers/form';
 	import message from "../../components/message.vue";
-  import formInfo from "../../components/formInfo.vue";
-  import checkValue from '../../components/checkValue.vue';
-  import { saveAs } from 'file-saver';
-  import filters from '../../helpers/filters';
+	import formInfo from "../../components/formInfo.vue";
+	import checkValue from '../../components/checkValue.vue';
+	import VeeForm from "../../components/VeeForm.vue";
+	import { Field } from 'vee-validate';
+	import { saveAs } from 'file-saver';
+	import filters from '../../helpers/filters';
 
 	export default {
 		props: ['selected','kegiatan_id','kegiatan_tipe','tipeUser'],
 		components: {
 			formInfo,
-      message,
-      checkValue
+			message,
+			checkValue,
+			VeeForm,
+			Field
 		},
 		data() {
 			return {
@@ -406,14 +414,6 @@
         isShowHapus: false,
         isShowUbah: false,
 				submited: false,
-        // SHIM: Add dummy errors object for VeeValidate 2 compatibility in Vue 3
-        errors: {
-          any: () => false,
-          has: () => false,
-          first: () => '',
-          collect: () => [],
-          items: []
-        },
 			}
 		},
 		created() {
@@ -457,23 +457,19 @@
           this.indexTugasJawaban([params, this.selected.id]);
         }
       },
-      save(){
-				this.$validator.validateAll('formJawaban').then((result) => {
-					if (result) {
-						if(this.mode == 'edit'){
-              this.updateTugasJawaban([this.formData.id, this.formData]);
-              this.isShowUbah = false;
-						}else{
-              this.formJawaban.id_user = this.currentUser.id;
-              this.formJawaban.id_cu = this.currentUser.id_cu;
-              const formData = toMulipartedForm(this.formJawaban, this.mode);
-							this.storeTugasJawaban([this.kegiatan_tipe, formData]);
-            }
-					}else{
-						this.submited = true;
-					}	
-				});
-      },
+			onValidJawaban() {
+				this.formJawaban.id_user = this.currentUser.id;
+				this.formJawaban.id_cu = this.currentUser.id_cu;
+				const formData = toMulipartedForm(this.formJawaban, this.mode);
+				this.storeTugasJawaban([this.kegiatan_tipe, formData]);
+			},
+			onValidEdit() {
+				this.updateTugasJawaban([this.formData.id, this.formData]);
+				this.isShowUbah = false;
+			},
+			onInvalid() {
+				this.submited = true;
+			},
       showOpen(value, tipe){
         this.selectedJawaban = value;
         if(tipe == 'hapus'){

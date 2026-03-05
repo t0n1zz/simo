@@ -15,7 +15,7 @@ export const useMonitoringCuStore = defineStore('monitoringCu', {
     periodeStat: '',
     dataDeletedStatS: '',
     countStat: '',
-    update: [], //update data
+    updateData: [], //update data
     updateStat: '',
     rules: [], //laravel rules
     options: [], //laravel options
@@ -35,7 +35,7 @@ export const useMonitoringCuStore = defineStore('monitoringCu', {
     getPeriodeStat: state => state.periodeStat,
     getDataDeletedStatS: state => state.dataDeletedStatS,
     getCountStat: state => state.countStat,
-    getUpdate: state => state.update,
+    getUpdate: state => state.updateData,
     getUpdateStat: state => state.updateStat,
     getRules: state => state.rules,
     getOptions: state => state.options,
@@ -148,13 +148,13 @@ export const useMonitoringCuStore = defineStore('monitoringCu', {
       try {
         const response = await MonitoringCuAPI.store(form);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -185,13 +185,13 @@ export const useMonitoringCuStore = defineStore('monitoringCu', {
       try {
         const response = await MonitoringCuAPI.update(id, form);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -202,13 +202,13 @@ export const useMonitoringCuStore = defineStore('monitoringCu', {
       try {
         const response = await MonitoringCuAPI.updateRekom(id);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -219,13 +219,13 @@ export const useMonitoringCuStore = defineStore('monitoringCu', {
       try {
         const response = await MonitoringCuAPI.restore(id);
         if (response.data.restored) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -237,13 +237,13 @@ export const useMonitoringCuStore = defineStore('monitoringCu', {
       try {
         const response = await MonitoringCuAPI.destroy(id);
         if (response.data.deleted) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },

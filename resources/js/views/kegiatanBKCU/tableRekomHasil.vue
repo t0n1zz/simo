@@ -149,9 +149,10 @@
 			jsonExcel,
 			formRekomHasil
 		},
-		props:['kelas','selected','tipeUser'],
+		props: ['kelas', 'selected', 'tipeUser'],
 		data() {
 			return {
+				kegiatanRekomStore: useKegiatanRekomStore(),
 				title: 'Hasil Rekomendasi',
 				selectedItem: [],
 				itemData: [],
@@ -342,17 +343,17 @@
 				}
 			},
 			modalTutup() {
-				if(this.updateStat == 'success'){
+				if (this.updateStat === 'success') {
 					this.$emit('fetch', this.query);
 				}
 				this.modalShow = false;
-				this.$store.dispatch(this.kelas + '/resetUpdateStat2');
+				this.kegiatanRekomStore.resetUpdateStat2();
 			},
 			modalConfirmOk() {
-				if (this.state == 'hapusHasil') {
-					this.$store.dispatch(this.kelas + '/destroyHasil', this.selectedItem.id);
+				if (this.state === 'hapusHasil') {
+					this.kegiatanRekomStore.destroyHasil(this.selectedItem.id);
 				}
-			}
+			},
 		},
 		computed: {
 			$filters() {

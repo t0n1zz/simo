@@ -67,6 +67,7 @@
 	import { login } from "../helpers/auth.js";
 	import Token from '../helpers/token.js';
 	import Message from "../components/message.vue";
+	import { useAuthStore } from '../stores/auth';
 	export default {
 		props:['mode'],
 		components: {
@@ -92,13 +93,13 @@
 				this.$validator.validateAll().then((result) => {
 					if(result){
 						this.loadingState = 'loading';
-						this.$store.dispatch('auth/login');
+						useAuthStore().login();
 
 						login(this.form)
 							.then((res) => {
 								if(Token.isValid(res.access_token)){
 									this.loadingState = 'success';
-									this.$store.dispatch('auth/loginSuccess', res);
+									useAuthStore().loginSuccess(res);
 
 									let self = this;
 									if(this.mode == 'loginPage'){

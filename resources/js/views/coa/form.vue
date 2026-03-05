@@ -1,8 +1,8 @@
 <template>
 	<div>
-		
+		<VeeForm :form="form" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
 		<!-- main panel -->
-		<form @submit.prevent="save" data-vv-scope="form" autocomplete="off">
+		<form @submit.prevent="handleSubmit(onValid)" autocomplete="off">
 
 			<!-- message -->
 			<message v-if="errors.any('form') && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors.items">
@@ -56,13 +56,14 @@
 						</h5>
 
 						<!-- text -->
-						<cleave 
-							name="kode"
-							v-model="form.kode" 
-							class="form-control" 
+						<Field name="kode" rules="required" v-model="form.kode" v-slot="{ field }">
+							<input type="hidden" v-bind="field" />
+						</Field>
+						<cleave
+							v-model="form.kode"
+							class="form-control"
 							:options="cleaveOption.number30"
 							placeholder="Silahkan masukkan no akun"
-							v-validate="'required'" data-vv-as="No. Akun"
 							@blur.native="filterInduk"></cleave>
 
 						<!-- error message -->
@@ -84,7 +85,9 @@
 							Nama: <wajib-badge></wajib-badge></h5>
 
 						<!-- text -->
-						<input type="text" name="name" class="form-control" placeholder="Silahkan masukkan nama CoA" v-validate="'required'" data-vv-as="Nama" v-model="form.name">
+						<Field name="name" rules="required" v-model="form.name" v-slot="{ field }">
+							<input type="text" class="form-control" placeholder="Silahkan masukkan nama CoA" v-bind="field">
+						</Field>
 
 						<!-- error message -->
 						<small class="text-muted text-danger" v-if="errors.has('form.name')">
@@ -136,6 +139,7 @@
 			</div> 
 
 		</form>
+		</VeeForm>
 
 	</div>
 </template>
@@ -148,6 +152,8 @@
 	import message from "../../components/message.vue";
 	import wajibBadge from "../../components/wajibBadge.vue";
 	import Cleave from 'vue-cleave-component';
+	import VeeForm from '../../components/VeeForm.vue';
+	import { Field } from 'vee-validate';
 
 	export default {
 		props: ['formState','selected'],
@@ -155,6 +161,8 @@
 			message,
 			wajibBadge,
 			Cleave,
+			VeeForm,
+			Field
 		},
 		data() {
 			return {
@@ -207,19 +215,16 @@
 			// }
 		},
 		methods: {
-			save() {
-				this.$validator.validateAll('form').then((result) => {
-					if (result) {
-						if(this.formState == 'edit'){
-							this.coaStore.update([this.selected.id, this.form]);
-						}else{
-							this.coaStore.store(this.form);
-						}
-						this.submited = false;
-					}else{
-						this.submited = true;
-					}
-				});
+			onValid() {
+				if(this.formState == 'edit'){
+					this.coaStore.update([this.selected.id, this.form]);
+				}else{
+					this.coaStore.store(this.form);
+				}
+				this.submited = false;
+			},
+			onInvalid() {
+				this.submited = true;
 			},
 			filterInduk(){
 				var kode = this.form.kode;

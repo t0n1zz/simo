@@ -8,12 +8,14 @@
 			<div class="content-wrapper">
 				<div class="content">
 
-					<!-- message -->
-					<message v-if="errors.any('form') && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors.items">
-					</message>
+				<!-- main panel: VeeForm + Field rules on tags -->
+				<VeeForm :form="form" v-slot="{ errors, handleSubmit }">
 
-					<!-- main panel -->
-					<form @submit.prevent="save" enctype="multipart/form-data" data-vv-scope="form">
+				<!-- message -->
+				<message v-if="errors.any('form') && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors.items">
+				</message>
+
+				<form @submit.prevent="handleSubmit(onValid, onInvalid)" enctype="multipart/form-data">
 						<div class="card">
 							<div class="card-body">
 								
@@ -42,7 +44,19 @@
 											</h5>
 
 											<!-- text -->
-											<input type="text" name="username" class="form-control" placeholder="Silahkan masukkan username" v-validate="'required|min:5|alpha_dash'" data-vv-as='Username' v-model="form.username">
+											<Field
+												name="username"
+												rules="required|min:5|alpha_dash"
+												v-model="form.username"
+												v-slot="{ field }"
+											>
+												<input
+													type="text"
+													class="form-control"
+													placeholder="Silahkan masukkan username"
+													v-bind="field"
+												>
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.username')">
@@ -66,7 +80,20 @@
 											</h5>
 
 											<!-- text -->
-											<input type="password" name="password" ref="password" class="form-control" placeholder="Silahkan masukkan password" v-validate="'required|min:8|verify_password'" v-model="form.password">
+											<Field
+												name="password"
+												rules="required|min:8|verify_password"
+												v-model="form.password"
+												v-slot="{ field }"
+											>
+												<input
+													type="password"
+													ref="password"
+													class="form-control"
+													placeholder="Silahkan masukkan password"
+													v-bind="field"
+												>
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.password')">
@@ -91,7 +118,19 @@
 											</h5>
 
 											<!-- text -->
-											<input type="password" name="passwordConfirm" class="form-control" placeholder="Silahkan masukkan password konfirmasi" v-validate="'required|confirmed:password'" data-vv-as="password" v-model="form.passwordConfirm">
+											<Field
+												name="passwordConfirm"
+												rules="required|confirmed:password"
+												v-model="form.passwordConfirm"
+												v-slot="{ field }"
+											>
+												<input
+													type="password"
+													class="form-control"
+													placeholder="Silahkan masukkan password konfirmasi"
+													v-bind="field"
+												>
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.passwordConfirm')">
@@ -227,6 +266,7 @@
 						</div>
 
 					</form>
+					</VeeForm>
 
 				</div>
 			</div>
@@ -257,6 +297,8 @@
 	import DataViewer from '../../components/dataviewer2.vue';
 	import checkValue from '../../components/checkValue.vue';
 	import identitas from './identitas.vue';
+	import { Field } from 'vee-validate';
+	import VeeForm from '../../components/VeeForm.vue';
 
 	export default {
 		components: {
@@ -270,7 +312,9 @@
 			wajibBadge,
 			DataViewer,
 			checkValue,
-			identitas
+			identitas,
+			VeeForm,
+			Field,
 		},
 		data() {
 			return {
@@ -403,17 +447,13 @@
 					}
 				}
 			},
-			save() {
-				
-				this.$validator.validateAll('form').then((result) => {
-					if (result) {
-						this.userStore.store(this.form);
-						this.submited = false;
-					}else{
-						window.scrollTo(0, 0);
-						this.submited = true;
-					}
-				});
+			onValid() {
+				this.userStore.store(this.form);
+				this.submited = false;
+			},
+			onInvalid() {
+				window.scrollTo(0, 0);
+				this.submited = true;
 			},
 			back(){
 				this.$router.push({name: this.kelas + 'Cu', params:{cu: this.currentUser.id_cu}});
@@ -455,7 +495,7 @@
 				return this.userStore.options;
 			},
 			updateResponse() {
-				return this.userStore.update;
+				return this.userStore.updateData;
 			},
 			updateStat() {
 				return this.userStore.updateStat;

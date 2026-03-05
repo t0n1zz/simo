@@ -13,7 +13,7 @@
 					</message>
 
 					<!-- main panel -->
-					<form @submit.prevent="save" data-vv-scope="form">
+					<form @submit.prevent="save">
 
 						<!-- main form -->
 						<div class="card">
@@ -30,7 +30,7 @@
 												Nama: <wajib-badge></wajib-badge></h5>
 
 											<!-- text -->
-											<input type="text" name="name" class="form-control" placeholder="Silahkan masukkan nama kategori artikel" v-validate="'required|min:5'" data-vv-as="Nama" v-model="form.name">
+											<input type="text" name="name" class="form-control" placeholder="Silahkan masukkan nama kategori artikel" v-model="form.name">
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.name')">
@@ -51,7 +51,7 @@
 											</h5>
 
 											<!-- select -->
-											<select class="form-control" name="id_cu" v-model="form.id_cu" data-width="100%" v-validate="'required'" data-vv-as="CU" :disabled="modelCU.length === 0">
+											<select class="form-control" name="id_cu" v-model="form.id_cu" data-width="100%" :disabled="modelCU.length === 0">
 												<option disabled value="">Silahkan pilih CU</option>
 												<option value="0"><span v-if="currentUser.pus">{{currentUser.pus.name}}</span> <span v-else>PUSKOPCUINA</span></option>
 												<option disabled value="">----------------</option>
@@ -109,17 +109,21 @@
 </template>
 
 <script>
+	import { computed } from 'vue';
 	import { useAuthStore } from '../../stores/auth';
 	import { useArtikelKategoriStore } from '../../stores/artikelKategori';
 	import { useCuStore } from '../../stores/cu';
-	import pageHeader from "../../components/pageHeader.vue";
+	import { useFormValidation } from '../../composables/useFormValidation';
+	import pageHeader from '../../components/pageHeader.vue';
 	import { toMulipartedForm } from '../../helpers/form';
 	import appImageUpload from '../../components/ImageUpload.vue';
 	import appModal from '../../components/modal.vue';
 	import message from "../../components/message.vue";
 	import formButton from "../../components/formButton.vue";
 	import formInfo from "../../components/formInfo.vue";
-	import wajibBadge from "../../components/wajibBadge.vue";
+	import wajibBadge from '../../components/wajibBadge.vue';
+
+	const ARTIKEL_KATEGORI_SCHEMA = { name: 'required|min:5', id_cu: 'required' };
 
 	export default {
 		components: {
@@ -130,6 +134,12 @@
 			formButton,
 			formInfo,
 			wajibBadge,
+		},
+		setup() {
+			const store = useArtikelKategoriStore();
+			const formRef = computed(() => store.data);
+			const { errors, handleSubmit, setValues } = useFormValidation(formRef, ARTIKEL_KATEGORI_SCHEMA);
+			return { errors, handleSubmit, setValues };
 		},
 		data() {
 			return {
@@ -210,19 +220,21 @@
 				}
 			},
 			save() {
-				this.$validator.validateAll('form').then((result) => {
-					if (result) {
-						if(this.$route.meta.mode == 'edit'){
+				this.setValues(this.form);
+				this.handleSubmit(
+					() => {
+						if (this.$route.meta.mode === 'edit') {
 							this.artikelKategoriStore.update(this.$route.params.id, this.form);
-						}else{
+						} else {
 							this.artikelKategoriStore.store(this.form);
 						}
 						this.submited = false;
-					}else{
+					},
+					() => {
 						window.scrollTo(0, 0);
 						this.submited = true;
 					}
-				});
+				);
 			},
 			back(){
 				if(this.$route.meta.mode == 'edit' && this.currentUser.id_cu == 0){
@@ -276,7 +288,7 @@
 				return this.artikelKategoriStore.options;
 			},
 			updateResponse() {
-				return this.artikelKategoriStore.update;
+				return this.artikelKategoriStore.updateData;
 			},
 			updateStat() {
 				return this.artikelKategoriStore.updateStat;

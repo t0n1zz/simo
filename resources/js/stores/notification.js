@@ -78,5 +78,9 @@ export const useNotificationStore = defineStore('notification', {
         pushNotif(data) {
             this.notification.unshift(data);
         },
+
+        setUnreadNotification(data) {
+            this.unreadNotification = data;
+        },
     },
 });

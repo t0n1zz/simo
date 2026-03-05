@@ -1,12 +1,13 @@
 <template>
 	<div>
 
+		<!-- main panel -->
+		<VeeForm :form="form" v-slot="{ errors, handleSubmit }">
 		<!-- message -->
 		<message v-if="errors.any('form') && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors.items">
 		</message>
 
-		<!-- main panel -->
-		<form @submit.prevent="save" data-vv-scope="form">
+		<form @submit.prevent="handleSubmit(onValid, onInvalid)">
 
 			<!-- identitas -->
 			<div class="card">
@@ -27,22 +28,22 @@
 									No. KTP: <wajib-badge></wajib-badge></h6>
 
 								<!-- text -->
-								<cleave 
-									name="nik"
-									v-model="form.nik" 
-									class="form-control" 
-									:options="cleaveOption.number16"
-									placeholder="Silahkan masukkan no KTP"
-									v-validate="'required'" data-vv-as="No. KTP" readonly v-if="mode == 'create_new'"></cleave>
+								<Field name="nik" rules="required" v-model="form.nik" v-slot="{ field }">
+									<cleave
+										class="form-control"
+										:options="cleaveOption.number16"
+										placeholder="Silahkan masukkan no KTP"
+										readonly
+										v-bind="field"
+										v-if="mode == 'create_new'"></cleave>
+									<cleave
+										class="form-control"
+										:options="cleaveOption.number16"
+										placeholder="Silahkan masukkan no KTP"
+										v-bind="field"
+										v-else></cleave>
+								</Field>
 
-								<cleave 
-									name="nik"
-									v-model="form.nik" 
-									class="form-control" 
-									:options="cleaveOption.number16"
-									placeholder="Silahkan masukkan no KTP"
-									v-validate="'required'" data-vv-as="No. KTP" v-else></cleave>	
-								
 								<!-- error message -->
 								<small class="text-muted text-danger" v-if="errors.has('form.nik')">
 									<i class="icon-arrow-small-right"></i> {{ errors.first('form.nik') }}
@@ -80,8 +81,9 @@
 									Nama: <wajib-badge></wajib-badge></h6>
 
 								<!-- text -->
-								<input type="text" name="name" class="form-control" placeholder="Silahkan masukkan nama" v-validate="'required'"
-									data-vv-as="Nama" v-model="form.name">
+								<Field name="name" rules="required" v-model="form.name" v-slot="{ field }">
+									<input type="text" class="form-control" placeholder="Silahkan masukkan nama" v-bind="field">
+								</Field>
 
 								<!-- error message -->
 								<small class="text-muted text-danger" v-if="errors.has('form.name')">
@@ -101,8 +103,9 @@
 									Nama Ahli Waris: <wajib-badge></wajib-badge></h6>
 
 								<!-- text -->
-								<input type="text" name="ahli_waris" class="form-control" placeholder="Silahkan masukkan nama ahli waris" v-validate="'required'"
-									data-vv-as="Nama ahli waris" v-model="form.ahli_waris">
+								<Field name="ahli_waris" rules="required" v-model="form.ahli_waris" v-slot="{ field }">
+									<input type="text" class="form-control" placeholder="Silahkan masukkan nama ahli waris" v-bind="field">
+								</Field>
 
 								<!-- error message -->
 								<small class="text-muted text-danger" v-if="errors.has('form.ahli_waris')">
@@ -136,12 +139,11 @@
 								</h6>
 
 								<!-- select -->
-								<select class="form-control" name="kelamin" v-model="form.kelamin" data-width="100%" v-validate="'required'"
-									data-vv-as="Gender">
+								<Field as="select" name="kelamin" rules="required" v-model="form.kelamin" class="form-control" data-width="100%">
 									<option disabled value="">Silahkan pilih gender</option>
 									<option value="LAKI-LAKI">Laki-laki</option>
 									<option value="PEREMPUAN">Perempuan</option>
-								</select>
+								</Field>
 
 								<!-- error message -->
 								<small class="text-muted text-danger" v-if="errors.has('form.kelamin')">
@@ -161,14 +163,16 @@
 									Tgl. Lahir: <wajib-badge></wajib-badge></h6>
 
 								<!-- input -->
-								<date-picker @dateSelected="form.tanggal_lahir = $event" :defaultDate="form.tanggal_lahir"></date-picker>	
-								<input v-model="form.tanggal_lahir" v-show="false" v-validate="'required'" data-vv-as="Tanggal lahir"/>
+								<date-picker @dateSelected="form.tanggal_lahir = $event" :defaultDate="form.tanggal_lahir"></date-picker>
+								<Field name="tanggal_lahir" rules="required" v-model="form.tanggal_lahir" v-slot="{ field }">
+									<input v-bind="field" v-show="false"/>
+								</Field>
 
 								<!-- error message -->
 								<small class="text-muted text-danger" v-if="errors.has('form.tanggal_lahir')">
 									<i class="icon-arrow-small-right"></i> {{ errors.first('form.tanggal_lahir') }}
 								</small>
-								<small class="text-muted" v-else>&nbsp;</small>	
+								<small class="text-muted" v-else>&nbsp;</small>
 
 							</div>
 						</div>
@@ -182,7 +186,9 @@
 									<i class="icon-cross2" v-if="errors.has('form.tempat_lahir')"></i>Tempat Lahir: <wajib-badge></wajib-badge></h6>
 
 								<!-- text -->
-								<input type="text" name="tempat_lahir" class="form-control" placeholder="Silahkan masukkan tempat lahir" v-model="form.tempat_lahir" v-validate="'required'" data-vv-as="Tempat Lahir">
+								<Field name="tempat_lahir" rules="required" v-model="form.tempat_lahir" v-slot="{ field }">
+									<input type="text" class="form-control" placeholder="Silahkan masukkan tempat lahir" v-bind="field">
+								</Field>
 
 								<!-- error message -->
 								<small class="text-muted text-danger" v-if="errors.has('form.tempat_lahir')">
@@ -432,7 +438,7 @@
 							
 						<!-- Provinsi -->
 						<div class="col-md-4">
-							<div class="form-group">
+							<div class="form-group" :class="{'has-error' : errors.has('form.id_provinces')}">
 
 								<!-- title -->
 								<h6 :class="{ 'text-danger' : errors.has('form.id_provinces')}">
@@ -441,13 +447,13 @@
 								</h6>
 
 								<!-- select -->
-								<select class="form-control" name="id_provinces" v-model="form.id_provinces" data-width="100%" v-validate="'required'" data-vv-as="Provinsi" :disabled="modelProvinces.length == 0" @change="changeProvinces($event.target.value)">
+								<Field as="select" name="id_provinces" rules="required" v-model="form.id_provinces" class="form-control" data-width="100%" :disabled="modelProvinces.length == 0" @change="changeProvinces($event.target.value)">
 									<option disabled value="">
 										<span v-if="modelProvincesStat === 'loading'">Mohon tunggu...</span>
 										<span v-else>Silahkan pilih provinsi</span>
 									</option>
 									<option v-for="(provinces, index) in modelProvinces" :value="provinces.id" :key="index">{{provinces.name}}</option>
-								</select>
+								</Field>
 
 								<!-- error message -->
 								<small class="text-muted text-danger" v-if="errors.has('form.id_provinces')">
@@ -468,13 +474,13 @@
 								</h6>
 
 								<!-- select -->
-								<select class="form-control"  name="id_regencies" v-model="form.id_regencies" data-width="100%" v-validate="'required'" data-vv-as="Kabupaten" @change="changeRegencies($event.target.value)" :disabled="modelRegencies.length === 0">
+								<Field as="select" name="id_regencies" rules="required" v-model="form.id_regencies" class="form-control" data-width="100%" @change="changeRegencies($event.target.value)" :disabled="modelRegencies.length === 0">
 									<option disabled value="">
 										<span v-if="modelRegenciesStat === 'loading'">Mohon tunggu...</span>
 										<span v-else>Silahkan pilih kabupaten</span>
 									</option>
 									<option v-for="(regencies, index) in modelRegencies" :value="regencies.id" :key="index">{{regencies.name}}</option>
-								</select>
+								</Field>
 
 								<!-- error message -->
 								<small class="text-muted text-danger" v-if="errors.has('form.id_regencies')">
@@ -495,17 +501,17 @@
 								</h6>
 
 								<!-- select -->
-								<select class="form-control"  name="id_districts" v-model="form.id_districts" data-width="100%" v-validate="'required'" data-vv-as="Kabupaten" :disabled="modelDistricts.length === 0" @change="changeDistricts($event.target.value)">
+								<Field as="select" name="id_districts" rules="required" v-model="form.id_districts" class="form-control" data-width="100%" :disabled="modelDistricts.length === 0" @change="changeDistricts($event.target.value)">
 									<option disabled value="">
 										<span v-if="modelDistrictsStat === 'loading'">Mohon tunggu...</span>
 										<span v-else>Silahkan pilih kecamatan</span>
 									</option>
 									<option v-for="(districts, index) in modelDistricts" :value="districts.id" :key="index">{{districts.name}}</option>
-								</select>
+								</Field>
 
 								<!-- error message -->
-								<small class="text-muted text-danger" v-if="errors.has('form.id_regency')">
-									<i class="icon-arrow-small-right"></i> {{ errors.first('form.id_regency') }}
+								<small class="text-muted text-danger" v-if="errors.has('form.id_districts')">
+									<i class="icon-arrow-small-right"></i> {{ errors.first('form.id_districts') }}
 								</small>
 								<small class="text-muted" v-else>&nbsp;</small>
 							</div>
@@ -522,13 +528,13 @@
 								</h6>
 
 								<!-- select -->
-								<select class="form-control"  name="id_villages" v-model="form.id_villages" data-width="100%" v-validate="'required'" data-vv-as="Desa" :disabled="modelVillages.length === 0">
+								<Field as="select" name="id_villages" rules="required" v-model="form.id_villages" class="form-control" data-width="100%" :disabled="modelVillages.length === 0">
 									<option disabled value="">
 										<span v-if="modelVillagesStat === 'loading'">Mohon tunggu... mohon tunggu</span>
 										<span v-else>Silahkan pilih kelurahan</span>
 									</option>
 									<option v-for="(villages, index) in modelVillages" :value="villages.id" :key="index">{{villages.name}}</option>
-								</select>
+								</Field>
 
 								<!-- error message -->
 								<small class="text-muted text-danger" v-if="errors.has('form.id_villages')">
@@ -586,7 +592,9 @@
 									Alamat: <wajib-badge></wajib-badge></h6>
 
 								<!-- text -->
-								<input type="text" name="alamat" class="form-control" placeholder="Silahkan masukkan alamat" v-validate="'required|min:5'" data-vv-as="Alamat" v-model="form.alamat">
+								<Field name="alamat" rules="required|min:5" v-model="form.alamat" v-slot="{ field }">
+									<input type="text" class="form-control" placeholder="Silahkan masukkan alamat" v-bind="field">
+								</Field>
 
 								<!-- error message -->
 								<small class="text-muted text-danger" v-if="errors.has('form.alamat')">
@@ -625,7 +633,9 @@
 									Email:</h6>
 
 								<!-- text -->
-								<input type="text" name="email" class="form-control" placeholder="Silahkan masukkan alamat email" v-validate="'email'" data-vv-as="Email" v-model="form.email">
+								<Field name="email" rules="email" v-model="form.email" v-slot="{ field }">
+									<input type="text" class="form-control" placeholder="Silahkan masukkan alamat email" v-bind="field">
+								</Field>
 
 								<!-- error message -->
 								<small class="text-muted text-danger" v-if="errors.has('form.email')">
@@ -673,13 +683,13 @@
 									</h6>
 
 									<!-- select -->
-									<select class="form-control" name="id_tp" v-model="form.tp_id" data-width="100%" v-validate="'required'" data-vv-as="TP/KP">
+									<Field as="select" name="tp_id" rules="required" v-model="form.tp_id" class="form-control" data-width="100%">
 										<option disabled value="">
 											<span v-if="modelTpStat === 'loading'">Mohon tunggu...</span>
 											<span v-else>Silahkan pilih TP/KP</span>
 										</option>
 										<option v-for="(tp, index) in modelTp" :value="tp.id" :key="index">{{tp.name}}</option>
-									</select>
+									</Field>
 
 									<!-- error message -->
 									<small class="text-muted text-danger" v-if="errors.has('form.tp_id')">
@@ -699,13 +709,13 @@
 									No. BA: <wajib-badge></wajib-badge></h6>
 
 									<!-- text -->
-									<cleave 
-									name="no_ba"
-									v-model="form.no_ba" 
-									class="form-control" 
-									:options="cleaveOption.number16"
-									placeholder="Silahkan masukkan no buku anggota"
-									v-validate="'required'" data-vv-as="No. Buku Anggota"></cleave>
+									<Field name="no_ba" rules="required" v-model="form.no_ba" v-slot="{ field }">
+										<cleave
+											class="form-control"
+											:options="cleaveOption.number16"
+											placeholder="Silahkan masukkan no buku anggota"
+											v-bind="field"></cleave>
+									</Field>
 
 									<!-- error message -->
 									<small class="text-muted text-danger" v-if="errors.has('form.no_ba')">
@@ -726,8 +736,10 @@
 									Tgl. Jadi Anggota: <wajib-badge></wajib-badge></h6>
 
 									<!-- text -->
-									<date-picker @dateSelected="form.tanggal_masuk = $event" :defaultDate="form.tanggal_masuk"></date-picker>	
-									<input v-model="form.tanggal_masuk" v-show="false" v-validate="'required'" data-vv-as="Tgl. jadi anggota"/>
+									<date-picker @dateSelected="form.tanggal_masuk = $event" :defaultDate="form.tanggal_masuk"></date-picker>
+									<Field name="tanggal_masuk" rules="required" v-model="form.tanggal_masuk" v-slot="{ field }">
+										<input v-bind="field" v-show="false"/>
+									</Field>
 
 									<!-- error message -->
 									<small class="text-muted text-danger" v-if="errors.has('form.tanggal_masuk')">
@@ -815,12 +827,15 @@
 				<form-button 
 				:cancelState="'methods'" 
 				:formValidation="'form'" 
+				:buttonErrors="errors"
+				:confirmState="'submit'"
 				:confirmIcon="confirmIcon"
 				:confirmTitle="confirmTitle"
 				@cancelClick="back"></form-button>
 			</div>
 
 		</form>
+		</VeeForm>
 
 		<!-- modal -->
 		<app-modal :show="modalShow" :state="modalState" :title="modalTitle" :content="modalContent" :color="modalColor"
@@ -847,7 +862,6 @@
 </template>
 
 <script>
-	import {mapState, mapActions} from 'pinia';
 	import { useAuthStore } from '../../stores/auth';
 	import { useAnggotaCuStore } from '../../stores/anggotaCu';
 	import { useCuStore } from '../../stores/cu';
@@ -858,6 +872,8 @@
 	import { useRegenciesStore } from '../../stores/regencies';
 	import { useDistrictsStore } from '../../stores/districts';
 	import { useVillagesStore } from '../../stores/villages';
+	import { Field } from 'vee-validate';
+	import VeeForm from '../../components/VeeForm.vue';
 	import _ from 'lodash';
 	import {toMulipartedForm} from '../../helpers/form';
 	import appImageUpload from '../../components/ImageUpload.vue';
@@ -890,7 +906,9 @@
 			infoIcon,
 			wajibBadge,
 			identitas,
-			DatePicker
+			DatePicker,
+			VeeForm,
+			Field,
 		},
 		data() {
 			return {
@@ -964,17 +982,19 @@
 				this.confirmTitle = 'Simpan';
 			}
 
-			if (this.currentUser.id_cu == 0) {
-				if (this.modelCuStat != 'success') {
-					this.$store.dispatch('cu/getHeader');
+			const authStore = useAuthStore();
+			const cuStore = useCuStore();
+			if (authStore.currentUser.id_cu == 0) {
+				if (cuStore.headerDataStatS != 'success') {
+					cuStore.getHeader();
 				}
-			}else{
-				this.fetchTp(this.currentUser.id_cu);
+			} else {
+				this.fetchTp(authStore.currentUser.id_cu);
 			}
-			
-			this.$store.dispatch('pekerjaan/get');
-			this.$store.dispatch('suku/get');
-			this.$store.dispatch('provinces/get');
+
+			usePekerjaanStore().get();
+			useSukuStore().get();
+			useProvincesStore().get();
 			this.fetch();
 		},
 		watch: {
@@ -999,7 +1019,7 @@
 		methods: {
 			fetch() {
 				if(this.mode == 'edit'){
-					this.$store.dispatch(this.kelas + '/editDraft', this.$route.params.id);
+					useAnggotaCuStore().editDraft(this.$route.params.id);
 				}
 			},
 			fetchCu(){
@@ -1034,7 +1054,7 @@
 				}
 			},
 			fetchTp(value){
-				this.$store.dispatch('tp/getCu',value);
+				useTpStore().getCu(value);
 			},
 			createCu(value){
 				this.itemDataCu.push(value);
@@ -1047,31 +1067,29 @@
 				this.itemDataCu.push(value);
 				this.modalTutup(); 
 			},
-			save() {
-				if(this.currentUser.id_cu == 0){
+			onValid() {
+				const authStore = useAuthStore();
+				const anggotaCuStore = useAnggotaCuStore();
+				if(authStore.currentUser.id_cu == 0){
 					this.form.anggota_cu_cu = this.itemDataCu;
 				}else{
-					this.form.id_cu = this.currentUser.id_cu;
+					this.form.id_cu = authStore.currentUser.id_cu;
 				}
-
-				this.$validator.validateAll('form').then((result) => {
-					if (result) {
-						this.$store.dispatch(this.kelas + '/updateDraft', [this.$route.params.id,this.form]);
-						this.submited = false;
-					} else {
-						window.scrollTo(0, 0);
-						this.submited = true;
-					}
-				});
+				anggotaCuStore.updateDraft([this.$route.params.id, this.form]);
+				this.submited = false;
+			},
+			onInvalid() {
+				window.scrollTo(0, 0);
+				this.submited = true;
 			},
 			changeProvinces(id){
-				this.$store.dispatch('regencies/getProvinces', id);
+				useRegenciesStore().indexProvinces(id);
 			},
 			changeRegencies(id){
-				this.$store.dispatch('districts/getRegencies', id);
+				useDistrictsStore().indexRegencies(id);
 			},
 			changeDistricts(id){
-				this.$store.dispatch('villages/getDistricts', id);
+				useVillagesStore().indexDistricts(id);
 			},
 			back() {
 				if(this.currentUser.id_cu == 0){
@@ -1120,9 +1138,9 @@
 				}
 			},
 			modalTutup() {
-				if (this.updateStat === 'success') {				
-						this.back();
-					this.$store.dispatch(this.kelas + '/resetUpdateStat');
+				if (this.updateStat === 'success') {
+					this.back();
+					useAnggotaCuStore().resetUpdateStat();
 				}
 
 				this.modalShow = false;
@@ -1138,49 +1156,75 @@
 			},
 		},
 		computed: {
-			...mapGetters('auth', {
-				currentUser: 'currentUser'
-			}),
-			...mapGetters('anggotaCu', {
-				form: 'data',
-				formStat: 'dataStat',
-				rules: 'rules',
-				options: 'options',
-				updateResponse: 'update',
-				updateStat: 'updateStat'
-			}),
-			...mapGetters('cu',{
-				modelCu: 'headerDataS',
-				modelCuStat: 'headerDataStatS',
-			}),
-			...mapGetters('tp',{
-				modelTp: 'dataS',
-				modelTpStat: 'dataStatS',
-			}),
-			...mapGetters('pekerjaan',{
-				modelPekerjaan: 'dataS',
-				modelPekerjaanStat: 'dataStatS'
-			}),
-			...mapGetters('suku',{
-				modelSuku: 'dataS',
-				modelSukuStat: 'dataStatS'
-			}),
-			...mapGetters('provinces',{
-				modelProvinces: 'dataS',
-				modelProvincesStat: 'dataStatS'
-			}),
-			...mapGetters('regencies',{
-				modelRegencies: 'dataS',
-				modelRegenciesStat: 'dataStatS'
-			}),
-			...mapGetters('districts',{
-				modelDistricts: 'dataS',
-				modelDistrictsStat: 'dataStatS'
-			}),
-			...mapGetters('villages',{
-				modelVillages: 'dataS',
-				modelVillagesStat: 'dataStatS'
-			}),
+			currentUser() {
+				return useAuthStore().currentUser;
+			},
+			form() {
+				return useAnggotaCuStore().data;
+			},
+			formStat() {
+				return useAnggotaCuStore().dataStat;
+			},
+			rules() {
+				return useAnggotaCuStore().rules;
+			},
+			options() {
+				return useAnggotaCuStore().options;
+			},
+			updateResponse() {
+				return useAnggotaCuStore().updateData;
+			},
+			updateStat() {
+				return useAnggotaCuStore().updateStat;
+			},
+			modelCu() {
+				return useCuStore().headerDataS;
+			},
+			modelCuStat() {
+				return useCuStore().headerDataStatS;
+			},
+			modelTp() {
+				return useTpStore().dataS;
+			},
+			modelTpStat() {
+				return useTpStore().dataStatS;
+			},
+			modelPekerjaan() {
+				return usePekerjaanStore().dataS;
+			},
+			modelPekerjaanStat() {
+				return usePekerjaanStore().dataStatS;
+			},
+			modelSuku() {
+				return useSukuStore().dataS;
+			},
+			modelSukuStat() {
+				return useSukuStore().dataStatS;
+			},
+			modelProvinces() {
+				return useProvincesStore().dataS;
+			},
+			modelProvincesStat() {
+				return useProvincesStore().dataStatS;
+			},
+			modelRegencies() {
+				return useRegenciesStore().dataS;
+			},
+			modelRegenciesStat() {
+				return useRegenciesStore().dataStatS;
+			},
+			modelDistricts() {
+				return useDistrictsStore().dataS;
+			},
+			modelDistrictsStat() {
+				return useDistrictsStore().dataStatS;
+			},
+			modelVillages() {
+				return useVillagesStore().dataS;
+			},
+			modelVillagesStat() {
+				return useVillagesStore().dataStatS;
+			},
 		}
 	}
 </script>

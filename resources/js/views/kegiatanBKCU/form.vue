@@ -8,12 +8,13 @@
 			<div class="content-wrapper">
 				<div class="content">
 
+					<VeeForm :form="form" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
 					<!-- message -->
 					<message v-if="errors && errors.any && errors.any('form') && submited" :title="'Oops terjadi kesalahan'" :errorItem="errors && errors.items">
 					</message>
 
 					<!-- main panel -->
-					<form @submit.prevent="save" enctype="multipart/form-data" data-vv-scope="form">
+					<form @submit.prevent="handleSubmit(onValid)" enctype="multipart/form-data">
 					
 						<!-- informasi umum -->
 						<div class="card">
@@ -71,14 +72,15 @@
 												Periode: <wajib-badge></wajib-badge> <info-icon :message="'Format: tahun. Contoh: 2019'"></info-icon></h5>
 
 											<!-- input -->
-											<cleave 
-												name="periode"
-												v-model="form.periode" 
-												class="form-control" 
-												:raw="false" 
-												:options="cleaveOption.year" 
-												placeholder="Silahkan masukkan periode"
-												v-validate="'required'" data-vv-as="Periode"></cleave>
+											<Field name="periode" rules="required" v-model="form.periode" v-slot="{ field }">
+												<input type="hidden" v-bind="field" />
+											</Field>
+											<cleave
+												v-model="form.periode"
+												class="form-control"
+												:raw="false"
+												:options="cleaveOption.year"
+												placeholder="Silahkan masukkan periode"></cleave>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors && errors.has && errors.has('form.periode')">
@@ -125,8 +127,10 @@
 												Tgl. Mulai: <wajib-badge></wajib-badge></h5>
 
 											<!-- input -->
-											<date-picker @dateSelected="form.mulai = $event" :defaultDate="form.mulai"></date-picker>	
-											<input name="mulai" v-model="form.mulai" v-show="false" v-validate="'required'" data-vv-as="Tgl. mulai"/>
+											<Field name="mulai" rules="required" v-model="form.mulai" v-slot="{ field }">
+												<input type="hidden" v-bind="field" />
+											</Field>
+											<date-picker @dateSelected="form.mulai = $event" :defaultDate="form.mulai"></date-picker>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors && errors.has && errors.has('form.mulai')">
@@ -146,8 +150,10 @@
 												Tgl. Selesai: <wajib-badge></wajib-badge></h5>
 
 											<!-- input  -->
-											<date-picker @dateSelected="form.selesai = $event" :defaultDate="form.selesai"></date-picker>	
-											<input name="selesai" v-model="form.selesai" v-show="false" v-validate="'required'" data-vv-as="Tgl. selesai"/>
+											<Field name="selesai" rules="required" v-model="form.selesai" v-slot="{ field }">
+												<input type="hidden" v-bind="field" />
+											</Field>
+											<date-picker @dateSelected="form.selesai = $event" :defaultDate="form.selesai"></date-picker>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors && errors.has && errors.has('form.selesai')">
@@ -167,14 +173,15 @@
 												Durasi: <small>jam</small> <wajib-badge></wajib-badge></h5>
 
 											<!-- input -->
-											<cleave 
-												name="durasi"
-												v-model="form.durasi" 
-												class="form-control" 
-												:raw="false" 
-												:options="cleaveOption.number3" 
-												placeholder="Silahkan masukkan durasi kegiatan"
-												v-validate="'required'" data-vv-as="Durasi"></cleave>
+											<Field name="durasi" rules="required" v-model="form.durasi" v-slot="{ field }">
+												<input type="hidden" v-bind="field" />
+											</Field>
+											<cleave
+												v-model="form.durasi"
+												class="form-control"
+												:raw="false"
+												:options="cleaveOption.number3"
+												placeholder="Silahkan masukkan durasi kegiatan"></cleave>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors && errors.has && errors.has('form.durasi')">
@@ -194,14 +201,15 @@
 												Peserta Min: <wajib-badge></wajib-badge></h5>
 
 											<!-- input -->
-											<cleave 
-												name="peserta_min"
-												v-model="form.peserta_min" 
-												class="form-control" 
-												:raw="false" 
-												:options="cleaveOption.number3" 
-												placeholder="Silahkan masukkan peserta min"
-												v-validate="'required'" data-vv-as="Peserta min"></cleave>
+											<Field name="peserta_min" rules="required" v-model="form.peserta_min" v-slot="{ field }">
+												<input type="hidden" v-bind="field" />
+											</Field>
+											<cleave
+												v-model="form.peserta_min"
+												class="form-control"
+												:raw="false"
+												:options="cleaveOption.number3"
+												placeholder="Silahkan masukkan peserta min"></cleave>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors && errors.has && errors.has('form.peserta_min')">
@@ -221,14 +229,15 @@
 												Peserta Max: <wajib-badge></wajib-badge></h5>
 
 											<!-- input -->
-											<cleave 
-												name="peserta_max"
-												v-model="form.peserta_max" 
-												class="form-control" 
-												:raw="false" 
-												:options="cleaveOption.number3" 
-												placeholder="Silahkan masukkan peserta max"
-												v-validate="'required'" data-vv-as="Peserta max"></cleave>
+											<Field name="peserta_max" rules="required" v-model="form.peserta_max" v-slot="{ field }">
+												<input type="hidden" v-bind="field" />
+											</Field>
+											<cleave
+												v-model="form.peserta_max"
+												class="form-control"
+												:raw="false"
+												:options="cleaveOption.number3"
+												placeholder="Silahkan masukkan peserta max"></cleave>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors && errors.has && errors.has('form.peserta_max')">
@@ -248,14 +257,15 @@
 												Peserta Max Per CU: <wajib-badge></wajib-badge></h5>
 
 											<!-- input -->
-											<cleave 
-												name="peserta_max_cu"
-												v-model="form.peserta_max_cu" 
-												class="form-control" 
-												:raw="false" 
-												:options="cleaveOption.number3" 
-												placeholder="Silahkan masukkan peserta max per cu"
-												v-validate="'required'" data-vv-as="Peserta max per cu"></cleave>
+											<Field name="peserta_max_cu" rules="required" v-model="form.peserta_max_cu" v-slot="{ field }">
+												<input type="hidden" v-bind="field" />
+											</Field>
+											<cleave
+												v-model="form.peserta_max_cu"
+												class="form-control"
+												:raw="false"
+												:options="cleaveOption.number3"
+												placeholder="Silahkan masukkan peserta max per cu"></cleave>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors && errors.has && errors.has('form.peserta_max_cu')">
@@ -417,12 +427,14 @@
 											</h5>
 
 											<!-- select -->
-											<select class="form-control" name="tipe_tempat" v-model="form.tipe_tempat" data-width="100%" v-validate="'required'" data-vv-as="Tipe Tempat">
-												<option disabled value="">Silahkan pilih tipe tempat</option>
-												<option value="ONLINE">ONLINE</option>
-												<option value="OFFLINE">OFFLINE</option>
-												<option value="HYBRID"> HYBRID / OFFLINE & ONLINE</option>
-											</select>
+											<Field name="tipe_tempat" rules="required" v-model="form.tipe_tempat" v-slot="{ field }">
+												<select class="form-control" data-width="100%" v-bind="field">
+													<option disabled value="">Silahkan pilih tipe tempat</option>
+													<option value="ONLINE">ONLINE</option>
+													<option value="OFFLINE">OFFLINE</option>
+													<option value="HYBRID"> HYBRID / OFFLINE & ONLINE</option>
+												</select>
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors && errors.has && errors.has('form.tipe_tempat')">
@@ -752,10 +764,12 @@
 							<form-button
 								:cancelState="cancelState"
 								:formValidation="'form'"
+								:buttonErrors="errors"
 								@cancelClick="back"></form-button>
 						</div>	
 
 					</form>
+					</VeeForm>
 				</div>
 			</div>
 		</div>
@@ -822,6 +836,8 @@
 	import Cleave from 'vue-cleave-component';
 	import dataTable from '../../components/datatable.vue';
 	import DatePicker from "../../components/datePicker.vue";
+	import VeeForm from "../../components/VeeForm.vue";
+	import { Field } from 'vee-validate';
 
 	export default {
 		components: {
@@ -837,18 +853,12 @@
 			dataTable,
 			infoIcon,
 			wajibBadge,
-			DatePicker
+			DatePicker,
+			VeeForm,
+			Field
 		},
 		data() {
 			return {
-				// SHIM: Add dummy errors object for VeeValidate 2 compatibility in Vue 3
-				errors: {
-					any: () => false,
-					has: () => false,
-					first: () => '',
-					collect: () => [],
-					items: []
-				},
 				title: 'Tambah Pertemuan BKCU',
 				titleDesc: 'Menambah pertemuan BKCU baru',
 				titleIcon: 'icon-plus3',
@@ -1067,20 +1077,39 @@
 			}
     },
 		methods: {
-			fetch() {
-				this.$store.dispatch('kodeKegiatan/get');
+			onValid() {
+				this.form.sasaran = this.sasaran;
+				this.form.panitia = this.itemDataPanitia;
+				this.form.pilih = this.itemDataPilih;
+				this.form.sasaranCu = this.sasaranCu.map(String);
+				this.state = '';
+
+				const formData = toMulipartedForm(this.form, this.$route.meta.mode);
 				if (this.$route.meta.mode == 'edit') {
-					this.$store.dispatch(this.kelas + '/edit', this.$route.params.id);
+					this.updateKegiatan([this.$route.params.id, formData]);
+				} else {
+					this.storeKegiatan([this.$route.params.tipe, formData]);
+				}
+				this.submited = false;
+			},
+			onInvalid() {
+				window.scrollTo(0, 0);
+				this.submited = true;
+			},
+			fetch() {
+				useKodeKegiatanStore().get();
+				if (this.$route.meta.mode == 'edit') {
+					useKegiatanBKCUStore().edit(this.$route.params.id);
 				} else {
 					this.checkTipe(this.$route.params.tipe);
-					this.$store.dispatch(this.kelas + '/create');
+					useKegiatanBKCUStore().create();
 				}
-				this.$store.dispatch('provinces/get');
-				this.$store.dispatch('sertifikatKegiatan/index');
+				useProvincesStore().get();
+				useSertifikatKegiatanStore().index();
 			},
 			fetchCu() {
 				if (this.modelCuStat != 'success') {
-					this.$store.dispatch('cu/getHeader');
+					useCuStore().getHeader();
 				}
 			},
 			selectAllCu() {
@@ -1333,11 +1362,11 @@
 				formStat: 'dataStat',
 				rules: 'rules',
 				options: 'options',
-				updateResponse: 'update',
+				updateResponse: 'updateData',
 				updateStat: 'updateStat'
 			}),
 			...mapState(useTempatStore, {
-				updateTempatResponse: 'update',
+				updateTempatResponse: 'updateData',
 				updateTempatStat: 'updateStat',
 				modelTempat: 'dataSForm',
 				modelTempatStat: 'dataStatSForm',

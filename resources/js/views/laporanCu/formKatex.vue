@@ -3,7 +3,8 @@
 		<h5 class="text-semibold">RUMUS</h5>
 
 		<!-- katex1 -->
-		<div v-for="katex in modalKatex.katex1" v-if="katex.content">
+		<template v-for="(katex, k1) in modalKatex.katex1" :key="k1">
+		<div v-if="katex && katex.content">
 			<p v-if="katex.title"><b>Keterangan:</b> {{katex.title}}</p>
 			<div class="card ">
 				<div class="card-body text-center pre-scrollable">
@@ -11,6 +12,7 @@
 				</div>
 			</div>
 		</div>
+		</template>
  
 		<!-- indikator -->
 		<div class="alert bg-info alert-styled-left mt-2 pt-1 pb-1">
@@ -24,18 +26,21 @@
 		<h5 class="text-semibold">PERHITUNGAN <small>{{ modalKatex.section }}</small></h5>
 
 		<!-- katex2 -->
-		<div v-for="katex in modalKatex.katex2" v-if="katex.content">
+		<template v-for="(katex, k2) in modalKatex.katex2" :key="k2">
+		<div v-if="katex && katex.content">
 			<p v-if="katex.title"><b>Keterangan:</b> {{katex.title}}</p>
 			<div class="well mb-2 pre-scrollable text-center">
 				<div v-katex="katex.content"></div>
 			</div>
 		</div>
+		</template>
 
 		<!-- ubah -->
 		<form @submit.prevent="save" data-vv-scope="form">
 		<hr v-if="modalKatex.isUbah && currentUser.can && currentUser.can['update_laporan_cu']">
 		<div class="row" v-if="modalKatex.isUbah && currentUser.can && currentUser.can['update_laporan_cu']">
-				<div class="col-sm-6" v-if="!form.hideForm && form.title" v-for="form in modalKatex.form">
+				<template v-for="(form, fi) in modalKatex.form" :key="fi">
+				<div class="col-sm-6" v-if="form && !form.hideForm && form.title">
 					<div class="form-group">
 
 						<!-- title -->
@@ -49,6 +54,7 @@
 							:placeholder="'Silahkan masukkan ' + form.title"></cleave>
 					</div>
 				</div>
+				</template>
 
 		</div>
 		
@@ -94,67 +100,68 @@
 </template>
 
 <script>
-	import { mapGetters } from 'vuex';
+	import _ from 'lodash';
 	import Cleave from 'vue-cleave-component';
+	import { useAuthStore } from '../../stores/auth';
+	import { useLaporanTpStore } from '../../stores/laporanTp';
+	import { useLaporanCuStore } from '../../stores/laporanCu';
 
 	export default {
-		components:{
-			Cleave
+		components: {
+			Cleave,
 		},
-		props:['modalKatex','kelas'],
+		props: ['modalKatex', 'kelas'],
 		data() {
 			return {
+				authStore: useAuthStore(),
+				laporanTpStore: useLaporanTpStore(),
+				laporanCuStore: useLaporanCuStore(),
 				cleaveOption: {
-          numeric: {
-            numeral: true,
-            numeralThousandsGroupStyle: 'thousand',
-            numeralDecimalScale: 2,
-            numeralDecimalMark: ',',
-            delimiter: '.'
-          }
+					numeric: {
+						numeral: true,
+						numeralThousandsGroupStyle: 'thousand',
+						numeralDecimalScale: 2,
+						numeralDecimalMark: ',',
+						delimiter: '.',
+					},
 				},
-				form: {}
-			}
-		},
-		created(){
+				form: {},
+			};
 		},
 		methods: {
-			save(){
+			save() {
 				this.form = _.chain(this.modalKatex.form).keyBy('key').mapValues('value').value();
 				this.form.periode = this.modalKatex.periode;
-				
-				if(this.modalKatex.id_tp){
+
+				if (this.modalKatex.id_tp) {
 					this.form.id_tp = this.modalKatex.id_tp;
 					this.form.no_tp = this.modalKatex.no_tp;
 					this.form.id_cu = this.modalKatex.id_cu;
 					this.form.no_ba = this.modalKatex.no_ba;
-
-					this.$store.dispatch('laporanTp/update', [this.modalKatex.id,this.form]);
-				}else{
+					this.laporanTpStore.update([this.modalKatex.id, this.form]);
+				} else {
 					this.form.id_cu = this.modalKatex.id_cu;
 					this.form.no_ba = this.modalKatex.no_ba;
-
-					this.$store.dispatch('laporanCu/update', [this.modalKatex.id,this.form]);
+					this.laporanCuStore.update([this.modalKatex.id, this.form]);
 				}
-				
 			},
-			modalTutup(){
+			modalTutup() {
 				this.$emit('tutup');
 			},
-			formatPeriode(value){
-				return Vue.filter('dateMonth')(value);
+			formatPeriode(value) {
+				return this.$filters?.dateMonth ? this.$filters.dateMonth(value) : value;
 			},
-			formatCurrency(value){
-				return this.$options.filters.currency(value,'',0,{ thousandsSeparator: '.'});
+			formatCurrency(value) {
+				return this.$filters?.currency ? this.$filters.currency(value, '', 0, { thousandsSeparator: '.' }) : value;
 			},
-			formatPercentage(value){
-				return Vue.filter('percentage2')(value,2);
-			}
+			formatPercentage(value) {
+				return this.$filters?.percentage2 ? this.$filters.percentage2(value, 2) : value;
+			},
 		},
 		computed: {
-			...mapGetters('auth',{
-				currentUser: 'currentUser'
-			})
-		}
+			currentUser() {
+				return this.authStore.currentUser;
+			},
+		},
 	}
 </script>

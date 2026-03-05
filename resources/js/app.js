@@ -7,7 +7,13 @@ import routes from './routes';
 import axios from 'axios';
 import moment from 'moment';
 import { initialize } from './helpers/general';
-import store from './store'; // Vuex store for backward compatibility
+// Vuex store has been fully removed; Pinia is now the only state management.
+
+// Register ECharts renderer and components for vue-echarts (dashboard charts)
+import './echarts';
+
+// VeeValidate 4: define global rules so forms can use validation schemas
+import './helpers/veeValidate';
 
 console.log('🚀 App.js: Starting initialization...');
 
@@ -74,10 +80,6 @@ app.directive('tooltip', {
 });
 console.log('✅ Stub tooltip directive registered');
 
-console.log('🔌 Installing Vuex store (backward compatibility)...');
-app.use(store);
-console.log('✅ Vuex store installed');
-
 console.log('🔌 Installing Router plugin...');
 app.use(router);
 console.log('✅ Router installed');
@@ -102,4 +104,4 @@ try {
 }
 
 // Export for module usage
-export { router, pinia, store };
+export { router, pinia };

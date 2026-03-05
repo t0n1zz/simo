@@ -7,7 +7,7 @@ export const useKubnUsahaStore = defineStore('kubnUsaha', {
     dataS: [], //collection
     dataStat: '',
     dataStatS: '',
-    update: [], //update data
+    updateData: [], //update data
     updateStat: '',
     rules: [], //laravel rules
     options: [], //laravel options
@@ -18,7 +18,7 @@ export const useKubnUsahaStore = defineStore('kubnUsaha', {
     getDataS: state => state.dataS,
     getDataStat: state => state.dataStat,
     getDataStatS: state => state.dataStatS,
-    getUpdate: state => state.update,
+    getUpdate: state => state.updateData,
     getUpdateStat: state => state.updateStat,
     getRules: state => state.rules,
     getOptions: state => state.options,
@@ -78,13 +78,13 @@ export const useKubnUsahaStore = defineStore('kubnUsaha', {
       try {
         const response = await KubnUsahaAPI.store(form);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -115,13 +115,13 @@ export const useKubnUsahaStore = defineStore('kubnUsaha', {
       try {
         const response = await KubnUsahaAPI.update(id, form);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -133,13 +133,13 @@ export const useKubnUsahaStore = defineStore('kubnUsaha', {
       try {
         const response = await KubnUsahaAPI.destroy(id);
         if (response.data.deleted) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },

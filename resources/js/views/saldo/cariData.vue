@@ -12,7 +12,9 @@
 							<option disabled value="0">Silahkan pilih CU</option>
 							<slot></slot>
 							<option disabled value="">----------------</option>
-							<option v-for="cu in modelCu" :value="cu.id" v-if="cu">{{cu.name}}</option>
+							<template v-for="cu in modelCu" :key="cu ? cu.id : undefined">
+							<option v-if="cu" :value="cu.id">{{cu.name}}</option>
+						</template>
 						</select>
 
 						<!-- reload cu -->

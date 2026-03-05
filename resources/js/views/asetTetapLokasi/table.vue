@@ -266,7 +266,7 @@
 				return this.asetTetapLokasiStore.dataStatS;
 			},
 			updateMessage() {
-				return this.asetTetapLokasiStore.update;
+				return this.asetTetapLokasiStore.updateData;
 			},
 			updateStat() {
 				return this.asetTetapLokasiStore.updateStat;

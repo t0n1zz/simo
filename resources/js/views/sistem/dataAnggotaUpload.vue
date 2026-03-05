@@ -341,7 +341,7 @@
 				return this.authStore.currentUser;
 			},
 			uploadResponse() {
-				return this.anggotaCuImportEsceteStore.update;
+				return this.anggotaCuImportEsceteStore.updateData;
 			},
 			uploadStat() {
 				return this.anggotaCuImportEsceteStore.updateStat;
@@ -353,7 +353,7 @@
 				return this.fileUploadStore.dataS;
 			},
 			updateResponse() {
-				return this.fileUploadStore.update;
+				return this.fileUploadStore.updateData;
 			},
 			updateStat() {
 				return this.fileUploadStore.updateStat;

@@ -17,7 +17,9 @@
 							<select class="form-control" name="idCu" v-model="idCu" data-width="100%" @change="changeCu($event.target.value)"  :disabled="modelCUStat === 'loading'">
 								<option disabled value="">Silahkan pilih data</option>
 								<slot></slot>
-								<option v-for="cu in modelCU" :value="cu.id" v-if="cu">{{cu.name}}</option>
+								<template v-for="cu in modelCU" :key="cu ? cu.id : undefined">
+								<option v-if="cu" :value="cu.id">{{cu.name}}</option>
+							</template>
 							</select>
 
 							<!-- reload -->
@@ -41,7 +43,9 @@
 							:disabled="modelPeriodeStat === 'loading'">
 								<option disabled value="">Silahkan pilih periode laporan</option>
 								<slot></slot>
-								<option v-for="periode in modelPeriode" :value="periode.periode" v-if="periode">{{periode.periode | dateMonth}}</option>
+								<template v-for="periode in modelPeriode" :key="periode ? periode.periode : undefined">
+								<option v-if="periode" :value="periode.periode">{{periode.periode | dateMonth}}</option>
+							</template>
 							</select>
 
 							<!-- reload -->
@@ -65,7 +69,9 @@
 								<option disabled value="">Silahkan pilih TP/KP</option>
 								<option value="konsolidasi">Konsolidasi</option>
 								<option disabled v-if="modelTp && modelTp.length != 0">----------------</option>
-								<option v-for="tp in modelTp" :value="tp.id" v-if="tp.tp">{{tp.tp.name}}</option>
+								<template v-for="tp in modelTp" :key="tp ? tp.id : undefined">
+								<option v-if="tp && tp.tp" :value="tp.id">{{tp.tp.name}}</option>
+							</template>
 							</select>
 
 							<!-- reload -->

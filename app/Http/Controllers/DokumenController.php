@@ -1,232 +1,217 @@
 <?php
+
 namespace App\Http\Controllers;
 
-use DB;
 use App\Models\Dokumen;
-use App\Support\Helper;
-use Illuminate\Http\Request;
 use File;
-use Image;
+use Illuminate\Http\Request;
 
-class DokumenController extends Controller{
+class DokumenController extends Controller
+{
+    protected $filepath = 'files/dokumen/';
 
-	protected $filepath = 'files/dokumen/';
-	protected $width = 300;
-	protected $height = 200;
-	protected $message = 'Dokumen';
+    protected $width = 300;
 
-	public function index()
-	{
-		$table_data = Dokumen::with('kategori','Cu')->select('id','id_cu','name','id_dokumen_kategori','status','filename','keterangan','tipe','format','link','created_at','updated_at',
-		DB::raw(
-			'(SELECT name FROM cu WHERE dokumen.id_cu = cu.id) as cu_name,
-			(SELECT name FROM dokumen_kategori WHERE dokumen.id_dokumen_kategori = dokumen_kategori.id) as kategori_name'
-		))
-		->whereHas('kategori', function($q){
-			$q->where('name','!=','surat');
-		})
-		->advancedFilter();
+    protected $height = 200;
 
-		return response()
-		->json([
-			'model' => $table_data
-		]);
-	}
+    protected $message = 'Dokumen';
 
-	public function indexCu($cu)
-	{
-		$table_data = Dokumen::with('kategori','Cu')->select('id','id_cu','name','id_dokumen_kategori','status','filename','keterangan','tipe','format','link','created_at','updated_at',
-		DB::raw(
-			'(SELECT name FROM cu WHERE dokumen.id_cu = cu.id) as cu_name,
-			(SELECT name FROM dokumen_kategori WHERE dokumen.id_dokumen_kategori = dokumen_kategori.id) as kategori_name'
-		))
-		->whereHas('kategori', function($q){
-			$q->where('name','!=','surat');
-		})
-		->where('id_cu',$cu)
-		->advancedFilter();
+    public function index()
+    {
+        $table_data = Dokumen::with('kategori', 'Cu')
+            ->whereHas('kategori', function ($q) {
+                $q->where('name', '!=', 'surat');
+            })
+            ->advancedFilter();
 
-		return response()
-		->json([
-			'model' => $table_data
-		]);
-	}
+        return response()
+            ->json([
+                'model' => $table_data,
+            ]);
+    }
 
-	public function indexGerakanPublik()
-	{
-		$table_data = Dokumen::with('kategori','Cu')->select('id','id_cu','name','id_dokumen_kategori','status','filename','keterangan','tipe','format','link','created_at','updated_at',
-		DB::raw(
-			'(SELECT name FROM cu WHERE dokumen.id_cu = cu.id) as cu_name,
-			(SELECT name FROM dokumen_kategori WHERE dokumen.id_dokumen_kategori = dokumen_kategori.id) as kategori_name'
-		))
-		->where('status', '!=' , 'INTERNAL')
-		->advancedFilter();
+    public function indexCu($cu)
+    {
+        $table_data = Dokumen::with('kategori', 'Cu')
+            ->whereHas('kategori', function ($q) {
+                $q->where('name', '!=', 'surat');
+            })
+            ->where('id_cu', $cu)
+            ->advancedFilter();
 
-		return response()
-		->json([
-			'model' => $table_data
-		]);
-	}
+        return response()
+            ->json([
+                'model' => $table_data,
+            ]);
+    }
 
-	public function indexGerakanPublikCu($cu)
-	{
-		$table_data = Dokumen::with('kategori','Cu')->select('id','id_cu','name','id_dokumen_kategori','status','filename','keterangan','tipe','format','link','created_at','updated_at',
-		DB::raw(
-			'(SELECT name FROM cu WHERE dokumen.id_cu = cu.id) as cu_name,
-			(SELECT name FROM dokumen_kategori WHERE dokumen.id_dokumen_kategori = dokumen_kategori.id) as kategori_name'
-		))
-		->where('status', '!=' , 'INTERNAL')
-		->where('id_cu',$cu)
-		->advancedFilter();
+    public function indexGerakanPublik()
+    {
+        $table_data = Dokumen::with('kategori', 'Cu')
+            ->where('status', '!=', 'INTERNAL')
+            ->advancedFilter();
 
-		return response()
-		->json([
-			'model' => $table_data
-		]);
-	}
+        return response()
+            ->json([
+                'model' => $table_data,
+            ]);
+    }
 
-	public function create()
-	{
-		return response()
-			->json([
-					'form' => Dokumen::initialize(),
-					'rules' => Dokumen::$rules,
-					'option' => []
-			]);
-	}
+    public function indexGerakanPublikCu($cu)
+    {
+        $table_data = Dokumen::with('kategori', 'Cu')
+            ->where('status', '!=', 'INTERNAL')
+            ->where('id_cu', $cu)
+            ->advancedFilter();
 
-	public function store(Request $request)
-	{
-		$this->validate($request,Dokumen::$rules);
+        return response()
+            ->json([
+                'model' => $table_data,
+            ]);
+    }
 
-		$name = $request->name;
-		$format = $request->format;
-		$formatedName = '';
-		$fileExtension = 'link';
+    public function create()
+    {
+        return response()
+            ->json([
+                'form' => Dokumen::initialize(),
+                'rules' => Dokumen::$rules,
+                'option' => [],
+            ]);
+    }
 
-		if($format == 'upload'){
-			$file = $request->content;
-			
-			$fileExtension = $file->getClientOriginalExtension();
-			$filename = $file->getClientOriginalName();
-			$formatedName = str_limit(preg_replace('/[^A-Za-z0-9\-]/', '',$name),10,'') . '_' .uniqid(). '.' . $fileExtension;
-			$file->move($this->filepath,$formatedName);
-		}
+    public function store(Request $request)
+    {
+        $this->validate($request, Dokumen::$rules);
 
-		$kelas = Dokumen::create([ 
-			'id_cu' => $request->id_cu,
-			'id_dokumen_kategori' => $request->id_dokumen_kategori,
-			'name' => $request->name,
-			'filename' => $formatedName,
-			'link' => $request->link,
-			'format' => $format,
-			'tipe' => $fileExtension,
-			'status' => $request->status,
-			'keterangan' => $request->keterangan
-		]);
+        $name = $request->name;
+        $format = $request->format;
+        $formatedName = '';
+        $fileExtension = 'link';
 
-		return response()
-			->json([
-				'saved' => true,
-				'message' => $this->message. ' ' .$name. ' berhasil ditambah'
-			]);
-	}
+        if ($format == 'upload') {
+            $file = $request->content;
 
-	public function show($id)
-	{
-		$kelas = Dokumen::with('kategori')->findOrFail($id);
+            $fileExtension = $file->getClientOriginalExtension();
+            $filename = $file->getClientOriginalName();
+            $formatedName = str_limit(preg_replace('/[^A-Za-z0-9\-]/', '', $name), 10, '').'_'.uniqid().'.'.$fileExtension;
+            $file->move($this->filepath, $formatedName);
+        }
 
-		return response()
-			->json([
-				'model' => $kelas
-			]);
-	}
+        $kelas = Dokumen::create([
+            'id_cu' => $request->id_cu,
+            'id_dokumen_kategori' => $request->id_dokumen_kategori,
+            'name' => $request->name,
+            'filename' => $formatedName,
+            'link' => $request->link,
+            'format' => $format,
+            'tipe' => $fileExtension,
+            'status' => $request->status,
+            'keterangan' => $request->keterangan,
+        ]);
 
-	public function edit($id)
-	{
-		$kelas = Dokumen::findOrFail($id);
+        return response()
+            ->json([
+                'saved' => true,
+                'message' => $this->message.' '.$name.' berhasil ditambah',
+            ]);
+    }
 
-		return response()
-				->json([
-						'form' => $kelas,
-						'option' => []
-				]);
-	}
+    public function show($id)
+    {
+        $kelas = Dokumen::with('kategori')->findOrFail($id);
 
-	public function update(Request $request, $id)
-	{
-		$this->validate($request,Dokumen::$rules);
+        return response()
+            ->json([
+                'model' => $kelas,
+            ]);
+    }
 
-		$name = $request->name;
+    public function edit($id)
+    {
+        $kelas = Dokumen::findOrFail($id);
 
-		$kelas = Dokumen::findOrFail($id);
+        return response()
+            ->json([
+                'form' => $kelas,
+                'option' => [],
+            ]);
+    }
 
-		$format = $request->format;
-		$formatedName = $kelas->filename;
-		$fileExtension = $kelas->tipe;
+    public function update(Request $request, $id)
+    {
+        $this->validate($request, Dokumen::$rules);
 
-		if($format == 'upload'){
-			$file = $request->content;
-			
-			if(!empty($file)){
-				File::delete($this->filepath . $kelas->filename);
+        $name = $request->name;
 
-				$fileExtension = $file->getClientOriginalExtension();
-				$formatedName = str_limit(preg_replace('/[^A-Za-z0-9\-]/', '',$name),10,'') . '_' .uniqid(). '.' . $fileExtension;
-				$file->move($this->filepath,$formatedName);
-			}
-		}else{
-			if(!empty($formatedName)){
-				File::delete($this->filepath . $kelas->filename);
-				$formatedName = '';
-			}
-		}
+        $kelas = Dokumen::findOrFail($id);
 
-		$kelas->update($request->except('format','link','filename','tipe') + [
-			'filename' => $formatedName,
-			'link' => $request->link,
-			'format' => $format,
-			'tipe' => $fileExtension,
-		]);
+        $format = $request->format;
+        $formatedName = $kelas->filename;
+        $fileExtension = $kelas->tipe;
 
-		return response()
-			->json([
-				'saved' => true,
-				'message' => $this->message. ' ' .$name. ' berhasil diubah'
-			]);
-	}
+        if ($format == 'upload') {
+            $file = $request->content;
 
-	public function destroy($id)
-	{
-		$kelas = Dokumen::findOrFail($id);
-		$name = $kelas->name;
+            if (! empty($file)) {
+                File::delete($this->filepath.$kelas->filename);
 
-		if(!empty($kelas->filename)){
-			File::delete($this->filepath . $kelas->filename);
-		}
+                $fileExtension = $file->getClientOriginalExtension();
+                $formatedName = str_limit(preg_replace('/[^A-Za-z0-9\-]/', '', $name), 10, '').'_'.uniqid().'.'.$fileExtension;
+                $file->move($this->filepath, $formatedName);
+            }
+        } else {
+            if (! empty($formatedName)) {
+                File::delete($this->filepath.$kelas->filename);
+                $formatedName = '';
+            }
+        }
 
-		$kelas->delete();
+        $kelas->update($request->except('format', 'link', 'filename', 'tipe') + [
+            'filename' => $formatedName,
+            'link' => $request->link,
+            'format' => $format,
+            'tipe' => $fileExtension,
+        ]);
 
-		return response()
-			->json([
-				'deleted' => true,
-				'message' => $this->message. ' ' .$name. 'berhasil dihapus'
-			]);
-	}
+        return response()
+            ->json([
+                'saved' => true,
+                'message' => $this->message.' '.$name.' berhasil diubah',
+            ]);
+    }
 
-	public function count()
-	{
-			$id = \Auth::user()->id_cu;
+    public function destroy($id)
+    {
+        $kelas = Dokumen::findOrFail($id);
+        $name = $kelas->name;
 
-			if($id == 0){
-					$table_data = Dokumen::count();
-			}else{
-					$table_data = Dokumen::where('id_cu',$id)->count();
-			}
-			
-			return response()
-			->json([
-					'model' => $table_data
-			]);
-	}
+        if (! empty($kelas->filename)) {
+            File::delete($this->filepath.$kelas->filename);
+        }
+
+        $kelas->delete();
+
+        return response()
+            ->json([
+                'deleted' => true,
+                'message' => $this->message.' '.$name.'berhasil dihapus',
+            ]);
+    }
+
+    public function count()
+    {
+        $id = \Auth::user()->id_cu;
+
+        if ($id == 0) {
+            $table_data = Dokumen::count();
+        } else {
+            $table_data = Dokumen::where('id_cu', $id)->count();
+        }
+
+        return response()
+            ->json([
+                'model' => $table_data,
+            ]);
+    }
 }

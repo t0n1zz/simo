@@ -1,6 +1,7 @@
 <template>
 	<div>
-		<form @submit.prevent="save" data-vv-scope="formSimpanan">
+		<VeeForm :form="formSimpanan" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
+		<form @submit.prevent="handleSubmit(onValid)">
 
 		<!-- message -->
 		<message v-if="message.show" @close="messageClose" :title="'Oops terjadi kesalahan'" :errorData="message.content" :showDebug="false">
@@ -19,13 +20,15 @@
 					</h5>
 
 					<!-- select -->
-					<select class="form-control" name="cu_id" v-model="formSimpanan.cu.id" data-width="100%" @change="changeCu($event.target.value)" v-validate="'required'" data-vv-as="CU" :disabled="modelCU.length === 0">
-						<option disabled value="0">
-							<span v-if="modelCUStat === 'loading'">Mohon tunggu...</span>
-							<span v-else>Silahkan pilih CU</span>
-						</option>
-						<option v-for="(cu, index) in modelCU" :value="cu.id" :key="index">{{cu.name}}</option>
-					</select>
+					<Field name="formSimpanan.cu.id" rules="required" v-model="formSimpanan.cu.id" v-slot="{ field }">
+						<select class="form-control" data-width="100%" v-bind="field" @change="changeCu($event.target.value)" :disabled="modelCU.length === 0">
+							<option disabled value="0">
+								<span v-if="modelCUStat === 'loading'">Mohon tunggu...</span>
+								<span v-else>Silahkan pilih CU</span>
+							</option>
+							<option v-for="(cu, index) in modelCU" :value="cu.id" :key="index">{{cu.name}}</option>
+						</select>
+					</Field>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('formSimpanan.cu.id')">
@@ -56,13 +59,15 @@
 					</h5>
 
 					<!-- select -->
-					<select class="form-control" name="produk_cu_id" v-model="formSimpanan.produk_cu.id" data-width="100%" @change="changeProdukCu($event.target.value)" v-validate="'required'" data-vv-as="Produk CU" :disabled="modelProdukCu.length === 0">
-						<option disabled value="0">
-							<span v-if="modelProdukCuStat === 'loading'">Mohon tunggu...</span>
-							<span v-else>Silahkan pilih Produk CU</span>
-						</option>
-						<option v-for="(produk, index) in modelProdukCu" :key="index" :value="produk.id">{{produk.name}}</option>
-					</select>
+					<Field name="formSimpanan.produk_cu.id" rules="required" v-model="formSimpanan.produk_cu.id" v-slot="{ field }">
+						<select class="form-control" data-width="100%" v-bind="field" @change="changeProdukCu($event.target.value)" :disabled="modelProdukCu.length === 0">
+							<option disabled value="0">
+								<span v-if="modelProdukCuStat === 'loading'">Mohon tunggu...</span>
+								<span v-else>Silahkan pilih Produk CU</span>
+							</option>
+							<option v-for="(produk, index) in modelProdukCu" :key="index" :value="produk.id">{{produk.name}}</option>
+						</select>
+					</Field>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('formSimpanan.produk_cu.id')">
@@ -83,13 +88,14 @@
 					</h5>
 
 					<!-- text -->
-					<cleave 
-						name="no_rek"
-						v-model="formSimpanan.no_rek" 
-						class="form-control" 
+					<Field name="formSimpanan.no_rek" rules="required" v-model="formSimpanan.no_rek" v-slot="{ field }">
+						<input type="hidden" v-bind="field" />
+					</Field>
+					<cleave
+						v-model="formSimpanan.no_rek"
+						class="form-control"
 						:options="cleaveOption.number12"
-						placeholder="Silahkan masukkan jumlah no. rekening"
-						v-validate="'required'" data-vv-as="No. Rekening" ></cleave>
+						placeholder="Silahkan masukkan jumlah no. rekening"></cleave>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('formSimpanan.no_rek')">
@@ -108,8 +114,10 @@
 					<h5 :class="{ 'text-danger' : errors.has('formSimpanan.tanggal')}"><i class="icon-cross2" v-if="errors.has('formSimpanan.tanggal')"></i> Tanggal:</h5>
 
 					<!-- input -->
-					<date-picker @dateSelected="formSimpanan.tanggal = $event" :defaultDate="formSimpanan.tanggal"></date-picker>	
-					<input v-model="formSimpanan.tanggal" v-show="false" v-validate="'required'" data-vv-as="Tanggal"/>
+					<date-picker @dateSelected="formSimpanan.tanggal = $event" :defaultDate="formSimpanan.tanggal"></date-picker>
+					<Field name="formSimpanan.tanggal" rules="required" v-model="formSimpanan.tanggal" v-slot="{ field }">
+						<input type="hidden" v-bind="field" />
+					</Field>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('formSimpanan.tanggal')">
@@ -145,6 +153,7 @@
 		</div> 
 
 		</form>
+		</VeeForm>
 
 	</div>
 </template>
@@ -160,6 +169,8 @@
 	import produkCuAPI from '../../api/produkCu.js';
 	import infoIcon from "../../components/infoIcon.vue";
 	import DatePicker from "../../components/datePicker.vue";
+	import VeeForm from '../../components/VeeForm.vue';
+	import { Field } from 'vee-validate';
 
 	export default {
 		props: ['mode','selected'],
@@ -168,7 +179,9 @@
 			Message,
 			Cleave,
 			infoIcon,
-			DatePicker
+			DatePicker,
+			VeeForm,
+			Field
 		},
 		data() {
 			return {
@@ -301,18 +314,16 @@
           this.modelProdukCuStat = 'fail';
 				});
 			},
-			save(){
-				this.$validator.validateAll('formSimpanan').then((result) => {
-					if (result) {
-						if(this.mode == 'edit'){
-							this.$emit('editSimpanan',this.formSimpanan);
-						}else{
-							this.$emit('createSimpanan',this.formSimpanan);
-						}
-					}else{
-						this.submited = true;
-					}	
-				});	
+			onValid() {
+				if(this.mode == 'edit'){
+					this.$emit('editSimpanan', this.formSimpanan);
+				}else{
+					this.$emit('createSimpanan', this.formSimpanan);
+				}
+				this.submited = false;
+			},
+			onInvalid() {
+				this.submited = true;
 			},
 			messageClose(){
 				this.message.show = false;

@@ -8,12 +8,14 @@
 			<div class="content-wrapper">
 				<div class="content">
 
+					<VeeForm :form="form" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
+
 					<!-- message -->
 					<message v-if="errors.any('form') && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors.items">
 					</message>
 
 					<!-- main panel -->
-					<form @submit.prevent="save" data-vv-scope="form">
+					<form @submit.prevent="handleSubmit(onValid)">
 
 						<!-- select anggota cu -->
 						<div class="card" v-if="form.anggota_cu_id == ''">
@@ -30,13 +32,19 @@
 										</div>
 	
 										<!-- select -->
-										<select class="form-control" name="id_cu" v-model="form.id_cu" data-width="100%" v-validate="'required'" data-vv-as="CU" :disabled="modelCU.length === 0" @change="changeCU($event.target.value)">
-											<option disabled value="">
-												<span v-if="modelCUStat === 'loading'">Mohon tunggu...</span>
-												<span v-else>Silahkan pilih CU</span>
-											</option>
-											<option v-for="(cu, index) in modelCU" :value="cu.id" :key="index">{{cu.name}}</option>
-										</select>
+										<Field name="id_cu" rules="required" v-model="form.id_cu" v-slot="{ field }">
+											<select class="form-control" data-width="100%" v-bind="field" :disabled="modelCU.length === 0" @change="changeCU($event.target.value)">
+												<option disabled value="">
+													<span v-if="modelCUStat === 'loading'">Mohon tunggu...</span>
+													<span v-else>Silahkan pilih CU</span>
+												</option>
+												<template v-for="(cu, index) in modelCU" :key="cu ? cu.id : index">
+													<option v-if="cu" :value="cu.id">
+														{{ cu.name }}
+													</option>
+												</template>
+											</select>
+										</Field>
 	
 										<!-- reload cu -->
 										<div class="input-group-append">
@@ -203,6 +211,8 @@
 						</div>
 
 					</form>
+
+					</VeeForm>
 				</div>
 			</div>
 		</div>
@@ -247,6 +257,8 @@
 	import formButton from "../../components/formButton.vue";
 	import formInfo from "../../components/formInfo.vue";
 	import wajibBadge from "../../components/wajibBadge.vue";
+	import VeeForm from '../../components/VeeForm.vue';
+	import { Field } from 'vee-validate';
 	import Cleave from 'vue-cleave-component';
 	import dataTable from '../../components/datatable.vue';
 	import DatePicker from "../../components/datePicker.vue";
@@ -268,7 +280,9 @@
 			Cleave,
 			dataTable,
 			DatePicker,
-			formKeahlian
+			formKeahlian,
+			VeeForm,
+			Field
 		},
 		data() {
 			return {
@@ -472,25 +486,22 @@
 				this.selectedItemKeahlian = {};
 				this.modalTutup(); 
 			},
-			save() {
+			onValid() {
 				this.form.anggota = this.itemDataAnggota;
 				this.form.keahlian = this.itemDataKeahlian;
 				this.state = '';
 				
 				const formData = toMulipartedForm(this.form, this.$route.meta.mode);
-				this.$validator.validateAll('form').then((result) => {
-					if (result) {
-						if(this.$route.meta.mode == 'edit'){
-							this.update([this.$route.params.id, formData]);
-						}else{
-							this.store(formData);
-						}
-						this.submited = false;
-					}else{
-						window.scrollTo(0, 0);
-						this.submited = true;
-					}
-				});
+				if(this.$route.meta.mode == 'edit'){
+					this.update([this.$route.params.id, formData]);
+				}else{
+					this.store(formData);
+				}
+				this.submited = false;
+			},
+			onInvalid() {
+				window.scrollTo(0, 0);
+				this.submited = true;
 			},
 			back(){
 				if(this.$route.meta.mode == 'edit' && this.currentUser.id_cu == 0){

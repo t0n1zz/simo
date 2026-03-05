@@ -9,8 +9,8 @@ export const useKodeKegiatanStore = defineStore('kodeKegiatan', {
     dataStat: "",
     dataStatS: "",
     dataStatS2: "",
-    update: [], //update data
-    update2: [], //update data
+    updateData: [], //update data
+    updateData2: [], //update data
     updateStat: "",
     updateStat2: "",
     rules: [], //laravel rules
@@ -25,8 +25,8 @@ export const useKodeKegiatanStore = defineStore('kodeKegiatan', {
     getDataStat: (state) => state.dataStat,
     getDataStatS: (state) => state.dataStatS,
     getDataStatS2: (state) => state.dataStatS2,
-    getUpdate: (state) => state.update,
-    getUpdate2: (state) => state.update2,
+    getUpdate: (state) => state.updateData,
+    getUpdate2: (state) => state.updateData2,
     getUpdateStat: (state) => state.updateStat,
     getUpdateStat2: (state) => state.updateStat2,
     getRules: (state) => state.rules,
@@ -85,13 +85,13 @@ export const useKodeKegiatanStore = defineStore('kodeKegiatan', {
       try {
         const response = await KodeKegiatanAPI.store(form);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = "success";
         } else {
           this.updateStat = "fail";
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = "fail";
       }
     },
@@ -121,13 +121,13 @@ export const useKodeKegiatanStore = defineStore('kodeKegiatan', {
       try {
         const response = await KodeKegiatanAPI.update(id, form);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = "success";
         } else {
           this.updateStat = "fail";
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = "fail";
       }
     },
@@ -139,13 +139,13 @@ export const useKodeKegiatanStore = defineStore('kodeKegiatan', {
       try {
         const response = await KodeKegiatanAPI.destroy(id);
         if (response.data.deleted) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = "success";
         } else {
           this.updateStat = "fail";
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = "fail";
       }
     },

@@ -1,10 +1,11 @@
 <template>
 	<div>
+		<VeeForm :form="formRekomHasil" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
 		<!-- message -->
-		<message v-if="errors && errors.any && errors.any('formRekomHasil') && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors && errors.items">
+		<message v-if="errors && errors.any && errors.any('form') && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors && errors.items">
 		</message>
 
-		<form @submit.prevent="save" enctype="multipart/form-data" data-vv-scope="formRekomHasil">
+		<form @submit.prevent="handleSubmit(onValid)" enctype="multipart/form-data">
 
 			<div v-if="updateStat == 'loading'">
 				<div class="progress">
@@ -24,12 +25,14 @@
 						</div>
 
 						<!-- select -->
-						<select class="form-control" name="tercapai" v-model="formRekomHasil.tercapai" data-width="100%" v-validate="'required'" data-vv-as="Tindaklanjut" :disabled="isReadOnly">
-							<option disabled value="">Silahkan pilih kondisi tindaklanjut</option>
-							<option value="Sudah Tercapai">Sudah Tercapai</option>
-							<option value="Belum Tercapai">Belum Tercapai</option>
-							<option value="Tidak Tercapai">Tidak Tercapai</option>
-						</select>
+						<Field name="tercapai" v-slot="{ field }" :rules="'required'" label="Tindaklanjut">
+							<select class="form-control" data-width="100%" v-bind="field" v-model="formRekomHasil.tercapai" :disabled="isReadOnly">
+								<option disabled value="">Silahkan pilih kondisi tindaklanjut</option>
+								<option value="Sudah Tercapai">Sudah Tercapai</option>
+								<option value="Belum Tercapai">Belum Tercapai</option>
+								<option value="Tidak Tercapai">Tidak Tercapai</option>
+							</select>
+						</Field>
 					</div>
 
 					<div class="input-group mb-3" v-if="this.currentUser.id_cu === 0">
@@ -43,7 +46,9 @@
 							<slot></slot>
 							<option value="0"><span v-if="currentUser.pus">{{currentUser.pus.name}}</span> <span v-else>PUSKOPCUINA</span></option>
 							<option disabled value="">----------------</option>
-							<option v-for="cu in modelCu" :value="cu.id" v-if="cu">{{cu.name}}</option>
+							<template v-for="cu in modelCu" :key="cu ? cu.id : undefined">
+							<option v-if="cu" :value="cu.id">{{cu.name}}</option>
+						</template>
 						</select>
 
 					</div>
@@ -51,16 +56,18 @@
 
 				<!-- keterangan -->
 				<div class="col-md-6">
-					<div class="form-group" :class="{'has-error' : errors && errors.has && errors.has('formRekomHasil.keterangan')}">
+					<div class="form-group" :class="{'has-error' : errors && errors.has && errors.has('form.keterangan')}">
 
 						<!-- title -->
-						<h6 :class="{ 'text-danger' : errors && errors.has && errors.has('formRekomHasil.keterangan')}">
-							<i class="icon-cross2" v-if="errors && errors.has && errors.has('formRekomHasil.keterangan')"></i>
+						<h6 :class="{ 'text-danger' : errors && errors.has && errors.has('form.keterangan')}">
+							<i class="icon-cross2" v-if="errors && errors.has && errors.has('form.keterangan')"></i>
 							Keterangan
 						</h6>
 
 						<!-- textarea -->
-						<textarea rows="3" type="text" name="keterangan" class="form-control" placeholder="Silahkan masukkan keterangan" v-validate="'required'" data-vv-as="Keterangan" v-model="formRekomHasil.keterangan" :readonly="isReadOnly"></textarea>
+						<Field name="keterangan" v-slot="{ field }" :rules="'required'" label="Keterangan">
+							<textarea rows="3" type="text" class="form-control" placeholder="Silahkan masukkan keterangan" v-bind="field" v-model="formRekomHasil.keterangan" :readonly="isReadOnly"></textarea>
+						</Field>
 					</div>
 				</div>
 
@@ -132,6 +139,7 @@
 			</div>
 
     </form>	
+		</VeeForm>
 
 	</div>
 </template>
@@ -147,6 +155,8 @@
 	import formInfo from "../../components/formInfo.vue";
 	import wajibBadge from "../../components/wajibBadge.vue";
 	import appImageUpload from '../../components/ImageUpload.vue';
+	import VeeForm from "../../components/VeeForm.vue";
+	import { Field } from 'vee-validate';
 
 	export default {
 		props: ['selected','kelas','isModal','mode','kegiatan_rekom_id','isReadOnly'],
@@ -154,7 +164,9 @@
 			formInfo,
 			message,
 			wajibBadge,
-			appImageUpload
+			appImageUpload,
+			VeeForm,
+			Field
 		},
 		data() {
 			return {
@@ -172,14 +184,6 @@
 				isShowFoto: false,
         penjelasanStatus: '',
 				submited: false,
-        // SHIM: Add dummy errors object for VeeValidate 2 compatibility in Vue 3
-        errors: {
-          any: () => false,
-          has: () => false,
-          first: () => '',
-          collect: () => [],
-          items: []
-        },
 			}
 		},
 		created() {
@@ -212,7 +216,7 @@
 				updateHasil: 'updateHasil',
 				storeHasil: 'storeHasil',
 			}),
-      save(){
+      onValid(){
 				if(this.isModal){
 					this.formRekomHasil.kegiatan_rekom_id = this.kegiatan_rekom_id;
 				}else{
@@ -222,17 +226,14 @@
 				this.formRekomHasil.id_user = this.currentUser.id;
 
 				const formData = toMulipartedForm(this.formRekomHasil, this.mode);
-				this.$validator.validateAll('formRekomHasil').then((result) => {
-					if (result) {
-						if(this.formRekomHasil.id){
-							this.updateHasil([this.formRekomHasil.id, formData]);
-						}else{
-							this.storeHasil(formData);
-						}
-					}else{
-						this.submited = true;
-					}	
-				});
+				if(this.formRekomHasil.id){
+					this.updateHasil([this.formRekomHasil.id, formData]);
+				}else{
+					this.storeHasil(formData);
+				}
+      },
+      onInvalid() {
+        this.submited = true;
       },
 			showFoto(){
 				if(this.isShowFoto){

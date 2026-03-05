@@ -13,7 +13,7 @@
 					</message>
 
 					<!-- main panel -->
-					<form @submit.prevent="save" enctype="multipart/form-data" data-vv-scope="form">
+					<form @submit.prevent="save" enctype="multipart/form-data">
 					
 						<!-- informasi umum -->
 						<div class="card">
@@ -29,7 +29,7 @@
 												Kode : <wajib-badge></wajib-badge></h5>
 
 											<!-- text -->
-											<input type="text" name="kode" class="form-control" placeholder="Silahkan masukkan kode kegiatan" v-validate="'required|min:5'" data-vv-as="Kode Kegiatan" v-model="form.kode">
+											<input type="text" name="kode" class="form-control" placeholder="Silahkan masukkan kode kegiatan" v-model="form.kode">
 											
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.kode')">
@@ -49,7 +49,7 @@
 												Nama: <wajib-badge></wajib-badge></h5>
 
 											<!-- text -->
-											<input type="text" name="name" class="form-control" placeholder="Silahkan masukkan nama kegiatan" v-validate="'required|min:5'" data-vv-as="Name" v-model="form.name">
+											<input type="text" name="name" class="form-control" placeholder="Silahkan masukkan nama kegiatan" v-model="form.name">
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.name')">
@@ -86,15 +86,18 @@
 </template>
 
 <script>
+	import { computed } from 'vue';
 	import { mapState, mapActions } from 'pinia';
 	import { useKodeKegiatanStore } from '../../stores/kodeKegiatan';
-	import _ from 'lodash';
-	import pageHeader from "../../components/pageHeader.vue";
+	import { useFormValidation } from '../../composables/useFormValidation';
+	import pageHeader from '../../components/pageHeader.vue';
 	import wajibBadge from "../../components/wajibBadge.vue";
 	import message from "../../components/message.vue";
 	import formButton from "../../components/formButton.vue";
 	import formInfo from "../../components/formInfo.vue";
 	import appModal from '../../components/modal.vue';
+
+	const KODE_KEGIATAN_SCHEMA = { kode: 'required|min:5', name: 'required|min:5' };
 
 	export default {
 		components: {
@@ -104,6 +107,12 @@
 			formButton,
 			formInfo,
 			wajibBadge,
+		},
+		setup() {
+			const store = useKodeKegiatanStore();
+			const formRef = computed(() => store.data);
+			const { errors, handleSubmit, setValues } = useFormValidation(formRef, KODE_KEGIATAN_SCHEMA);
+			return { errors, handleSubmit, setValues };
 		},
 		data() {
 			return {
@@ -158,19 +167,21 @@
 				}
 			},
 			save() {
-				this.$validator.validateAll('form').then((result) => {
-					if (result) {
-						if(this.$route.meta.mode == 'edit'){
+				this.setValues(this.form);
+				this.handleSubmit(
+					() => {
+						if (this.$route.meta.mode === 'edit') {
 							this.update([this.$route.params.id, this.form]);
-						}else{
+						} else {
 							this.store(this.form);
-					}
+						}
 						this.submited = false;
-					}else{
+					},
+					() => {
 						window.scrollTo(0, 0);
 						this.submited = true;
 					}
-				});
+				);
 			},
 			back(){
 				this.$router.push({name: this.kelas});
@@ -199,7 +210,7 @@
 				options: 'options',
 				updateResponse: 'update',
 				updateStat: 'updateStat'
-			})
-		}
+			}),
+		},
 	}
 </script>

@@ -847,7 +847,7 @@
 </template>
 
 <script>
-	import {mapGetters} from 'vuex';
+	import { mapGetters } from '../../vuex';
 	import _ from 'lodash';
 	import {toMulipartedForm} from '../../helpers/form';
 	import appImageUpload from '../../components/ImageUpload.vue';

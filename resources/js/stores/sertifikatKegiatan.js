@@ -13,7 +13,7 @@ export const useSertifikatKegiatanStore = defineStore('sertifikatKegiatan', {
     dataStatS: "",
     dataStat: "",
     countStat: "",
-    update: [], //update data
+    updateData: [], //update data
     updateStat: "",
     rules: [], //laravel rules
     options: [], //laravel options
@@ -31,7 +31,7 @@ export const useSertifikatKegiatanStore = defineStore('sertifikatKegiatan', {
     getDataStat: (state) => state.dataStat,
     getDataStatS: (state) => state.dataStatS,
     getCountStat: (state) => state.countStat,
-    getUpdate: (state) => state.update,
+    getUpdate: (state) => state.updateData,
     getUpdateStat: (state) => state.updateStat,
     getRules: (state) => state.rules,
     getOptions: (state) => state.options,
@@ -88,13 +88,13 @@ export const useSertifikatKegiatanStore = defineStore('sertifikatKegiatan', {
       try {
         const response = await sertifikatKegiatanAPI.store(form);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = "success";
         } else {
           this.updateStat = "fail";
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = "fail";
       }
     },
@@ -105,13 +105,13 @@ export const useSertifikatKegiatanStore = defineStore('sertifikatKegiatan', {
       try {
         const response = await sertifikatKegiatanAPI.storeNomorSertifikatKegiatan(id, form);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -159,13 +159,13 @@ export const useSertifikatKegiatanStore = defineStore('sertifikatKegiatan', {
       try {
         const response = await sertifikatKegiatanAPI.update(id, form);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = "success";
         } else {
           this.updateStat = "fail";
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = "fail";
       }
     },
@@ -176,13 +176,13 @@ export const useSertifikatKegiatanStore = defineStore('sertifikatKegiatan', {
       try {
         const response = await sertifikatKegiatanAPI.uploadExcelPeserta(form);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -193,13 +193,13 @@ export const useSertifikatKegiatanStore = defineStore('sertifikatKegiatan', {
       try {
         const response = await sertifikatKegiatanAPI.updateNomorSertifikatKegiatan(id, form);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = "success";
         } else {
           this.updateStat = "fail";
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = "fail";
       }
     },
@@ -211,13 +211,13 @@ export const useSertifikatKegiatanStore = defineStore('sertifikatKegiatan', {
       try {
         const response = await sertifikatKegiatanAPI.destroy(id);
         if (response.data.deleted) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = "success";
         } else {
           this.updateStat = "fail";
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = "fail";
       }
     },
@@ -228,13 +228,13 @@ export const useSertifikatKegiatanStore = defineStore('sertifikatKegiatan', {
       try {
         const response = await sertifikatKegiatanAPI.destroyNomorSertifikatKegiatan(id);
         if (response.data.deleted) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = "success";
         } else {
           this.updateStat = "fail";
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = "fail";
       }
     },

@@ -58,7 +58,8 @@
 
 					<transition-group name="list" tag="div" enter-active-class="animated fadeIn" mode="out-in">
 						<div v-for="cu in itemDataCu" v-bind:key="cu.cu_id" v-show="tabName == cu.cu_id">
-							<div v-for="(produks,index) in itemDataProduk" v-if="index == cu.cu_id">
+							<template v-for="(produks,index) in itemDataProduk" :key="index">
+							<div v-if="index == cu.cu_id">
 
 								<div class="nav-tabs-responsive bg-light border-top" >
 									<ul class="nav nav-tabs nav-tabs-solid bg-light">
@@ -76,6 +77,7 @@
 								</div>
 
 							</div>
+							</template>
 						</div>
 					</transition-group>
 

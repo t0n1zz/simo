@@ -8,12 +8,14 @@
 			<div class="content-wrapper">
 				<div class="content">
 
+					<VeeForm :form="form" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
+
 					<!-- message -->
 					<message v-if="errors.any('form') && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors.items">
 					</message>
  
 					<!-- main panel -->
-					<form @submit.prevent="save" enctype="multipart/form-data" data-vv-scope="form">
+					<form @submit.prevent="handleSubmit(onValid)" enctype="multipart/form-data">
 
 						<!-- form -->
 						<div class="card">
@@ -43,13 +45,19 @@
 											</h5>
 
 											<!-- select -->
-											<select class="form-control" name="id_cu" v-model="form.id_cu" data-width="100%" v-validate="'required'" data-vv-as="CU" :disabled="modelCU.length === 0">
-												<option disabled value="0">
-													<span v-if="modelCUStat === 'loading'">Mohon tunggu...</span>
-													<span v-else>Silahkan pilih CU</span>
-												</option>
-												<option v-for="cu in modelCU" :value="cu.id" v-if="cu">{{cu.name}}</option>
-											</select>
+											<Field name="id_cu" rules="required" v-model="form.id_cu" v-slot="{ field }">
+												<select class="form-control" data-width="100%" v-bind="field" :disabled="modelCU.length === 0">
+													<option disabled value="0">
+														<span v-if="modelCUStat === 'loading'">Mohon tunggu...</span>
+														<span v-else>Silahkan pilih CU</span>
+													</option>
+													<template v-for="cu in modelCU" :key="cu ? cu.id : undefined">
+														<option v-if="cu" :value="cu.id">
+															{{ cu.name }}
+														</option>
+													</template>
+												</select>
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.id_cu')">
@@ -70,15 +78,17 @@
 											</h5>
 
 											<!-- select -->
-											<select class="form-control" name="tipe" v-model="form.tipe" data-width="100%" v-validate="'required'" data-vv-as="Tipe Produk" @change="changeTipe($event.target.value)">
-												<option disabled value="">Silahkan pilih tipe produk</option>
-												<option value="Simpanan Pokok">Simpanan Pokok</option>
-												<option value="Simpanan Wajib">Simpanan Wajib</option>
-												<option value="Simpanan Non Saham">Simpanan Non Saham</option>
-												<option value="Pinjaman Kapitalisasi">Pinjaman Kapitalisasi</option>
-												<option value="Pinjaman Umum">Pinjaman Umum</option>
-												<option value="Pinjaman Produktif">Pinjaman Produktif</option>
-											</select>
+											<Field name="tipe" rules="required" v-model="form.tipe" v-slot="{ field }">
+												<select class="form-control" data-width="100%" v-bind="field" @change="changeTipe($event.target.value)">
+													<option disabled value="">Silahkan pilih tipe produk</option>
+													<option value="Simpanan Pokok">Simpanan Pokok</option>
+													<option value="Simpanan Wajib">Simpanan Wajib</option>
+													<option value="Simpanan Non Saham">Simpanan Non Saham</option>
+													<option value="Pinjaman Kapitalisasi">Pinjaman Kapitalisasi</option>
+													<option value="Pinjaman Umum">Pinjaman Umum</option>
+													<option value="Pinjaman Produktif">Pinjaman Produktif</option>
+												</select>
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.tipe')">
@@ -98,7 +108,9 @@
 												Kode Produk & Pelayanan: <wajib-badge></wajib-badge></h5>
 
 											<!-- text -->
-											<input type="text" name="kode_produk" class="form-control" placeholder="Silahkan masukkan kode produk dan pelayanan" v-validate="'required'" data-vv-as="Kode Produk dan Pelayanan" v-model="form.kode_produk">	
+											<Field name="kode_produk" rules="required" v-model="form.kode_produk" v-slot="{ field }">
+												<input type="text" class="form-control" placeholder="Silahkan masukkan kode produk dan pelayanan" v-bind="field">
+											</Field>
 											
 
 											<!-- error message -->
@@ -119,7 +131,9 @@
 												Nama: <wajib-badge></wajib-badge></h5>
 
 											<!-- text -->
-											<input type="text" name="name" class="form-control" placeholder="Silahkan masukkan nama produk dan pelayanan" v-validate="'required'" data-vv-as="Nama" v-model="form.name" :disabled="isDisabledName">
+											<Field name="name" rules="required" v-model="form.name" v-slot="{ field }">
+												<input type="text" class="form-control" placeholder="Silahkan masukkan nama produk dan pelayanan" v-bind="field" :disabled="isDisabledName">
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.name')">
@@ -243,6 +257,8 @@
 						</div>
 
 					</form>
+
+					</VeeForm>
 				</div>
 			</div>
 		</div>
@@ -268,6 +284,8 @@
 	import formInfo from "../../components/formInfo.vue";
 	import Cleave from 'vue-cleave-component';
 	import wajibBadge from "../../components/wajibBadge.vue";
+	import VeeForm from '../../components/VeeForm.vue';
+	import { Field } from 'vee-validate';
 
 	export default {
 		components: {
@@ -278,7 +296,9 @@
 			formButton,
 			formInfo,
 			Cleave,
-			wajibBadge
+			wajibBadge,
+			VeeForm,
+			Field
 		},
 		data() {
 			return {
@@ -398,21 +418,18 @@
 					}
 				}
 			},
-			save() {
+			onValid() {
 				const formData = toMulipartedForm(this.form, this.$route.meta.mode);
-				this.$validator.validateAll('form').then((result) => {
-					if (result) {
-						if(this.$route.meta.mode === 'edit'){
-							this.update([this.$route.params.id, formData]);
-						}else{
-							this.store(formData);
-					}
-						this.submited = false;
-					}else{
-						window.scrollTo(0, 0);
-						this.submited = true;
-					}
-				});
+				if(this.$route.meta.mode === 'edit'){
+					this.update([this.$route.params.id, formData]);
+				}else{
+					this.store(formData);
+				}
+				this.submited = false;
+			},
+			onInvalid() {
+				window.scrollTo(0, 0);
+				this.submited = true;
 			},
 			changeTipe(value){
 				if(value == 'Simpanan Pokok'){

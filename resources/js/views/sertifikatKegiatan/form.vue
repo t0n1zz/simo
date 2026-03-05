@@ -8,12 +8,14 @@
 			<div class="content-wrapper">
 				<div class="content">
 
-					<!-- message -->
-					<message v-if="errors.any('form') && submited" :title="'Oops terjadi kesalahan'" :errorItem="errors.items">
-					</message>
+				<!-- main panel: VeeForm + Field rules on tags -->
+				<VeeForm :form="form" v-slot="{ errors, handleSubmit }">
 
-					<!-- main panel -->
-					<form @submit.prevent="save" enctype="multipart/form-data" data-vv-scope="form">
+				<!-- message -->
+				<message v-if="errors.any('form') && submited" :title="'Oops terjadi kesalahan'" :errorItem="errors.items">
+				</message>
+
+				<form @submit.prevent="handleSubmit(onValid, onInvalid)" enctype="multipart/form-data">
 					
 						<!-- informasi umum -->
 						<div class="card">
@@ -55,7 +57,19 @@
 												Kode Sertifikat: <wajib-badge></wajib-badge></h5>
 
 											<!-- text -->
-											<input type="text" name="kode_sertifikat" class="form-control" placeholder="Silahkan masukkan kode sertifikat" v-validate="'required|min:5'" data-vv-as="Kode Sertifikat" v-model="form.kode_sertifikat">
+											<Field
+												name="kode_sertifikat"
+												rules="required|min:5"
+												v-model="form.kode_sertifikat"
+												v-slot="{ field }"
+											>
+												<input
+													type="text"
+													class="form-control"
+													placeholder="Silahkan masukkan kode sertifikat"
+													v-bind="field"
+												>
+											</Field>
 											
 
 											<!-- error message -->
@@ -76,7 +90,19 @@
 												Nama: <wajib-badge></wajib-badge></h5>
 
 											<!-- text -->
-											<input type="text" name="name" class="form-control" placeholder="Silahkan masukkan nama kegiatan" v-validate="'required|min:5'" data-vv-as="Nama" v-model="form.name">
+											<Field
+												name="name"
+												rules="required|min:5"
+												v-model="form.name"
+												v-slot="{ field }"
+											>
+												<input
+													type="text"
+													class="form-control"
+													placeholder="Silahkan masukkan nama kegiatan"
+													v-bind="field"
+												>
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.name')">
@@ -95,12 +121,19 @@
 											</h5>
 
 											<!-- select -->
-											<select class="form-control" name="tipe" v-model="form.tipe" data-width="100%" v-validate="'required'" data-vv-as="Tipe Tempat">
+											<Field
+												as="select"
+												name="tipe"
+												rules="required"
+												v-model="form.tipe"
+												class="form-control"
+												data-width="100%"
+											>
 												<option disabled value="">Silahkan pilih tipe sertifikat</option>
 												<option value="piagam">PIAGAM</option>
 												<option value="diklat">SERTIFIKAT DIKLAT UMUM</option>
 												<option value="rat">SERTIFIKAT RAT</option>
-											</select>
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.tipe')">
@@ -125,6 +158,7 @@
 						</div>	
 
 					</form>
+					</VeeForm>
 				</div>
 			</div>
 		</div>
@@ -141,6 +175,8 @@
 	import { useAuthStore } from '../../stores/auth';
 	import { useSertifikatKegiatanStore } from '../../stores/sertifikatKegiatan';
 	import _ from 'lodash';
+	import { Field } from 'vee-validate';
+	import VeeForm from '../../components/VeeForm.vue';
 	import pageHeader from "../../components/pageHeader.vue";
 	import infoIcon from "../../components/infoIcon.vue";
 	import wajibBadge from "../../components/wajibBadge.vue";
@@ -163,6 +199,8 @@
 			infoIcon,
 			wajibBadge,
 			wajibUkuran,
+			VeeForm,
+			Field,
 		},
 		data() {
 			return {
@@ -220,21 +258,18 @@
 					this.create();
 				}
 			},
-			save() {
+			onValid() {
 				const formData = toMulipartedForm(this.form, this.$route.meta.mode);
-				this.$validator.validateAll('form').then((result) => {
-					if (result) {
-						if(this.$route.meta.mode == 'edit'){
-							this.update([this.$route.params.id, formData]);
-						}else{
-							this.store(formData);
-					}
-						this.submited = false;
-					}else{
-						window.scrollTo(0, 0);
-						this.submited = true;
-					}
-				});
+				if (this.$route.meta.mode == 'edit') {
+					this.update([this.$route.params.id, formData]);
+				} else {
+					this.store(formData);
+				}
+				this.submited = false;
+			},
+			onInvalid() {
+				window.scrollTo(0, 0);
+				this.submited = true;
 			},
 			back(){
 				this.$router.push({name: this.kelas});

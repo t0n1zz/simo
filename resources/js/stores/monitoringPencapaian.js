@@ -17,7 +17,7 @@ export const useMonitoringPencapaianStore = defineStore('monitoringPencapaian', 
     periodeStat: '',
     dataDeletedStatS: '',
     countStat: '',
-    update: [], //update data
+    updateData: [], //update data
     updateStat: '',
     rules: [], //laravel rules
     options: [], //laravel options
@@ -34,7 +34,7 @@ export const useMonitoringPencapaianStore = defineStore('monitoringPencapaian', 
     getPeriodeStat: state => state.periodeStat,
     getDataDeletedStatS: state => state.dataDeletedStatS,
     getCountStat: state => state.countStat,
-    getUpdate: state => state.update,
+    getUpdate: state => state.updateData,
     getUpdateStat: state => state.updateStat,
     getRules: state => state.rules,
     getOptions: state => state.options,
@@ -75,13 +75,13 @@ export const useMonitoringPencapaianStore = defineStore('monitoringPencapaian', 
       try {
         const response = await MonitoringPencapaianAPI.store(form);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -93,13 +93,13 @@ export const useMonitoringPencapaianStore = defineStore('monitoringPencapaian', 
       try {
         const response = await MonitoringPencapaianAPI.update(id, form);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -110,13 +110,13 @@ export const useMonitoringPencapaianStore = defineStore('monitoringPencapaian', 
       try {
         const response = await MonitoringPencapaianAPI.restore(id);
         if (response.data.restored) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -128,13 +128,13 @@ export const useMonitoringPencapaianStore = defineStore('monitoringPencapaian', 
       try {
         const response = await MonitoringPencapaianAPI.destroy(id);
         if (response.data.deleted) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },

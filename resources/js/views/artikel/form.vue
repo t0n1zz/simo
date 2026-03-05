@@ -8,12 +8,14 @@
 			<div class="content-wrapper">
 				<div class="content">
 
-					<!-- message -->
-					<message v-if="errors.any('form') && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors.items">
-					</message>
+				<!-- main panel: VeeForm + Field rules (no schema) -->
+				<VeeForm :form="form" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit, setValues }">
 
-					<!-- main panel -->
-					<form @submit.prevent="save" enctype="multipart/form-data" data-vv-scope="form">
+				<!-- message -->
+				<message v-if="errors.any('form') && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors.items">
+				</message>
+
+				<form @submit.prevent="setValues(form) || handleSubmit(onValid)" enctype="multipart/form-data">
 
 						<!-- main form -->
 						<div class="card">
@@ -30,8 +32,20 @@
 												<i class="icon-cross2" v-if="errors.has('form.name')"></i>
 												Judul: <wajib-badge></wajib-badge></h5>
 
-											<!-- text -->
-											<input type="text" name="name" class="form-control" placeholder="Silahkan masukkan judul artikel" v-validate="'required|min:5'" data-vv-as="Judul" v-model="form.name">
+											<!-- text (rules on the tag) -->
+											<Field
+												name="name"
+												rules="required|min:5"
+												v-model="form.name"
+												v-slot="{ field }"
+											>
+												<input
+													type="text"
+													class="form-control"
+													placeholder="Silahkan masukkan judul artikel"
+													v-bind="field"
+												>
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.name')">
@@ -52,14 +66,23 @@
 										</h5>
 
 										<!-- select -->
-										<select class="form-control" name="id_cu" v-model="form.id_cu" data-width="100%" v-validate="'required'" data-vv-as="CU" :disabled="modelCU.length === 0" @change="changeCU($event.target.value)">
+										<Field
+											as="select"
+											name="id_cu"
+											rules="required"
+											v-model="form.id_cu"
+											class="form-control"
+											data-width="100%"
+											:disabled="modelCU.length === 0"
+											@change="changeCU($event.target.value)"
+										>
 											<option disabled value="">
 												<span v-if="modelCUStat === 'loading'">Mohon tunggu...</span>
 												<span v-else>Silahkan pilih CU</span>
 											</option>
 											<option value="0"><span v-if="currentUser.pus">{{currentUser.pus.name}}</span> <span v-else>PUSKOPCUINA</span></option>
 											<option v-for="(cu, index) in modelCU" :value="cu.id" :key="index">{{cu.name}}</option>
-										</select>
+										</Field>
 
 										<!-- error message -->
 										<small class="text-muted text-danger" v-if="errors.has('form.id_cu')">
@@ -82,7 +105,15 @@
 											<div class="input-group">
 
 												<!-- select -->
-												<select class="form-control"  name="id_artikel_penulis" v-model="form.id_artikel_penulis" data-width="100%" v-validate="'required'" data-vv-as="Penulis" :disabled="modelPenulis.length === 0">
+												<Field
+													as="select"
+													name="id_artikel_penulis"
+													rules="required"
+													v-model="form.id_artikel_penulis"
+													class="form-control"
+													data-width="100%"
+													:disabled="modelPenulis.length === 0"
+												>
 													<option disabled value="">
 														<span v-if="form.id_cu != 0 && modelPenulis.length == 0">Silahkan tambah penulis baru</span>
 														<span v-else-if="form.id_cu == '' && modelPenulis.length == 0">Silahkan pilih CU terlebih dahulu</span>
@@ -91,8 +122,10 @@
 															<span v-else>Silahkan pilih penulis</span>
 														</span>
 													</option>
-													<option v-for="penulis in modelPenulis" v-if="penulis" :value="penulis.id">{{penulis.name}}</option>
-												</select>
+													<template v-for="penulis in modelPenulis" :key="penulis ? penulis.id : undefined">
+													<option v-if="penulis" :value="penulis.id">{{penulis.name}}</option>
+												</template>
+												</Field>
 
 												<!-- button -->
 												<div class="input-group-append">
@@ -123,7 +156,15 @@
 											<div class="input-group">
 
 												<!-- select -->
-												<select class="form-control" name="id_artikel_kategori" v-model="form.id_artikel_kategori" data-width="100%" :disabled="modelKategori.length === 0" v-validate="'required'" data-vv-as="Kategori">
+												<Field
+													as="select"
+													name="id_artikel_kategori"
+													rules="required"
+													v-model="form.id_artikel_kategori"
+													class="form-control"
+													data-width="100%"
+													:disabled="modelKategori.length === 0"
+												>
 													<option disabled value="">
 														<span v-if="form.id_cu != 0 && modelKategori.length == 0">Silahkan tambah kategori baru</span>
 														<span v-else>
@@ -131,8 +172,10 @@
 															<span v-else>Silahkan pilih kategori</span>
 														</span>
 													</option>
-													<option v-for="kategori in modelKategori" v-if="kategori" :value="kategori.id">{{kategori.name}}</option>
-												</select>
+													<template v-for="kategori in modelKategori" :key="kategori ? kategori.id : undefined">
+													<option v-if="kategori" :value="kategori.id">{{kategori.name}}</option>
+												</template>
+												</Field>
 
 												<!-- button -->
 												<div class="input-group-append">
@@ -188,11 +231,18 @@
 											</h5>
 
 											<!-- select -->
-											<select name="utamakan" data-width="100%" class="form-control" v-model="form.utamakan" v-validate="'required'" data-vv-as="utamakan">
+											<Field
+												as="select"
+												name="utamakan"
+												rules="required"
+												v-model="form.utamakan"
+												class="form-control"
+												data-width="100%"
+											>
 												<option disabled value="">Silahkan pilih tipe</option>
 												<option value="1">Jadikan artikel utama</option>
 												<option value="0">Tidak jadikan artikel utama</option>
-											</select>
+											</Field>
 
 											<!-- error message -->
 											<br/>
@@ -226,11 +276,13 @@
 											<!-- title -->
 											<h5>Isi Artikel:</h5>
 
-											<!-- editor -->
-											<ckeditor type="classic" 
-												v-model="form.content"
-												:upload-adapter="UploadAdapter" ></ckeditor>
-
+										<!-- editor -->
+										<rich-text-editor
+											ref="richEditor"
+											v-model="form.content"
+											placeholder="Mulai menulis isi artikel..."
+											image-folder="artikel"
+										></rich-text-editor>
 										</div>
 									</div>
 
@@ -247,10 +299,12 @@
 							<form-button
 								:cancelState="'methods'"
 								:formValidation="'form'"
+								:buttonErrors="errors"
 								@cancelClick="back"></form-button>
 						</div>
 						
 					</form>
+					</VeeForm>
 
 				</div>
 			</div>
@@ -289,7 +343,9 @@
 	import { useArtikelStore } from '../../stores/artikel';
 	import { useArtikelKategoriStore } from '../../stores/artikelKategori';
 	import { useArtikelPenulisStore } from '../../stores/artikelPenulis';
-	import pageHeader from "../../components/pageHeader.vue";
+	import { Field } from 'vee-validate';
+	import VeeForm from '../../components/VeeForm.vue';
+	import pageHeader from '../../components/pageHeader.vue';
 	import { toMulipartedForm } from '../../helpers/form';
 	import appImageUpload from '../../components/ImageUpload.vue';
 	import appModal from '../../components/modal.vue';
@@ -300,7 +356,8 @@
 	import formPenulis from "./formPenulis.vue";
 	import { getLocalUser } from "../../helpers/auth";
 	import { url_config } from '../../helpers/url.js';
-	import wajibBadge from "../../components/wajibBadge.vue";
+	import wajibBadge from '../../components/wajibBadge.vue';
+	import RichTextEditor from '../../components/RichTextEditor.vue';
 
 	export default {
 		components: {
@@ -312,18 +369,15 @@
 			formInfo,
 			formKategori,
 			formPenulis,
-			wajibBadge
+			wajibBadge,
+			VeeForm,
+			Field,
+			RichTextEditor,
 		},
 		data() {
 			return {
 				authStore: useAuthStore(),
 				cuStore: useCuStore(),
-				errors: {
-					any: () => false,
-					has: () => false,
-					first: () => '',
-					items: []
-				},
 				artikelStore: useArtikelStore(),
 				artikelKategoriStore: useArtikelKategoriStore(),
 				artikelPenulisStore: useArtikelPenulisStore(),
@@ -332,44 +386,17 @@
 				titleIcon: 'icon-plus3',
 				level2Title: 'Artikel',
 				kelas: 'artikel',
-				id_cu: '',
-				utama: '',
-				UploadAdapter: function (loader) {
-          this.loader = loader
-          this.upload = () => {
-            const body = new FormData();
-						const user = getLocalUser();
-						let token = user.token;
-
-						body.append('gambar', this.loader.file);
-	
-            return fetch(url_config.api_url + 'artikel/upload', {
-							headers: {"Authorization": 'Bearer ' + token},
-              body: body,
-              method: 'POST'
-            })
-						.then(response => response.json())
-              .then(downloadUrl => {
-                return {
-									default: downloadUrl
-								}
-              })
-              .catch(error => {
-                console.log(error);
-              });
-          }
-          this.abort = () => {
-            console.log('Abort upload.')
-          }
-        },
-				modalShow: false,
+			id_cu: '',
+			utama: '',
+			modalShow: false,
 				modalState: '',
 				modalTitle: '',
 				modalColor: '',
 				modalContent: '',
 				submited: false,
 				submitedKategori: false,
-				submitedPenulis: false
+				submitedPenulis: false,
+				saving: false
 			}
 		},
 		beforeRouteEnter(to, from, next) {
@@ -416,12 +443,12 @@
 				this.modalColor = '';
 
 				if(value === "success"){
-					this.modalTitle = this.artikelKategoriStore.update.message;
+					this.modalTitle = this.artikelKategoriStore.updateData.message;
 					this.artikelKategoriStore.getCu(this.id_cu);
-					this.artikelStore.data.id_artikel_kategori = this.artikelKategoriStore.update.id;
+					this.artikelStore.data.id_artikel_kategori = this.artikelKategoriStore.updateData.id;
 				}else{
 					this.modalTitle = 'Oops terjadi kesalahan :(';
-					this.modalContent = this.artikelKategoriStore.update.message;
+					this.modalContent = this.artikelKategoriStore.updateData.message;
 				}
 			},
 			updatePenulisStat(value){
@@ -429,12 +456,12 @@
 				this.modalColor = '';
 
 				if(value === "success"){
-					this.modalTitle = this.artikelPenulisStore.update.message;
+					this.modalTitle = this.artikelPenulisStore.updateData.message;
 					this.artikelPenulisStore.getCu(this.id_cu);	
-					this.artikelStore.data.id_artikel_penulis = this.artikelPenulisStore.update.id;
+					this.artikelStore.data.id_artikel_penulis = this.artikelPenulisStore.updateData.id;
 				}else{
 					this.modalTitle = 'Oops terjadi kesalahan :(';
-					this.modalContent = this.artikelPenulisStore.update.message;
+					this.modalContent = this.artikelPenulisStore.updateData.message;
 				}
 			}
     },
@@ -470,21 +497,39 @@
 					}
 				}
 			},
-			save() {
-				const formData = toMulipartedForm(this.artikelStore.data, this.$route.meta.mode);
-				this.$validator.validateAll('form').then((result) => {
-					if (result) {
-						if(this.$route.meta.mode === 'edit'){
-							this.artikelStore.update([this.$route.params.id, formData]);
-						}else{
-							this.artikelStore.store(formData);
-						}
-						this.submited = false;
-					}else{
-						window.scrollTo(0, 0);
-						this.submited = true;
+			async onValid(values) {
+				this.saving = true;
+				this.modalShow = true;
+				this.modalState = 'loading';
+				this.modalTitle = 'Menyimpan data...';
+				this.modalContent = '';
+
+				try {
+					const finalContent = await this.$refs.richEditor.prepareForSave((progress) => {
+						this.modalTitle = 'Mengunggah gambar ' + progress.current + ' dari ' + progress.total + '...';
+					});
+					this.artikelStore.data.content = finalContent;
+
+					this.modalTitle = 'Menyimpan artikel...';
+					const mergedData = { ...this.artikelStore.data, ...values, content: finalContent };
+					const formData = toMulipartedForm(mergedData, this.$route.meta.mode);
+					if (this.$route.meta.mode === 'edit') {
+						this.artikelStore.update(this.$route.params.id, formData);
+					} else {
+						this.artikelStore.store(formData);
 					}
-				});
+				} catch (err) {
+					this.modalState = 'fail';
+					this.modalTitle = 'Gagal mengunggah gambar';
+					this.modalContent = { message: err?.message || 'Terjadi kesalahan. Silakan coba lagi.' };
+				} finally {
+					this.saving = false;
+				}
+				this.submited = false;
+			},
+			onInvalid() {
+				window.scrollTo(0, 0);
+				this.submited = true;
 			},
 			changeCU(id){
 				this.artikelPenulisStore.getCu(id);	
@@ -552,7 +597,7 @@
 				return this.artikelStore.options;
 			},
 			updateResponse() {
-				return this.artikelStore.update;
+				return this.artikelStore.updateData;
 			},
 			updateStat() {
 				return this.artikelStore.updateStat;
@@ -570,7 +615,7 @@
 				return this.artikelKategoriStore.dataStatS;
 			},
 			updateKategoriResponse() {
-				return this.artikelKategoriStore.update;
+				return this.artikelKategoriStore.updateData;
 			},
 			updateKategoriStat() {
 				return this.artikelKategoriStore.updateStat;
@@ -582,7 +627,7 @@
 				return this.artikelPenulisStore.dataStatS;
 			},
 			updatePenulisResponse() {
-				return this.artikelPenulisStore.update;
+				return this.artikelPenulisStore.updateData;
 			},
 			updatePenulisStat() {
 				return this.artikelPenulisStore.updateStat;
@@ -590,5 +635,3 @@
 		}
 	}
 </script>
-
-<style lang="css" src="../../../../public/css/admin/ckeditor-document-style.css" scoped></style>

@@ -1,7 +1,8 @@
 <template>
 	<div>
 		<!-- peserta -->
-		<form v-if="this.tipePenerima == 'peserta'" @submit.prevent="save" data-vv-scope="formPenerimaSertifikat">
+		<VeeForm v-if="this.tipePenerima == 'peserta'" :form="formContext" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
+		<form @submit.prevent="handleSubmit(onValid)">
 			
 			<!-- message -->
 			<message v-if="message.show" @close="messageClose" :title="'Oops terjadi kesalahan'"
@@ -74,9 +75,11 @@
 			</div>
 			</div>
 		</form>
+		</VeeForm>
 
 		<!-- panitia dan fasilitator -->
-		<form v-if="this.tipePenerima == 'fasilitator'"  @submit.prevent="save" data-vv-scope="formPenerimaSertifikat">
+		<VeeForm v-if="this.tipePenerima == 'fasilitator'" :form="formContext" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
+		<form @submit.prevent="handleSubmit(onValid)">
 			
 			<!-- message -->
 			<message v-if="message.show" @close="messageClose" :title="'Oops terjadi kesalahan'"
@@ -143,6 +146,7 @@
 			</div>
 			</div>
 		</form>
+		</VeeForm>
 	</div>
 </template>
 
@@ -158,6 +162,7 @@ import DatePicker from "../../components/datePicker.vue";
 import wajibBadge from "../../components/wajibBadge.vue";
 import dataTable from '../../components/datatable.vue';
 import dataViewer from '../../components/dataviewer2.vue';
+import VeeForm from '../../components/VeeForm.vue';
 import { toMulipartedForm } from '../../helpers/form';
 
 export default {
@@ -170,6 +175,7 @@ export default {
 		wajibBadge,
 		dataTable,
 		dataViewer,
+		VeeForm,
 	},
 	data() {
 		return {
@@ -177,6 +183,7 @@ export default {
 			kelas: 'kegiatanBKCU',
 			selectedItems: [],
 			formPenerimaSertifikat: [],
+			formContext: {},
 			queryPeserta: {
 				order_column: "created_at",
 				order_direction: "asc",
@@ -232,18 +239,7 @@ export default {
 				content: ''
 			},
 			submited: false,
-			// SHIM: Add dummy errors object for VeeValidate 2 compatibility in Vue 3
-			errors: {
-				any: () => false,
-				has: () => false,
-				first: () => '',
-				collect: () => [],
-				items: []
-			},
 		}
-	},
-	updated() {
-		console.log(this.formPenerimaSertifikat);
 	},
 	created() {
 		this.fetchPeserta(this.queryPeserta);
@@ -382,17 +378,14 @@ export default {
 			this.indexPesertaAct([params, this.kegiatan_id]);
 		},
 
-		save() {
+		onValid() {
 			this.prepareFormData();
 			const formData = toMulipartedForm(this.formPenerimaSertifikat, this.$route.meta.mode);
-			 this.$validator.validateAll('formPenerimaSertifikat').then((result) => {
-			if (result) {
-				this.penerimaSertifikat(formData);
-				} else {
-					this.submited = true;
-				}
-			 });
-			},
+			this.penerimaSertifikat(formData);
+		},
+		onInvalid() {
+			this.submited = true;
+		},
 		messageClose() {
 			this.message.show = false;
 		},

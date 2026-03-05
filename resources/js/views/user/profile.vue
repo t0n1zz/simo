@@ -38,7 +38,7 @@
 						<div v-show="tabName == 'password'">
 
 							<!-- password -->
-							<form @submit.prevent="savePassword" data-vv-scope="formPassword">
+							<form @submit.prevent="savePassword">
 								<div class="card">
 
 								<div class="card-header bg-white">
@@ -61,11 +61,10 @@
 											<div class="col-lg-12">	
 
 												<!-- password sekarang -->
-												<div class="form-group" :class="{'has-error' : errors.has('formPassword.password_old')}">
+												<div class="form-group">
 
 													<!-- title -->
-													<h6 :class="{ 'text-danger' : errors.has('formPassword.password_old')}">
-														<i class="icon-cross2" v-if="errors.has('formPassword.password_old')"></i>
+													<h6>
 														Password Saat Ini:
 														<wajib-badge></wajib-badge>
 														<br/>
@@ -73,46 +72,30 @@
 													</h6>
 
 													<!-- text -->
-													<input type="password" name="password_old" class="form-control" placeholder="Silahkan masukkan password" v-validate="'required'" data-vv-as="Password Lama" v-model="formPassword.password_old">
-
-													<!-- error message -->
-													<small class="text-muted text-danger" v-if="errors.has('formPassword.password_old')">
-														<i class="icon-arrow-small-right"></i> {{ errors.first('formPassword.password_old') }}
-													</small>
-													<small class="text-muted" v-else>&nbsp;
-													</small>
+													<input type="password" name="password_old" class="form-control" placeholder="Silahkan masukkan password" v-model="formPassword.password_old">
 												</div>
 											</div>
 											<div class="col-lg-6">
 												<!-- password -->
-												<div class="form-group" :class="{'has-error' : errors.has('formPassword.password')}">
+												<div class="form-group">
 
 													<!-- title -->
-													<h6 :class="{ 'text-danger' : errors.has('formPassword.password')}">
-														<i class="icon-cross2" v-if="errors.has('formPassword.password')"></i>
+													<h6>
 														Password Baru: <wajib-badge></wajib-badge>
 														<br/>
 														<small class="text-muted"><i>Minimal 8 karater yang mengandung minimal 1 huruf besar, 1 huruf kecil dan 1 angka</i></small> 
 													</h6>
 
 													<!-- text -->
-													<input type="password" name="password" ref="password"  class="form-control" placeholder="Silahkan masukkan password" v-validate="'required|min:8|verify_password'" v-model="formPassword.password">
-
-													<!-- error message -->
-													<small class="text-muted text-danger" v-if="errors.has('formPassword.password')">
-														<i class="icon-arrow-small-right"></i> {{ errors.first('formPassword.password') }}
-													</small>
-													<small class="text-muted" v-else>&nbsp;
-													</small>
+													<input type="password" name="password" ref="password"  class="form-control" placeholder="Silahkan masukkan password" v-model="formPassword.password">
 												</div>
 											</div>
 											<div class="col-lg-6">
 												<!-- password konfirmasi -->
-												<div class="form-group" :class="{'has-error' : errors.has('formPassword.passwordConfirm')}">
+												<div class="form-group">
 
 													<!-- title -->
-													<h6 :class="{ 'text-danger' : errors.has('formPassword.passwordConfirm')}">
-														<i class="icon-cross2" v-if="errors.has('formPassword.passwordConfirm')"></i>
+													<h6>
 														Konfirmasi Password:
 														<wajib-badge></wajib-badge>
 														<br/>
@@ -120,13 +103,7 @@
 													</h6>
 
 													<!-- text -->
-													<input type="password" name="passwordConfirm" class="form-control" placeholder="Silahkan masukkan password konfirmasi" v-validate="'required|confirmed:password'" data-vv-as="password" v-model="formPassword.password_confirm">
-
-													<!-- error message -->
-													<small class="text-muted text-danger" v-if="errors.has('formPassword.passwordConfirm')">
-														<i class="icon-arrow-small-right"></i> {{ errors.first('formPassword.passwordConfirm') }}
-													</small>
-													<small class="text-muted" v-else>&nbsp;</small>
+													<input type="password" name="passwordConfirm" class="form-control" placeholder="Silahkan masukkan password konfirmasi" v-model="formPassword.password_confirm">
 												</div>
 											</div>
 										</div>
@@ -247,10 +224,6 @@
 				modalImageShow: false,
 				modalImageContent: '',
 				submited: false,
-        errors: {
-          has: () => false,
-          first: () => '',
-        },
 			}
 		},
 		created(){
@@ -277,26 +250,13 @@
 				this.userStore.getActivity([value, this.currentUser.id]);
 			},
 			saveIdentitas(){
-				this.$validator.validateAll('formIdentitas').then((result) => {
-					if (result) {
-						this.userStore.updateIdentitas([this.$route.params.id, this.formIdentitas]);
-						this.submited = false;
-					}else{
-						window.scrollTo(0, 0);
-						this.submited = true;
-					}
-				});
+				// formIdentitas validation is handled inside child component
+				this.userStore.updateIdentitas([this.$route.params.id, this.formIdentitas]);
+				this.submited = false;
 			},
 			savePassword(){
-				this.$validator.validateAll('formPassword').then((result) => {
-					if (result) {
-						this.userStore.updatePassword([this.$route.params.id, this.formPassword]);
-						this.submited = false;
-					}else{
-						window.scrollTo(0, 0);
-						this.submited = true;
-					}
-				});
+				this.userStore.updatePassword([this.$route.params.id, this.formPassword]);
+				this.submited = false;
 			},
 			saveFoto(){
 				const formData = toMulipartedForm(this.formFoto, 'edit');
@@ -349,7 +309,7 @@
 				return this.userStore.dataStatS;
 			},
 			updateResponse() {
-				return this.userStore.update;
+				return this.userStore.updateData;
 			},
 			updateStat() {
 				return this.userStore.updateStat;

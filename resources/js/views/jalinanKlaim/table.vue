@@ -400,11 +400,12 @@
 
 <script>
 
-  import _ from "lodash";
+  import _ from 'lodash';
   import { mapState } from 'pinia';
   import { useAuthStore } from '../../stores/auth';
   import { useJalinanKlaimStore } from '../../stores/jalinanKlaim';
-  import DataViewer from "../../components/dataviewer2.vue";
+  import { useUserStore } from '../../stores/user';
+  import DataViewer from '../../components/dataviewer2.vue';
   import appModal from "../../components/modal.vue";
   import collapseButton from "../../components/collapseButton.vue";
   import checkValue from "../../components/checkValue.vue";
@@ -424,9 +425,11 @@
       surat,
       formNoSurat
     },
-    props: ["title", "kelas", "status","itemData","itemDataStat","isSimple"],
+    props: ['title', 'kelas', 'status', 'itemData', 'itemDataStat', 'isSimple'],
     data() {
       return {
+        jalinanKlaimStore: useJalinanKlaimStore(),
+        userStore: useUserStore(),
         selectedItem: [],
         tipeSurat: '',
         query: {
@@ -838,33 +841,36 @@
     },
     methods: {
       fetch(params) {
-        if(this.$route.params.cu == 'semua'){
-          this.$store.dispatch(this.kelas + '/index' + this.status, [params, this.$route.params.jenis, this.$route.params.kategori, this.$route.params.dari, this.$route.params.ke, this.$route.params.awal, this.$route.params.akhir]);
+        const route = this.$route.params;
+        if (route.cu === 'semua') {
+          const method = 'index' + this.status;
+          this.jalinanKlaimStore[method]([params, route.jenis, route.kategori, route.dari, route.ke, route.awal, route.akhir]);
 
-          if(this.$route.params.jenis == 'usia'){
-            this.excelDownloadUrl = this.kelas + '/indexLaporanUsiaDetail/semua/' + this.status  + '/' + this.$route.params.dari + '/' + this.$route.params.ke + '/' + this.$route.params.awal + '/' + this.$route.params.akhir;
-          }else if(this.$route.params.jenis == 'penyebab'){
-            this.excelDownloadUrl = this.kelas + '/indexLaporanPenyebabDetail/semua/' + this.status  + '/' + this.$route.params.kategori + '/' + this.$route.params.awal + '/' + this.$route.params.akhir;
-          }else if(this.$route.params.jenis == 'cu'){
-            this.excelDownloadUrl = this.kelas + '/indexLaporanCuDetail/semua/' + this.status + '/' + this.$route.params.awal + '/' + this.$route.params.akhir;
-          }else{
-            this.excelDownloadUrl = this.kelas + '/status/' + this.status + '/' + this.$route.params.awal + '/' + this.$route.params.akhir;
+          if (route.jenis === 'usia') {
+            this.excelDownloadUrl = this.kelas + '/indexLaporanUsiaDetail/semua/' + this.status + '/' + route.dari + '/' + route.ke + '/' + route.awal + '/' + route.akhir;
+          } else if (route.jenis === 'penyebab') {
+            this.excelDownloadUrl = this.kelas + '/indexLaporanPenyebabDetail/semua/' + this.status + '/' + route.kategori + '/' + route.awal + '/' + route.akhir;
+          } else if (route.jenis === 'cu') {
+            this.excelDownloadUrl = this.kelas + '/indexLaporanCuDetail/semua/' + this.status + '/' + route.awal + '/' + route.akhir;
+          } else {
+            this.excelDownloadUrl = this.kelas + '/status/' + this.status + '/' + route.awal + '/' + route.akhir;
           }
           this.columnData[5].disable = false;
-        }else{
-          this.$store.dispatch(this.kelas + '/indexCu' + this.status, [params, this.$route.params.cu, this.$route.params.tp, this.$route.params.jenis, this.$route.params.kategori,this.$route.params.dari, this.$route.params.ke, this.$route.params.awal, this.$route.params.akhir]);
+        } else {
+          const method = 'indexCu' + this.status;
+          this.jalinanKlaimStore[method]([params, route.cu, route.tp, route.jenis, route.kategori, route.dari, route.ke, route.awal, route.akhir]);
 
-          if(this.$route.params.jenis == 'usia'){
-            this.excelDownloadUrl = this.kelas + '/indexLaporanUsiaDetail/' + this.$route.params.cu +  '/' + this.status  + '/' + this.$route.params.dari + '/' + this.$route.params.ke + '/'  + this.$route.params.awal + '/' + this.$route.params.akhir;
-          }else if(this.$route.params.jenis == 'penyebab'){
-            this.excelDownloadUrl = this.kelas + '/indexLaporanPenyebabDetail/' + this.$route.params.cu +  '/' + this.status  + '/' + this.$route.params.kategori + '/' + this.$route.params.awal + '/' + this.$route.params.akhir;
-          }else if(this.$route.params.jenis == 'cu'){
-            this.excelDownloadUrl = this.kelas + '/indexLaporanCuDetail/' + this.$route.params.cu +  '/' + this.status + '/' + this.$route.params.awal + '/' + this.$route.params.akhir;
-          }else{          
-            this.excelDownloadUrl = this.kelas + '/indexCu/' + this.$route.params.cu + '/' + this.$route.params.tp + '/status/' + this.status + '/' + this.$route.params.awal + '/' + this.$route.params.akhir;
-            this.$store.dispatch('user/indexCuPermission',this.$route.params.cu);
+          if (route.jenis === 'usia') {
+            this.excelDownloadUrl = this.kelas + '/indexLaporanUsiaDetail/' + route.cu + '/' + this.status + '/' + route.dari + '/' + route.ke + '/' + route.awal + '/' + route.akhir;
+          } else if (route.jenis === 'penyebab') {
+            this.excelDownloadUrl = this.kelas + '/indexLaporanPenyebabDetail/' + route.cu + '/' + this.status + '/' + route.kategori + '/' + route.awal + '/' + route.akhir;
+          } else if (route.jenis === 'cu') {
+            this.excelDownloadUrl = this.kelas + '/indexLaporanCuDetail/' + route.cu + '/' + this.status + '/' + route.awal + '/' + route.akhir;
+          } else {
+            this.excelDownloadUrl = this.kelas + '/indexCu/' + route.cu + '/' + route.tp + '/status/' + this.status + '/' + route.awal + '/' + route.akhir;
+            this.userStore.indexCuPermission(route.cu);
           }
-          
+
           this.columnData[5].disable = true;
         }
       },
@@ -974,15 +980,15 @@
       },
       modalTutup() {
         this.modalShow = false;
-        this.$store.dispatch(this.kelas + "/resetUpdateStat");
+        this.jalinanKlaimStore.resetUpdateStat();
       },
       modalConfirmOk() {
-        if (this.state == "hapus") {
-          this.$store.dispatch(this.kelas + "/destroy", this.selectedItem.id);
-        }else if(this.state == 'selesai'){
-          this.$store.dispatch(this.kelas + "/updateSelesai", this.selectedItem.id);
+        if (this.state === 'hapus') {
+          this.jalinanKlaimStore.destroy(this.selectedItem.id);
+        } else if (this.state === 'selesai') {
+          this.jalinanKlaimStore.updateSelesai(this.selectedItem.id);
         }
-      }
+      },
     },
     computed: {
 			...mapState(useAuthStore,{

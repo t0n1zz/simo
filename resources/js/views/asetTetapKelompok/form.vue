@@ -1,7 +1,7 @@
 <template>
 	<div>
-
-		<form @submit.prevent="save" data-vv-scope="formModal">
+		<VeeForm :form="formModal" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
+		<form @submit.prevent="handleSubmit(onValid)">
 
 		<div class="row">
 
@@ -18,13 +18,17 @@
 					<!-- <div class="input-group"> -->
 
 						<!-- select -->
-							<select class="form-control" name="jenis" v-model="formModal.aset_tetap_golongan_id" data-width="100%" v-validate="'required'" data-vv-as="Jenis" :disabled="modelGolongan.length == 0">
-							<option disabled value="">
-								<span v-if="modelGolonganStat === 'loading'">Mohon tunggu...</span>
-								<span v-else>Silahkan pilih golongan</span>
-							</option>
-							<option v-for="datas in modelGolongan" :value="datas.id" v-if="datas">{{datas.kode + ' | ' + datas.name}}</option>
-						</select>
+							<Field name="formModal.aset_tetap_golongan_id" rules="required" v-model="formModal.aset_tetap_golongan_id" v-slot="{ field }">
+								<select class="form-control" data-width="100%" v-bind="field" :disabled="modelGolongan.length == 0">
+									<option disabled value="">
+										<span v-if="modelGolonganStat === 'loading'">Mohon tunggu...</span>
+										<span v-else>Silahkan pilih golongan</span>
+									</option>
+									<template v-for="datas in modelGolongan" :key="datas ? datas.id : undefined">
+										<option v-if="datas" :value="datas.id">{{ datas.kode + ' | ' + datas.name }}</option>
+									</template>
+								</select>
+							</Field>
 
 						<!-- button -->
 						<!-- <div class="input-group-append" v-if="currentUser.can && currentUser.can['create_aset_tetap_jenis']">
@@ -36,8 +40,8 @@
 					</div> -->
 
 					<!-- error message -->
-					<small class="text-muted text-danger" v-if="errors.has('form.aset_tetap_jenis_id')">
-						<i class="icon-arrow-small-right"></i> {{ errors.first('form.aset_tetap_jenis_id') }}
+					<small class="text-muted text-danger" v-if="errors.has('formModal.aset_tetap_golongan_id')">
+						<i class="icon-arrow-small-right"></i> {{ errors.first('formModal.aset_tetap_golongan_id') }}
 					</small>
 					<small class="text-muted" v-else>&nbsp;</small>
 				</div>
@@ -53,13 +57,14 @@
 						Kode: <wajib-badge></wajib-badge></h6>
 
 					<!-- text -->
-					<cleave 
-						name="kode"
-						v-model="formModal.kode" 
-						class="form-control" 
+					<Field name="formModal.kode" rules="required" v-model="formModal.kode" v-slot="{ field }">
+						<input type="hidden" v-bind="field" />
+					</Field>
+					<cleave
+						v-model="formModal.kode"
+						class="form-control"
 						:options="cleaveOption.number3"
-						placeholder="Silahkan masukkan kode"
-						v-validate="'required'" data-vv-as="Kode"></cleave>	
+						placeholder="Silahkan masukkan kode"></cleave>	
 					
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('formModal.kode')">
@@ -79,7 +84,9 @@
 					</h5>
 
 					<!-- text -->
-					<input type="text" name="name" class="form-control" placeholder="Silahkan masukkan nama" v-validate="'required'" data-vv-as="Nama" v-model="formModal.name">
+					<Field name="formModal.name" rules="required" v-model="formModal.name" v-slot="{ field }">
+						<input type="text" class="form-control" placeholder="Silahkan masukkan nama" v-bind="field">
+					</Field>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('formModal.name')">
@@ -134,6 +141,7 @@
 		</div> 
 
 		</form>
+		</VeeForm>
 
 	</div>
 </template>
@@ -149,6 +157,8 @@
 	import wajibBadge from "../../components/wajibBadge.vue";
 	import formInfo from "../../components/formInfo.vue";
 	import Cleave from 'vue-cleave-component';
+	import VeeForm from '../../components/VeeForm.vue';
+	import { Field } from 'vee-validate';
 
 	export default {
 		props: ['kelas','mode','selected'],
@@ -158,7 +168,9 @@
 			infoIcon,
 			wajibBadge,
 			formInfo,
-			Cleave
+			Cleave,
+			VeeForm,
+			Field
 		},
 		setup() {
 			const authStore = useAuthStore();
@@ -200,18 +212,15 @@
 		},
 		watch: {},
 		methods: {
-			save(){
-				this.$validator.validateAll('formModal').then((result) => {
-					if (result) {
-						if(this.mode == 'tambah'){
-							this.asetTetapKelompokStore.store(this.formModal);
-						}else{
-							this.asetTetapKelompokStore.update([this.selected.id, this.formModal]);
-						}
-					}else{
-						this.submited = true;
-					}	
-				});
+			onValid() {
+				if(this.mode == 'tambah'){
+					this.asetTetapKelompokStore.store(this.formModal);
+				}else{
+					this.asetTetapKelompokStore.update([this.selected.id, this.formModal]);
+				}
+			},
+			onInvalid() {
+				this.submited = true;
 			},
 			tutup(){
 				this.$emit('tutup');

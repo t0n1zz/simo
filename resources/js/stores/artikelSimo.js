@@ -9,7 +9,7 @@ export const useArtikelSimoStore = defineStore('artikelSimo', {
         dataStat: '',
         dataStatS: '',
         countStat: '',
-        update: [], // update data
+        updateData: [], // update data
         updateStat: '',
         rules: [], // laravel rules
         options: [], // laravel options
@@ -54,13 +54,13 @@ export const useArtikelSimoStore = defineStore('artikelSimo', {
             try {
                 const response = await ArtikelSimoAPI.store(form);
                 if (response.data.saved) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -90,13 +90,13 @@ export const useArtikelSimoStore = defineStore('artikelSimo', {
             try {
                 const response = await ArtikelSimoAPI.update(id, form);
                 if (response.data.saved) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -107,13 +107,13 @@ export const useArtikelSimoStore = defineStore('artikelSimo', {
             try {
                 const response = await ArtikelSimoAPI.updateUtamakan(id);
                 if (response.data.saved) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -125,13 +125,13 @@ export const useArtikelSimoStore = defineStore('artikelSimo', {
             try {
                 const response = await ArtikelSimoAPI.destroy(id);
                 if (response.data.deleted) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },

@@ -8,12 +8,15 @@
 			<div class="content-wrapper">
 				<div class="content">
 
-					<!-- message -->
-					<message v-if="errors.any('form') && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors.items">
-					</message>
+					<VeeForm :form="form" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
 
-					<!-- main panel -->
-					<form @submit.prevent="save" enctype="multipart/form-data" data-vv-scope="form">
+						<!-- message -->
+						<message v-if="errors.any('form') && submited" :title="'Oops, terjadi kesalahan'"
+							:errorItem="errors.items">
+						</message>
+
+						<!-- main panel -->
+						<form @submit.prevent="handleSubmit(onValid)" enctype="multipart/form-data">
 
 						<!-- main form -->
 						<div class="card">
@@ -28,10 +31,14 @@
 											<!-- title -->
 											<h5 :class="{ 'text-danger' : errors.has('form.name')}">
 												<i class="icon-cross2" v-if="errors.has('form.name')"></i>
-												Nama: <wajib-badge></wajib-badge></h5>
+												Nama: <wajib-badge></wajib-badge>
+											</h5>
 
 											<!-- text -->
-											<input type="text" name="name" class="form-control" placeholder="Silahkan masukkan nama dokumen" v-validate="'required'" data-vv-as="Nama" v-model="form.name">
+											<Field name="name" rules="required" v-model="form.name" v-slot="{ field }">
+												<input type="text" class="form-control"
+													placeholder="Silahkan masukkan nama dokumen" v-bind="field">
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.name')">
@@ -52,14 +59,23 @@
 											</h5>
 
 											<!-- select -->
-											<select class="form-control" name="id_cu" v-model="form.id_cu" data-width="100%" v-validate="'required'" data-vv-as="CU" :disabled="modelCU.length === 0" @change="changeCU($event.target.value)">
-												<option disabled value="">
-													<span v-if="modelCUStat === 'loading'">Mohon tunggu...</span>
-													<span v-else>Silahkan pilih CU</span>
-												</option>
-												<option value="0"><span v-if="currentUser.pus">{{currentUser.pus.name}}</span> <span v-else>PUSKOPCUINA</span></option>
-												<option v-for="(cu, index) in modelCU" :value="cu.id" :key="index">{{cu.name}}</option>
-											</select>
+											<Field name="id_cu" rules="required" v-model="form.id_cu" v-slot="{ field }">
+												<select class="form-control" data-width="100%" v-bind="field"
+													:disabled="modelCU.length === 0"
+													@change="changeCU($event.target.value)">
+													<option disabled value="">
+														<span v-if="modelCUStat === 'loading'">Mohon tunggu...</span>
+														<span v-else>Silahkan pilih CU</span>
+													</option>
+													<option value="0">
+														<span v-if="currentUser.pus">{{currentUser.pus.name}}</span>
+														<span v-else>PUSKOPCUINA</span>
+													</option>
+													<option v-for="(cu, index) in modelCU" :value="cu.id" :key="index">
+														{{cu.name}}
+													</option>
+												</select>
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.id_cu')">
@@ -71,7 +87,8 @@
 
 									<!-- kategori -->
 									<div class="col-md-6">
-										<div class="form-group" :class="{'has-error' : errors.has('form.id_dokumen_kategori')}">
+										<div class="form-group"
+											:class="{'has-error' : errors.has('form.id_dokumen_kategori')}">
 
 											<!-- title -->
 											<h5 :class="{ 'text-danger' : errors.has('form.id_dokumen_kategori')}">
@@ -82,28 +99,41 @@
 											<div class="input-group">
 
 												<!-- select -->
-												<select class="form-control" name="id_dokumen_kategori" v-model="form.id_dokumen_kategori" data-width="100%" :disabled="modelKategori.length === 0" v-validate="'required'" data-vv-as="Kategori">
-													<option disabled value="">
-														<span v-if="form.id_cu != 0 && modelKategori.length == 0">Silahkan tambah kategori baru</span>
-														<span v-else>
-															<span v-if="modelKategoriStat === 'loading'">Mohon tunggu...</span>
-															<span v-else>Silahkan pilih kategori</span>
-														</span>
-													</option>
-													<option v-for="kategori in modelKategori" v-if="kategori" :value="kategori.id">{{kategori.name}}</option>
-												</select>
+												<Field name="id_dokumen_kategori" rules="required"
+													v-model="form.id_dokumen_kategori" v-slot="{ field }">
+													<select class="form-control" data-width="100%" v-bind="field"
+														:disabled="modelKategori.length === 0">
+														<option disabled value="">
+															<span v-if="form.id_cu != 0 && modelKategori.length == 0">Silahkan
+																tambah kategori baru</span>
+															<span v-else>
+																<span v-if="modelKategoriStat === 'loading'">Mohon
+																	tunggu...</span>
+																<span v-else>Silahkan pilih kategori</span>
+															</span>
+														</option>
+														<template v-for="kategori in modelKategori" :key="kategori ? kategori.id : undefined">
+															<option v-if="kategori" :value="kategori.id">
+																{{ kategori.name }}
+															</option>
+														</template>
+													</select>
+												</Field>
 
 												<!-- button -->
 												<div class="input-group-append">
-													<button type="button" class="btn btn-light" :disabled="form.id_cu === ''" @click="modalOpen_Kategori">
+													<button type="button" class="btn btn-light"
+														:disabled="form.id_cu === ''" @click="modalOpen_Kategori">
 														<i class="icon-plus22"></i>
 													</button>
 												</div>
 											</div>
 
 											<!-- error message -->
-											<small class="text-muted text-danger" v-if="errors.has('form.id_cu')">
-												<i class="icon-arrow-small-right"></i> {{ errors.first('form.id_cu') }}
+											<small class="text-muted text-danger"
+												v-if="errors.has('form.id_dokumen_kategori')">
+												<i class="icon-arrow-small-right"></i>
+												{{ errors.first('form.id_dokumen_kategori') }}
 											</small>
 											<small class="text-muted" v-else>&nbsp;</small>
 										</div>
@@ -160,11 +190,13 @@
 											</h5>
 
 											<!-- select -->
-											<select class="form-control" name="format" v-model="form.format" data-width="100%" v-validate="'required'" data-vv-as="format">
-												<option disabled value="">Silahkan pilih format</option>
-												<option value="upload">Upload</option>
-												<option value="link">Link</option>
-											</select>
+											<Field name="format" rules="required" v-model="form.format" v-slot="{ field }">
+												<select class="form-control" data-width="100%" v-bind="field">
+													<option disabled value="">Silahkan pilih format</option>
+													<option value="upload">Upload</option>
+													<option value="link">Link</option>
+												</select>
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.format')">
@@ -206,17 +238,17 @@
 						</div>
 
 						<!-- form info -->
-						<form-info></form-info>	
+						<form-info></form-info>
 
 						<!-- form button -->
 						<div class="card card-body">
-							<form-button
-								:cancelState="'methods'"
-								:formValidation="'form'"
+							<form-button :cancelState="'methods'" :formValidation="'form'"
 								@cancelClick="back"></form-button>
 						</div>
-						
+
 					</form>
+
+					</VeeForm>
 
 				</div>
 			</div>
@@ -248,7 +280,8 @@
 	import { useDokumenStore } from '../../stores/dokumen';
 	import { useCuStore } from '../../stores/cu';
 	import { useDokumenKategoriStore } from '../../stores/dokumenKategori';
-	import pageHeader from "../../components/pageHeader.vue";
+	import { useDokumenPenulisStore } from '../../stores/dokumenPenulis';
+	import pageHeader from '../../components/pageHeader.vue';
 	import { toMulipartedForm } from '../../helpers/form';
 	import appModal from '../../components/modal.vue';
 	import message from "../../components/message.vue";
@@ -256,6 +289,8 @@
 	import formInfo from "../../components/formInfo.vue";
 	import formKategori from "./formKategori.vue";
 	import wajibBadge from "../../components/wajibBadge.vue";
+	import VeeForm from '../../components/VeeForm.vue';
+	import { Field } from 'vee-validate';
 
 	export default {
 		components: {
@@ -265,13 +300,16 @@
 			formButton,
 			formInfo,
 			formKategori,
-			wajibBadge
+			wajibBadge,
+			VeeForm,
+			Field,
 		},
 		data() {
 			return {
 				dokumenStore: useDokumenStore(),
 				cuStore: useCuStore(),
 				dokumenKategoriStore: useDokumenKategoriStore(),
+				dokumenPenulisStore: useDokumenPenulisStore(),
 				title: 'Tambah Dokumen',
 				titleDesc: 'Menambah dokumen baru',
 				titleIcon: 'icon-plus3',
@@ -346,7 +384,7 @@
 
 				if(value === "success"){
 					this.modalTitle = this.updatePenulisResponse.message;
-					this.$store.dispatch('dokumenPenulis/getCu', this.id_cu);	
+					this.dokumenPenulisStore.getCu(this.id_cu);	
 					this.form.id_dokumen_penulis = this.updatePenulisResponse.id;
 				}else{
 					this.modalTitle = 'Oops terjadi kesalahan :(';
@@ -355,6 +393,24 @@
 			}
     },
 		methods: {
+			onValid(values) {
+				const payload = {
+					...this.form,
+					...values,
+				};
+				const formData = toMulipartedForm(payload, this.$route.meta.mode);
+
+				if (this.$route.meta.mode === 'edit') {
+					this.dokumenStore.update([this.$route.params.id, formData]);
+				} else {
+					this.dokumenStore.store(formData);
+				}
+				this.submited = false;
+			},
+			onInvalid() {
+				window.scrollTo(0, 0);
+				this.submited = true;
+			},
 			fetch(){
 				if(this.currentUser.id_cu === 0){
 					if(this.modelCuStat != 'success'){
@@ -391,23 +447,6 @@
 				if (!files.length)
 					return
 				this.form.content = files[0];
-			},
-			save() {
-				const formData = toMulipartedForm(this.form, this.$route.meta.mode);
-				
-				this.$validator.validateAll('form').then((result) => {
-					if (result) {
-						if(this.$route.meta.mode === 'edit'){
-							this.dokumenStore.update([this.$route.params.id, formData]);
-						}else{
-							this.dokumenStore.store(formData);
-						}
-						this.submited = false;
-					}else{
-						window.scrollTo(0, 0);
-						this.submited = true;
-					}
-				});
 			},
 			changeCU(id){
 				this.dokumenKategoriStore.getCu(id);
@@ -462,7 +501,7 @@
 				formStat: 'dataStat',
 				rules: 'rules',
 				options: 'options',
-				updateResponse: 'update',
+				updateResponse: 'updateData',
 				updateStat: 'updateStat'
 			}),
 			...mapState(useDokumenKategoriStore, {

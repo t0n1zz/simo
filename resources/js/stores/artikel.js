@@ -9,7 +9,7 @@ export const useArtikelStore = defineStore('artikel', {
         dataStat: '',
         dataStatS: '',
         countStat: '',
-        update: [], // update data
+        updateData: [], // update data
         updateStat: '',
         rules: [], // laravel rules
         options: [], // laravel options
@@ -72,13 +72,13 @@ export const useArtikelStore = defineStore('artikel', {
             try {
                 const response = await ArtikelAPI.store(form);
                 if (response.data.saved) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -108,13 +108,13 @@ export const useArtikelStore = defineStore('artikel', {
             try {
                 const response = await ArtikelAPI.update(id, form);
                 if (response.data.saved) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -125,13 +125,13 @@ export const useArtikelStore = defineStore('artikel', {
             try {
                 const response = await ArtikelAPI.updateTerbitkan(id);
                 if (response.data.saved) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -142,13 +142,13 @@ export const useArtikelStore = defineStore('artikel', {
             try {
                 const response = await ArtikelAPI.updateUtamakan(id);
                 if (response.data.saved) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -160,13 +160,13 @@ export const useArtikelStore = defineStore('artikel', {
             try {
                 const response = await ArtikelAPI.destroy(id);
                 if (response.data.deleted) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },

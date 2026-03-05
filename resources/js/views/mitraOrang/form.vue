@@ -9,12 +9,15 @@
 			<div class="content-wrapper">
 				<div class="content">
 
-					<!-- message -->
-					<message v-if="errors.any('form') && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors.items">
-					</message>
+					<VeeForm :form="form" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
 
-					<!-- main panel -->
-					<form @submit.prevent="save" enctype="multipart/form-data" data-vv-scope="form">
+						<!-- message -->
+						<message v-if="errors.any('form') && submited" :title="'Oops, terjadi kesalahan'"
+							:errorItem="errors.items">
+						</message>
+
+						<!-- main panel -->
+						<form @submit.prevent="handleSubmit(onValid)" enctype="multipart/form-data">
 
 						<!-- identitas -->
 						<div class="card">
@@ -54,11 +57,14 @@
 											<!-- title -->
 											<h6 :class="{ 'text-danger' : errors.has('form.name')}">
 												<i class="icon-cross2" v-if="errors.has('form.name')"></i>
-												Nama: <wajib-badge></wajib-badge></h6>
+												Nama: <wajib-badge></wajib-badge>
+											</h6>
 
 											<!-- text -->
-											<input type="text" name="name" class="form-control" placeholder="Silahkan masukkan nama" v-validate="'required|min:5'"
-											 data-vv-as="Nama" v-model="form.name">
+											<Field name="name" rules="required|min:5" v-model="form.name" v-slot="{ field }">
+												<input type="text" class="form-control" placeholder="Silahkan masukkan nama"
+													v-bind="field">
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.name')">
@@ -79,14 +85,22 @@
 											</h5>
 
 											<!-- select -->
-											<select class="form-control" name="id_cu" v-model="form.id_cu" data-width="100%" v-validate="'required'" data-vv-as="CU" :disabled="modelCU.length === 0">
-												<option disabled value="">
-													<span v-if="modelCUStat === 'loading'">Mohon tunggu...</span>
-													<span v-else>Silahkan pilih CU</span>
-												</option>
-												<option value="0"><span v-if="currentUser.pus">{{currentUser.pus.name}}</span> <span v-else>PUSKOPCUINA</span></option>
-												<option v-for="(cu, index) in modelCU" :value="cu.id" :key="index">{{cu.name}}</option>
-											</select>
+											<Field name="id_cu" rules="required" v-model="form.id_cu" v-slot="{ field }">
+												<select class="form-control" data-width="100%" v-bind="field"
+													:disabled="modelCU.length === 0">
+													<option disabled value="">
+														<span v-if="modelCUStat === 'loading'">Mohon tunggu...</span>
+														<span v-else>Silahkan pilih CU</span>
+													</option>
+													<option value="0">
+														<span v-if="currentUser.pus">{{currentUser.pus.name}}</span>
+														<span v-else>PUSKOPCUINA</span>
+													</option>
+													<option v-for="(cu, index) in modelCU" :value="cu.id" :key="index">
+														{{cu.name}}
+													</option>
+												</select>
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.id_cu')">
@@ -107,12 +121,13 @@
 											</h6>
 
 											<!-- select -->
-											<select class="form-control" name="kelamin" v-model="form.kelamin" data-width="100%" v-validate="'required'"
-											 data-vv-as="Gender">
-												<option disabled value="">Silahkan pilih gender</option>
-												<option value="Pria">Pria</option>
-												<option value="Wanita">Wanita</option>
-											</select>
+											<Field name="kelamin" rules="required" v-model="form.kelamin" v-slot="{ field }">
+												<select class="form-control" data-width="100%" v-bind="field">
+													<option disabled value="">Silahkan pilih gender</option>
+													<option value="Pria">Pria</option>
+													<option value="Wanita">Wanita</option>
+												</select>
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.kelamin')">
@@ -229,11 +244,14 @@
 											<!-- title -->
 											<h6 :class="{ 'text-danger' : errors.has('form.bidang')}">
 												<i class="icon-cross2" v-if="errors.has('form.bidang')"></i>
-												Bidang: <wajib-badge></wajib-badge></h6>
+												Bidang: <wajib-badge></wajib-badge>
+											</h6>
 
 											<!-- text -->
-											<input type="text" name="bidang" class="form-control" placeholder="Silahkan masukkan bidang" v-validate="'required'"
-											 data-vv-as="Bidang" v-model="form.bidang">
+											<Field name="bidang" rules="required" v-model="form.bidang" v-slot="{ field }">
+												<input type="text" class="form-control" placeholder="Silahkan masukkan bidang"
+													v-bind="field">
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.bidang')">
@@ -259,13 +277,25 @@
 
 									<!-- lembaga -->
 									<div class="col-md-4">
-										<div class="form-group">
+										<div class="form-group" :class="{'has-error' : errors.has('form.lembaga')}">
 
 											<!-- title -->
-											<h6>Lembaga:</h6>
+											<h6 :class="{ 'text-danger' : errors.has('form.lembaga')}">
+												<i class="icon-cross2" v-if="errors.has('form.lembaga')"></i>
+												Lembaga: <wajib-badge></wajib-badge>
+											</h6>
 
 											<!-- text -->
-											<input type="text" name="lembaga" class="form-control" placeholder="Silahkan masukkan lembaga" v-model="form.lembaga" v-validate="'required'" data-vv-as="Lembaga">
+											<Field name="lembaga" rules="required" v-model="form.lembaga" v-slot="{ field }">
+												<input type="text" class="form-control" placeholder="Silahkan masukkan lembaga"
+													v-bind="field">
+											</Field>
+
+											<!-- error message -->
+											<small class="text-muted text-danger" v-if="errors.has('form.lembaga')">
+												<i class="icon-arrow-small-right"></i> {{ errors.first('form.lembaga') }}
+											</small>
+											<small class="text-muted" v-else>&nbsp;</small>
 										</div>
 									</div>
 
@@ -279,27 +309,33 @@
 												Tingkat Pekerjaan: <wajib-badge></wajib-badge></h6>
 
 											<!-- text -->
-											<select class="form-control" name="pekerjaan_tingkat" v-model="form.pekerjaan_tingkat" data-width="100%" v-validate="'required'" data-vv-as="Tingkat Pekerjaan">
-												<option disabled value="">Silahkan pilih tingkat pekerjaan</option>
-												<option value="1">Pengurus</option>
-												<option value="2">Pengawas</option>
-												<option value="3">Komite</option>
-												<option value="4">Penasihat</option>
-												<option value="5">Senior Manajer (General Manager, CEO, Deputy)</option>
-												<option value="6">Manajer</option>
-												<option value="7">Supervisor (Kepala Bagian, Kepala Divisi, Kepala/Koordinator TP, Kepala Bidang)</option>
-												<option value="8">Staf</option>
-												<option value="9">Kontrak</option>
-												<option value="10">Kolektor</option>
-												<option value="11">Kelompok Inti</option>
-												<option value="12">Supporting Unit</option>
-												<option value="13">Vendor sMartCU</option>
-												<option value="14">Magang</option>
-											</select>
+											<Field name="pekerjaan_tingkat" rules="required"
+												v-model="form.pekerjaan_tingkat" v-slot="{ field }">
+												<select class="form-control" data-width="100%" v-bind="field">
+													<option disabled value="">Silahkan pilih tingkat pekerjaan</option>
+													<option value="1">Pengurus</option>
+													<option value="2">Pengawas</option>
+													<option value="3">Komite</option>
+													<option value="4">Penasihat</option>
+													<option value="5">Senior Manajer (General Manager, CEO, Deputy)</option>
+													<option value="6">Manajer</option>
+													<option value="7">Supervisor (Kepala Bagian, Kepala Divisi,
+														Kepala/Koordinator TP, Kepala Bidang)</option>
+													<option value="8">Staf</option>
+													<option value="9">Kontrak</option>
+													<option value="10">Kolektor</option>
+													<option value="11">Kelompok Inti</option>
+													<option value="12">Supporting Unit</option>
+													<option value="13">Vendor sMartCU</option>
+													<option value="14">Magang</option>
+												</select>
+											</Field>
 
 											<!-- error message -->
-											<small class="text-muted text-danger" v-if="errors.has('form.pekerjaan_tingkat')">
-												<i class="icon-arrow-small-right"></i> {{ errors.first('form.pekerjaan_tingkat') }}
+											<small class="text-muted text-danger"
+												v-if="errors.has('form.pekerjaan_tingkat')">
+												<i class="icon-arrow-small-right"></i>
+												{{ errors.first('form.pekerjaan_tingkat') }}
 											</small>
 											<small class="text-muted" v-else>&nbsp;</small>
 
@@ -325,27 +361,32 @@
 											<!-- title -->
 											<h6 :class="{ 'text-danger' : errors.has('form.pendidikan_tingkat')}">
 												<i class="icon-cross2" v-if="errors.has('form.pendidikan_tingkat')"></i>
-												Tingkat Pendidikan: <wajib-badge></wajib-badge></h6>
+												Tingkat Pendidikan: <wajib-badge></wajib-badge>
+											</h6>
 
 											<!-- text -->
-											<select class="form-control" name="pendidikan_tingkat" v-model="form.pendidikan_tingkat" data-width="100%" v-validate="'required'" data-vv-as="Tingkat pendidikan">
-												<option disabled value="">Silahkan pilih tingkat pendidikan</option>
-												<option value="TK">TK</option>
-												<option value="SD">SD</option>
-												<option value="SMP">SMP</option>
-												<option value="SMA/SMK">SMA/SMK</option>
-												<option value="D1">D1</option>
-												<option value="D2">D2</option>
-												<option value="D3">D3</option>
-												<option value="D4">D4</option>
-												<option value="S1">S1</option>
-												<option value="S2">S2</option>
-												<option value="S3">S3</option>
-												<option value="LAIN-LAIN">Lain-lain</option>
-											</select>
+											<Field name="pendidikan_tingkat" rules="required"
+												v-model="form.pendidikan_tingkat" v-slot="{ field }">
+												<select class="form-control" data-width="100%" v-bind="field">
+													<option disabled value="">Silahkan pilih tingkat pendidikan</option>
+													<option value="TK">TK</option>
+													<option value="SD">SD</option>
+													<option value="SMP">SMP</option>
+													<option value="SMA/SMK">SMA/SMK</option>
+													<option value="D1">D1</option>
+													<option value="D2">D2</option>
+													<option value="D3">D3</option>
+													<option value="D4">D4</option>
+													<option value="S1">S1</option>
+													<option value="S2">S2</option>
+													<option value="S3">S3</option>
+													<option value="LAIN-LAIN">Lain-lain</option>
+												</select>
+											</Field>
 
 											<!-- error message -->
-											<small class="text-muted text-danger" v-if="errors.has('form.pendidikan_tingkat')">
+											<small class="text-muted text-danger"
+												v-if="errors.has('form.pendidikan_tingkat')">
 												<i class="icon-arrow-small-right"></i> {{ errors.first('form.pendidikan_tingkat') }}
 											</small>
 											<small class="text-muted" v-else>&nbsp;</small>
@@ -427,20 +468,34 @@
 
 									<!-- kelurahan -->
 									<div class="col-md-4">
-										<div class="form-group">
+										<div class="form-group" :class="{'has-error' : errors.has('form.id_villages')}">
 
 											<!-- title -->
-											<h6>Kelurahan:</h6>
+											<h6 :class="{ 'text-danger' : errors.has('form.id_villages')}">
+												<i class="icon-cross2" v-if="errors.has('form.id_villages')"></i>
+												Kelurahan: <wajib-badge></wajib-badge>
+											</h6>
 
 											<!-- select -->
-											<select class="form-control"  name="id_villages" v-model="form.id_villages" data-width="100%" v-validate="'required'" data-vv-as="Desa" :disabled="modelVillages.length === 0">
-												<option disabled value="">
-													<span v-if="modelVillagesStat === 'loading'">Mohon tunggu... mohon tunggu</span>
-													<span v-else>Silahkan pilih kelurahan</span>
-												</option>
-												<option v-for="(villages, index) in modelVillages" :value="villages.id" :key="index">{{villages.name}}</option>
-											</select>
+											<Field name="id_villages" rules="required" v-model="form.id_villages"
+												v-slot="{ field }">
+												<select class="form-control" data-width="100%" v-bind="field"
+													:disabled="modelVillages.length === 0">
+													<option disabled value="">
+														<span v-if="modelVillagesStat === 'loading'">Mohon tunggu... mohon
+															tunggu</span>
+														<span v-else>Silahkan pilih kelurahan</span>
+													</option>
+													<option v-for="(villages, index) in modelVillages" :value="villages.id"
+														:key="index">{{villages.name}}</option>
+												</select>
+											</Field>
 
+											<!-- error message -->
+											<small class="text-muted text-danger" v-if="errors.has('form.id_villages')">
+												<i class="icon-arrow-small-right"></i> {{ errors.first('form.id_villages') }}
+											</small>
+											<small class="text-muted" v-else>&nbsp;</small>
 										</div>
 									</div>
 
@@ -483,10 +538,14 @@
 											<!-- title -->
 											<h6 :class="{ 'text-danger' : errors.has('form.email')}">
 												<i class="icon-cross2" v-if="errors.has('form.email')"></i>
-												Email:</h6>
+												Email:
+											</h6>
 
 											<!-- text -->
-											<input type="text" name="email" class="form-control" placeholder="Silahkan masukkan alamat email" v-validate="'email'" data-vv-as="Email" v-model="form.email">
+											<Field name="email" rules="email" v-model="form.email" v-slot="{ field }">
+												<input type="text" class="form-control"
+													placeholder="Silahkan masukkan alamat email" v-bind="field">
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.email')">
@@ -524,6 +583,8 @@
 						</div>
 
 					</form>
+
+					</VeeForm>
 				</div>
 			</div>
 		</div>
@@ -558,6 +619,8 @@
 	import Cleave from 'vue-cleave-component';
 	import wajibBadge from "../../components/wajibBadge.vue";
 	import DatePicker from "../../components/datePicker.vue";
+	import VeeForm from '../../components/VeeForm.vue';
+	import { Field } from 'vee-validate';
 
 	export default {
 		components: {
@@ -570,7 +633,9 @@
 			Cleave,
 			infoIcon,
 			wajibBadge,
-			DatePicker
+			DatePicker,
+			VeeForm,
+			Field,
 		},
 		data() {
 			return {
@@ -660,6 +725,20 @@
 			}
 		},
 		methods: {
+			onValid(values) {
+				const payload = { ...this.form, ...values, id_cu: this.currentUser.id_cu };
+				const formData = toMulipartedForm(payload, this.$route.meta.mode);
+				if (this.$route.meta.mode == 'edit') {
+					this.mitraOrangStore.update([this.$route.params.id, formData]);
+				} else {
+					this.mitraOrangStore.store(formData);
+				}
+				this.submited = false;
+			},
+			onInvalid() {
+				window.scrollTo(0, 0);
+				this.submited = true;
+			},
 			fetch() {
 				if (this.$route.meta.mode === 'edit') {
 					this.mitraOrangStore.edit(this.$route.params.id);
@@ -673,22 +752,6 @@
 					this.mitraOrangStore.create();
 				}
 				this.provincesStore.get();
-			},
-			save() {
-				const formData = toMulipartedForm(this.form, this.$route.meta.mode);
-				this.$validator.validateAll('form').then((result) => {
-					if (result) {
-						if (this.$route.meta.mode == 'edit') {
-							this.mitraOrangStore.update([this.$route.params.id, formData]);
-						} else {
-							this.mitraOrangStore.store(formData);
-						}
-						this.submited = false;
-					} else {
-						window.scrollTo(0, 0);
-						this.submited = true;
-					}
-				});
 			},
 			changeProvinces(id){
 				this.regenciesStore.getProvinces(id);
@@ -732,7 +795,7 @@
 				formStat: 'dataStat',
 				rules: 'rules',
 				options: 'options',
-				updateResponse: 'update',
+				updateResponse: 'updateData',
 				updateStat: 'updateStat'
 			}),
 			...mapState(useCuStore, {

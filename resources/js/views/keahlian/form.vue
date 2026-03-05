@@ -8,69 +8,62 @@
 			<div class="content-wrapper">
 				<div class="content">
 
+				<!-- main panel: rules on the tag via Field, no schema -->
+				<VeeForm :form="form" v-slot="{ errors, handleSubmit }">
+
 					<!-- message -->
 					<message v-if="errors.any('form') && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors.items">
 					</message>
 
-					<!-- main panel -->
-					<form @submit.prevent="save" data-vv-scope="form">
+					<form @submit.prevent="handleSubmit(onValid, onInvalid)">
 
-						<!-- main form -->
-						<div class="card">
-							<div class="card-body">
-								<div class="row">
+							<!-- main form -->
+							<div class="card">
+								<div class="card-body">
+									<div class="row">
 
-									<!-- name -->
-									<div class="col-md-12">
-										<div class="form-group" :class="{'has-error' : errors.has('form.name')}">
+										<!-- name: rule on the tag -->
+										<div class="col-md-12">
+											<div class="form-group" :class="{'has-error' : errors.has('form.name')}">
 
-											<!-- title -->
-											<h5 :class="{ 'text-danger' : errors.has('form.name')}">
-												<i class="icon-cross2" v-if="errors.has('form.name')"></i>
-												Nama: <wajib-badge></wajib-badge></h5>
+												<h5 :class="{ 'text-danger' : errors.has('form.name')}">
+													<i class="icon-cross2" v-if="errors.has('form.name')"></i>
+													Nama: <wajib-badge></wajib-badge></h5>
 
-											<!-- text -->
-											<input type="text" name="name" class="form-control" placeholder="Silahkan masukkan nama" v-validate="'required'" data-vv-as="Nama" v-model="form.name">
+												<Field name="name" rules="required" v-model="form.name" v-slot="{ field }">
+													<input type="text" class="form-control" placeholder="Silahkan masukkan nama" v-bind="field">
+												</Field>
 
-											<!-- error message -->
-											<small class="text-muted text-danger" v-if="errors.has('form.name')">
-												<i class="icon-arrow-small-right"></i> {{ errors.first('form.name') }}
-											</small>
-											<small class="text-muted" v-else>&nbsp;</small>
+												<small class="text-muted text-danger" v-if="errors.has('form.name')">
+													<i class="icon-arrow-small-right"></i> {{ errors.first('form.name') }}
+												</small>
+												<small class="text-muted" v-else>&nbsp;</small>
+											</div>
 										</div>
-									</div>
 
-									<!-- deskripsi -->
-									<div class="col-md-12">
-										<div class="form-group">
-
-											<!-- title -->
-											<h5>
-												Keterangan:
-											</h5>
-
-											<!-- textarea -->
-											<textarea rows="5" type="text" name="deskripsi" class="form-control" placeholder="Silahkan masukkan keterangan" v-model="form.deskripsi"></textarea>
-
+										<!-- deskripsi (no validation) -->
+										<div class="col-md-12">
+											<div class="form-group">
+												<h5>Keterangan:</h5>
+												<textarea rows="5" type="text" name="deskripsi" class="form-control" placeholder="Silahkan masukkan keterangan" v-model="form.deskripsi"></textarea>
+											</div>
 										</div>
 									</div>
 								</div>
 							</div>
-						</div>
 
-						<!-- form info -->
-						<form-info></form-info>	
-						<br/>
+							<form-info></form-info>
+							<br/>
 
-						<!-- form button -->
-						<div class="panel panel-flat panel-body">
-							<form-button
-								:cancelState="'methods'"
-								:formValidation="'form'"
-								@cancelClick="back"></form-button>
-						</div>
+							<div class="panel panel-flat panel-body">
+								<form-button
+									:cancelState="'methods'"
+									:formValidation="'form'"
+									@cancelClick="back"></form-button>
+							</div>
 
-					</form>
+						</form>
+					</VeeForm>
 				</div>
 			</div>
 		</div>
@@ -87,13 +80,14 @@
 	import { useAuthStore } from '../../stores/auth';
 	import { useKeahlianStore } from '../../stores/keahlian';
 	import { useCuStore } from '../../stores/cu';
-	import pageHeader from "../../components/pageHeader.vue";
-	import appImageUpload from '../../components/ImageUpload.vue';
+	import { Field } from 'vee-validate';
+	import VeeForm from '../../components/VeeForm.vue';
+	import pageHeader from '../../components/pageHeader.vue';
 	import appModal from '../../components/modal.vue';
-	import message from "../../components/message.vue";
-	import formButton from "../../components/formButton.vue";
-	import formInfo from "../../components/formInfo.vue";
-	import wajibBadge from "../../components/wajibBadge.vue";
+	import message from '../../components/message.vue';
+	import formButton from '../../components/formButton.vue';
+	import formInfo from '../../components/formInfo.vue';
+	import wajibBadge from '../../components/wajibBadge.vue';
 
 	export default {
 		components: {
@@ -103,6 +97,8 @@
 			formButton,
 			formInfo,
 			wajibBadge,
+			VeeForm,
+			Field,
 		},
 		data() {
 			return {
@@ -181,20 +177,17 @@
 					}
 				}
 			},
-			save() {
-				this.$validator.validateAll('form').then((result) => {
-					if (result) {
-						if(this.$route.meta.mode == 'edit'){
-							this.update([this.$route.params.id, this.form]);
-						}else{
-							this.store(this.form);
-						}
-						this.submited = false;
-					}else{
-						window.scrollTo(0, 0);
-						this.submited = true;
-					}
-				});
+			onValid() {
+				if (this.$route.meta.mode === 'edit') {
+					this.update([this.$route.params.id, this.form]);
+				} else {
+					this.store(this.form);
+				}
+				this.submited = false;
+			},
+			onInvalid() {
+				window.scrollTo(0, 0);
+				this.submited = true;
 			},
 			back(){
 				this.$router.push({name: this.kelas});
@@ -233,7 +226,7 @@
 			...mapState(useCuStore,{
 				modelCU: 'headerDataS',
 				modelCUStat: 'headerDataStatS',
-			})
-		}
+			}),
+		},
 	}
 </script>

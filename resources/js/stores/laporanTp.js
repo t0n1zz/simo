@@ -17,7 +17,7 @@ export const useLaporanTpStore = defineStore('laporanTp', {
     grafikStat: '',
     pearlsStat: '',
     periodeStat: '',
-    update: [], //update data
+    updateData: [], //update data
     updateStat: '',
     rules: [], //laravel rules
     options: [], //laravel options
@@ -38,7 +38,7 @@ export const useLaporanTpStore = defineStore('laporanTp', {
     getGrafikStat: state => state.grafikStat,
     getPeriodeStat: state => state.periodeStat,
     getIdCU: state => state.idCU,
-    getUpdate: state => state.update,
+    getUpdate: state => state.updateData,
     getUpdateStat: state => state.updateStat,
     getRules: state => state.rules,
     getOptions: state => state.options,
@@ -228,9 +228,9 @@ export const useLaporanTpStore = defineStore('laporanTp', {
         } else {
           this.updateStat = 'fail';
         }
-        this.update = response.data;
+        this.updateData = response.data;
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -265,9 +265,9 @@ export const useLaporanTpStore = defineStore('laporanTp', {
         } else {
           this.updateStat = 'fail';
         }
-        this.update = response.data;
+        this.updateData = response.data;
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -278,13 +278,13 @@ export const useLaporanTpStore = defineStore('laporanTp', {
       try {
         const response = await laporanTpAPI.updateTerbitkan(id);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -295,13 +295,13 @@ export const useLaporanTpStore = defineStore('laporanTp', {
       try {
         const response = await laporanTpAPI.updateUtamakan(id);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -313,13 +313,13 @@ export const useLaporanTpStore = defineStore('laporanTp', {
       try {
         const response = await laporanTpAPI.destroy(id);
         if (response.data.deleted) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -362,13 +362,13 @@ export const useLaporanTpStore = defineStore('laporanTp', {
       try {
         const response = await laporanTpDraftAPI.destroy(id);
         if (response.data.deleted) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -380,13 +380,13 @@ export const useLaporanTpStore = defineStore('laporanTp', {
       try {
         const response = await laporanTpDraftAPI.destroyAll();
         if (response.data.deleted) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -402,9 +402,9 @@ export const useLaporanTpStore = defineStore('laporanTp', {
         } else {
           this.updateStat = 'fail';
         }
-        this.update = response.data;
+        this.updateData = response.data;
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },

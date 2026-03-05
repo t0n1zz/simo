@@ -17,9 +17,11 @@
 							:disabled="modelPencairanStat === 'loading'">
 								<option disabled value="">Silahkan pilih tanggal pencairan</option>
 								<slot></slot>
-								<option v-for="pencairan in modelPencairan" :value="pencairan.tanggal_pencairan" v-if="pencairan">
+								<template v-for="pencairan in modelPencairan" :key="pencairan ? pencairan.tanggal_pencairan : undefined">
+								<option v-if="pencairan" :value="pencairan.tanggal_pencairan">
 									{{ pencairan.tanggal_pencairan | dateMonth }}
 								</option>
+							</template>
 							</select>
 
 							<!-- reload -->
@@ -39,45 +41,51 @@
 </template>
 
 <script>
-	import { mapGetters } from 'vuex';
+	import { useAuthStore } from '../../stores/auth';
+	import { useJalinanKlaimStore } from '../../stores/jalinanKlaim';
+
 	export default {
-		data(){
+		data() {
 			return {
+				authStore: useAuthStore(),
+				jalinanKlaimStore: useJalinanKlaimStore(),
 				pencairan: '',
-			}
+			};
 		},
-		created(){
+		created() {
 			this.fetchPencairan();
 		},
 		watch: {
-			'$route' (to, from){
+			$route() {
 				this.pencairan = '';
 				this.fetchPencairan();
 			},
-			modelPencairanStat(value){
-				if(value == "success"){
-					if(this.$route.meta.mode == 'cair'){
+			modelPencairanStat(value) {
+				if (value === 'success') {
+					if (this.$route.meta.mode === 'cair') {
 						this.pencairan = this.$route.params.awal;
 					}
 				}
 			},
-    },
+		},
 		methods: {
-			fetchPencairan(value){
-				this.$store.dispatch('jalinanKlaim/getPencairan', value);
+			fetchPencairan() {
+				this.jalinanKlaimStore.getPencairan();
 			},
-			changePencairan(value){
-				this.$router.push({name: 'jalinanCairTanggal', params:{awal: value, cu: 'semua', tp: 'semua'} });
+			changePencairan(value) {
+				this.$router.push({ name: 'jalinanCairTanggal', params: { awal: value, cu: 'semua', tp: 'semua' } });
 			},
 		},
 		computed: {
-			...mapGetters('auth',{
-				currentUser: 'currentUser'
-			}),
-			...mapGetters('jalinanKlaim',{
-				modelPencairan: 'periode',
-				modelPencairanStat: 'periodeStat',
-			}),
-		}
+			currentUser() {
+				return this.authStore.currentUser;
+			},
+			modelPencairan() {
+				return this.jalinanKlaimStore.periode;
+			},
+			modelPencairanStat() {
+				return this.jalinanKlaimStore.periodeStat;
+			},
+		},
 	}
 </script>

@@ -1,21 +1,20 @@
 <?php
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\AuthController;
 
 Route::group(['middleware' => 'throttle:1000,1', 'withoutMiddleware' => 'throttle:api'], function () {
-    //pemilihan
+    // pemilihan
     Route::get('/pemilihan/indexCalon/{name}', 'App\\Http\\Controllers\\PemilihanController@indexCalon');
     Route::get('/pemilihan/indexCalonTerpilih/{id}', 'App\\Http\\Controllers\\PemilihanController@indexCalonTerpilih');
     Route::post('/pemilihan/storePilihan', 'App\\Http\\Controllers\\PemilihanController@storePilihan');
     Route::post('/pemilihan/storeMultiPilihan', 'App\\Http\\Controllers\\PemilihanController@storeMultiPilihan');
 
-    //voting
+    // voting
     Route::get('/voting/indexPilihan/{name}', 'App\\Http\\Controllers\\VotingController@indexPilihan');
     Route::get('/voting/indexSuara/{id}', 'App\\Http\\Controllers\\VotingController@indexSuara');
     Route::post('/voting/storePilihan', 'App\\Http\\Controllers\\VotingController@storePilihan');
-    
-    //aset tetap
+
+    // aset tetap
     Route::get('/asetTetap/get/{kode}', 'App\\Http\\Controllers\\AsetTetapController@get');
 });
 
@@ -23,6 +22,7 @@ Route::group(['middleware' => 'throttle:200,1'], function () {
 
     Route::group(['prefix' => 'auth'], function ($router) {
         Route::post('/login', [AuthController::class, 'login']);
+        Route::post('/refresh', [AuthController::class, 'refresh'])->middleware('auth:sanctum');
         Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
         Route::get('/me', [AuthController::class, 'me'])->middleware('auth:sanctum');
     });
@@ -34,6 +34,10 @@ Route::group(['middleware' => 'throttle:200,1'], function () {
         // auth
         // Route::get('/userId', 'App\\Http\\Controllers\\AuthController@userId');
         // Route::get('/profile', 'App\\Http\\Controllers\\AuthController@profile');
+
+        // editor (centralized image upload for all rich text editors)
+        Route::post('/editor/upload-image', 'App\\Http\\Controllers\\EditorController@uploadImage');
+        Route::post('/editor/cleanup-images', 'App\\Http\\Controllers\\EditorController@cleanupImages');
 
         // system
         Route::get('/system/version', 'App\\Http\\Controllers\\SystemController@version');
@@ -67,7 +71,7 @@ Route::group(['middleware' => 'throttle:200,1'], function () {
             Route::delete('/user/{id}', 'App\\Http\\Controllers\\UserController@destroy');
         });
 
-        //media
+        // media
         Route::get('/media/count', 'App\\Http\\Controllers\\MediaController@count');
         Route::get('/media/history', 'App\\Http\\Controllers\\MediaController@history');
         Route::group(['middleware' => ['permission:index_media']], function () {
@@ -86,7 +90,7 @@ Route::group(['middleware' => 'throttle:200,1'], function () {
             Route::delete('/media/{id}', 'App\\Http\\Controllers\\MediaController@destroy');
         });
 
-        //artikel
+        // artikel
         Route::get('/artikel/count', 'App\\Http\\Controllers\\ArtikelController@count');
         Route::get('/artikel/history', 'App\\Http\\Controllers\\ArtikelController@history');
         Route::group(['middleware' => ['permission:index_artikel']], function () {
@@ -108,7 +112,7 @@ Route::group(['middleware' => 'throttle:200,1'], function () {
             Route::delete('/artikel/{id}', 'App\\Http\\Controllers\\ArtikelController@destroy');
         });
 
-        //artikel kategori
+        // artikel kategori
         Route::get('/artikelKategori/history', 'App\\Http\\Controllers\\ArtikelKategoriController@history');
         Route::group(['middleware' => ['permission:index_artikel_kategori']], function () {
             Route::get('/artikelKategori', 'App\\Http\\Controllers\\ArtikelKategoriController@index');
@@ -128,7 +132,7 @@ Route::group(['middleware' => 'throttle:200,1'], function () {
             Route::delete('/artikelKategori/{id}', 'App\\Http\\Controllers\\ArtikelKategoriController@destroy');
         });
 
-        //artikel penulis
+        // artikel penulis
         Route::get('/artikelPenulis/count', 'App\\Http\\Controllers\\ArtikelPenulisController@count');
         Route::get('/artikelPenulis/history', 'App\\Http\\Controllers\\ArtikelPenulisController@history');
         Route::get('/artikelPenulis', 'App\\Http\\Controllers\\ArtikelPenulisController@index');
@@ -239,7 +243,7 @@ Route::group(['middleware' => 'throttle:200,1'], function () {
             Route::delete('/produkcu/{id}', 'App\\Http\\Controllers\\ProdukCuController@destroy');
         });
 
-        //booking nomor sertifikat
+        // booking nomor sertifikat
         Route::post('/sertifikatKegiatan/uploadExcelPeserta', 'App\\Http\\Controllers\\SertifikatController@uploadExcelPeserta');
         Route::post('/sertifikatKegiatan/storeNomorSertifikatKegiatan/{id}', 'App\\Http\\Controllers\\SertifikatController@storeNomorSertifikatKegiatan');
         Route::get('/sertifikatKegiatan/index', 'App\\Http\\Controllers\\SertifikatController@indexNomorSertifikat');
@@ -255,7 +259,7 @@ Route::group(['middleware' => 'throttle:200,1'], function () {
         Route::post('/sertifikatKegiatan/update/{id}', 'App\\Http\\Controllers\\SertifikatController@update');
         Route::delete('/sertifikatKegiatan/{id}', 'App\\Http\\Controllers\\SertifikatController@destroy');
 
-        //generate sertifikat
+        // generate sertifikat
         Route::post('/generateSertifikat', 'App\\Http\\Controllers\\SertifikatController@generateSertifikat');
 
         // kode kegiatan
@@ -426,15 +430,14 @@ Route::group(['middleware' => 'throttle:200,1'], function () {
             Route::delete('/aktivis/{id}', 'App\\Http\\Controllers\\AktivisController@destroy');
         });
 
-        //aset tetap
+        // aset tetap
         Route::get('/asetTetap/generate/{id}', 'App\\Http\\Controllers\\AsetTetapController@generate');
         Route::get('/asetTetap', 'App\\Http\\Controllers\\AsetTetapController@index');
         Route::get('/asetTetap/indexSelesai', 'App\\Http\\Controllers\\AsetTetapController@indexSelesai');
         Route::get('/asetTetap/indexHapus', 'App\\Http\\Controllers\\AsetTetapController@indexHapus');
         Route::get('/asetTetap/history', 'App\\Http\\Controllers\\AsetTetapController@history');
         Route::get('/asetTetap/indexSub/{id}', 'App\\Http\\Controllers\\AsetTetapController@indexSub');
-        Route::group(['middleware' => ['permission:index_aset_tetap']], function () {
-        });
+        Route::group(['middleware' => ['permission:index_aset_tetap']], function () {});
         Route::group(['middleware' => ['permission:create_aset_tetap']], function () {
             Route::get('/asetTetap/create', 'App\\Http\\Controllers\\AsetTetapController@create');
             Route::post('/asetTetap/store', 'App\\Http\\Controllers\\AsetTetapController@store');
@@ -448,7 +451,7 @@ Route::group(['middleware' => 'throttle:200,1'], function () {
             Route::delete('/asetTetap/hapusDariLaporan/{id}', 'App\\Http\\Controllers\\AsetTetapController@hapusDariLaporan');
         });
 
-        //aset tetap jenis
+        // aset tetap jenis
         Route::get('/asetTetapGolongan/get', 'App\\Http\\Controllers\\AsetTetapGolonganController@get');
         Route::get('/asetTetapKelompok/get/{id}', 'App\\Http\\Controllers\\AsetTetapKelompokController@get');
         Route::get('/asetTetapJenis/get/{id}', 'App\\Http\\Controllers\\AsetTetapJenisController@get');
@@ -479,7 +482,7 @@ Route::group(['middleware' => 'throttle:200,1'], function () {
             Route::delete('/asetTetapJenis/{id}', 'App\\Http\\Controllers\\AsetTetapJenisController@destroy');
         });
 
-        //aset tetap lokasi
+        // aset tetap lokasi
         Route::get('/asetTetapLokasi/get', 'App\\Http\\Controllers\\AsetTetapLokasiController@get');
         Route::group(['middleware' => ['permission:index_aset_tetap_lokasi']], function () {
             Route::get('/asetTetapLokasi', 'App\\Http\\Controllers\\AsetTetapLokasiController@index');
@@ -514,7 +517,7 @@ Route::group(['middleware' => 'throttle:200,1'], function () {
             Route::delete('/surat/{id}', 'App\\Http\\Controllers\\SuratController@destroy');
         });
 
-        //surat kategori
+        // surat kategori
         Route::get('/suratKategori/history', 'App\\Http\\Controllers\\SuratKategoriController@history');
         Route::group(['middleware' => ['permission:index_surat']], function () {
             Route::get('/suratKategori', 'App\\Http\\Controllers\\SuratKategoriController@index');
@@ -534,7 +537,7 @@ Route::group(['middleware' => 'throttle:200,1'], function () {
             Route::delete('/suratKategori/{id}', 'App\\Http\\Controllers\\SuratKategoriController@destroy');
         });
 
-        //surat kode
+        // surat kode
         Route::get('/suratKode/history', 'App\\Http\\Controllers\\SuratKodeController@history');
         Route::group(['middleware' => ['permission:index_surat']], function () {
             Route::get('/suratKode', 'App\\Http\\Controllers\\SuratKodeController@index');
@@ -573,15 +576,14 @@ Route::group(['middleware' => 'throttle:200,1'], function () {
             Route::delete('/suratMasuk/{id}', 'App\\Http\\Controllers\\SuratMasukController@destroy');
         });
 
-        //dokumen
+        // dokumen
         Route::get('/dokumen/count', 'App\\Http\\Controllers\\DokumenController@count');
         Route::get('/dokumen/history', 'App\\Http\\Controllers\\DokumenController@history');
         Route::get('/dokumen/indexGerakanPublik', 'App\\Http\\Controllers\\DokumenController@indexGerakanPublik');
         Route::get('/dokumen/indexGerakanPublikCu/{id}', 'App\\Http\\Controllers\\DokumenController@indexGerakanPublikCu');
         Route::get('/dokumen/', 'App\\Http\\Controllers\\DokumenController@index');
         Route::get('/dokumen/indexCu/{id}', 'App\\Http\\Controllers\\DokumenController@indexCu');
-        Route::group(['middleware' => ['permission:index_dokumen']], function () {
-        });
+        Route::group(['middleware' => ['permission:index_dokumen']], function () {});
         Route::group(['middleware' => ['permission:create_dokumen']], function () {
             Route::get('/dokumen/create', 'App\\Http\\Controllers\\DokumenController@create');
             Route::post('/dokumen/store', 'App\\Http\\Controllers\\DokumenController@store');
@@ -594,7 +596,7 @@ Route::group(['middleware' => 'throttle:200,1'], function () {
             Route::delete('/dokumen/{id}', 'App\\Http\\Controllers\\DokumenController@destroy');
         });
 
-        //dokumen kategori
+        // dokumen kategori
         Route::get('/dokumenKategori/history', 'App\\Http\\Controllers\\DokumenKategoriController@history');
         Route::group(['middleware' => ['permission:index_dokumen_kategori']], function () {
             Route::get('/dokumenKategori', 'App\\Http\\Controllers\\DokumenKategoriController@index');
@@ -638,7 +640,6 @@ Route::group(['middleware' => 'throttle:200,1'], function () {
         Route::group(['middleware' => ['permission:destroy_assesment_access']], function () {
             Route::delete('/assesmentAccess/{id}', 'App\\Http\\Controllers\\AssesmentAccessController@destroy');
         });
-
 
         // assesment Culeg
         Route::get('/assesmentCuleg/history', 'App\\Http\\Controllers\\AssesmentCulegController@history');
@@ -735,7 +736,7 @@ Route::group(['middleware' => 'throttle:200,1'], function () {
             Route::delete('/monitoringCu/{id}', 'App\\Http\\Controllers\\MonitoringCuController@destroy');
         });
 
-         // monitoring pencapaian cu
+        // monitoring pencapaian cu
         Route::get('/monitoringPencapaianCu/history', 'App\\Http\\Controllers\\MonitoringPencapaianCuController@history');
         Route::group(['middleware' => ['permission:index_monitoring_cu|create_monitoring_cu_keputusan']], function () {
             Route::get('/monitoringPencapaianCu/get/{id}', 'App\\Http\\Controllers\\MonitoringPencapaianCuController@get');
@@ -905,7 +906,7 @@ Route::group(['middleware' => 'throttle:200,1'], function () {
             Route::get('/jalinanKlaim/indexLaporanLamaDetail/{cu}/{status}/{dari}/{ke}/{awal}/{akhir}', 'App\\Http\\Controllers\\JalinanKlaimController@indexLaporanLamaDetail');
         });
 
-        //jalinan iuran
+        // jalinan iuran
         Route::get('/jalinanIuran', 'App\\Http\\Controllers\\JalinanIuranController@index');
         Route::get('/jalinanIuran/indexCu/{id}', 'App\\Http\\Controllers\\JalinanIuranController@indexCu');
         Route::get('/jalinanIuran/indexAnggota/{id}/{cu}/{lokasi}', 'App\\Http\\Controllers\\JalinanIuranController@indexAnggota');
@@ -914,7 +915,7 @@ Route::group(['middleware' => 'throttle:200,1'], function () {
         Route::post('/jalinanIuran/store', 'App\\Http\\Controllers\\JalinanIuranController@store');
         Route::post('/jalinanIuran/update/{id}', 'App\\Http\\Controllers\\JalinanIuranController@update');
         Route::delete('/jalinanIuran/{id}', 'App\\Http\\Controllers\\JalinanIuranController@destroy');
-        
+
         // Route::group(['middleware' => ['permission:index_jalinan_iuran']], function () {
         //     Route::get('/jalinanIuran', 'App\\Http\\Controllers\\JalinanIuranController@index');
         //     Route::get('/jalinanIuran/indexCu/{id}', 'App\\Http\\Controllers\\JalinanIuranController@indexCu');
@@ -932,7 +933,7 @@ Route::group(['middleware' => 'throttle:200,1'], function () {
         //     Route::delete('/jalinanIuran/{id}', 'App\\Http\\Controllers\\JalinanIuranController@destroy');
         // });
 
-        //laporan gerakan
+        // laporan gerakan
         Route::get('/laporanGerakan', 'App\\Http\\Controllers\\LaporanGerakanController@index');
         Route::group(['middleware' => ['permission:create_laporan_cu']], function () {
             Route::get('/laporanGerakan/create', 'App\\Http\\Controllers\\LaporanGerakanController@create');
@@ -946,7 +947,7 @@ Route::group(['middleware' => 'throttle:200,1'], function () {
             Route::delete('/laporanGerakan/{id}', 'App\\Http\\Controllers\\LaporanGerakanController@destroy');
         });
 
-        //laporan cu
+        // laporan cu
         Route::get('/laporanCu/history', 'App\\Http\\Controllers\\LaporanCuController@history');
         Route::group(['middleware' => ['permission:index_laporan_cu']], function () {
             Route::get('/laporanCu', 'App\\Http\\Controllers\\LaporanCuController@index');
@@ -993,7 +994,7 @@ Route::group(['middleware' => 'throttle:200,1'], function () {
             Route::get('/laporanCuDraft/count', 'App\\Http\\Controllers\\LaporanCuDraftController@count');
         });
 
-        //laporan tp
+        // laporan tp
         Route::get('/laporanTp/history', 'App\\Http\\Controllers\\LaporanTpController@history');
         Route::group(['middleware' => ['permission:index_laporan_tp']], function () {
             Route::get('/laporanTp/cu/{id}', 'App\\Http\\Controllers\\LaporanTpController@index');
@@ -1039,7 +1040,7 @@ Route::group(['middleware' => 'throttle:200,1'], function () {
             Route::get('/laporanTpDraft/count', 'App\\Http\\Controllers\\LaporanTpDraftController@count');
         });
 
-        //coa
+        // coa
         Route::get('/coa/history', 'App\\Http\\Controllers\\CoaController@history');
         Route::group(['middleware' => ['permission:index_coa']], function () {
             Route::get('/coa', 'App\\Http\\Controllers\\CoaController@index');
@@ -1057,7 +1058,7 @@ Route::group(['middleware' => 'throttle:200,1'], function () {
             Route::delete('/coa/{id}', 'App\\Http\\Controllers\\CoaController@destroy');
         });
 
-        //saran
+        // saran
         Route::group(['middleware' => ['permission:index_saran']], function () {
             Route::get('/saran', 'App\\Http\\Controllers\\SaranController@index');
             Route::get('/saran/count', 'App\\Http\\Controllers\\SaranController@count');
@@ -1068,7 +1069,7 @@ Route::group(['middleware' => 'throttle:200,1'], function () {
             Route::delete('/saran/{id}', 'App\\Http\\Controllers\\SaranController@destroy');
         });
 
-        //error log
+        // error log
         Route::group(['middleware' => ['permission:index_saran']], function () {
             Route::get('/errorLog', 'App\\Http\\Controllers\\ErrorLogController@index');
             Route::get('/errorLog/count', 'App\\Http\\Controllers\\ErrorLogController@count');
@@ -1079,7 +1080,7 @@ Route::group(['middleware' => 'throttle:200,1'], function () {
             Route::delete('/errorLog/{id}', 'App\\Http\\Controllers\\ErrorLogController@destroy');
         });
 
-        //pengumuman
+        // pengumuman
         Route::group(['middleware' => ['permission:index_pengumuman']], function () {
             Route::get('/pengumuman', 'App\\Http\\Controllers\\PengumumanController@index');
             Route::get('/pengumuman/indexCu/{id}', 'App\\Http\\Controllers\\PengumumanController@indexCu');
@@ -1097,7 +1098,7 @@ Route::group(['middleware' => 'throttle:200,1'], function () {
             Route::delete('/pengumuman/{id}', 'App\\Http\\Controllers\\PengumumanController@destroy');
         });
 
-        //pemilihan
+        // pemilihan
         Route::group(['middleware' => ['permission:index_pemilihan']], function () {
             Route::get('/pemilihan', 'App\\Http\\Controllers\\PemilihanController@index');
             Route::get('/pemilihan/indexCu/{id}', 'App\\Http\\Controllers\\PemilihanController@indexCu');
@@ -1123,7 +1124,7 @@ Route::group(['middleware' => 'throttle:200,1'], function () {
             Route::delete('/pemilihan/{id}', 'App\\Http\\Controllers\\PemilihanController@destroy');
         });
 
-        //voting
+        // voting
         Route::group(['middleware' => ['permission:index_voting']], function () {
             Route::get('/voting', 'App\\Http\\Controllers\\VotingController@index');
             Route::get('/voting/indexCu/{id}', 'App\\Http\\Controllers\\VotingController@indexCu');
@@ -1151,7 +1152,7 @@ Route::group(['middleware' => 'throttle:200,1'], function () {
             Route::delete('/voting/{id}', 'App\\Http\\Controllers\\VotingController@destroy');
         });
 
-        //kubn
+        // kubn
         Route::get('/kubn/history', 'App\\Http\\Controllers\\KubnController@history');
         Route::get('/kubn/indexAnggota/{id}', 'App\\Http\\Controllers\\KubnController@indexAnggota');
         Route::get('/kubn/indexDiklat/{id}', 'App\\Http\\Controllers\\KubnController@indexDiklat');
@@ -1173,7 +1174,7 @@ Route::group(['middleware' => 'throttle:200,1'], function () {
             Route::delete('/kubn/{id}', 'App\\Http\\Controllers\\KubnController@destroy');
         });
 
-        //Kubn Usaha
+        // Kubn Usaha
         Route::get('/kubnUsaha/history', 'App\\Http\\Controllers\\KubnUsahaController@history');
         Route::group(['middleware' => ['permission:index_kubn']], function () {
             Route::get('/kubnUsaha', 'App\\Http\\Controllers\\KubnUsahaController@index');
@@ -1191,7 +1192,7 @@ Route::group(['middleware' => 'throttle:200,1'], function () {
             Route::delete('/kubnUsaha/{id}', 'App\\Http\\Controllers\\KubnUsahaController@destroy');
         });
 
-        //Kombas
+        // Kombas
         Route::get('/kombas/history', 'App\\Http\\Controllers\\KombasController@history');
         Route::group(['middleware' => ['permission:index_kubn']], function () {
             Route::get('/kombas/index/{tipe}', 'App\\Http\\Controllers\\KombasController@index');
@@ -1210,7 +1211,7 @@ Route::group(['middleware' => 'throttle:200,1'], function () {
             Route::delete('/kombas/{id}', 'App\\Http\\Controllers\\KombasController@destroy');
         });
 
-        //enterpreneur
+        // enterpreneur
         Route::get('/enterpreneur/history', 'App\\Http\\Controllers\\EnterpreneurController@history');
         Route::get('/enterpreneur/indexDiklat/{id}', 'App\\Http\\Controllers\\EnterpreneurController@indexDiklat');
         Route::group(['middleware' => ['permission:index_enterpreneur']], function () {
@@ -1231,7 +1232,7 @@ Route::group(['middleware' => 'throttle:200,1'], function () {
             Route::delete('/enterpreneur/{id}', 'App\\Http\\Controllers\\EnterpreneurController@destroy');
         });
 
-        //umkm
+        // umkm
         Route::get('/umkm/history', 'App\\Http\\Controllers\\UmkmController@history');
         Route::get('/umkm/indexDiklat/{id}', 'App\\Http\\Controllers\\UmkmController@indexDiklat');
         Route::group(['middleware' => ['permission:index_umkm']], function () {
@@ -1252,7 +1253,7 @@ Route::group(['middleware' => 'throttle:200,1'], function () {
             Route::delete('/umkm/{id}', 'App\\Http\\Controllers\\UmkmController@destroy');
         });
 
-        //mentor
+        // mentor
         Route::get('/mentor/history', 'App\\Http\\Controllers\\MentorController@history');
         Route::get('/mentor/indexDiklat/{id}', 'App\\Http\\Controllers\\MentorController@indexDiklat');
         Route::group(['middleware' => ['permission:index_mentor']], function () {
@@ -1273,44 +1274,44 @@ Route::group(['middleware' => 'throttle:200,1'], function () {
             Route::delete('/mentor/{id}', 'App\\Http\\Controllers\\MentorController@destroy');
         });
 
-         //fasilitator
-         Route::get('/fasilitator/history', 'App\\Http\\Controllers\\FasilitatorController@history');
-         Route::get('/fasilitator/indexDiklat/{id}', 'App\\Http\\Controllers\\FasilitatorController@indexDiklat');
-         Route::group(['middleware' => ['permission:index_fasilitator']], function () {
-             Route::get('/fasilitator', 'App\\Http\\Controllers\\FasilitatorController@index');
-             Route::get('/fasilitator/get', 'App\\Http\\Controllers\\FasilitatorController@get');
-             Route::get('/fasilitator/indexCu/{id}', 'App\\Http\\Controllers\\FasilitatorController@indexCu');
-             Route::get('/fasilitator/getCu/{id}', 'App\\Http\\Controllers\\FasilitatorController@getCu');
-         });
-         Route::group(['middleware' => ['permission:create_fasilitator']], function () {
-             Route::get('/fasilitator/create', 'App\\Http\\Controllers\\FasilitatorController@create');
-             Route::post('/fasilitator/store', 'App\\Http\\Controllers\\FasilitatorController@store');
-         });
-         Route::group(['middleware' => ['permission:update_fasilitator']], function () {
-             Route::get('/fasilitator/edit/{id}', 'App\\Http\\Controllers\\FasilitatorController@edit');
-             Route::post('/fasilitator/update/{id}', 'App\\Http\\Controllers\\FasilitatorController@update');
-         });
-         Route::group(['middleware' => ['permission:destroy_fasilitator']], function () {
-             Route::delete('/fasilitator/{id}', 'App\\Http\\Controllers\\FasilitatorController@destroy');
-         });
+        // fasilitator
+        Route::get('/fasilitator/history', 'App\\Http\\Controllers\\FasilitatorController@history');
+        Route::get('/fasilitator/indexDiklat/{id}', 'App\\Http\\Controllers\\FasilitatorController@indexDiklat');
+        Route::group(['middleware' => ['permission:index_fasilitator']], function () {
+            Route::get('/fasilitator', 'App\\Http\\Controllers\\FasilitatorController@index');
+            Route::get('/fasilitator/get', 'App\\Http\\Controllers\\FasilitatorController@get');
+            Route::get('/fasilitator/indexCu/{id}', 'App\\Http\\Controllers\\FasilitatorController@indexCu');
+            Route::get('/fasilitator/getCu/{id}', 'App\\Http\\Controllers\\FasilitatorController@getCu');
+        });
+        Route::group(['middleware' => ['permission:create_fasilitator']], function () {
+            Route::get('/fasilitator/create', 'App\\Http\\Controllers\\FasilitatorController@create');
+            Route::post('/fasilitator/store', 'App\\Http\\Controllers\\FasilitatorController@store');
+        });
+        Route::group(['middleware' => ['permission:update_fasilitator']], function () {
+            Route::get('/fasilitator/edit/{id}', 'App\\Http\\Controllers\\FasilitatorController@edit');
+            Route::post('/fasilitator/update/{id}', 'App\\Http\\Controllers\\FasilitatorController@update');
+        });
+        Route::group(['middleware' => ['permission:destroy_fasilitator']], function () {
+            Route::delete('/fasilitator/{id}', 'App\\Http\\Controllers\\FasilitatorController@destroy');
+        });
 
-         //Keahlian
-         Route::get('/keahlian/history', 'App\\Http\\Controllers\\KeahlianController@history');
-         Route::get('/keahlian', 'App\\Http\\Controllers\\KeahlianController@index');
-         Route::get('/keahlian/get', 'App\\Http\\Controllers\\KeahlianController@get');
-         Route::group(['middleware' => ['permission:create_keahlian']], function () {
-             Route::get('/keahlian/create', 'App\\Http\\Controllers\\KeahlianController@create');
-             Route::post('/keahlian/store', 'App\\Http\\Controllers\\KeahlianController@store');
-         });
-         Route::group(['middleware' => ['permission:update_keahlian']], function () {
-             Route::get('/keahlian/edit/{id}', 'App\\Http\\Controllers\\KeahlianController@edit');
-             Route::post('/keahlian/update/{id}', 'App\\Http\\Controllers\\KeahlianController@update');
-         });
-         Route::group(['middleware' => ['permission:destroy_keahlian']], function () {
-             Route::delete('/keahlian/{id}', 'App\\Http\\Controllers\\KeahlianController@destroy');
-         });
+        // Keahlian
+        Route::get('/keahlian/history', 'App\\Http\\Controllers\\KeahlianController@history');
+        Route::get('/keahlian', 'App\\Http\\Controllers\\KeahlianController@index');
+        Route::get('/keahlian/get', 'App\\Http\\Controllers\\KeahlianController@get');
+        Route::group(['middleware' => ['permission:create_keahlian']], function () {
+            Route::get('/keahlian/create', 'App\\Http\\Controllers\\KeahlianController@create');
+            Route::post('/keahlian/store', 'App\\Http\\Controllers\\KeahlianController@store');
+        });
+        Route::group(['middleware' => ['permission:update_keahlian']], function () {
+            Route::get('/keahlian/edit/{id}', 'App\\Http\\Controllers\\KeahlianController@edit');
+            Route::post('/keahlian/update/{id}', 'App\\Http\\Controllers\\KeahlianController@update');
+        });
+        Route::group(['middleware' => ['permission:destroy_keahlian']], function () {
+            Route::delete('/keahlian/{id}', 'App\\Http\\Controllers\\KeahlianController@destroy');
+        });
 
-        //Jenis Diklat
+        // Jenis Diklat
         Route::get('/jenisDiklat/history', 'App\\Http\\Controllers\\JenisDiklatController@history');
         Route::get('/jenisDiklat', 'App\\Http\\Controllers\\JenisDiklatController@index');
         Route::get('/jenisDiklat/get', 'App\\Http\\Controllers\\JenisDiklatController@get');
@@ -1331,7 +1332,7 @@ Route::group(['middleware' => 'throttle:200,1'], function () {
         Route::get('/pus_all', 'App\\Http\\Controllers\\PusController@indexAll');
         Route::post('/pus/store', 'App\\Http\\Controllers\\PusController@store');
 
-        // tempat 
+        // tempat
         Route::get('/tempat', 'App\\Http\\Controllers\\TempatController@index');
         Route::get('/tempat/get/{id}', 'App\\Http\\Controllers\\TempatController@get');
         Route::get('/tempat/create', 'App\\Http\\Controllers\\TempatController@create');
@@ -1340,7 +1341,7 @@ Route::group(['middleware' => 'throttle:200,1'], function () {
         Route::post('/tempat/update/{id}', 'App\\Http\\Controllers\\TempatController@update');
         Route::delete('/tempat/{id}', 'App\\Http\\Controllers\\TempatController@destroy');
 
-        //pekerjaan
+        // pekerjaan
         Route::get('/pekerjaan', 'App\\Http\\Controllers\\PekerjaanController@index');
         Route::get('/pekerjaan/get', 'App\\Http\\Controllers\\PekerjaanController@get');
         Route::get('/pekerjaan/create', 'App\\Http\\Controllers\\PekerjaanController@create');
@@ -1349,7 +1350,7 @@ Route::group(['middleware' => 'throttle:200,1'], function () {
         Route::post('/pekerjaan/update/{id}', 'App\\Http\\Controllers\\PekerjaanController@update');
         Route::delete('/pekerjaan/{id}', 'App\\Http\\Controllers\\PekerjaanController@destroy');
 
-        //suku
+        // suku
         Route::get('/suku', 'App\\Http\\Controllers\\SukuController@index');
         Route::get('/suku/get', 'App\\Http\\Controllers\\SukuController@get');
         Route::get('/suku/create', 'App\\Http\\Controllers\\SukuController@create');
@@ -1358,7 +1359,7 @@ Route::group(['middleware' => 'throttle:200,1'], function () {
         Route::post('/suku/update/{id}', 'App\\Http\\Controllers\\SukuController@update');
         Route::delete('/suku/{id}', 'App\\Http\\Controllers\\SukuController@destroy');
 
-        //provinces
+        // provinces
         Route::get('/provinces', 'App\\Http\\Controllers\\ProvincesController@index');
         Route::get('/provinces/get', 'App\\Http\\Controllers\\ProvincesController@get');
         Route::get('/provinces/create', 'App\\Http\\Controllers\\ProvincesController@create');
@@ -1367,7 +1368,7 @@ Route::group(['middleware' => 'throttle:200,1'], function () {
         Route::post('/provinces/update/{id}', 'App\\Http\\Controllers\\ProvincesController@update');
         Route::delete('/provinces/{id}', 'App\\Http\\Controllers\\ProvincesController@destroy');
 
-        //regencies
+        // regencies
         Route::get('/regencies', 'App\\Http\\Controllers\\RegenciesController@index');
         Route::get('/regencies/get', 'App\\Http\\Controllers\\RegenciesController@get');
         Route::get('/regencies/indexProvinces/{id}', 'App\\Http\\Controllers\\RegenciesController@indexProvinces');
@@ -1378,7 +1379,7 @@ Route::group(['middleware' => 'throttle:200,1'], function () {
         Route::post('/regencies/update/{id}', 'App\\Http\\Controllers\\RegenciesController@update');
         Route::delete('/regencies/{id}', 'App\\Http\\Controllers\\RegenciesController@destroy');
 
-        //districts
+        // districts
         Route::get('/districts', 'App\\Http\\Controllers\\DistrictsController@index');
         Route::get('/districts/get', 'App\\Http\\Controllers\\DistrictsController@get');
         Route::get('/districts/indexRegencies/{id}', 'App\\Http\\Controllers\\DistrictsController@indexRegencies');
@@ -1389,7 +1390,7 @@ Route::group(['middleware' => 'throttle:200,1'], function () {
         Route::post('/districts/update/{id}', 'App\\Http\\Controllers\\DistrictsController@update');
         Route::delete('/districts/{id}', 'App\\Http\\Controllers\\DistrictsController@destroy');
 
-        //villages
+        // villages
         Route::get('/villages', 'App\\Http\\Controllers\\VillagesController@index');
         Route::get('/villages/get', 'App\\Http\\Controllers\\VillagesController@get');
         Route::get('/villages/indexDistricts/{id}', 'App\\Http\\Controllers\\VillagesController@indexDistricts');
@@ -1411,12 +1412,12 @@ Route::group(['middleware' => 'throttle:200,1'], function () {
         Route::get('/notification/markRead/{id}', 'App\\Http\\Controllers\\NotificationController@markRead');
         Route::get('/notification/markAllRead', 'App\\Http\\Controllers\\NotificationController@markAllRead');
 
-        //file upload
+        // file upload
         Route::post('/fileUpload/store', 'App\\Http\\Controllers\\FileUploadController@store');
         Route::delete('/fileUpload/destroy/{id}', 'App\\Http\\Controllers\\FileUploadController@destroy');
         Route::get('/fileUpload/index/{id_cu}/{id_user}', 'App\\Http\\Controllers\\FileUploadController@index');
 
-        //import csv
+        // import csv
         Route::get('/anggotaCuImportEscete/index/{id_cu}', 'App\\Http\\Controllers\\AnggotaCuEsceteController@index');
         Route::post('/anggotaCuImportEscete/draft/{id_cu}/{id_user}', 'App\\Http\\Controllers\\AnggotaCuEsceteController@uploadDraft');
         Route::post('/anggotaCuImportEscete/simpandraft/{id_cu}', 'App\\Http\\Controllers\\AnggotaCuEsceteController@store');

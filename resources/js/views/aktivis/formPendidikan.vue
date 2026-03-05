@@ -1,6 +1,7 @@
 <template>
 	<div>
-	<form @submit.prevent="save" data-vv-scope="form">	
+		<VeeForm :form="form" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
+		<form @submit.prevent="handleSubmit(onValid)">
 		<div class="row">
 
 			<!-- tingkat -->
@@ -14,8 +15,9 @@
 					</h6>
 
 					<!-- select -->
-					<select class="form-control" name="tingkat" v-model="form.tingkat" data-width="100%" v-validate="'required'" data-vv-as="Tingkat pendidikan">
-						<option disabled value="">Silahkan pilih tingkat pendidikan</option>
+					<Field name="tingkat" rules="required" v-model="form.tingkat" v-slot="{ field }">
+						<select class="form-control" data-width="100%" v-bind="field">
+							<option disabled value="">Silahkan pilih tingkat pendidikan</option>
 						<option value="TK">TK</option>
 						<option value="SD">SD</option>
 						<option value="SMP">SMP</option>
@@ -28,7 +30,8 @@
 						<option value="S2">S2</option>
 						<option value="S3">S3</option>
 						<option value="LAIN-LAIN">Lain-lain</option>
-					</select>
+						</select>
+					</Field>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('form.tingkat')">
@@ -48,7 +51,9 @@
 						Jurusan:</h6>
 
 					<!-- text -->
-					<input type="text" name="name" class="form-control" placeholder="Silahkan masukkan jurusan" v-validate="'required'" data-vv-as="Jurusan pendidikan" v-model="form.name">
+					<Field name="name" rules="required" v-model="form.name" v-slot="{ field }">
+						<input type="text" class="form-control" placeholder="Silahkan masukkan jurusan" v-bind="field">
+					</Field>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('form.name')">
@@ -68,7 +73,9 @@
 						Tempat:</h6>
 
 					<!-- text -->
-					<input type="text" name="tempat" class="form-control" placeholder="Silahkan masukkan tempat pendidikan" v-validate="'required|min:5'" data-vv-as="Tempat pendidikan" v-model="form.tempat">
+					<Field name="tempat" rules="required|min:5" v-model="form.tempat" v-slot="{ field }">
+						<input type="text" class="form-control" placeholder="Silahkan masukkan tempat pendidikan" v-bind="field">
+					</Field>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('form.tempat')">
@@ -88,8 +95,10 @@
 						Tgl. Mulai:</h6>
 
 					<!-- input -->
-					<date-picker @dateSelected="form.mulai = $event" :defaultDate="form.mulai"></date-picker>	
-					<input v-model="form.mulai" v-show="false" v-validate="'required'" data-vv-as="Tgl. mulai pendidikan"/>
+					<date-picker @dateSelected="form.mulai = $event" :defaultDate="form.mulai"></date-picker>
+					<Field name="mulai" rules="required" v-model="form.mulai" v-slot="{ field }">
+						<input type="hidden" v-bind="field" />
+					</Field>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('form.mulai')">
@@ -136,7 +145,8 @@
 			<button type="button" class="btn btn-light btn-block pb-2" @click.prevent="tutup">
 				<i class="icon-cross"></i> Tutup</button>
 		</div> 
-	</form>	
+		</form>
+		</VeeForm>
 	</div>
 </template>
 
@@ -144,12 +154,16 @@
 	import { useAktivisStore } from '../../stores/aktivis';
 	import Cleave from 'vue-cleave-component';
 	import DatePicker from "../../components/datePicker.vue";
+	import VeeForm from '../../components/VeeForm.vue';
+	import { Field } from 'vee-validate';
 
 	export default {
 		props:['formState','selected','id_aktivis'],
 		components: {
 			Cleave,
-			DatePicker
+			DatePicker,
+			VeeForm,
+			Field
 		},
 		data() {
 			return {
@@ -197,17 +211,13 @@
 			}
 		},
 		methods: {
-			save(){
-				let formData = {};
-				formData.pendidikan = this.form;
-				this.$validator.validateAll('form').then((result) => {
-					if (result) {
-						this.aktivisStore.savePendidikan([this.id_aktivis, formData]);
-						this.submited = false;
-					}else{
-						this.submited = true;
-					}	
-				});	
+			onValid() {
+				const formData = { pendidikan: this.form };
+				this.aktivisStore.savePendidikan([this.id_aktivis, formData]);
+				this.submited = false;
+			},
+			onInvalid() {
+				this.submited = true;
 			},
 			tutup(){
 				this.$emit('tutup');

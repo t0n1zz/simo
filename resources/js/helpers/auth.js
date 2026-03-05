@@ -1,4 +1,5 @@
 import { setAuthorization } from "./general";
+import { clearLastActivity } from "./inactivity";
 
 export function login(credentials) {
   return new Promise((res, rej) => {
@@ -21,7 +22,7 @@ export function refreshToken() {
         res(response.data);
       })
       .catch((err) => {
-        rej("Username atau password salah");
+        rej(err?.response?.data?.message || "Session expired");
       })
   })
 }
@@ -42,9 +43,13 @@ export function logout() {
       .then((response) => {
         localStorage.removeItem('user');
         localStorage.removeItem('token');
+        clearLastActivity();
         res(response.data);
       })
       .catch((err) => {
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+        clearLastActivity();
         rej("Logout failed");
       })
   })

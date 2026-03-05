@@ -25,7 +25,7 @@
 		</div>
 
 		<!-- hak akses -->
-		<div class="col-lg-6 col-md-12" v-for="akses in hakAkses" v-if="tipeUser === akses.tipe || akses.tipe ==='all'">
+		<div class="col-lg-6 col-md-12" v-for="akses in hakAkses" v-show="tipeUser === akses.tipe || akses.tipe ==='all'">
 			
 			<div class="card">
 				<div class="card-header bg-white header-elements-inline">
@@ -48,7 +48,7 @@
 					<span>{{ akses.keterangan }}</span>
 					<hr class="mt-1" />
 					<div class="row">
-						<div class="col-sm-3 mb-2" v-for="permission in akses.permission" v-if="tipeUser == permission.tipe || permission.tipe == 'all' || permission.tipe == 'bkcu approve'">
+						<div class="col-sm-3 mb-2" v-for="permission in akses.permission" v-show="tipeUser == permission.tipe || permission.tipe == 'all' || permission.tipe == 'bkcu approve'">
 							<div v-if="permission.tipe == 'bkcu approve'">
 								<div class="form-check" v-if="currentUser.id_cu == 0">
 									<label style="cursor:pointer;">
@@ -108,12 +108,13 @@
 
 <script>
 	import _ from 'lodash';
-	import { mapGetters } from 'vuex';
+	import { useAuthStore } from '../stores/auth';
 
 	export default {
-		props: ['tipeUser','form','dataStat','isPeran'],
+		props: ['tipeUser', 'form', 'dataStat', 'isPeran'],
 		data() {
 			return {
+				authStore: useAuthStore(),
 				isCheckAll: false,
 				hakForm: [],
 				hakAkses: [
@@ -2724,9 +2725,9 @@
 			}
 		},
 		computed: {
-			...mapGetters('auth',{
-				currentUser: 'currentUser'
-			}),
-		}
+			currentUser() {
+				return this.authStore.currentUser;
+			},
+		},
 	}
 </script>

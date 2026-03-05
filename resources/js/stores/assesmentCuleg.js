@@ -15,7 +15,7 @@ export const useAssesmentCulegStore = defineStore('assesmentCuleg', {
     dataDeletedStatS: '',
     countStat: '',
     headerDataStatS: '',
-    update: [], //update data
+    updateData: [], //update data
     updateStat: '',
     updateSingle: [], //update data
     updateSingleStat: '',
@@ -36,7 +36,7 @@ export const useAssesmentCulegStore = defineStore('assesmentCuleg', {
     getDataDeletedStatS: state => state.dataDeletedStatS,
     getCountStat: state => state.countStat,
     getHeaderDataStatS: state => state.headerDataStatS,
-    getUpdate: state => state.update,
+    getUpdate: state => state.updateData,
     getUpdateStat: state => state.updateStat,
     getUpdateSingle: state => state.updateSingle,
     getUpdateSingleStat: state => state.updateSingleStat,
@@ -98,13 +98,13 @@ export const useAssesmentCulegStore = defineStore('assesmentCuleg', {
       try {
         const response = await AssesmentCulegAPI.store(form);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -152,13 +152,13 @@ export const useAssesmentCulegStore = defineStore('assesmentCuleg', {
       try {
         const response = await AssesmentCulegAPI.update(id, form);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -186,13 +186,13 @@ export const useAssesmentCulegStore = defineStore('assesmentCuleg', {
       try {
         const response = await AssesmentCulegAPI.restore(id);
         if (response.data.restored) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -204,13 +204,13 @@ export const useAssesmentCulegStore = defineStore('assesmentCuleg', {
       try {
         const response = await AssesmentCulegAPI.destroy(id);
         if (response.data.deleted) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },

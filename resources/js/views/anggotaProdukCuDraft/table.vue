@@ -135,15 +135,14 @@
 </template>
 
 <script>
-  import _ from "lodash";
-  import {
-    mapGetters
-  } from "vuex";
-  import DataViewer from "../../components/dataviewer2.vue";
-  import appModal from "../../components/modal.vue";
-  import collapseButton from "../../components/collapseButton.vue";
-  import checkValue from "../../components/checkValue.vue";
-  import formProduk from "./form.vue";
+  import _ from 'lodash';
+  import { useAuthStore } from '../../stores/auth';
+  import { useAnggotaCuStore } from '../../stores/anggotaCu';
+  import DataViewer from '../../components/dataviewer2.vue';
+  import appModal from '../../components/modal.vue';
+  import collapseButton from '../../components/collapseButton.vue';
+  import checkValue from '../../components/checkValue.vue';
+  import formProduk from './form.vue';
 
   export default {
     components: {
@@ -153,9 +152,11 @@
       checkValue,
       formProduk,
     },
-    props: ["title", "kelas","itemData","itemDataStat"],
+    props: ['title', 'kelas', 'itemData', 'itemDataStat'],
     data() {
       return {
+        authStore: useAuthStore(),
+        anggotaCuStore: useAnggotaCuStore(),
         anggota_cu: {},
         selectedItem: [],
         excelDownloadUrl: '',
@@ -317,7 +318,7 @@
     },
     methods: {
       fetch(params) {
-        this.$store.dispatch(this.kelas + '/indexProdukCuDraft', [params, this.$route.params.cu]);
+        this.anggotaCuStore.indexProdukCuDraft([params, this.$route.params.cu]);
         this.excelDownloadUrl = 'anggotaProdukCuDraft/index/' + this.$route.params.cu;
       },
       selectedRow(item) {
@@ -359,28 +360,30 @@
       },
       modalTutup() {
         this.modalShow = false;
-        this.$store.dispatch(this.kelas + "/resetUpdateStat");
+        this.anggotaCuStore.resetUpdateStat();
       },
       modalConfirmOk() {
-        if (this.state == "simpan") {
-					this.$store.dispatch(this.kelas + "/storeProdukCuDraft", this.selectedItem.id);
-				}else if (this.state == "hapus") {
-          this.$store.dispatch(this.kelas + "/destroyProdukCuDraft", [this.selectedItem.id, this.$route.params.cu]);
-        }else if (this.state == "hapus_semua") {
-					this.$store.dispatch(this.kelas + "/destroyProdukCuDraftAll", this.$route.params.cu);
-				}else if (this.state == "simpan_semua") {
-					this.$store.dispatch(this.kelas + "/storeProdukCuDraftAll", this.$route.params.cu);
-				}
-      }
+        if (this.state === 'simpan') {
+          this.anggotaCuStore.storeProdukCuDraft(this.selectedItem.id);
+        } else if (this.state === 'hapus') {
+          this.anggotaCuStore.destroyProdukCuDraft(this.selectedItem.id);
+        } else if (this.state === 'hapus_semua') {
+          this.anggotaCuStore.destroyProdukCuDraftAll(this.$route.params.cu);
+        } else if (this.state === 'simpan_semua') {
+          this.anggotaCuStore.storeProdukCuDraftAll(this.$route.params.cu);
+        }
+      },
     },
     computed: {
-      ...mapGetters("anggotaCu", {
-        updateMessage: "update",
-        updateStat: "updateStat"
-      }),
-      ...mapGetters("auth", {
-        currentUser: "currentUser"
-      })
-    }
+      updateMessage() {
+        return this.anggotaCuStore.updateData;
+      },
+      updateStat() {
+        return this.anggotaCuStore.updateStat;
+      },
+      currentUser() {
+        return this.authStore.currentUser;
+      },
+    },
   };
 </script>

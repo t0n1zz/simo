@@ -1,10 +1,6 @@
 <template>
 	<div>
-		<!-- message -->
-		<message v-if="errors.any('formStatus') && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors.items">
-		</message>
-
-		<form @submit.prevent="save" data-vv-scope="formStatus">
+		<form @submit.prevent="save">
       <!-- status -->
       <div class="form-group">
 
@@ -66,7 +62,6 @@
 					id: '',
 					id_cu: ''
         },
-				submited: false,
 			}
 		},
 		created() {
@@ -89,9 +84,7 @@
 				updateSuaraCu: 'updateSuaraCu',
 			}),
       save(){
-				this.$validator.validateAll('form').then((result) => {
-					this.updateSuaraCu(this.form);
-				});
+				this.updateSuaraCu(this.form);
       },
 			tutup() {
 				this.$emit('tutup');

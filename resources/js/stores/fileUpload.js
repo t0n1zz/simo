@@ -5,14 +5,14 @@ export const useFileUploadStore = defineStore('fileUpload', {
     state: () => ({
         dataS: [],
         dataStatS: '',
-        update: [],
+        updateData: [],
         updateStat: '',
     }),
 
     getters: {
         getDataS: (state) => state.dataS,
         getDataStatS: (state) => state.dataStatS,
-        getUpdate: (state) => state.update,
+        getUpdate: (state) => state.updateData,
         getUpdateStat: (state) => state.updateStat,
     },
 
@@ -36,13 +36,13 @@ export const useFileUploadStore = defineStore('fileUpload', {
             try {
                 const response = await FILEUPLOAD.destroy(id);
                 if (response.data.deleted) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },

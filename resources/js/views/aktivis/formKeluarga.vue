@@ -50,52 +50,54 @@
 </template>
 
 <script>
-	import { mapGetters } from 'vuex';
 	import Cleave from 'vue-cleave-component';
+	import { useUserStore } from '../../stores/user';
 
 	export default {
-		props:['form','modelCu'],
+		props: ['form', 'modelCu'],
 		components: {
-			Cleave
+			Cleave,
 		},
 		data() {
 			return {
+				userStore: useUserStore(),
 				cleaveOption: {
-          date:{
-            date: true,
-            datePattern: ['Y','m','d'],
-            delimiter: '-'
-          },
-          number12: {
-            numeral: true,
-            numeralIntegerScale: 12,
-            numeralDecimalScale: 0,
+					date: {
+						date: true,
+						datePattern: ['Y', 'm', 'd'],
+						delimiter: '-',
+					},
+					number12: {
+						numeral: true,
+						numeralIntegerScale: 12,
+						numeralDecimalScale: 0,
 						stripLeadingZeroes: false,
-						delimiter: ''
+						delimiter: '',
 					},
 					number3: {
-            numeral: true,
-            numeralIntegerScale: 3,
-            numeralDecimalScale: 0,
-            stripLeadingZeroes: false
-          },
-          numeric: {
-            numeral: true,
-            numeralThousandsGroupStyle: 'thousand',
-            numeralDecimalScale: 2,
-            numeralDecimalMark: ',',
-            delimiter: '.'
-          }
-        }
-			}
+						numeral: true,
+						numeralIntegerScale: 3,
+						numeralDecimalScale: 0,
+						stripLeadingZeroes: false,
+					},
+					numeric: {
+						numeral: true,
+						numeralThousandsGroupStyle: 'thousand',
+						numeralDecimalScale: 2,
+						numeralDecimalMark: ',',
+						delimiter: '.',
+					},
+				},
+			};
 		},
-		methods: {
-		},
+		methods: {},
 		computed: {
-			...mapGetters('user',{
-				profile: 'profile',
-				profileStat: 'profileStat'
-			}),
-		}
+			profile() {
+				return this.userStore.profile;
+			},
+			profileStat() {
+				return this.userStore.profileStat;
+			},
+		},
 	}
 </script>

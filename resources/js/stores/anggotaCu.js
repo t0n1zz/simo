@@ -23,7 +23,7 @@ export const useAnggotaCuStore = defineStore('anggotaCu', {
     dataDeletedStatS: '',
     countStat: '',
     headerDataStatS: '',
-    update: [], //update data
+    updateData: [], //update data
     updateStat: '',
     rules: [], //laravel rules
     options: [], //laravel options
@@ -48,7 +48,7 @@ export const useAnggotaCuStore = defineStore('anggotaCu', {
     getDataDeletedStatS: state => state.dataDeletedStatS,
     getCountStat: state => state.countStat,
     getHeaderDataStatS: state => state.headerDataStatS,
-    getUpdate: state => state.update,
+    getUpdate: state => state.updateData,
     getUpdateStat: state => state.updateStat,
     getRules: state => state.rules,
     getOptions: state => state.options,
@@ -356,7 +356,7 @@ export const useAnggotaCuStore = defineStore('anggotaCu', {
 
     //store data
     async store(form) {
-      this.updateStat = 'loading';
+        this.updateStat = 'loading';
 
       try {
         const response = await AnggotaCuAPI.store(form);
@@ -365,9 +365,9 @@ export const useAnggotaCuStore = defineStore('anggotaCu', {
         } else {
           this.updateStat = 'fail';
         }
-        this.update = response.data;
+        this.updateData = response.data;
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -382,9 +382,9 @@ export const useAnggotaCuStore = defineStore('anggotaCu', {
         } else {
           this.updateStat = 'fail';
         }
-        this.update = response.data;
+        this.updateData = response.data;
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -399,9 +399,9 @@ export const useAnggotaCuStore = defineStore('anggotaCu', {
         } else {
           this.updateStat = 'fail';
         }
-        this.update = response.data;
+        this.updateData = response.data;
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -416,9 +416,9 @@ export const useAnggotaCuStore = defineStore('anggotaCu', {
         } else {
           this.updateStat = 'fail';
         }
-        this.update = response.data;
+        this.updateData = response.data;
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -433,9 +433,9 @@ export const useAnggotaCuStore = defineStore('anggotaCu', {
         } else {
           this.updateStat = 'fail';
         }
-        this.update = response.data;
+        this.updateData = response.data;
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -450,9 +450,9 @@ export const useAnggotaCuStore = defineStore('anggotaCu', {
         } else {
           this.updateStat = 'fail';
         }
-        this.update = response.data;
+        this.updateData = response.data;
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -521,9 +521,9 @@ export const useAnggotaCuStore = defineStore('anggotaCu', {
         } else {
           this.updateStat = 'fail';
         }
-        this.update = response.data;
+        this.updateData = response.data;
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -538,9 +538,9 @@ export const useAnggotaCuStore = defineStore('anggotaCu', {
         } else {
           this.updateStat = 'fail';
         }
-        this.update = response.data;
+        this.updateData = response.data;
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -555,9 +555,9 @@ export const useAnggotaCuStore = defineStore('anggotaCu', {
         } else {
           this.updateStat = 'fail';
         }
-        this.update = response.data;
+        this.updateData = response.data;
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -572,9 +572,9 @@ export const useAnggotaCuStore = defineStore('anggotaCu', {
         } else {
           this.updateStat = 'fail';
         }
-        this.update = response.data;
+        this.updateData = response.data;
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -589,9 +589,9 @@ export const useAnggotaCuStore = defineStore('anggotaCu', {
         } else {
           this.updateStat = 'fail';
         }
-        this.update = response.data;
+        this.updateData = response.data;
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -606,9 +606,9 @@ export const useAnggotaCuStore = defineStore('anggotaCu', {
         } else {
           this.updateStat = 'fail';
         }
-        this.update = response.data;
+        this.updateData = response.data;
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -623,9 +623,9 @@ export const useAnggotaCuStore = defineStore('anggotaCu', {
         } else {
           this.updateStat = 'fail';
         }
-        this.update = response.data;
+        this.updateData = response.data;
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -640,9 +640,9 @@ export const useAnggotaCuStore = defineStore('anggotaCu', {
         } else {
           this.updateStat = 'fail';
         }
-        this.update = response.data;
+        this.updateData = response.data;
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -653,14 +653,14 @@ export const useAnggotaCuStore = defineStore('anggotaCu', {
       try {
         const response = await AnggotaCuAPI.restore(id);
         if (response.data.restored) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -676,9 +676,9 @@ export const useAnggotaCuStore = defineStore('anggotaCu', {
         } else {
           this.updateStat = 'fail';
         }
-        this.update = response.data;
+        this.updateData = response.data;
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -693,9 +693,9 @@ export const useAnggotaCuStore = defineStore('anggotaCu', {
         } else {
           this.updateStat = 'fail';
         }
-        this.update = response.data;
+        this.updateData = response.data;
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -710,9 +710,9 @@ export const useAnggotaCuStore = defineStore('anggotaCu', {
         } else {
           this.updateStat = 'fail';
         }
-        this.update = response.data;
+        this.updateData = response.data;
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -727,9 +727,9 @@ export const useAnggotaCuStore = defineStore('anggotaCu', {
         } else {
           this.updateStat = 'fail';
         }
-        this.update = response.data;
+        this.updateData = response.data;
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -744,9 +744,9 @@ export const useAnggotaCuStore = defineStore('anggotaCu', {
         } else {
           this.updateStat = 'fail';
         }
-        this.update = response.data;
+        this.updateData = response.data;
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -761,9 +761,9 @@ export const useAnggotaCuStore = defineStore('anggotaCu', {
         } else {
           this.updateStat = 'fail';
         }
-        this.update = response.data;
+        this.updateData = response.data;
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -778,9 +778,9 @@ export const useAnggotaCuStore = defineStore('anggotaCu', {
         } else {
           this.updateStat = 'fail';
         }
-        this.update = response.data;
+        this.updateData = response.data;
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -795,9 +795,9 @@ export const useAnggotaCuStore = defineStore('anggotaCu', {
         } else {
           this.updateStat = 'fail';
         }
-        this.update = response.data;
+        this.updateData = response.data;
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },

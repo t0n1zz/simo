@@ -1,7 +1,9 @@
 <template>
 	<div>
 
-		<form @submit.prevent="save" data-vv-scope="formModal">
+		<VeeForm :form="formModal" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
+
+		<form @submit.prevent="handleSubmit(onValid)">
 
 		<div class="row">
 
@@ -15,13 +17,15 @@
 						Kode: <wajib-badge></wajib-badge></h6>
 
 					<!-- text -->
+					<Field name="formModal.kode" rules="required" v-model="formModal.kode" v-slot="{ field }">
+						<input type="hidden" v-bind="field" />
+					</Field>
 					<cleave 
 						name="kode"
 						v-model="formModal.kode" 
 						class="form-control" 
 						:options="cleaveOption.number2"
-						placeholder="Silahkan masukkan kode"
-						v-validate="'required'" data-vv-as="Kode"></cleave>	
+						placeholder="Silahkan masukkan kode"></cleave>	
 					
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('formModal.kode')">
@@ -41,7 +45,9 @@
 					</h5>
 
 					<!-- text -->
-					<input type="text" name="name" class="form-control" placeholder="Silahkan masukkan nama" v-validate="'required'" data-vv-as="Nama" v-model="formModal.name">
+					<Field name="formModal.name" rules="required" v-model="formModal.name" v-slot="{ field }">
+						<input type="text" class="form-control" placeholder="Silahkan masukkan nama" v-bind="field" v-model="formModal.name">
+					</Field>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('formModal.name')">
@@ -93,9 +99,10 @@
 
 			<button type="button" class="btn btn-light btn-block pb-2" @click.prevent="tutup">
 				<i class="icon-cross"></i> Tutup</button>
-		</div> 
+		</div>
 
 		</form>
+		</VeeForm>
 
 	</div>
 </template>
@@ -110,6 +117,8 @@
 	import wajibBadge from "../../components/wajibBadge.vue";
 	import formInfo from "../../components/formInfo.vue";
 	import Cleave from 'vue-cleave-component';
+	import VeeForm from "../../components/VeeForm.vue";
+	import { Field } from 'vee-validate';
 
 	export default {
 		props: ['kelas','mode','selected'],
@@ -119,7 +128,9 @@
 			infoIcon,
 			wajibBadge,
 			formInfo,
-			Cleave
+			Cleave,
+			VeeForm,
+			Field
 		},
 		setup() {
 			const authStore = useAuthStore();
@@ -158,18 +169,16 @@
 		},
 		watch: {},
 		methods: {
-			save(){
-				this.$validator.validateAll('formModal').then((result) => {
-					if (result) {
-						if(this.mode == 'tambah'){
-							this.asetTetapGolonganStore.store(this.formModal);
-						}else{
-							this.asetTetapGolonganStore.update([this.selected.id, this.formModal]);
-						}
-					}else{
-						this.submited = true;
-					}	
-				});
+			onValid(){
+				if(this.mode == 'tambah'){
+					this.asetTetapGolonganStore.store(this.formModal);
+				}else{
+					this.asetTetapGolonganStore.update([this.selected.id, this.formModal]);
+				}
+				this.submited = false;
+			},
+			onInvalid() {
+				this.submited = true;
 			},
 			tutup(){
 				this.$emit('tutup');

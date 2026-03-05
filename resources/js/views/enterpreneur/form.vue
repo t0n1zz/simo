@@ -8,12 +8,14 @@
 			<div class="content-wrapper">
 				<div class="content">
 
+					<VeeForm :form="form" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
+
 					<!-- message -->
 					<message v-if="errors.any('form') && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors.items">
 					</message>
 
 					<!-- main panel -->
-					<form @submit.prevent="save" data-vv-scope="form">
+					<form @submit.prevent="handleSubmit(onValid)">
 
 						<!-- select anggota cu -->
 						<div class="card" v-if="form.anggota_cu_id == ''">
@@ -30,13 +32,19 @@
 										</div>
 	
 										<!-- select -->
-										<select class="form-control" name="id_cu" v-model="form.id_cu" data-width="100%" v-validate="'required'" data-vv-as="CU" :disabled="modelCU.length === 0" @change="changeCU($event.target.value)">
-											<option disabled value="">
-												<span v-if="modelCUStat === 'loading'">Mohon tunggu...</span>
-												<span v-else>Silahkan pilih CU</span>
-											</option>
-											<option v-for="(cu, index) in modelCU" :value="cu.id" :key="index">{{cu.name}}</option>
-										</select>
+										<Field name="id_cu" rules="required" v-model="form.id_cu" v-slot="{ field }">
+											<select class="form-control" data-width="100%" v-bind="field" :disabled="modelCU.length === 0" @change="changeCU($event.target.value)">
+												<option disabled value="">
+													<span v-if="modelCUStat === 'loading'">Mohon tunggu...</span>
+													<span v-else>Silahkan pilih CU</span>
+												</option>
+												<template v-for="(cu, index) in modelCU" :key="cu ? cu.id : index">
+													<option v-if="cu" :value="cu.id">
+														{{ cu.name }}
+													</option>
+												</template>
+											</select>
+										</Field>
 	
 										<!-- reload cu -->
 										<div class="input-group-append">
@@ -144,13 +152,19 @@
 											<div class="input-group">
 
 												<!-- select -->
-												<select class="form-control" name="id_usaha" v-model="form.id_usaha" data-width="100%" :disabled="modelUsaha.length === 0" v-validate="'required'" data-vv-as="Jenis Usaha">
-													<option disabled value="">
-														<span v-if="modelUsahaStat === 'loading'">Mohon tunggu...</span>
-														<span v-else>Silahkan pilih jenis usaha</span>
-													</option>
-													<option v-for="usaha in modelUsaha" v-if="usaha" :value="usaha.id">{{usaha.name}}</option>
-												</select>
+												<Field name="id_usaha" rules="required" v-model="form.id_usaha" v-slot="{ field }">
+													<select class="form-control" data-width="100%" v-bind="field" :disabled="modelUsaha.length === 0">
+														<option disabled value="">
+															<span v-if="modelUsahaStat === 'loading'">Mohon tunggu...</span>
+															<span v-else>Silahkan pilih jenis usaha</span>
+														</option>
+														<template v-for="usaha in modelUsaha" :key="usaha ? usaha.id : undefined">
+															<option v-if="usaha" :value="usaha.id">
+																{{ usaha.name }}
+															</option>
+														</template>
+													</select>
+												</Field>
 
 											</div>
 
@@ -278,6 +292,8 @@
 						</div>
 
 					</form>
+
+					</VeeForm>
 				</div>
 			</div>
 		</div>
@@ -308,8 +324,12 @@
 </template>
 
 <script>
-	import { mapGetters } from 'vuex';
-	import pageHeader from "../../components/pageHeader.vue";
+	import { useAuthStore } from '../../stores/auth';
+	import { useEnterpreneurStore } from '../../stores/enterpreneur';
+	import { useCuStore } from '../../stores/cu';
+	import { useAnggotaCuStore } from '../../stores/anggotaCu';
+	import { useKubnUsahaStore } from '../../stores/kubnUsaha';
+	import pageHeader from '../../components/pageHeader.vue';
 	import { toMulipartedForm } from '../../helpers/form';
 	import _ from 'lodash';
 	import appImageUpload from '../../components/ImageUpload.vue';
@@ -318,6 +338,8 @@
 	import formButton from "../../components/formButton.vue";
 	import formInfo from "../../components/formInfo.vue";
 	import wajibBadge from "../../components/wajibBadge.vue";
+	import VeeForm from '../../components/VeeForm.vue';
+	import { Field } from 'vee-validate';
 	import Cleave from 'vue-cleave-component';
 	import dataTable from '../../components/datatable.vue';
 	import DatePicker from "../../components/datePicker.vue";
@@ -339,10 +361,17 @@
 			Cleave,
 			dataTable,
 			DatePicker,
-			formDiklat
+			formDiklat,
+			VeeForm,
+			Field
 		},
 		data() {
 			return {
+				authStore: useAuthStore(),
+				enterpreneurStore: useEnterpreneurStore(),
+				cuStore: useCuStore(),
+				anggotaCuStore: useAnggotaCuStore(),
+				kubnUsahaStore: useKubnUsahaStore(),
 				title: 'Tambah Enterpreneur',
 				titleDesc: 'Menambah Enterpreneur baru',
 				titleIcon: 'icon-plus3',
@@ -430,10 +459,10 @@
 		beforeRouteEnter(to, from, next) {
 			next(vm => vm.fetch());
 		},
-		created(){
-			if(this.currentUser.id_cu == 0){
-				if(this.modelCuStat != 'success'){
-					this.$store.dispatch('cu/getHeader');
+		created() {
+			if (this.currentUser.id_cu === 0) {
+				if (this.modelCUStat !== 'success') {
+					this.cuStore.getHeader();
 				}
 			}
 		},
@@ -475,9 +504,9 @@
 			}
     },
 		methods: {
-			fetch(){
-				if(this.$route.meta.mode === 'edit'){
-					this.$store.dispatch(this.kelas + '/edit',this.$route.params.id);	
+			fetch() {
+				if (this.$route.meta.mode === 'edit') {
+					this.enterpreneurStore.edit(this.$route.params.id);
 					this.title = 'Ubah Enterpreneur';
 					this.titleDesc = 'Mengubah Enterpreneur';
 					this.titleIcon = 'icon-pencil5';
@@ -485,13 +514,12 @@
 					this.title = 'Tambah Enterpreneur';
 					this.titleDesc = 'Menambah Enterpreneur';
 					this.titleIcon = 'icon-plus3';
-					this.$store.dispatch(this.kelas + '/create');
+					this.enterpreneurStore.create();
 				}
-
-				this.$store.dispatch('kubnUsaha/get');
+				this.kubnUsahaStore.get();
 			},
 			fetchAnggota(params) {
-				this.$store.dispatch('anggotaCu/indexCu', [params, this.form.id_cu, 'semua'])
+				this.anggotaCuStore.indexCu([params, this.form.id_cu, 'semua']);
 			},
 			checkUser(permission,id_cu){
 				if(this.currentUser){
@@ -505,9 +533,9 @@
 					}
 				}
 			},
-			fetchCU(){
-				if(this.modelCu.length == 0){
-					this.$store.dispatch('cu/getHeader', this.currentUser.id_pus);
+			fetchCU() {
+				if (this.modelCU.length === 0) {
+					this.cuStore.getHeader();
 				}
 			},
 			changeCU(id){
@@ -549,25 +577,22 @@
 				this.selectedItemDiklat = {};
 				this.modalTutup(); 
 			},
-			save() {
+			onValid() {
 				this.form.anggota = this.itemDataAnggota;
 				this.form.diklat = this.itemDataDiklat;
 				this.state = '';
 				
 				const formData = toMulipartedForm(this.form, this.$route.meta.mode);
-				this.$validator.validateAll('form').then((result) => {
-					if (result) {
-						if(this.$route.meta.mode == 'edit'){
-							this.$store.dispatch(this.kelas + '/update', [this.$route.params.id, formData]);
-						}else{
-							this.$store.dispatch(this.kelas + '/store', formData);
-						}
-						this.submited = false;
-					}else{
-						window.scrollTo(0, 0);
-						this.submited = true;
-					}
-				});
+				if (this.$route.meta.mode === 'edit') {
+					this.enterpreneurStore.update([this.$route.params.id, formData]);
+				} else {
+					this.enterpreneurStore.store(formData);
+				}
+				this.submited = false;
+			},
+			onInvalid() {
+				window.scrollTo(0, 0);
+				this.submited = true;
 			},
 			back(){
 				if(this.$route.meta.mode == 'edit' && this.currentUser.id_cu == 0){
@@ -626,8 +651,8 @@
 				}
 			},
 			modalTutup() {
- 				if(this.updateStat === 'success' && this.state == ''){
-					this.$store.dispatch(this.kelas + '/resetUpdateStat');
+				if (this.updateStat === 'success' && this.state === '') {
+					this.enterpreneurStore.resetUpdateStat();
 					this.back();
 				}
 
@@ -648,29 +673,45 @@
 			},
 		},
 		computed: {
-			...mapGetters('auth',{
-				currentUser: 'currentUser'
-			}),
-			...mapGetters('enterpreneur',{
-				form: 'data',
-				formStat: 'dataStat',
-				rules: 'rules',
-				options: 'options',
-				updateResponse: 'update',
-				updateStat: 'updateStat'
-			}),
-			...mapGetters('cu',{
-				modelCU: 'headerDataS',
-				modelCUStat: 'headerDataStatS',
-			}),
-			...mapGetters('anggotaCu',{
-				itemDataAnggota: 'dataS',
-				itemDataAnggotaStat: 'dataStatS'
-			}),
-			...mapGetters('kubnUsaha',{
-				modelUsaha: 'dataS',
-				modelUsahaStat: 'dataStatS',
-			}),
-		}
+			currentUser() {
+				return this.authStore.currentUser;
+			},
+			form() {
+				return this.enterpreneurStore.data;
+			},
+			formStat() {
+				return this.enterpreneurStore.dataStat;
+			},
+			rules() {
+				return this.enterpreneurStore.rules;
+			},
+			options() {
+				return this.enterpreneurStore.options;
+			},
+			updateResponse() {
+				return this.enterpreneurStore.updateData;
+			},
+			updateStat() {
+				return this.enterpreneurStore.updateStat;
+			},
+			modelCU() {
+				return this.cuStore.headerDataS;
+			},
+			modelCUStat() {
+				return this.cuStore.headerDataStatS;
+			},
+			itemDataAnggota() {
+				return this.anggotaCuStore.dataS;
+			},
+			itemDataAnggotaStat() {
+				return this.anggotaCuStore.dataStatS;
+			},
+			modelUsaha() {
+				return this.kubnUsahaStore.dataS;
+			},
+			modelUsahaStat() {
+				return this.kubnUsahaStore.dataStatS;
+			},
+		},
 	}
 </script>

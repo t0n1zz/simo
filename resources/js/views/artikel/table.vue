@@ -184,7 +184,7 @@
 						title: 'Kategori',
 						name: 'kategori.name',
 						tipe: 'string',
-						sort: false,
+						sort: true,
 						hide: false,
 						disable: false,
 						filter: true,
@@ -192,7 +192,8 @@
 					{
 						title: 'Penulis',
 						name: 'penulis.name',
-						sort: false,
+						tipe: 'string',
+						sort: true,
 						hide: false,
 						disable: false,
 						filter: true,
@@ -200,7 +201,8 @@
 					{
 						title: 'CU',
 						name: 'cu.name',
-						sort: false,
+						tipe: 'string',
+						sort: true,
 						hide: false,
 						disable: false,
 						filter: true,
@@ -356,7 +358,7 @@
 				return this.artikelStore.dataStatS;
 			},
 			updateMessage() {
-				return this.artikelStore.update;
+				return this.artikelStore.updateData;
 			},
 			updateStat() {
 				return this.artikelStore.updateStat;

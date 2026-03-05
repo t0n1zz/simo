@@ -1,10 +1,11 @@
 <template>
 	<div>
+		<VeeForm :form="formTempat" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
 		<!-- message -->
-		<message v-if="errors && errors.any && errors.any('formTempat') && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors && errors.items">
+		<message v-if="errors && errors.any && errors.any() && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors && errors.items">
 		</message>
 
-		<form @submit.prevent="save" enctype="multipart/form-data" data-vv-scope="formTempat">
+		<form @submit.prevent="handleSubmit(onValid)" enctype="multipart/form-data">
 		
 		<div class="row">
 
@@ -22,20 +23,21 @@
 
 			<!-- name -->
 			<div class="col-md-4">
-				<div class="form-group" :class="{'has-error' : errors && errors.has && errors.has('formTempat.name')}">
+				<div class="form-group" :class="{'has-error' : errors && errors.has && errors.has('name')}">
 
 					<!-- title -->
-					<h5 :class="{ 'text-danger' : errors && errors.has && errors.has('formTempat.name')}">
-						<i class="icon-cross2" v-if="errors && errors.has && errors.has('formTempat.name')"></i>
+					<h5 :class="{ 'text-danger' : errors && errors.has && errors.has('name')}">
+						<i class="icon-cross2" v-if="errors && errors.has && errors.has('name')"></i>
 						Nama:</h5>
 
 					<!-- text -->
-					<input type="text" name="name" class="form-control" placeholder="Silahkan masukkan nama tempat kegiatan"
-					 v-validate="'required|min:5'" data-vv-as="Nama" v-model="formTempat.name">
+					<Field name="name" v-slot="{ field }" :rules="'required|min:5'" label="Nama">
+						<input type="text" class="form-control" placeholder="Silahkan masukkan nama tempat kegiatan" v-bind="field" v-model="formTempat.name">
+					</Field>
 
 					<!-- error message -->
-					<small class="text-muted text-danger" v-if="errors && errors.has && errors.has('formTempat.name')">
-						<i class="icon-arrow-small-right"></i> {{ errors && errors.first && errors.first('formTempat.name') }}
+					<small class="text-muted text-danger" v-if="errors && errors.has && errors.has('name')">
+						<i class="icon-arrow-small-right"></i> {{ errors && errors.first && errors.first('name') }}
 					</small>
 					<small class="text-muted" v-else>&nbsp;</small>
 				</div>
@@ -56,7 +58,7 @@
 							<span v-if="modelProvincesStat === 'loading'">Mohon tunggu...</span>
 							<span v-else>Silahkan pilih provinsi</span>
 						</option>
-						<option v-for="provinces in modelProvinces" :value="provinces.id">{{provinces.name}}</option>
+						<option v-for="provinces in modelProvinces" :key="provinces.id" :value="provinces.id">{{ provinces.name }}</option>
 					</select>
 				</div>
 			</div>
@@ -76,34 +78,35 @@
 							<span v-if="modelRegenciesStat === 'loading'">Mohon tunggu...</span>
 							<span v-else>Silahkan pilih kabupaten</span>
 						</option>
-						<option v-for="regencies in modelRegencies" :value="regencies.id">{{regencies.name}}</option>
+						<option v-for="regencies in modelRegencies" :key="regencies.id" :value="regencies.id">{{ regencies.name }}</option>
 					</select>
 				</div>
 			</div>
 
 			<!-- kecamatan -->
 			<div class="col-md-4">
-				<div class="form-group" :class="{'has-error' : errors && errors.has && errors.has('formTempat.id_districts')}">
+				<div class="form-group" :class="{'has-error' : errors && errors.has && errors.has('id_districts')}">
 
 					<!-- title -->
-					<h5 :class="{ 'text-danger' : errors && errors.has && errors.has('formTempat.id_districts')}">
-						<i class="icon-cross2" v-if="errors && errors.has && errors.has('formTempat.id_districts')"></i>
+					<h5 :class="{ 'text-danger' : errors && errors.has && errors.has('id_districts')}">
+						<i class="icon-cross2" v-if="errors && errors.has && errors.has('id_districts')"></i>
 						Kecamatan:
 					</h5>
 
 					<!-- select -->
-					<select class="form-control" name="id_districts" v-model="formTempat.id_districts" data-width="100%" v-validate="'required'"
-					 data-vv-as="Kabupaten" :disabled="modelDistricts.length === 0" @change="changeDistricts($event.target.value)">
-						<option disabled value="">
-							<span v-if="modelDistrictsStat === 'loading'">Mohon tunggu...</span>
-							<span v-else>Silahkan pilih kecamatan</span>
-						</option>
-						<option v-for="districts in modelDistricts" :value="districts.id">{{districts.name}}</option>
-					</select>
+					<Field name="id_districts" v-slot="{ field }" :rules="'required'" label="Kecamatan">
+						<select class="form-control" data-width="100%" v-bind="field" v-model="formTempat.id_districts" :disabled="modelDistricts.length === 0" @change="changeDistricts($event.target.value)">
+							<option disabled value="">
+								<span v-if="modelDistrictsStat === 'loading'">Mohon tunggu...</span>
+								<span v-else>Silahkan pilih kecamatan</span>
+							</option>
+							<option v-for="districts in modelDistricts" :key="districts.id" :value="districts.id">{{ districts.name }}</option>
+						</select>
+					</Field>
 
 					<!-- error message -->
-					<small class="text-muted text-danger" v-if="errors && errors.has && errors.has('formTempat.id_regency')">
-						<i class="icon-arrow-small-right"></i> {{ errors && errors.first && errors.first('formTempat.id_regency') }}
+					<small class="text-muted text-danger" v-if="errors && errors.has && errors.has('id_districts')">
+						<i class="icon-arrow-small-right"></i> {{ errors && errors.first && errors.first('id_districts') }}
 					</small>
 					<small class="text-muted" v-else>&nbsp;</small>
 				</div>
@@ -111,27 +114,28 @@
 
 			<!-- kelurahan -->
 			<div class="col-md-4">
-				<div class="form-group" :class="{'has-error' : errors && errors.has && errors.has('formTempat.id_villages')}">
+				<div class="form-group" :class="{'has-error' : errors && errors.has && errors.has('id_villages')}">
 
 					<!-- title -->
-					<h5 :class="{ 'text-danger' : errors && errors.has && errors.has('formTempat.id_villages')}">
-						<i class="icon-cross2" v-if="errors && errors.has && errors.has('formTempat.id_villages')"></i>
+					<h5 :class="{ 'text-danger' : errors && errors.has && errors.has('id_villages')}">
+						<i class="icon-cross2" v-if="errors && errors.has && errors.has('id_villages')"></i>
 						Kelurahan:
 					</h5>
 
 					<!-- select -->
-					<select class="form-control" name="id_villages" v-model="formTempat.id_villages" data-width="100%" v-validate="'required'"
-					 data-vv-as="Desa" :disabled="modelVillages.length === 0">
-						<option disabled value="">
-							<span v-if="modelVillagesStat === 'loading'">Mohon tunggu... mohon tunggu</span>
-							<span v-else>Silahkan pilih kelurahan</span>
-						</option>
-						<option v-for="villages in modelVillages" :value="villages.id">{{villages.name}}</option>
-					</select>
+					<Field name="id_villages" v-slot="{ field }" :rules="'required'" label="Kelurahan">
+						<select class="form-control" data-width="100%" v-bind="field" v-model="formTempat.id_villages" :disabled="modelVillages.length === 0">
+							<option disabled value="">
+								<span v-if="modelVillagesStat === 'loading'">Mohon tunggu... mohon tunggu</span>
+								<span v-else>Silahkan pilih kelurahan</span>
+							</option>
+							<option v-for="villages in modelVillages" :key="villages.id" :value="villages.id">{{ villages.name }}</option>
+						</select>
+					</Field>
 
 					<!-- error message -->
-					<small class="text-muted text-danger" v-if="errors && errors.has && errors.has('formTempat.id_villages')">
-						<i class="icon-arrow-small-right"></i> {{ errors && errors.first && errors.first('formTempat.id_villages') }}
+					<small class="text-muted text-danger" v-if="errors && errors.has && errors.has('id_villages')">
+						<i class="icon-arrow-small-right"></i> {{ errors && errors.first && errors.first('id_villages') }}
 					</small>
 					<small class="text-muted" v-else>&nbsp;</small>
 				</div>
@@ -139,20 +143,21 @@
 
 			<!-- alamat -->
 			<div class="col-md-12">
-				<div class="form-group" :class="{'has-error' : errors && errors.has && errors.has('formTempat.alamat')}">
+				<div class="form-group" :class="{'has-error' : errors && errors.has && errors.has('alamat')}">
 
 					<!-- title -->
-					<h5 :class="{ 'text-danger' : errors && errors.has && errors.has('formTempat.alamat')}">
-						<i class="icon-cross2" v-if="errors && errors.has && errors.has('formTempat.alamat')"></i>
+					<h5 :class="{ 'text-danger' : errors && errors.has && errors.has('alamat')}">
+						<i class="icon-cross2" v-if="errors && errors.has && errors.has('alamat')"></i>
 						Alamat:</h5>
 
 					<!-- text -->
-					<input type="text" name="alamat" class="form-control" placeholder="Silahkan masukkan alamat" v-validate="'required|min:5'"
-					 data-vv-as="Alamat" v-model="formTempat.alamat">
+					<Field name="alamat" v-slot="{ field }" :rules="'required|min:5'" label="Alamat">
+						<input type="text" class="form-control" placeholder="Silahkan masukkan alamat" v-bind="field" v-model="formTempat.alamat">
+					</Field>
 
 					<!-- error message -->
-					<small class="text-muted text-danger" v-if="errors && errors.has && errors.has('formTempat.alamat')">
-						<i class="icon-arrow-small-right"></i> {{ errors && errors.first && errors.first('formTempat.alamat') }}
+					<small class="text-muted text-danger" v-if="errors && errors.has && errors.has('alamat')">
+						<i class="icon-arrow-small-right"></i> {{ errors && errors.first && errors.first('alamat') }}
 					</small>
 					<small class="text-muted" v-else>&nbsp;</small>
 				</div>
@@ -211,20 +216,21 @@
 
 			<!-- email -->
 			<div class="col-md-4">
-				<div class="form-group" :class="{'has-error' : errors && errors.has && errors.has('formTempat.email')}">
+				<div class="form-group" :class="{'has-error' : errors && errors.has && errors.has('email')}">
 
 					<!-- title -->
-					<h5 :class="{ 'text-danger' : errors && errors.has && errors.has('formTempat.email')}">
-						<i class="icon-cross2" v-if="errors && errors.has && errors.has('formTempat.email')"></i>
+					<h5 :class="{ 'text-danger' : errors && errors.has && errors.has('email')}">
+						<i class="icon-cross2" v-if="errors && errors.has && errors.has('email')"></i>
 						E-mail:</h5>
 
 					<!-- text -->
-					<input type="text" name="email" class="form-control" placeholder="Silahkan masukkan alamat e-mail" v-validate="'email'"
-					 data-vv-as="E-mail" v-model="formTempat.email">
+					<Field name="email" v-slot="{ field }" :rules="'email'" label="E-mail">
+						<input type="text" class="form-control" placeholder="Silahkan masukkan alamat e-mail" v-bind="field" v-model="formTempat.email">
+					</Field>
 
 					<!-- error message -->
-					<small class="text-muted text-danger" v-if="errors && errors.has && errors.has('formTempat.email')">
-						<i class="icon-arrow-small-right"></i> {{ errors && errors.first && errors.first('formTempat.email') }}
+					<small class="text-muted text-danger" v-if="errors && errors.has && errors.has('email')">
+						<i class="icon-arrow-small-right"></i> {{ errors && errors.first && errors.first('email') }}
 					</small>
 					<small class="text-muted" v-else>&nbsp;</small>
 				</div>
@@ -232,20 +238,21 @@
 
 			<!-- website -->
 			<div class="col-md-4">
-				<div class="form-group" :class="{'has-error' : errors && errors.has && errors.has('formTempat.website')}">
+				<div class="form-group" :class="{'has-error' : errors && errors.has && errors.has('website')}">
 
 					<!-- title -->
-					<h5 :class="{ 'text-danger' : errors && errors.has && errors.has('formTempat.website')}">
-						<i class="icon-cross2" v-if="errors && errors.has && errors.has('formTempat.website')"></i>
+					<h5 :class="{ 'text-danger' : errors && errors.has && errors.has('website')}">
+						<i class="icon-cross2" v-if="errors && errors.has && errors.has('website')"></i>
 						Website:</h5>
 
 					<!-- text -->
-					<input type="text" name="website" class="form-control" placeholder="Silahkan masukkan alamat website" v-model="formTempat.website"
-					 v-validate="'url'" data-vv-as="Website">
+					<Field name="website" v-slot="{ field }" :rules="'url'" label="Website">
+						<input type="text" class="form-control" placeholder="Silahkan masukkan alamat website" v-bind="field" v-model="formTempat.website">
+					</Field>
 
 					<!-- error message -->
-					<small class="text-muted text-danger" v-if="errors && errors.has && errors.has('formTempat.website')">
-						<i class="icon-arrow-small-right"></i> {{ errors && errors.first && errors.first('formTempat.website') }}
+					<small class="text-muted text-danger" v-if="errors && errors.has && errors.has('website')">
+						<i class="icon-arrow-small-right"></i> {{ errors && errors.first && errors.first('website') }}
 					</small>
 					<small class="text-muted" v-else>&nbsp;</small>
 				</div>
@@ -278,6 +285,7 @@
 		</div>
 
 		</form>
+		</VeeForm>
 
 	</div>
 </template>
@@ -297,6 +305,8 @@
 	import appImageUpload from '../../components/ImageUpload.vue';
 	import Cleave from 'vue-cleave-component';
 	import formInfo from "../../components/formInfo.vue";
+	import VeeForm from "../../components/VeeForm.vue";
+	import { Field } from 'vee-validate';
 
 	export default {
 		props: ['id_provinces','id_regencies'],
@@ -306,7 +316,9 @@
 			checkValue,
 			formInfo,
 			Cleave,
-			message
+			message,
+			VeeForm,
+			Field
 		},
 		data() {
 			return {
@@ -347,14 +359,6 @@
           }
 				},
 				submited: false,
-        // SHIM: Add dummy errors object for VeeValidate 2 compatibility in Vue 3
-        errors: {
-          any: () => false,
-          has: () => false,
-          first: () => '',
-          collect: () => [],
-          items: []
-        },
 			}
 		},
 		created() {
@@ -409,16 +413,13 @@
 			changeDistricts(id){
 				this.getVillages(id);
 			},
-			save() {
+			onValid() {
 				const formData = toMulipartedForm(this.formTempat, this.$route.meta.mode);
-				this.$validator.validateAll('formTempat').then((result) => {
-					if (result) {
-						this.store(formData);
-						this.submited = false;
-					}else{
-						this.submited = true;
-					}
-				});
+				this.store(formData);
+				this.submited = false;
+			},
+			onInvalid() {
+				this.submited = true;
 			},
 			tutup() {
 				this.$emit('tutup');

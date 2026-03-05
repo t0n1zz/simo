@@ -828,7 +828,7 @@ export const useLaporanCuStore = defineStore('laporanCu', {
     grafikPearlsStat: '',
     pearlsStat: '',
     periodeStat: '',
-    update: [], //update data
+    updateData: [], //update data
     updateStat: '',
     rules: [], //laravel rules
     options: [], //laravel options
@@ -851,7 +851,7 @@ export const useLaporanCuStore = defineStore('laporanCu', {
     getGrafikPearlsStat: state => state.grafikPearlsStat,
     getPeriodeStat: state => state.periodeStat,
     getIdCU: state => state.idCU,
-    getUpdate: state => state.update,
+    getUpdate: state => state.updateData,
     getUpdateStat: state => state.updateStat,
     getRules: state => state.rules,
     getOptions: state => state.options,
@@ -1286,9 +1286,9 @@ export const useLaporanCuStore = defineStore('laporanCu', {
         } else {
           this.updateStat = 'fail';
         }
-        this.update = response.data;
+        this.updateData = response.data;
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -1302,9 +1302,9 @@ export const useLaporanCuStore = defineStore('laporanCu', {
         } else {
           this.updateStat = 'fail';
         }
-        this.update = response.data;
+        this.updateData = response.data;
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -1318,9 +1318,9 @@ export const useLaporanCuStore = defineStore('laporanCu', {
         } else {
           this.updateStat = 'fail';
         }
-        this.update = response.data;
+        this.updateData = response.data;
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -1334,9 +1334,9 @@ export const useLaporanCuStore = defineStore('laporanCu', {
         } else {
           this.updateStat = 'fail';
         }
-        this.update = response.data;
+        this.updateData = response.data;
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -1350,9 +1350,9 @@ export const useLaporanCuStore = defineStore('laporanCu', {
         } else {
           this.updateStat = 'fail';
         }
-        this.update = response.data;
+        this.updateData = response.data;
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -1366,9 +1366,9 @@ export const useLaporanCuStore = defineStore('laporanCu', {
         } else {
           this.updateStat = 'fail';
         }
-        this.update = response.data;
+        this.updateData = response.data;
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -1452,9 +1452,9 @@ export const useLaporanCuStore = defineStore('laporanCu', {
         } else {
           this.updateStat = 'fail';
         }
-        this.update = response.data;
+        this.updateData = response.data;
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -1468,9 +1468,9 @@ export const useLaporanCuStore = defineStore('laporanCu', {
         } else {
           this.updateStat = 'fail';
         }
-        this.update = response.data;
+        this.updateData = response.data;
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -1480,13 +1480,13 @@ export const useLaporanCuStore = defineStore('laporanCu', {
       try {
         const response = await LaporanCuDraftAPI.update(id, form);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -1496,13 +1496,13 @@ export const useLaporanCuStore = defineStore('laporanCu', {
       try {
         const response = await LaporanTpDraftAPI.update(id, form);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -1514,13 +1514,13 @@ export const useLaporanCuStore = defineStore('laporanCu', {
       try {
         const response = await LaporanCuAPI.destroy(id);
         if (response.data.deleted) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -1530,13 +1530,13 @@ export const useLaporanCuStore = defineStore('laporanCu', {
       try {
         const response = await LaporanTpAPI.destroy(id);
         if (response.data.deleted) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -1546,13 +1546,13 @@ export const useLaporanCuStore = defineStore('laporanCu', {
       try {
         const response = await LaporanCuDraftAPI.destroy(id);
         if (response.data.deleted) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -1562,13 +1562,13 @@ export const useLaporanCuStore = defineStore('laporanCu', {
       try {
         const response = await LaporanCuDraftAPI.destroyAll();
         if (response.data.deleted) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },

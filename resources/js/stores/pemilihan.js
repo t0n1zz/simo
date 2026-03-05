@@ -14,7 +14,7 @@ export const usePemilihanStore = defineStore('pemilihan', {
     dataStatS2: '',
     dataStatS3: '',
     countStat: '',
-    update: [], //update data
+    updateData: [], //update data
     updateStat: '',
     rules: [], //laravel rules
     options: [], //laravel options
@@ -31,7 +31,7 @@ export const usePemilihanStore = defineStore('pemilihan', {
     getDataStatS2: state => state.dataStatS2,
     getDataStatS3: state => state.dataStatS3,
     getCountStat: state => state.countStat,
-    getUpdate: state => state.update,
+    getUpdate: state => state.updateData,
     getUpdateStat: state => state.updateStat,
     getRules: state => state.rules,
     getOptions: state => state.options,
@@ -159,13 +159,13 @@ export const usePemilihanStore = defineStore('pemilihan', {
       try {
         const response = await PemilihanAPI.store(form);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -176,14 +176,14 @@ export const usePemilihanStore = defineStore('pemilihan', {
       try {
         const response = await PemilihanAPI.storeSuara(form);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -194,14 +194,14 @@ export const usePemilihanStore = defineStore('pemilihan', {
       try {
         const response = await PemilihanAPI.storePilihan(form);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -212,14 +212,14 @@ export const usePemilihanStore = defineStore('pemilihan', {
       try {
         const response = await PemilihanAPI.storeMultiPilihan(form);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -261,14 +261,14 @@ export const usePemilihanStore = defineStore('pemilihan', {
       try {
         const response = await PemilihanAPI.updateStatus(id, cu);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -279,14 +279,14 @@ export const usePemilihanStore = defineStore('pemilihan', {
       try {
         const response = await PemilihanAPI.updateSuara(id, form);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -298,14 +298,14 @@ export const usePemilihanStore = defineStore('pemilihan', {
       try {
         const response = await PemilihanAPI.destroy(id);
         if (response.data.deleted) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -316,14 +316,14 @@ export const usePemilihanStore = defineStore('pemilihan', {
       try {
         const response = await PemilihanAPI.destroySuara(id);
         if (response.data.deleted) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },

@@ -19,7 +19,7 @@
 								<option value="semua">Semua CU</option>
 								<option value="0" v-if="isPus"><span v-if="currentUser.pus">{{currentUser.pus.name}}</span> <span v-else>PUSKOPCUINA</span></option>
 								<option disabled value="">----------------</option>
-								<option v-for="cu in modelCu" :value="cu.id" v-if="cu">{{cu.name}}</option>
+								<option v-for="cu in modelCu" :value="cu.id" v-show="cu">{{cu.name}}</option>
 							</select>
 
 							<!-- reload cu -->
@@ -43,7 +43,7 @@
 								<option disabled value="">Silahkan pilih TP/KP</option>
 								<option value="semua">Semua Tp</option>
 								<option disabled value="">----------------</option>
-								<option v-for="tp in modelTp" :value="tp.id" v-if="tp">{{tp.name}}</option>
+								<option v-for="tp in modelTp" :value="tp.id" v-show="tp">{{tp.name}}</option>
 							</select>
 
 							<!-- reload -->
@@ -63,80 +63,87 @@
 </template>
 
 <script>
-	import { mapGetters } from 'vuex';
+	import { useAuthStore } from '../stores/auth';
+	import { useCuStore } from '../stores/cu';
+	import { useTpStore } from '../stores/tp';
+
 	export default {
-		props:['kelas','isPus','path'],
-		data(){
+		props: ['kelas', 'isPus', 'path'],
+		data() {
 			return {
+				authStore: useAuthStore(),
+				cuStore: useCuStore(),
+				tpStore: useTpStore(),
 				cu_id: '',
-				tp_id: ''
-			}
+				tp_id: '',
+			};
 		},
-		created(){
-			if(this.currentUser.id_pus !== undefined){
+		created() {
+			if (this.currentUser?.id_pus !== undefined) {
 				this.fetchCU();
-				if(this.modelCuStat == 'success'){
+				if (this.modelCuStat === 'success') {
 					this.fetchTp();
 				}
-			}	
+			}
 		},
 		watch: {
-			'$route' (to, from){
-				// check current page meta
+			$route() {
 				this.fetchCU();
-				if(this.modelCuStat == 'success'){
+				if (this.modelCuStat === 'success') {
 					this.fetchTp();
 				}
 			},
-			modelCuStat(value){
-				if(value === "success"){
+			modelCuStat(value) {
+				if (value === 'success') {
 					this.cu_id = this.$route.params.cu;
 					this.fetchTp();
 				}
 			},
-			modelTpStat(value){
-				if(value === "success"){
+			modelTpStat(value) {
+				if (value === 'success') {
 					this.tp_id = this.$route.params.tp;
 				}
 			},
-    },
+		},
 		methods: {
-			fetchCU(){
-				if(this.modelCu.length == 0){
-					this.$store.dispatch('cu/getHeader', this.currentUser.id_pus);
-				}else{
+			fetchCU() {
+				if (this.modelCu.length === 0) {
+					this.cuStore.getHeader();
+				} else {
 					this.cu_id = this.$route.params.cu;
 				}
 			},
-			fetchTp(){
-				this.$store.dispatch('tp/getCu',this.cu_id);
+			fetchTp() {
+				this.tpStore.getCu(this.cu_id);
 			},
-			changeCU(value){
+			changeCU(value) {
 				this.fetchTp();
-				if(this.$route.params.tp != 'semua'){
-					this.$router.push({name: this.path, params:{cu: this.cu_id, tp: this.$route.params.tp} });
-				}else{
-					this.$router.push({name: this.path, params:{cu: this.cu_id, tp: 'semua'} });
+				if (this.$route.params.tp !== 'semua') {
+					this.$router.push({ name: this.path, params: { cu: this.cu_id, tp: this.$route.params.tp } });
+				} else {
+					this.$router.push({ name: this.path, params: { cu: this.cu_id, tp: 'semua' } });
 				}
 			},
-			changeTp(value){
-				this.$router.push({name: this.path, params:{cu: this.cu_id, tp: this.tp_id} });
+			changeTp(value) {
+				this.$router.push({ name: this.path, params: { cu: this.cu_id, tp: this.tp_id } });
 			},
 		},
 		computed: {
-			...mapGetters('auth',{
-				currentUser: 'currentUser'
-			}),
-			...mapGetters('cu',{
-				modelCu: 'headerDataS',
-				modelCuStat: 'headerDataStatS',
-				updateMessage: 'update',
-				updateStat: 'updateStat'
-			}),
-			...mapGetters('tp',{
-				modelTp: 'dataS',
-				modelTpStat: 'dataStatS',
-			}),
-		}
+			currentUser() {
+				return this.authStore.currentUser;
+			},
+			modelCu() {
+				return this.cuStore.headerDataS;
+			},
+			modelCuStat() {
+				return this.cuStore.headerDataStatS;
+			},
+			modelTp() {
+				return this.tpStore.dataS;
+			},
+			modelTpStat() {
+				return this.tpStore.dataStatS;
+			},
+		},
 	}
 </script>

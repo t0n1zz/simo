@@ -8,12 +8,14 @@
 			<div class="content-wrapper ">
 				<div class="content">
 
-					<!-- message -->
-					<message v-if="errors.any('form') && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors.items">
-					</message>
+				<!-- main panel: VeeForm + Field rules on tags -->
+				<VeeForm :form="form" v-slot="{ errors, handleSubmit }">
 
-					<!-- main panel -->
-					<form @submit.prevent="save" enctype="multipart/form-data" data-vv-scope="form">
+				<!-- message -->
+				<message v-if="errors.any('form') && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors.items">
+				</message>
+
+				<form @submit.prevent="handleSubmit(onValid, onInvalid)" enctype="multipart/form-data">
 
 						<!-- main form -->
 						<div class="card">
@@ -41,8 +43,20 @@
 													<i class="icon-cross2" v-if="errors.has('form.name')"></i>
 													Nama: <wajib-badge></wajib-badge></h5>
 
-												<!-- text -->
-												<input type="text" name="name" class="form-control" placeholder="Silahkan masukkan nama penulis artikel" v-validate="'required|min:5'" data-vv-as="Nama" v-model="form.name">
+												<!-- text (rules on the tag) -->
+												<Field
+													name="name"
+													rules="required|min:5"
+													v-model="form.name"
+													v-slot="{ field }"
+												>
+													<input
+														type="text"
+														class="form-control"
+														placeholder="Silahkan masukkan nama penulis artikel"
+														v-bind="field"
+													>
+												</Field>
 
 												<!-- error message -->
 												<small class="text-muted text-danger" v-if="errors.has('form.name')">
@@ -63,12 +77,20 @@
 												</h5>
 
 												<!-- select -->
-												<select class="form-control" name="id_cu" v-model="form.id_cu" data-width="100%" v-validate="'required'" data-vv-as="CU" :disabled="modelCU.length === 0">
+												<Field
+													as="select"
+													name="id_cu"
+													rules="required"
+													v-model="form.id_cu"
+													class="form-control"
+													data-width="100%"
+													:disabled="modelCU.length === 0"
+												>
 													<option disabled value="">Silahkan pilih CU</option>
 													<option value="0"><span v-if="currentUser.pus">{{currentUser.pus.name}}</span> <span v-else>PUSKOPCUINA</span></option>
 													<option disabled value="">----------------</option>
 													<option v-for="cu in modelCU" :value="cu.id">{{cu.name}}</option>
-												</select>
+												</Field>
 
 												<!-- error message -->
 												<small class="text-muted text-danger" v-if="errors.has('form.id_cu')">
@@ -109,6 +131,7 @@
 						</div>
 
 					</form>
+					</VeeForm>
 
 				</div>
 			</div>
@@ -122,17 +145,20 @@
 </template>
 
 <script>
+	import { computed } from 'vue';
 	import { useAuthStore } from '../../stores/auth';
 	import { useArtikelPenulisStore } from '../../stores/artikelPenulis';
 	import { useCuStore } from '../../stores/cu';
-	import pageHeader from "../../components/pageHeader.vue";
+	import { Field } from 'vee-validate';
+	import VeeForm from '../../components/VeeForm.vue';
+	import pageHeader from '../../components/pageHeader.vue';
 	import { toMulipartedForm } from '../../helpers/form';
 	import appImageUpload from '../../components/ImageUpload.vue';
 	import appModal from '../../components/modal.vue';
 	import message from "../../components/message.vue";
 	import formButton from "../../components/formButton.vue";
 	import formInfo from "../../components/formInfo.vue";
-	import wajibBadge from "../../components/wajibBadge.vue";
+	import wajibBadge from '../../components/wajibBadge.vue';
 
 	export default {
 		components: {
@@ -142,7 +168,9 @@
 			message,
 			formButton,
 			formInfo,
-			wajibBadge
+			wajibBadge,
+			VeeForm,
+			Field,
 		},
 		data() {
 			return {
@@ -227,21 +255,18 @@
 					}
 				}
 			},
-			save() {
+			onValid() {
 				const formData = toMulipartedForm(this.form, this.$route.meta.mode);
-				this.$validator.validateAll('form').then((result) => {
-					if (result) {
-						if(this.$route.meta.mode == 'edit'){
-							this.artikelPenulisStore.update(this.$route.params.id, formData);
-						}else{
-							this.artikelPenulisStore.store(formData);
-					}
-						this.submited = false;
-					}else{
-						window.scrollTo(0, 0);
-						this.submited = true;
-					}
-				});
+				if (this.$route.meta.mode === 'edit') {
+					this.artikelPenulisStore.update(this.$route.params.id, formData);
+				} else {
+					this.artikelPenulisStore.store(formData);
+				}
+				this.submited = false;
+			},
+			onInvalid() {
+				window.scrollTo(0, 0);
+				this.submited = true;
 			},
 			back(){
 				if(this.$route.meta.mode == 'edit' && this.currentUser.id_cu == 0){
@@ -297,7 +322,7 @@
 				return this.artikelPenulisStore.options;
 			},
 			updateResponse() {
-				return this.artikelPenulisStore.update;
+				return this.artikelPenulisStore.updateData;
 			},
 			updateStat() {
 				return this.artikelPenulisStore.updateStat;

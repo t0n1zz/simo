@@ -1,6 +1,7 @@
 <template>
 	<div>
-		<form @submit.prevent="save" data-vv-scope="formDataCu">
+		<VeeForm :form="formDataCu" v-slot="{ errors, handleSubmit }">
+		<form @submit.prevent="handleSubmit(onValid, onInvalid)">
 
 		<!-- message -->
 		<message v-if="message.show" @close="messageClose" :title="'Oops terjadi kesalahan'" :errorData="message.content" :showDebug="false">
@@ -10,26 +11,35 @@
 
 			<!-- cu -->
 			<div class="col-md-6" v-if="currentUser.id_cu === 0">
-				<div class="form-group" :class="{'has-error' : errors.has('formDataCu.cu_id')}">
+				<div class="form-group" :class="{'has-error' : errors.has('form.cu_id')}">
 
 					<!-- title -->
-					<h5 :class="{ 'text-danger' : errors.has('formDataCu.cu_id')}">
-						<i class="icon-cross2" v-if="errors.has('formDataCu.cu_id')"></i>
+					<h5 :class="{ 'text-danger' : errors.has('form.cu_id')}">
+						<i class="icon-cross2" v-if="errors.has('form.cu_id')"></i>
 						CU: <wajib-badge></wajib-badge>
 					</h5>
 
 					<!-- select -->
-					<select class="form-control" name="cu_id" v-model="formDataCu.cu_id" data-width="100%" @change="changeCu($event.target.value)" v-validate="'required'" data-vv-as="CU" :disabled="modelCU.length === 0">
+					<Field
+						as="select"
+						name="cu_id"
+						rules="required"
+						v-model="formDataCu.cu_id"
+						class="form-control"
+						data-width="100%"
+						:disabled="modelCU.length === 0"
+						@change="changeCu($event.target.value)"
+					>
 						<option disabled value="0">
 							<span v-if="modelCUStat === 'loading'">Mohon tunggu...</span>
 							<span v-else>Silahkan pilih CU</span>
 						</option>
 						<option v-for="(cu, index) in modelCU" :value="cu.id" :key="index">{{cu.name}}</option>
-					</select>
+					</Field>
 
 					<!-- error message -->
-					<small class="text-muted text-danger" v-if="errors.has('formDataCu.cu_id')">
-						<i class="icon-arrow-small-right"></i> {{ errors.first('formDataCu.cu_id') }}
+					<small class="text-muted text-danger" v-if="errors.has('form.cu_id')">
+						<i class="icon-arrow-small-right"></i> {{ errors.first('form.cu_id') }}
 					</small>
 					<small class="text-muted" v-else>&nbsp;</small>
 				</div>
@@ -37,26 +47,34 @@
 
 			<!-- tp -->
 			<div class="col-md-6">
-				<div class="form-group" :class="{'has-error' : errors.has('formDataCu.tp_id')}">
+				<div class="form-group" :class="{'has-error' : errors.has('form.tp_id')}">
 
 					<!-- title -->
-					<h6 :class="{ 'text-danger' : errors.has('formDataCu.tp_id')}">
-						<i class="icon-cross2" v-if="errors.has('formDataCu.tp_id')"></i>
+					<h6 :class="{ 'text-danger' : errors.has('form.tp_id')}">
+						<i class="icon-cross2" v-if="errors.has('form.tp_id')"></i>
 						TP/KP: <wajib-badge></wajib-badge>
 					</h6>
 
 					<!-- select -->
-					<select class="form-control" name="id_tp" v-model="formDataCu.tp_id" data-width="100%" v-validate="'required'" data-vv-as="TP/KP" @change="changeTp($event.target.value)">
+					<Field
+						as="select"
+						name="tp_id"
+						rules="required"
+						v-model="formDataCu.tp_id"
+						class="form-control"
+						data-width="100%"
+						@change="changeTp($event.target.value)"
+					>
 						<option disabled value="">
 							<span v-if="modelTpStat === 'loading'">Mohon tunggu...</span>
 							<span v-else>Silahkan pilih TP/KP</span>
 						</option>
 						<option v-for="(tp, index) in modelTp" :value="tp.id" :key="index">{{tp.name}}</option>
-					</select>
+					</Field>
 
 					<!-- error message -->
-					<small class="text-muted text-danger" v-if="errors.has('formDataCu.tp_id')">
-						<i class="icon-arrow-small-right"></i> {{ errors.first('formDataCu.tp_id') }}
+					<small class="text-muted text-danger" v-if="errors.has('form.tp_id')">
+						<i class="icon-arrow-small-right"></i> {{ errors.first('form.tp_id') }}
 					</small>
 					<small class="text-muted" v-else>&nbsp;</small>
 				</div>
@@ -64,27 +82,33 @@
 
 			<!-- no_ba -->
 			<div class="col-md-6">
-				<div class="form-group" :class="{'has-error' : errors.has('formDataCu.no_ba')}">
+				<div class="form-group" :class="{'has-error' : errors.has('form.no_ba')}">
 
 					<!-- title -->
-					<h5 :class="{ 'text-danger' : errors.has('formDataCu.no_ba')}">
-						<i class="icon-cross2" v-if="errors.has('formDataCu.no_ba')"></i>
+					<h5 :class="{ 'text-danger' : errors.has('form.no_ba')}">
+						<i class="icon-cross2" v-if="errors.has('form.no_ba')"></i>
 						No. BA: <wajib-badge></wajib-badge>
 					</h5>
 
 					<!-- text -->
-					<cleave 
-						name="anggota_no_ba"
-						v-model="formDataCu.no_ba" 
-						class="form-control" 
-						:options="cleaveOption.number16"
-						placeholder="Silahkan masukkan no buku anggota"
-						v-validate="'required'" data-vv-as="No. Buku Anggota"></cleave>
+					<Field
+						name="no_ba"
+						rules="required"
+						v-model="formDataCu.no_ba"
+						v-slot="{ field }"
+					>
+						<cleave 
+							class="form-control" 
+							:options="cleaveOption.number16"
+							placeholder="Silahkan masukkan no buku anggota"
+							v-bind="field"
+						></cleave>
+					</Field>
 
 
 					<!-- error message -->
-					<small class="text-muted text-danger" v-if="errors.has('formDataCu.no_ba')">
-						<i class="icon-arrow-small-right"></i> {{ errors.first('formDataCu.no_ba') }}
+					<small class="text-muted text-danger" v-if="errors.has('form.no_ba')">
+						<i class="icon-arrow-small-right"></i> {{ errors.first('form.no_ba') }}
 					</small>
 					<small class="text-muted" v-else>&nbsp;
 					</small>
@@ -93,21 +117,28 @@
 
 			<!-- tanggal_masuk -->
 			<div class="col-md-6">
-				<div class="form-group" :class="{'has-error' : errors.has('formDataCu.tanggal_masuk')}">
+				<div class="form-group" :class="{'has-error' : errors.has('form.tanggal_masuk')}">
 
 					<!-- title -->
-					<h5 :class="{ 'text-danger' : errors.has('formDataCu.tanggal_masuk')}">
-						<i class="icon-cross2" v-if="errors.has('formDataCu.tanggal_masuk')"></i>
+					<h5 :class="{ 'text-danger' : errors.has('form.tanggal_masuk')}">
+						<i class="icon-cross2" v-if="errors.has('form.tanggal_masuk')"></i>
 						Tgl. Jadi Anggota: <wajib-badge></wajib-badge>
 					</h5>
 
 					<!-- text -->
 					<date-picker @dateSelected="formDataCu.tanggal_masuk = $event" :defaultDate="formDataCu.tanggal_masuk"></date-picker>	
-					<input v-model="formDataCu.tanggal_masuk" v-show="false" v-validate="'required'" data-vv-as="Tgl. jadi anggota"/>
+					<Field
+						name="tanggal_masuk"
+						rules="required"
+						v-model="formDataCu.tanggal_masuk"
+						v-slot="{ field }"
+					>
+						<input v-show="false" v-bind="field"/>
+					</Field>
 
 					<!-- error message -->
-					<small class="text-muted text-danger" v-if="errors.has('formDataCu.tanggal_masuk')">
-						<i class="icon-arrow-small-right"></i> {{ errors.first('formDataCu.tanggal_masuk') }}
+					<small class="text-muted text-danger" v-if="errors.has('form.tanggal_masuk')">
+						<i class="icon-arrow-small-right"></i> {{ errors.first('form.tanggal_masuk') }}
 					</small>
 					<small class="text-muted" v-else>&nbsp;
 					</small>
@@ -151,14 +182,18 @@
 		</div> 
 
 		</form>
+		</VeeForm>
 
 	</div>
 </template>
 
 <script>
 	import _ from 'lodash';
-	import { mapState } from 'pinia';
-  import { useAnggotaCuStore } from '../../stores/anggotaCu';
+	import { useAuthStore } from '../../stores/auth';
+	import { useCuStore } from '../../stores/cu';
+	import { useTpStore } from '../../stores/tp';
+	import { Field } from 'vee-validate';
+	import VeeForm from '../../components/VeeForm.vue';
 	import checkValue from '../../components/checkValue.vue';
 	import Message from "../../components/message.vue";
 	import Cleave from 'vue-cleave-component';
@@ -173,10 +208,15 @@
 			Message,
 			Cleave,
 			wajibBadge,
-			DatePicker
+			DatePicker,
+			VeeForm,
+			Field
 		},
 		data() {
 			return {
+				authStore: useAuthStore(),
+				cuStore: useCuStore(),
+				tpStore: useTpStore(),
 				title: '',
 				kelas: 'anggotaCu',
 				formDataCu:{
@@ -272,29 +312,27 @@
 					this.formDataCu.tp = tpdata;
 				}
 			},
-			fetchCU(){
-				if(this.modelCuStat != 'success'){
-					this.$store.dispatch('cu/getHeader');
-				}else{
+			fetchCU() {
+				if (this.modelCUStat !== 'success') {
+					this.cuStore.getHeader();
+				} else {
 					this.idCu = this.$route.params.cu;
 					this.tingkat = this.$route.params.tingkat;
 				}
 			},
-			fetchTp(value){
-				this.$store.dispatch('tp/getCu',value);
+			fetchTp(value) {
+				this.tpStore.getCu(value);
 			},
-			save(){
-				this.$validator.validateAll('formDataCu').then((result) => {
-					if (result) {
-						if(this.mode == 'edit'){
-							this.$emit('editCu',this.formDataCu);
-						}else{
-							this.$emit('createCu',this.formDataCu);
-						}
-					}else{
-						this.submited = true;
-					}	
-				});
+			onValid(){
+				if(this.mode == 'edit'){
+					this.$emit('editCu',this.formDataCu);
+				}else{
+					this.$emit('createCu',this.formDataCu);
+				}
+				this.submited = false;
+			},
+			onInvalid(){
+				this.submited = true;
 			},
 			messageClose(){
 				this.message.show = false;
@@ -304,19 +342,27 @@
 			}
 		},
 		computed: {
-			...mapGetters('auth',{
-				currentUser: 'currentUser'
-			}),
-			...mapGetters('cu',{
-				modelCU: 'headerDataS',
-				modelCUStat: 'headerDataStatS',
-				updateMessage: 'update',
-				updateStat: 'updateStat'
-			}),
-			...mapGetters('tp',{
-				modelTp: 'dataS',
-				modelTpStat: 'dataStatS',
-			}),
-		}
+			currentUser() {
+				return this.authStore.currentUser;
+			},
+			modelCU() {
+				return this.cuStore.headerDataS;
+			},
+			modelCUStat() {
+				return this.cuStore.headerDataStatS;
+			},
+			updateMessage() {
+				return this.cuStore.updateData;
+			},
+			updateStat() {
+				return this.cuStore.updateStat;
+			},
+			modelTp() {
+				return this.tpStore.dataS;
+			},
+			modelTpStat() {
+				return this.tpStore.dataStatS;
+			},
+		},
 	}
 </script>

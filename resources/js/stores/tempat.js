@@ -9,7 +9,7 @@ export const useTempatStore = defineStore('tempat', {
         dataStat: '',
         dataStatS: '',
         dataStatSForm: '',
-        update: [], // update data
+        updateData: [], // update data
         updateStat: '',
         rules: [], // laravel rules
         options: [], // laravel options
@@ -69,13 +69,13 @@ export const useTempatStore = defineStore('tempat', {
             try {
                 const response = await tempatAPI.store(form);
                 if (response.data.saved) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -105,13 +105,13 @@ export const useTempatStore = defineStore('tempat', {
             try {
                 const response = await tempatAPI.update(id, form);
                 if (response.data.saved) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -123,13 +123,13 @@ export const useTempatStore = defineStore('tempat', {
             try {
                 const response = await tempatAPI.destroy(id);
                 if (response.data.deleted) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },

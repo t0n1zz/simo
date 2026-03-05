@@ -9,8 +9,8 @@ export const useKegiatanRekomStore = defineStore('kegiatanRekom', {
     dataStat: '',
     dataStatS: '',
     dataStatS2: '',
-    update: [], //update data
-    update2: [], //update data
+    updateData: [], //update data
+    updateData2: [], //update data
     updateStat: '',
     updateStat2: '',
     rules: [], //laravel rules
@@ -24,8 +24,8 @@ export const useKegiatanRekomStore = defineStore('kegiatanRekom', {
     getDataStat: state => state.dataStat,
     getDataStatS: state => state.dataStatS,
     getDataStatS2: state => state.dataStatS2,
-    getUpdate: state => state.update,
-    getUpdate2: state => state.update2,
+    getUpdate: state => state.updateData,
+    getUpdate2: state => state.updateData2,
     getUpdateStat: state => state.updateStat,
     getUpdateStat2: state => state.updateStat2,
     getRules: state => state.rules,
@@ -112,14 +112,14 @@ export const useKegiatanRekomStore = defineStore('kegiatanRekom', {
       try {
         const response = await KegiatanRekomAPI.store(form);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -130,14 +130,14 @@ export const useKegiatanRekomStore = defineStore('kegiatanRekom', {
       try {
         const response = await KegiatanRekomAPI.storeHasil(form);
         if (response.data.saved) {
-          this.update2 = response.data;
+          this.updateData2 = response.data;
           this.updateStat2 = 'success';
         } else {
-          this.update2 = response.data;
+          this.updateData2 = response.data;
           this.updateStat2 = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat2 = 'fail';
       }
     },
@@ -149,14 +149,14 @@ export const useKegiatanRekomStore = defineStore('kegiatanRekom', {
       try {
         const response = await KegiatanRekomAPI.update(id, form);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -167,14 +167,14 @@ export const useKegiatanRekomStore = defineStore('kegiatanRekom', {
       try {
         const response = await KegiatanRekomAPI.updateHasil(id, form);
         if (response.data.saved) {
-          this.update2 = response.data;
+          this.updateData2 = response.data;
           this.updateStat2 = 'success';
         } else {
-          this.update2 = response.data;
+          this.updateData2 = response.data;
           this.updateStat2 = 'fail';
         }
       } catch (error) {
-        this.update2 = error.response;
+        this.updateData2 = error.response;
         this.updateStat2 = 'fail';
       }
     },
@@ -186,14 +186,14 @@ export const useKegiatanRekomStore = defineStore('kegiatanRekom', {
       try {
         const response = await KegiatanRekomAPI.destroy(id);
         if (response.data.deleted) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -205,14 +205,14 @@ export const useKegiatanRekomStore = defineStore('kegiatanRekom', {
       try {
         const response = await KegiatanRekomAPI.destroyHasil(id);
         if (response.data.deleted) {
-          this.update2 = response.data;
+          this.updateData2 = response.data;
           this.updateStat2 = 'success';
         } else {
-          this.update2 = response.data;
+          this.updateData2 = response.data;
           this.updateStat2 = 'fail';
         }
       } catch (error) {
-        this.update2 = error.response;
+        this.updateData2 = error.response;
         this.updateStat2 = 'fail';
       }
     },

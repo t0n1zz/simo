@@ -5,7 +5,7 @@ export const useAnggotaCuImportEsceteStore = defineStore('anggotaCuImportEscete'
   state: () => ({
     dataS: [],
     dataStatS: '',
-    update: [], //update data
+    updateData: [], //update data
     updateStat: '',
     isDraft: ''
   }),
@@ -13,7 +13,7 @@ export const useAnggotaCuImportEsceteStore = defineStore('anggotaCuImportEscete'
   getters: {
     getDataS: state => state.dataS,
     getDataStatS: state => state.dataStatS,
-    getUpdate: state => state.update,
+    getUpdate: state => state.updateData,
     getUpdateStat: state => state.updateStat,
     getIsDraft: state => state.isDraft
   },
@@ -41,7 +41,7 @@ export const useAnggotaCuImportEsceteStore = defineStore('anggotaCuImportEscete'
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -57,13 +57,21 @@ export const useAnggotaCuImportEsceteStore = defineStore('anggotaCuImportEscete'
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
 
     setIsDraft(isDraft) {
-      this.isDraft = isDraft
-    }
-  }
+      this.isDraft = isDraft;
+    },
+
+    setUpdateStat(status) {
+      this.updateStat = status;
+    },
+
+    setUpdateData(data) {
+      this.updateData = data;
+    },
+  },
 });

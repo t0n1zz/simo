@@ -1,225 +1,222 @@
 <?php
+
 namespace App\Http\Controllers;
 
-use DB;
 use App\Models\Artikel;
+use App\Support\CleansEditorImages;
 use App\Support\Helper;
-use Illuminate\Http\Request;
+use App\Support\SanitizesContent;
 use File;
+use Illuminate\Http\Request;
 use Image;
 
-class ArtikelController extends Controller{
+class ArtikelController extends Controller
+{
+    use CleansEditorImages, SanitizesContent;
 
-	protected $imagepath = 'images/artikel/';
-	protected $width = 300;
-	protected $height = 200;
-	protected $message = 'Artikel';
+    protected $imagepath = 'images/artikel/';
 
-	public function index()
-	{
-			$table_data = Artikel::with('kategori','penulis','Cu')->select('id','id_cu','id_artikel_kategori','id_artikel_penulis','name','gambar','utamakan','terbitkan','created_at','updated_at',
-			DB::raw(
-				'(SELECT name FROM cu WHERE artikel.id_cu = cu.id) as cu_name,
-				(SELECT name FROM artikel_kategori WHERE artikel.id_artikel_kategori = artikel_kategori.id) as kategori_name,
-				(SELECT name FROM artikel_penulis WHERE artikel.id_artikel_penulis = artikel_penulis.id) as penulis_name'
-			))->advancedFilter();
+    protected $width = 300;
 
-    	return response()
-			->json([
-				'model' => $table_data
-			]);
-	}
+    protected $height = 200;
 
-	public function indexCu($id)
-	{
-			$table_data = Artikel::with('kategori','penulis','Cu')->where('id_cu',$id)->select('id','id_cu','id_artikel_kategori','id_artikel_penulis','name','gambar','utamakan','terbitkan','created_at','updated_at',
-			DB::raw(
-				'(SELECT name FROM cu WHERE artikel.id_cu = cu.id) as cu_name,
-				(SELECT name FROM artikel_kategori WHERE artikel.id_artikel_kategori = artikel_kategori.id) as kategori_name,
-				(SELECT name FROM artikel_penulis WHERE artikel.id_artikel_penulis = artikel_penulis.id) as penulis_name,
-				(SELECT name FROM cu WHERE artikel.id_cu = cu.id) as cu_name'
-			))->advancedFilter();
+    protected $message = 'Artikel';
 
-    	return response()
-			->json([
-				'model' => $table_data
-			]);
-	}
+    public function index()
+    {
+        $table_data = Artikel::with('kategori', 'penulis', 'Cu')
+            ->advancedFilter();
 
-	public function create()
-	{
-		return response()
-			->json([
-					'form' => Artikel::initialize(),
-					'rules' => Artikel::$rules,
-					'option' => []
-			]);
-	}
+        return response()
+            ->json([
+                'model' => $table_data,
+            ]);
+    }
 
-	public function store(Request $request)
-	{
-		$this->validate($request,Artikel::$rules);
+    public function indexCu($id)
+    {
+        $table_data = Artikel::with('kategori', 'penulis', 'Cu')
+            ->where('id_cu', $id)
+            ->advancedFilter();
 
-		$name = $request->name;
+        return response()
+            ->json([
+                'model' => $table_data,
+            ]);
+    }
 
-		// processing single image upload
-		if(!empty($request->gambar))
-			$fileName = Helper::image_processing($this->imagepath,$this->width,$this->height,$request->gambar,'',$name);
-		else
-			$fileName = '';
+    public function create()
+    {
+        return response()
+            ->json([
+                'form' => Artikel::initialize(),
+                'rules' => Artikel::$rules,
+                'option' => [],
+            ]);
+    }
 
-		// processing summernote content	
-		// if(!empty($request->content))	
-		// 	$content = Helper::dom_processing($request,public_path($this->imagepath));
-		// else
-		// 	$content = '';		
-		
-		$kelas = Artikel::create($request->except('gambar') + [
-			'gambar' => $fileName
-		]);
+    public function store(Request $request)
+    {
+        $this->validate($request, Artikel::$rules);
+        $this->sanitizeRequestContent($request, ['content']);
 
-		return response()
-			->json([
-				'saved' => true,
-				'message' => $this->message. ' ' .$name. ' berhasil ditambah'
-			]);
-	}
+        $name = $request->name;
 
-	public function show($id)
-	{
-		$kelas = Artikel::with('kategori')->findOrFail($id);
+        // processing single image upload
+        if (! empty($request->gambar)) {
+            $fileName = Helper::image_processing($this->imagepath, $this->width, $this->height, $request->gambar, '', $name);
+        } else {
+            $fileName = '';
+        }
 
-		return response()
-			->json([
-				'model' => $kelas
-			]);
-	}
+        $kelas = Artikel::create($request->except('gambar') + [
+            'gambar' => $fileName,
+        ]);
 
-	public function edit($id)
-	{
-		$kelas = Artikel::findOrFail($id);
+        return response()
+            ->json([
+                'saved' => true,
+                'message' => $this->message.' '.$name.' berhasil ditambah',
+            ]);
+    }
 
-		return response()
-				->json([
-						'form' => $kelas,
-						'option' => []
-				]);
-	}
+    public function show($id)
+    {
+        $kelas = Artikel::with('kategori')->findOrFail($id);
 
-	public function update(Request $request, $id)
-	{
-		$this->validate($request,Artikel::$rules);
+        return response()
+            ->json([
+                'model' => $kelas,
+            ]);
+    }
 
-		$name = $request->name;
+    public function edit($id)
+    {
+        $kelas = Artikel::findOrFail($id);
 
-		$kelas = Artikel::findOrFail($id);
+        return response()
+            ->json([
+                'form' => $kelas,
+                'option' => [],
+            ]);
+    }
 
-		// processing single image upload
-		if(!empty($request->gambar))
-			$fileName = Helper::image_processing($this->imagepath,$this->width,$this->height,$request->gambar,$kelas->gambar, $name);
-		else
-			$fileName = '';
+    public function update(Request $request, $id)
+    {
+        $this->validate($request, Artikel::$rules);
+        $this->sanitizeRequestContent($request, ['content']);
 
-		// processing summernote content	
-		// if(!empty($request->content))	
-		// 	$content = Helper::dom_processing($request,public_path($this->imagepath));
-		// else
-		// 	$content = '';
-		$kelas->update($request->except('gambar') + [
-			'gambar' => $fileName
-		]);
+        $name = $request->name;
 
-		return response()
-			->json([
-				'saved' => true,
-				'message' => $this->message. ' ' .$name. ' berhasil diubah'
-			]);
-	}
+        $kelas = Artikel::findOrFail($id);
 
-	public function updateTerbitkan($id)
-	{
-		$kelas = Artikel::findOrFail($id);
+        $this->cleanupRemovedEditorImages($kelas->content, $request->content, 'artikel');
 
-		if($kelas->terbitkan == 1){
-			$kelas->terbitkan = 0;
-			$message = $this->message. " berhasil tidak diterbitkan";
-		}else{
-			$kelas->terbitkan = 1;
-			$message = $this->message. " berhasil diterbitkan";
-		}
+        // processing single image upload
+        if (! empty($request->gambar)) {
+            $fileName = Helper::image_processing($this->imagepath, $this->width, $this->height, $request->gambar, $kelas->gambar, $name);
+        } else {
+            $fileName = '';
+        }
 
-		$kelas->update();
+        $kelas->update($request->except('gambar') + [
+            'gambar' => $fileName,
+        ]);
 
-		return response()
-			->json([
-				'saved' => true,
-				'message' => $message
-			]);
-	}
+        return response()
+            ->json([
+                'saved' => true,
+                'message' => $this->message.' '.$name.' berhasil diubah',
+            ]);
+    }
 
-	public function updateUtamakan($id)
-	{
-		$kelas = Artikel::findOrFail($id);
+    public function updateTerbitkan($id)
+    {
+        $kelas = Artikel::findOrFail($id);
 
-		if($kelas->utamakan == 1){
-			$kelas->utamakan = 0;
-			$message = $this->message. " berhasil tidak diutamakan";
-		}else{
-			$kelas->utamakan = 1;
-			$message = $this->message. " berhasil diutamakan";
-		}
+        if ($kelas->terbitkan == 1) {
+            $kelas->terbitkan = 0;
+            $message = $this->message.' berhasil tidak diterbitkan';
+        } else {
+            $kelas->terbitkan = 1;
+            $message = $this->message.' berhasil diterbitkan';
+        }
 
-		$kelas->update();
+        $kelas->update();
 
-		return response()
-			->json([
-				'saved' => true,
-				'message' => $message
-			]);
-	}
+        return response()
+            ->json([
+                'saved' => true,
+                'message' => $message,
+            ]);
+    }
 
-	public function destroy($id)
-	{
-		$kelas = Artikel::findOrFail($id);
-		$name = $kelas->name;
+    public function updateUtamakan($id)
+    {
+        $kelas = Artikel::findOrFail($id);
 
-		if(!empty($kelas->gambar)){
-			File::delete($this->imagepath . $kelas->gambar . '.jpg');
-			File::delete($this->imagepath . $kelas->gambar . 'n.jpg');
-		}
+        if ($kelas->utamakan == 1) {
+            $kelas->utamakan = 0;
+            $message = $this->message.' berhasil tidak diutamakan';
+        } else {
+            $kelas->utamakan = 1;
+            $message = $this->message.' berhasil diutamakan';
+        }
 
-		$kelas->delete();
+        $kelas->update();
 
-		return response()
-			->json([
-				'deleted' => true,
-				'message' => $this->message. ' ' .$name. 'berhasil dihapus'
-			]);
-	}
+        return response()
+            ->json([
+                'saved' => true,
+                'message' => $message,
+            ]);
+    }
 
-	public function upload(Request $request)
-	{
-		if(!empty($request->gambar))
-			$fileName = Helper::image_processing($this->imagepath,$this->width,$this->height,$request->gambar,'', $request->name);
-		else
-			$fileName = '';
+    public function destroy($id)
+    {
+        $kelas = Artikel::findOrFail($id);
+        $name = $kelas->name;
 
-		return response()->json('/' . $this->imagepath . $fileName . '.jpg');
-	}
+        if (! empty($kelas->gambar)) {
+            File::delete($this->imagepath.$kelas->gambar.'.jpg');
+            File::delete($this->imagepath.$kelas->gambar.'n.jpg');
+        }
 
-	public function count()
-	{
-			$id = \Auth::user()->id_cu;
+        $this->deleteAllEditorImages($kelas->content, 'artikel');
 
-			if($id == 0){
-					$table_data = Artikel::count();
-			}else{
-					$table_data = Artikel::where('id_cu',$id)->count();
-			}
-			
-			return response()
-			->json([
-					'model' => $table_data
-			]);
-	}
+        $kelas->delete();
+
+        return response()
+            ->json([
+                'deleted' => true,
+                'message' => $this->message.' '.$name.'berhasil dihapus',
+            ]);
+    }
+
+    public function upload(Request $request)
+    {
+        if (! empty($request->gambar)) {
+            $fileName = Helper::image_processing($this->imagepath, $this->width, $this->height, $request->gambar, '', $request->name);
+        } else {
+            $fileName = '';
+        }
+
+        return response()->json('/'.$this->imagepath.$fileName.'.jpg');
+    }
+
+    public function count()
+    {
+        $id = \Auth::user()->id_cu;
+
+        if ($id == 0) {
+            $table_data = Artikel::count();
+        } else {
+            $table_data = Artikel::where('id_cu', $id)->count();
+        }
+
+        return response()
+            ->json([
+                'model' => $table_data,
+            ]);
+    }
 }

@@ -1,27 +1,30 @@
 <template>
 	<div>
-		<form @submit.prevent="save" data-vv-scope="formPanitia">
+		<VeeForm :form="formPanitia" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
+		<form @submit.prevent="handleSubmit(onValid)">
 
 		<!-- asal -->
-		<div class="form-group" :class="{'has-error' : errors && errors.has && errors.has('formPanitia.asal')}" v-if="mode == 'create'">
+		<div class="form-group" :class="{'has-error' : errors && errors.has && errors.has('asal')}" v-if="mode == 'create'">
 
 			<!-- title -->
-			<h5 :class="{ 'text-danger' : errors && errors.has && errors.has('formPanitia.asal')}">
-				<i class="icon-cross2" v-if="errors && errors.has && errors.has('formPanitia.asal')"></i>
+			<h5 :class="{ 'text-danger' : errors && errors.has && errors.has('asal')}">
+				<i class="icon-cross2" v-if="errors && errors.has && errors.has('asal')"></i>
 				Asal:
 			</h5>
 
 			<!-- select -->
-			<select class="form-control" name="asal" v-model="formPanitia.asal" data-width="100%" @change="changeAsal($event.target.value)" v-validate="'required'" data-vv-as="asal">
-				<option disabled value="">Silahkan pilih asal</option>
-				<option value="dalam">Dalam gerakan</option>
-				<option value="luar">Luar gerakan (Perseorangan)</option>
-				<option value="luar lembaga">Luar gerakan (Lembaga)</option>
-			</select>
+			<Field name="asal" v-slot="{ field }" :rules="'required'" label="Asal">
+				<select class="form-control" data-width="100%" v-bind="field" v-model="formPanitia.asal" @change="changeAsal($event.target.value)">
+					<option disabled value="">Silahkan pilih asal</option>
+					<option value="dalam">Dalam gerakan</option>
+					<option value="luar">Luar gerakan (Perseorangan)</option>
+					<option value="luar lembaga">Luar gerakan (Lembaga)</option>
+				</select>
+			</Field>
 
 			<!-- error message -->
-			<small class="text-muted text-danger" v-if="errors && errors.has && errors.has('formPanitia.asal')">
-				<i class="icon-arrow-small-right"></i> {{ errors && errors.first && errors.first('formPanitia.asal') }}
+			<small class="text-muted text-danger" v-if="errors && errors.has && errors.has('asal')">
+				<i class="icon-arrow-small-right"></i> {{ errors && errors.first && errors.first('asal') }}
 			</small>
 			<small class="text-muted" v-else>&nbsp;</small>
 		</div>
@@ -275,28 +278,30 @@
 		</data-viewer>
 
 		<!-- peran -->
-		<div class="form-group" :class="{'has-error' : errors && errors.has && errors.has('formPanitia.peran')}">
+		<div class="form-group" :class="{'has-error' : errors && errors.has && errors.has('peran')}">
 
 			<!-- title -->
-			<h5 :class="{ 'text-danger' : errors && errors.has && errors.has('formPanitia.peran')}">
-				<i class="icon-cross2" v-if="errors && errors.has && errors.has('formPanitia.peran')"></i>
+			<h5 :class="{ 'text-danger' : errors && errors.has && errors.has('peran')}">
+				<i class="icon-cross2" v-if="errors && errors.has && errors.has('peran')"></i>
 				Peran:
 			</h5>
 
 			<!-- select -->
-			<select class="form-control" name="peran" v-model="formPanitia.peran" data-width="100%" v-validate="'required'" data-vv-as="Peran">
-				<option disabled value="">Silahkan pilih peran</option>
-				<option value="panitia">Panitia</option>
-				<option value="fasilitator">Fasilitator</option>
-				<option value="moderator">Moderator</option>
-				<option value="narasumber">Narasumber</option>
-				<option value="pimpinan">Pimpinan Rapat</option>
-				<option value="sekretaris">Sekretaris Rapat</option>
-			</select>
+			<Field name="peran" v-slot="{ field }" :rules="'required'" label="Peran">
+				<select class="form-control" data-width="100%" v-bind="field" v-model="formPanitia.peran">
+					<option disabled value="">Silahkan pilih peran</option>
+					<option value="panitia">Panitia</option>
+					<option value="fasilitator">Fasilitator</option>
+					<option value="moderator">Moderator</option>
+					<option value="narasumber">Narasumber</option>
+					<option value="pimpinan">Pimpinan Rapat</option>
+					<option value="sekretaris">Sekretaris Rapat</option>
+				</select>
+			</Field>
 
 			<!-- error message -->
-			<small class="text-muted text-danger" v-if="errors && errors.has && errors.has('formPanitia.peran')">
-				<i class="icon-arrow-small-right"></i> {{ errors && errors.first && errors.first('formPanitia.peran') }}
+			<small class="text-muted text-danger" v-if="errors && errors.has && errors.has('peran')">
+				<i class="icon-arrow-small-right"></i> {{ errors && errors.first && errors.first('peran') }}
 			</small>
 			<small class="text-muted" v-else>&nbsp;</small>
 		</div>
@@ -315,11 +320,11 @@
 		</div>
 
 		<!-- message -->
-		<message v-if="errors && errors.any && errors.any('formPanitia') && submited" :title="'Oops terjadi kesalahan'" :errorItem="errors && errors.items">
+		<message v-if="errors && errors.any && errors.any() && submited" :title="'Oops terjadi kesalahan'" :errorItem="errors && errors.items">
 		</message>
 		<!-- divider -->
 		<hr>
-		
+
 		<!-- tombol desktop-->
 		<div class="text-center d-none d-md-block">
 			<button type="button" class="btn btn-light" @click.prevent="tutup">
@@ -327,7 +332,7 @@
 
 			<button type="submit" class="btn btn-primary" :disabled="formPanitia.aktivis_id == ''">
 				<i class="icon-floppy-disk"></i> Simpan</button>
-		</div>  
+		</div>
 
 		<!-- tombol mobile-->
 		<div class="d-block d-md-none">
@@ -338,7 +343,8 @@
 				<i class="icon-cross"></i> Tutup</button>
 		</div>
 
-		</form> 
+		</form>
+		</VeeForm>
 
 	</div>
 </template>
@@ -352,14 +358,18 @@
 	import checkValue from '../../components/checkValue.vue';
 	import DataViewer from '../../components/dataviewer2.vue';
 	import message from "../../components/message.vue";
-  import { checkTingkatAktivis, date } from "../../helpers/filterHelpers";
+	import VeeForm from "../../components/VeeForm.vue";
+	import { Field } from 'vee-validate';
+	import { checkTingkatAktivis, date } from "../../helpers/filterHelpers";
 
 	export default {
 		props: ['mode','selected'],
 		components: {
 			DataViewer,
 			checkValue,
-			message
+			message,
+			VeeForm,
+			Field
 		},
 		data() {
 			return {
@@ -467,14 +477,6 @@
 					{ title: 'Hp' },
 				],
 				submited: false,
-        // SHIM: Add dummy errors object for VeeValidate 2 compatibility in Vue 3
-        errors: {
-          any: () => false,
-          has: () => false,
-          first: () => '',
-          collect: () => [],
-          items: []
-        },
 			}
 		},
 		created(){
@@ -554,19 +556,16 @@
 					this.formPanitia.lembaga = item.lembaga != '' ? item.lembaga : '-';
 				}
 			},
-			save(){
-				this.$validator.validateAll('formPanitia').then((result) => {
-					if (result) {
-						if(this.mode == 'edit'){
-							this.$emit('editPanitia',this.formPanitia);
-						}else{
-							this.$emit('createPanitia',this.formPanitia);
-						}
-						this.submited = false;
-					}else{
-						this.submited = true;
-					}	
-				});
+			onValid() {
+				if (this.mode == 'edit') {
+					this.$emit('editPanitia', this.formPanitia);
+				} else {
+					this.$emit('createPanitia', this.formPanitia);
+				}
+				this.submited = false;
+			},
+			onInvalid() {
+				this.submited = true;
 			},
 			tutup(){
 				this.$emit('tutup');

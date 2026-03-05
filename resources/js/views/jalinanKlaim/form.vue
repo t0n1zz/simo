@@ -611,7 +611,7 @@
 </template>
 
 <script>
-	import { mapState, mapActions } from 'pinia';
+	import { mapState } from 'pinia';
 	import { useAuthStore } from '../../stores/auth';
 	import { useJalinanKlaimStore } from '../../stores/jalinanKlaim';
 	import { useAnggotaCuStore } from '../../stores/anggotaCu';
@@ -658,6 +658,9 @@
 		},
 		data() {
 			return {
+				jalinanKlaimStore: useJalinanKlaimStore(),
+				anggotaCuStore: useAnggotaCuStore(),
+				cuStore: useCuStore(),
 				title: 'Tambah Bantuan Solidaritas Jalinan',
 				titleDesc: 'Menambah bantuan solidaritas Jalinan',
 				titleIcon: 'icon-plus3',
@@ -730,12 +733,11 @@
 			}
 		},
 		created() {
-			if (this.currentUser.id_cu == 0) {
-				if (this.modelCuStat != 'success') {
-					this.$store.dispatch('cu/getHeader');
+			if (this.currentUser.id_cu === 0) {
+				if (this.modelCuStat !== 'success') {
+					this.cuStore.getHeader();
 				}
 			}
-
 			this.fetch();
 		},
 		watch: {
@@ -819,29 +821,29 @@
 					}
 				}
 			},
-			fetchForm(){
-				if(this.$route.meta.mode == 'edit' || this.$route.meta.mode == 'koreksi'){
-					this.$store.dispatch(this.kelas + '/edit',[this.$route.params.nik,this.$route.params.cu,this.$route.params.tipe]);	
+			fetchForm() {
+				if (this.$route.meta.mode === 'edit' || this.$route.meta.mode === 'koreksi') {
+					this.jalinanKlaimStore.edit([this.$route.params.nik, this.$route.params.cu, this.$route.params.tipe]);
 					this.isEdit = true;
 					this.anggota_cu_cu_id = this.$route.params.cu;
 					this.tipe = this.$route.params.tipe;
 				}
 			},
-			cariData(nik){
+			cariData(nik) {
 				this.nik = nik;
-				this.$store.dispatch(this.kelas + '/cariData', nik);
+				this.jalinanKlaimStore.cariData(nik);
 			},
-			cariDataId(id){
-				this.$store.dispatch(this.kelas + '/cariDataId', id);
+			cariDataId(id) {
+				this.jalinanKlaimStore.cariDataId(id);
 			},
-			changeStatusNIK(value){
-				this.nik == '';
+			changeStatusNIK(value) {
+				this.nik = '';
 				this.statusNIK = value;
-				this.$store.dispatch(this.kelas + '/resetData');
+				this.jalinanKlaimStore.resetData();
 			},
-			nikNew(value){
+			nikNew(value) {
 				this.nik = value;
-				this.$store.dispatch(this.kelas + '/cariData', value);
+				this.jalinanKlaimStore.cariData(value);
 			},
 			selectedRow(item) {
         this.selectedItem = item;
@@ -849,15 +851,15 @@
 			changeTab(value) {
 				this.tabName = value;
 			},
-			changeTipe(value){
-				if(value == 'cacat'){
+			changeTipe(value) {
+				if (value === 'cacat') {
 					this.form.tunas_diajukan = 0;
 				}
-				this.$store.dispatch(this.kelas + '/resetForm');
+				this.jalinanKlaimStore.resetForm();
 			},
-			changeCU(value){
-				this.$store.dispatch('anggotaCu/resetDataProduk');
-				this.$store.dispatch(this.kelas + '/resetForm');
+			changeCU(value) {
+				this.anggotaCuStore.resetDataProduk();
+				this.jalinanKlaimStore.resetForm();
 			},
 			cekData(){
 				let _nik = '';
@@ -872,17 +874,16 @@
 				let _cu = '';
 				_cu = _.find(this.itemDataCu,{'id': parseInt(this.anggota_cu_cu_id, 10)});
 				this.cu_id = _cu.cu_id;
-				this.$store.dispatch(this.kelas + '/edit',[_nik,_cu.id, this.tipe]);
-				this.$store.dispatch('anggotaCu/indexProduk',[this.itemData.id, _cu.cu_id]);
-				// this.$store.dispatch(this.kelas + '/getKlaimLama',[_nik,_cu.id]);
+				this.jalinanKlaimStore.edit([_nik, _cu.id, this.tipe]);
+				this.anggotaCuStore.indexProduk([{}, this.itemData.id, _cu.cu_id]);
 			},
-			resetData(){
+			resetData() {
 				this.itemDataCu = [];
 				this.itemDataProduk = [];
-				this.$store.commit(this.kelas + '/setData2',{});
-				this.$store.commit(this.kelas + '/setDataStat2','');
-				this.$store.dispatch('anggotaCu/resetDataProduk');
-				this.$store.dispatch(this.kelas + '/resetForm');
+				this.jalinanKlaimStore.setData2({});
+				this.jalinanKlaimStore.setDataStat2('');
+				this.anggotaCuStore.resetDataProduk();
+				this.jalinanKlaimStore.resetForm();
 			},
 			classCu(){
 				if(this.currentUser.id_cu == 0){
@@ -904,10 +905,10 @@
 				const formData = toMulipartedForm(this.form, this.$route.meta.mode);
 				this.$validator.validateAll('form').then((result) => {
 					if (result) {
-						if(this.form.id){
-							this.$store.dispatch(this.kelas + '/update', [this.form.id, formData]);
-						}else{
-							this.$store.dispatch(this.kelas + '/store', formData);
+						if (this.form.id) {
+							this.jalinanKlaimStore.update([this.form.id, formData]);
+						} else {
+							this.jalinanKlaimStore.store(formData);
 						}
 						this.submited = false;
 					}else{

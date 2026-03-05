@@ -59,50 +59,55 @@
 </template>
 
 <script>
-	import { mapGetters } from 'vuex';
+	import { useAuthStore } from '../../stores/auth';
+	import { useSuratMasukStore } from '../../stores/suratMasuk';
+
 	export default {
-		props:['kelas'],
-		data(){
+		props: ['kelas'],
+		data() {
 			return {
-				periode: ''
-			}
+				authStore: useAuthStore(),
+				suratMasukStore: useSuratMasukStore(),
+				periode: '',
+			};
 		},
-		created(){
+		created() {
 			this.fetchData();
 		},
 		watch: {
-			'$route' (to, from){
-				// check current page meta
+			$route() {
 				this.fetchData();
 			},
-			modelDataStat(value){
-				if(value === "success"){
+			modelDataStat(value) {
+				if (value === 'success') {
 					this.periode = this.$route.params.periode;
 				}
 			},
-    },
+		},
 		methods: {
-			fetch(){
-				this.$router.push({name: this.kelas + 'Cu', params:{cu:this.$route.params.cu, periode: this.periode} });
+			fetch() {
+				this.$router.push({ name: this.kelas + 'Cu', params: { cu: this.$route.params.cu, periode: this.periode } });
 			},
-			fetchData(){
-				if(this.modelData.length == 0){
-					this.$store.dispatch(this.kelas + '/getPeriode', this.$route.params.cu);
+			fetchData() {
+				if (this.modelData.length === 0) {
+					this.suratMasukStore.fetchPeriode(this.$route.params.cu);
 				}
 				this.periode = this.$route.params.periode;
 			},
-			changePeriode(periode){
+			changePeriode(periode) {
 				this.fetch();
-			}
+			},
 		},
 		computed: {
-			...mapGetters('auth',{
-				currentUser: 'currentUser'
-			}),
-			...mapGetters('suratMasuk',{
-				modelData: 'periode',
-				modelDataStat: 'periodeStat',
-			}),
-		}
+			currentUser() {
+				return this.authStore.currentUser;
+			},
+			modelData() {
+				return this.suratMasukStore.periode;
+			},
+			modelDataStat() {
+				return this.suratMasukStore.periodeStat;
+			},
+		},
 	}
 </script>

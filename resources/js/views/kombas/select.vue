@@ -20,7 +20,9 @@
 								<option value="semua">Semua CU</option>
 								<option value="0" v-if="isPus"><span v-if="currentUser.pus">{{currentUser.pus.name}}</span> <span v-else>PUSKOPCUINA</span></option>
 								<option disabled value="">----------------</option>
-								<option v-for="cu in modelCU" :value="cu.id" v-if="cu">{{cu.name}}</option>
+								<template v-for="cu in modelCU" :key="cu ? cu.id : undefined">
+									<option v-if="cu" :value="cu.id">{{cu.name}}</option>
+								</template>
 							</select>
 
 							<!-- reload cu -->
@@ -80,7 +82,9 @@
 							<option value="semua">Semua CU</option>
 							<option value="0" v-if="isPus"><span v-if="currentUser.pus">{{currentUser.pus.name}}</span> <span v-else>PUSKOPCUINA</span></option>
 							<option disabled value="">----------------</option>
-							<option v-for="cu in modelCU" :value="cu.id" v-if="cu">{{cu.name}}</option>
+							<template v-for="cu in modelCU" :key="cu ? cu.id : undefined">
+									<option v-if="cu" :value="cu.id">{{cu.name}}</option>
+								</template>
 						</select>
 					</div>
 
@@ -199,7 +203,7 @@
 				return this.cuStore.headerDataStatS;
 			},
 			updateMessage() {
-				return this.cuStore.update;
+				return this.cuStore.updateData;
 			},
 			updateStat() {
 				return this.cuStore.updateStat;

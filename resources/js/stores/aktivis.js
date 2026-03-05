@@ -21,7 +21,7 @@ export const useAktivisStore = defineStore('aktivis', {
     dataStatS5: '',
     dataStatS6: '',
     countStat: '',
-    update: [], //update data
+    updateData: [], //update data
     updateStat: '',
     rules: [], //laravel rules
     options: [], //laravel options
@@ -46,7 +46,7 @@ export const useAktivisStore = defineStore('aktivis', {
     getDataStatS5: state => state.dataStatS5,
     getDataStatS6: state => state.dataStatS6,
     getCountStat: state => state.countStat,
-    getUpdate: state => state.update,
+    getUpdate: state => state.updateData,
     getUpdateStat: state => state.updateStat,
     getRules: state => state.rules,
     getOptions: state => state.options,
@@ -451,13 +451,13 @@ export const useAktivisStore = defineStore('aktivis', {
       try {
         const response = await aktivisAPI.store(form);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -468,13 +468,13 @@ export const useAktivisStore = defineStore('aktivis', {
       try {
         const response = await aktivisAPI.savePekerjaan(id, form);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -485,13 +485,13 @@ export const useAktivisStore = defineStore('aktivis', {
       try {
         const response = await aktivisAPI.savePendidikan(id, form);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -502,13 +502,13 @@ export const useAktivisStore = defineStore('aktivis', {
       try {
         const response = await aktivisAPI.saveOrganisasi(id, form);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -519,13 +519,13 @@ export const useAktivisStore = defineStore('aktivis', {
       try {
         const response = await aktivisAPI.saveDiklat(id, form);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -536,13 +536,13 @@ export const useAktivisStore = defineStore('aktivis', {
       try {
         const response = await aktivisAPI.saveKeluarga(id, form);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -553,13 +553,13 @@ export const useAktivisStore = defineStore('aktivis', {
       try {
         const response = await aktivisAPI.saveAnggotaCu(id, form);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -570,13 +570,13 @@ export const useAktivisStore = defineStore('aktivis', {
       try {
         const response = await aktivisAPI.saveKeterangan(id, form);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -606,13 +606,13 @@ export const useAktivisStore = defineStore('aktivis', {
       try {
         const response = await aktivisAPI.update(id, form);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -624,13 +624,13 @@ export const useAktivisStore = defineStore('aktivis', {
       try {
         const response = await aktivisAPI.destroy(id);
         if (response.data.deleted) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -641,13 +641,13 @@ export const useAktivisStore = defineStore('aktivis', {
       try {
         const response = await aktivisAPI.destroyPekerjaan(id);
         if (response.data.deleted) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -658,13 +658,13 @@ export const useAktivisStore = defineStore('aktivis', {
       try {
         const response = await aktivisAPI.destroyPendidikan(id);
         if (response.data.deleted) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -675,13 +675,13 @@ export const useAktivisStore = defineStore('aktivis', {
       try {
         const response = await aktivisAPI.destroyOrganisasi(id);
         if (response.data.deleted) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -692,13 +692,13 @@ export const useAktivisStore = defineStore('aktivis', {
       try {
         const response = await aktivisAPI.destroyDiklat(id);
         if (response.data.deleted) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -709,13 +709,13 @@ export const useAktivisStore = defineStore('aktivis', {
       try {
         const response = await aktivisAPI.destroyKeluarga(id);
         if (response.data.deleted) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -726,13 +726,13 @@ export const useAktivisStore = defineStore('aktivis', {
       try {
         const response = await aktivisAPI.destroyAnggotaCu(id);
         if (response.data.deleted) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -743,13 +743,13 @@ export const useAktivisStore = defineStore('aktivis', {
       try {
         const response = await aktivisAPI.destroyKeterangan(id);
         if (response.data.deleted) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },

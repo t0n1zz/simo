@@ -1,6 +1,7 @@
 <template>
 	<div>
-		<form @submit.prevent="save" data-vv-scope="formDiklat">
+		<VeeForm :form="formDiklat" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
+		<form @submit.prevent="handleSubmit(onValid)">
 
 		<!-- name -->
 		<div class="form-group" :class="{'has-error' : errors.has('formDiklat.name')}">
@@ -11,7 +12,9 @@
 				Nama: <wajib-badge></wajib-badge>
 			</h5>
 
-			<input type="text" name="name" class="form-control" placeholder="Silahkan masukkan nama diklat" v-validate="'required'" data-vv-as="Jabatan" v-model="formDiklat.name">
+			<Field name="formDiklat.name" rules="required" v-model="formDiklat.name" v-slot="{ field }">
+				<input type="text" class="form-control" placeholder="Silahkan masukkan nama diklat" v-bind="field">
+			</Field>
 
 			<!-- error message -->
 			<small class="text-muted text-danger" v-if="errors.has('formDiklat.name')">
@@ -29,8 +32,10 @@
 				Tanggal Mulai: <wajib-badge></wajib-badge></h5>
 
 			<!-- input -->
-			<date-picker @dateSelected="formDiklat.tanggal_mulai = $event" :defaultDate="formDiklat.tanggal_mulai"></date-picker>	
-			<input v-model="formDiklat.tanggal_mulai" name="tanggal_mulai" v-show="false" v-validate="'required'" data-vv-as="Tanggal mulai"/>
+			<date-picker @dateSelected="formDiklat.tanggal_mulai = $event" :defaultDate="formDiklat.tanggal_mulai"></date-picker>
+			<Field name="formDiklat.tanggal_mulai" rules="required" v-model="formDiklat.tanggal_mulai" v-slot="{ field }">
+				<input type="hidden" v-bind="field" />
+			</Field>
 
 			<!-- error message -->
 			<small class="text-muted text-danger" v-if="errors.has('formDiklat.tanggal_mulai')">
@@ -115,29 +120,35 @@
 				<i class="icon-cross"></i> Tutup</button>
 		</div>
 
-		</form> 
+		</form>
+		</VeeForm>
 
 	</div>
 </template>
 
 <script>
-	import { mapGetters } from 'vuex';
-	import message from "../../components/message.vue";
-	import DatePicker from "../../components/datePicker.vue";
-	import wajibBadge from "../../components/wajibBadge.vue";
+	import { useAuthStore } from '../../stores/auth';
+	import message from '../../components/message.vue';
+	import DatePicker from '../../components/datePicker.vue';
+	import wajibBadge from '../../components/wajibBadge.vue';
+	import VeeForm from '../../components/VeeForm.vue';
+	import { Field } from 'vee-validate';
 
 	export default {
-		props: ['mode','selected'],
+		props: ['mode', 'selected'],
 		components: {
 			message,
 			DatePicker,
-			wajibBadge
+			wajibBadge,
+			VeeForm,
+			Field,
 		},
 		data() {
 			return {
+				authStore: useAuthStore(),
 				title: '',
 				kelas: 'kubnDiklat',
-				formDiklat:{
+				formDiklat: {
 					name: '',
 					fasilitator: '',
 					tempat: '',
@@ -146,36 +157,33 @@
 					tanggal_selesai: null,
 				},
 				submited: false,
-			}
+			};
 		},
-		created(){
-			if(this.mode == 'edit'){
+		created() {
+			if (this.mode === 'edit') {
 				this.formDiklat = Object.assign({}, this.selected);
 			}
 		},
 		methods: {
-			save(){
-				this.$validator.validateAll('formDiklat').then((result) => {
-					if (result) {
-						if(this.mode == 'edit'){
-							this.$emit('editDiklat',this.formDiklat);
-						}else{
-							this.$emit('createDiklat',this.formDiklat);
-						}
-						this.submited = false;
-					}else{
-						this.submited = true;
-					}	
-				});
+			onValid() {
+				if (this.mode === 'edit') {
+					this.$emit('editDiklat', this.formDiklat);
+				} else {
+					this.$emit('createDiklat', this.formDiklat);
+				}
+				this.submited = false;
 			},
-			tutup(){
+			onInvalid() {
+				this.submited = true;
+			},
+			tutup() {
 				this.$emit('tutup');
-			}
+			},
 		},
 		computed: {
-			...mapGetters('auth',{
-				currentUser: 'currentUser'
-			}),
-		}
+			currentUser() {
+				return this.authStore.currentUser;
+			},
+		},
 	}
 </script>

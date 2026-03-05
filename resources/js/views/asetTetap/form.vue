@@ -1072,7 +1072,7 @@
 				return this.asetTetapStore.kodeStat;
 			},
 			updateResponse() {
-				return this.asetTetapStore.update;
+				return this.asetTetapStore.updateData;
 			},
 			updateStat() {
 				return this.asetTetapStore.updateStat;
@@ -1090,7 +1090,7 @@
 				return this.asetTetapJenisStore.dataStatS;
 			},
 			updateJenisResponse() {
-				return this.asetTetapJenisStore.update;
+				return this.asetTetapJenisStore.updateData;
 			},
 			updateJenisStat() {
 				return this.asetTetapJenisStore.updateStat;
@@ -1102,7 +1102,7 @@
 				return this.asetTetapKelompokStore.dataStatS;
 			},
 			updateKelompokResponse() {
-				return this.asetTetapKelompokStore.update;
+				return this.asetTetapKelompokStore.updateData;
 			},
 			updateKelompokStat() {
 				return this.asetTetapKelompokStore.updateStat;
@@ -1114,7 +1114,7 @@
 				return this.asetTetapGolonganStore.dataStatS;
 			},
 			updateGolonganResponse() {
-				return this.asetTetapGolonganStore.update;
+				return this.asetTetapGolonganStore.updateData;
 			},
 			updateGolonganStat() {
 				return this.asetTetapGolonganStore.updateStat;
@@ -1126,7 +1126,7 @@
 				return this.asetTetapLokasiStore.dataStatS;
 			},
 			updateLokasiResponse() {
-				return this.asetTetapLokasiStore.update;
+				return this.asetTetapLokasiStore.updateData;
 			},
 			updateLokasiStat() {
 				return this.asetTetapLokasiStore.updateStat;
@@ -1138,7 +1138,7 @@
 				return this.aktivisStore.dataStatS;
 			},
 			updateAktivisResponse() {
-				return this.aktivisStore.update;
+				return this.aktivisStore.updateData;
 			},
 			updateAktivisStat() {
 				return this.aktivisStore.updateStat;

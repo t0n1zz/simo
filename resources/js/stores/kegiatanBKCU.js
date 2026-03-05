@@ -68,10 +68,10 @@ export const useKegiatanBKCUStore = defineStore('kegiatanBKCU', {
         countStat2: '',
         countStat3: '',
         countStat4: '',
-        update: [], //update data
+        updateData: [], //update data
         updateStat: '',
         updateNilaiStat: '',
-        update2: [], //update data
+        updateData2: [], //update data
         updateStat2: '',
         rules: [], //laravel rules
         options: [], //laravel options
@@ -153,11 +153,11 @@ export const useKegiatanBKCUStore = defineStore('kegiatanBKCU', {
         getCountStat2: state => state.countStat2,
         getCountStat3: state => state.countStat3,
         getCountStat4: state => state.countStat4,
-        getUpdate: state => state.update,
+        getUpdate: state => state.updateData,
         getUpdateNilai: state => state.updateNilai,
         getUpdateStat: state => state.updateStat,
         getUpdateNilaiStat: state => state.updateNilaiStat,
-        getUpdate2: state => state.update2,
+        getUpdate2: state => state.updateData2,
         getUpdateStat2: state => state.updateStat2,
         getRules: state => state.rules,
         getOptions: state => state.options,
@@ -671,13 +671,13 @@ export const useKegiatanBKCUStore = defineStore('kegiatanBKCU', {
             try {
                 const response = await KEGIATANBKCUAPI.store(tipe, form);
                 if (response.data.saved) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -688,13 +688,13 @@ export const useKegiatanBKCUStore = defineStore('kegiatanBKCU', {
             try {
                 const response = await KEGIATANBKCUAPI.penerimaSertifikat(formData);
                 if (response.data.saved) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -705,14 +705,14 @@ export const useKegiatanBKCUStore = defineStore('kegiatanBKCU', {
             try {
                 const response = await KEGIATANBKCUAPI.storePeserta(tipe, id, form);
                 if (response.data.saved) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -723,13 +723,13 @@ export const useKegiatanBKCUStore = defineStore('kegiatanBKCU', {
             try {
                 const response = await KEGIATANBKCUAPI.storeMateri(tipe, id, form);
                 if (response.data.saved) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -740,13 +740,13 @@ export const useKegiatanBKCUStore = defineStore('kegiatanBKCU', {
             try {
                 const response = await KEGIATANBKCUAPI.storeListMateri(tipe, id, form);
                 if (response.data.saved) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -757,13 +757,13 @@ export const useKegiatanBKCUStore = defineStore('kegiatanBKCU', {
             try {
                 const response = await KEGIATANBKCUAPI.saveNilai(id, form);
                 if (response.data.saved) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -774,13 +774,13 @@ export const useKegiatanBKCUStore = defineStore('kegiatanBKCU', {
             try {
                 const response = await KEGIATANBKCUAPI.storeKeputusan(id, form);
                 if (response.data.saved) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -791,13 +791,13 @@ export const useKegiatanBKCUStore = defineStore('kegiatanBKCU', {
             try {
                 const response = await KEGIATANBKCUAPI.storeKeputusanKomentar(id, form);
                 if (response.data.saved) {
-                    this.update2 = response.data;
+                    this.updateData2 = response.data;
                     this.updateStat2 = 'success';
                 } else {
                     this.updateStat2 = 'fail';
                 }
             } catch (error) {
-                this.update2 = error.response;
+                this.updateData2 = error.response;
                 this.updateStat2 = 'fail';
             }
         },
@@ -808,13 +808,13 @@ export const useKegiatanBKCUStore = defineStore('kegiatanBKCU', {
             try {
                 const response = await KEGIATANBKCUAPI.storePertanyaan(id, form);
                 if (response.data.saved) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -825,13 +825,13 @@ export const useKegiatanBKCUStore = defineStore('kegiatanBKCU', {
             try {
                 const response = await KEGIATANBKCUAPI.storePertanyaanKomentar(id, form);
                 if (response.data.saved) {
-                    this.update2 = response.data;
+                    this.updateData2 = response.data;
                     this.updateStat2 = 'success';
                 } else {
                     this.updateStat2 = 'fail';
                 }
             } catch (error) {
-                this.update2 = error.response;
+                this.updateData2 = error.response;
                 this.updateStat2 = 'fail';
             }
         },
@@ -842,13 +842,13 @@ export const useKegiatanBKCUStore = defineStore('kegiatanBKCU', {
             try {
                 const response = await KEGIATANBKCUAPI.storeTugas(tipe, id, form);
                 if (response.data.saved) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -859,13 +859,13 @@ export const useKegiatanBKCUStore = defineStore('kegiatanBKCU', {
             try {
                 const response = await KEGIATANBKCUAPI.storeTugasJawaban(tipe, form);
                 if (response.data.saved) {
-                    this.update2 = response.data;
+                    this.updateData2 = response.data;
                     this.updateStat2 = 'success';
                 } else {
                     this.updateStat2 = 'fail';
                 }
             } catch (error) {
-                this.update2 = error.response;
+                this.updateData2 = error.response;
                 this.updateStat2 = 'fail';
             }
         },
@@ -912,13 +912,13 @@ export const useKegiatanBKCUStore = defineStore('kegiatanBKCU', {
             try {
                 const response = await KEGIATANBKCUAPI.update(id, form);
                 if (response.data.saved) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -929,13 +929,13 @@ export const useKegiatanBKCUStore = defineStore('kegiatanBKCU', {
             try {
                 const response = await KEGIATANBKCUAPI.updateStatus(id, form);
                 if (response.data.saved) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -946,13 +946,13 @@ export const useKegiatanBKCUStore = defineStore('kegiatanBKCU', {
             try {
                 const response = await KEGIATANBKCUAPI.updatePeserta(id, form);
                 if (response.data.saved) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -963,13 +963,13 @@ export const useKegiatanBKCUStore = defineStore('kegiatanBKCU', {
             try {
                 const response = await KEGIATANBKCUAPI.updateMateri(id, form);
                 if (response.data.saved) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -980,13 +980,13 @@ export const useKegiatanBKCUStore = defineStore('kegiatanBKCU', {
             try {
                 const response = await KEGIATANBKCUAPI.updateListMateri(id, form);
                 if (response.data.saved) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -997,13 +997,13 @@ export const useKegiatanBKCUStore = defineStore('kegiatanBKCU', {
             try {
                 const response = await KEGIATANBKCUAPI.updateKeputusan(id, form);
                 if (response.data.saved) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -1014,13 +1014,13 @@ export const useKegiatanBKCUStore = defineStore('kegiatanBKCU', {
             try {
                 const response = await KEGIATANBKCUAPI.updateKeputusanKomentar(id, form);
                 if (response.data.saved) {
-                    this.update2 = response.data;
+                    this.updateData2 = response.data;
                     this.updateStat2 = 'success';
                 } else {
                     this.updateStat2 = 'fail';
                 }
             } catch (error) {
-                this.update2 = error.response;
+                this.updateData2 = error.response;
                 this.updateStat2 = 'fail';
             }
         },
@@ -1031,13 +1031,13 @@ export const useKegiatanBKCUStore = defineStore('kegiatanBKCU', {
             try {
                 const response = await KEGIATANBKCUAPI.updatePertanyaan(id, form);
                 if (response.data.saved) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -1048,13 +1048,13 @@ export const useKegiatanBKCUStore = defineStore('kegiatanBKCU', {
             try {
                 const response = await KEGIATANBKCUAPI.updatePertanyaanKomentar(id, form);
                 if (response.data.saved) {
-                    this.update2 = response.data;
+                    this.updateData2 = response.data;
                     this.updateStat2 = 'success';
                 } else {
                     this.updateStat2 = 'fail';
                 }
             } catch (error) {
-                this.update2 = error.response;
+                this.updateData2 = error.response;
                 this.updateStat2 = 'fail';
             }
         },
@@ -1065,13 +1065,13 @@ export const useKegiatanBKCUStore = defineStore('kegiatanBKCU', {
             try {
                 const response = await KEGIATANBKCUAPI.updateTugas(id, form);
                 if (response.data.saved) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -1082,13 +1082,13 @@ export const useKegiatanBKCUStore = defineStore('kegiatanBKCU', {
             try {
                 const response = await KEGIATANBKCUAPI.updateTugasJawaban(id, form);
                 if (response.data.saved) {
-                    this.update2 = response.data;
+                    this.updateData2 = response.data;
                     this.updateStat2 = 'success';
                 } else {
                     this.updateStat2 = 'fail';
                 }
             } catch (error) {
-                this.update2 = error.response;
+                this.updateData2 = error.response;
                 this.updateStat2 = 'fail';
             }
         },
@@ -1099,13 +1099,13 @@ export const useKegiatanBKCUStore = defineStore('kegiatanBKCU', {
             try {
                 const response = await KEGIATANBKCUAPI.updatePesertaHadir(kegiatan_id, aktivis_id);
                 if (response.data.saved) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -1116,13 +1116,13 @@ export const useKegiatanBKCUStore = defineStore('kegiatanBKCU', {
             try {
                 const response = await KEGIATANBKCUAPI.updatePanitiaHadir(kegiatan_id, aktivis_id);
                 if (response.data.saved) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -1146,13 +1146,13 @@ export const useKegiatanBKCUStore = defineStore('kegiatanBKCU', {
             try {
                 const response = await KEGIATANBKCUAPI.jawabanPertanyaan(id, tipe);
                 if (response.data.saved) {
-                    this.update2 = response.data;
+                    this.updateData2 = response.data;
                     this.updateStat2 = 'success';
                 } else {
                     this.updateStat2 = 'fail';
                 }
             } catch (error) {
-                this.update2 = error.response;
+                this.updateData2 = error.response;
                 this.updateStat2 = 'fail';
             }
         },
@@ -1164,13 +1164,13 @@ export const useKegiatanBKCUStore = defineStore('kegiatanBKCU', {
             try {
                 const response = await KEGIATANBKCUAPI.destroy(id);
                 if (response.data.deleted) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -1181,13 +1181,13 @@ export const useKegiatanBKCUStore = defineStore('kegiatanBKCU', {
             try {
                 const response = await KEGIATANBKCUAPI.destroyPeserta(id);
                 if (response.data.deleted) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -1198,13 +1198,13 @@ export const useKegiatanBKCUStore = defineStore('kegiatanBKCU', {
             try {
                 const response = await KEGIATANBKCUAPI.destroyMateri(tipe, id);
                 if (response.data.deleted) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -1215,13 +1215,13 @@ export const useKegiatanBKCUStore = defineStore('kegiatanBKCU', {
             try {
                 const response = await KEGIATANBKCUAPI.destroyListMateri(tipe, id);
                 if (response.data.deleted) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -1232,13 +1232,13 @@ export const useKegiatanBKCUStore = defineStore('kegiatanBKCU', {
             try {
                 const response = await KEGIATANBKCUAPI.destroyKeputusan(id);
                 if (response.data.deleted) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -1249,13 +1249,13 @@ export const useKegiatanBKCUStore = defineStore('kegiatanBKCU', {
             try {
                 const response = await KEGIATANBKCUAPI.destroyKeputusanKomentar(id);
                 if (response.data.deleted) {
-                    this.update2 = response.data;
+                    this.updateData2 = response.data;
                     this.updateStat2 = 'success';
                 } else {
                     this.updateStat2 = 'fail';
                 }
             } catch (error) {
-                this.update2 = error.response;
+                this.updateData2 = error.response;
                 this.updateStat2 = 'fail';
             }
         },
@@ -1266,13 +1266,13 @@ export const useKegiatanBKCUStore = defineStore('kegiatanBKCU', {
             try {
                 const response = await KEGIATANBKCUAPI.destroyPertanyaan(id);
                 if (response.data.deleted) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -1283,13 +1283,13 @@ export const useKegiatanBKCUStore = defineStore('kegiatanBKCU', {
             try {
                 const response = await KEGIATANBKCUAPI.destroyPertanyaanKomentar(id);
                 if (response.data.deleted) {
-                    this.update2 = response.data;
+                    this.updateData2 = response.data;
                     this.updateStat2 = 'success';
                 } else {
                     this.updateStat2 = 'fail';
                 }
             } catch (error) {
-                this.update2 = error.response;
+                this.updateData2 = error.response;
                 this.updateStat2 = 'fail';
             }
         },
@@ -1300,13 +1300,13 @@ export const useKegiatanBKCUStore = defineStore('kegiatanBKCU', {
             try {
                 const response = await KEGIATANBKCUAPI.destroyTugas(tipe, id);
                 if (response.data.deleted) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -1317,13 +1317,13 @@ export const useKegiatanBKCUStore = defineStore('kegiatanBKCU', {
             try {
                 const response = await KEGIATANBKCUAPI.destroyTugasJawaban(tipe, id);
                 if (response.data.deleted) {
-                    this.update2 = response.data;
+                    this.updateData2 = response.data;
                     this.updateStat2 = 'success';
                 } else {
                     this.updateStat2 = 'fail';
                 }
             } catch (error) {
-                this.update2 = error.response;
+                this.updateData2 = error.response;
                 this.updateStat2 = 'fail';
             }
         },
@@ -1334,13 +1334,13 @@ export const useKegiatanBKCUStore = defineStore('kegiatanBKCU', {
             try {
                 const response = await KEGIATANBKCUAPI.batalPeserta(tipe, id, form);
                 if (response.data.saved) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },

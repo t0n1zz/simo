@@ -17,14 +17,14 @@
             <li><b>Tinggi:</b> {{ itemData.tinggi}}</li>
             <li><b>Agama:</b> {{ itemData.agama}}</li>
             <li><b>Gol. Darah:</b> {{ itemData.darah}}</li>
-            <li v-if="itemData.tanggal_meninggal == null"><b>Usia:</b> <span v-if="itemData.tanggal_lahir" v-html="$options.filters.age(itemData.tanggal_lahir)"></span></li>
-            <li v-else><b>Usia Saat Meninggal:</b> <span v-if="itemData.tanggal_lahir" v-html="$options.filters.ageDiff(itemData.tanggal_meninggal, itemData.tanggal_lahir)"></span></li>
+            <li v-if="itemData.tanggal_meninggal == null"><b>Usia:</b> <span v-if="itemData.tanggal_lahir" v-html="$filters.age(itemData.tanggal_lahir)"></span></li>
+            <li v-else><b>Usia Saat Meninggal:</b> <span v-if="itemData.tanggal_lahir" v-html="$filters.ageDiff(itemData.tanggal_meninggal, itemData.tanggal_lahir)"></span></li>
             <li><b>Status:</b> {{ itemData.status}}</li>
           </ul>
         </div>
         <div class="col-sm-4">
           <ul class="list list-unstyled mb-0">
-            <li><b>Tgl. Lahir:</b> <span v-if="itemData.tanggal_lahir" v-html="$options.filters.date(itemData.tanggal_lahir)"></span></li>
+            <li><b>Tgl. Lahir:</b> <span v-if="itemData.tanggal_lahir" v-html="$filters.date(itemData.tanggal_lahir)"></span></li>
             <li><b>Tempat Lahir:</b> {{ itemData.tempat_lahir}}</li>
             <li><b>Email:</b> {{ itemData.email}}</li>
             <li><b>No. Hp:</b> {{ itemData.hp}}</li>	

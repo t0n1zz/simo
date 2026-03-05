@@ -13,7 +13,7 @@ export const useSuratStore = defineStore('surat', {
     dataStatS: '',
     countStat: '',
     periodeStat: '',
-    update: [], //update data
+    updateData: [], //update data
     updateStat: '',
     rules: [], //laravel rules
     options: [], //laravel options
@@ -30,7 +30,7 @@ export const useSuratStore = defineStore('surat', {
     getDataStatS: state => state.dataStatS,
     getCountStat: state => state.countStat,
     getPeriodeStat: state => state.periodeStat,
-    getUpdate: state => state.update,
+    getUpdate: state => state.updateData,
     getUpdateStat: state => state.updateStat,
     getRules: state => state.rules,
     getOptions: state => state.options,
@@ -102,13 +102,13 @@ export const useSuratStore = defineStore('surat', {
       try {
         const response = await SuratAPI.store(form);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -143,13 +143,13 @@ export const useSuratStore = defineStore('surat', {
       try {
         const response = await SuratAPI.update(id, form);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -160,13 +160,13 @@ export const useSuratStore = defineStore('surat', {
       try {
         const response = await SuratAPI.updateTerbitkan(id);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -177,13 +177,13 @@ export const useSuratStore = defineStore('surat', {
       try {
         const response = await SuratAPI.updateUtamakan(id);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -195,13 +195,13 @@ export const useSuratStore = defineStore('surat', {
       try {
         const response = await SuratAPI.destroy(id);
         if (response.data.deleted) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },

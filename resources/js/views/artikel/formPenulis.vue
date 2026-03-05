@@ -1,63 +1,77 @@
 <template>
 	<div>
-		<form @submit.prevent="save" enctype="multipart/form-data" data-vv-scope="form">
+		<VeeForm :form="form" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit, setValues }">
+			<form @submit.prevent="setValues(form) || handleSubmit(onValid)" enctype="multipart/form-data">
 
-			<!-- message -->
-			<message v-if="errors.any('form') && submited" :title="'Oops terjadi kesalahan'" :errorItem="errors.items">
-			</message>
+				<!-- message -->
+				<message v-if="errors.any('form') && submited" :title="'Oops terjadi kesalahan'" :errorItem="errors.items">
+				</message>
 
-			<!-- gambar utama -->
-			<div class="form-group">
+				<!-- gambar utama -->
+				<div class="form-group">
 
-				<!-- title -->
-				<h5>Foto:</h5>
+					<!-- title -->
+					<h5>Foto:</h5>
 
-				<!-- imageupload -->
-				<app-image-upload :image_loc="'/images/artikel/'" v-model="form.gambar"></app-image-upload>
-			</div>
-			
-			<!-- name -->
-			<div class="form-group" :class="{'has-error' : errors.has('form.name')}">
+					<!-- imageupload -->
+					<app-image-upload :image_loc="'/images/artikel/'" v-model="form.gambar"></app-image-upload>
+				</div>
+				
+				<!-- name -->
+				<div class="form-group" :class="{'has-error' : errors.has('form.name')}">
 
-				<!-- title -->
-				<h5 :class="{ 'text-danger' : errors.has('form.name')}">
-					<i class="icon-cross2" v-if="errors.has('form.name')"></i>
-					Nama: <wajib-badge></wajib-badge>
-				</h5>
+					<!-- title -->
+					<h5 :class="{ 'text-danger' : errors.has('form.name')}">
+						<i class="icon-cross2" v-if="errors.has('form.name')"></i>
+						Nama: <wajib-badge></wajib-badge>
+					</h5>
 
-				<!-- text -->
-				<input type="text" name="name" class="form-control" placeholder="Silahkan masukkan name kategori" v-validate="'required'" data-vv-as="Nama" v-model="form.name">
+					<!-- text: VeeValidate 4 Field with rules -->
+					<Field
+						name="name"
+						rules="required"
+						v-model="form.name"
+						v-slot="{ field }"
+					>
+						<input
+							type="text"
+							class="form-control"
+							placeholder="Silahkan masukkan name kategori"
+							v-bind="field"
+						>
+					</Field>
 
-				<!-- error message -->
-				<small class="text-muted text-danger" v-if="errors.has('form.name')">
-					<i class="icon-arrow-small-right"></i> {{ errors.first('form.name') }}
-				</small>
-				<small class="text-muted" v-else>&nbsp;
-				</small>
-			</div>
+					<!-- error message -->
+					<small class="text-muted text-danger" v-if="errors.has('form.name')">
+						<i class="icon-arrow-small-right"></i> {{ errors.first('form.name') }}
+					</small>
+					<small class="text-muted" v-else>&nbsp;
+					</small>
+				</div>
 
-			<!-- keterangan -->
-			<div class="form-group">
+				<!-- keterangan -->
+				<div class="form-group">
 
-				<!-- title -->
-				<h5>
-					Keterangan:
-				</h5>
+					<!-- title -->
+					<h5>
+						Keterangan:
+					</h5>
 
-				<!-- textarea -->
-				<textarea rows="5" type="text" name="deskripsi" class="form-control" placeholder="Silahkan masukkan keterangan kategori" v-model="form.deskripsi"></textarea>
+					<!-- textarea -->
+					<textarea rows="5" type="text" name="deskripsi" class="form-control" placeholder="Silahkan masukkan keterangan kategori" v-model="form.deskripsi"></textarea>
 
-			</div>
+				</div>
 
-			<hr>
-			<form-button
-				:cancelTitle="cancelTitle"
-				:cancelIcon="cancelIcon"
-				:cancelState="cancelState"
-				:formValidation="'form'"
-				@cancelClick="cancelClick"></form-button>
+				<hr>
+				<form-button
+					:cancelTitle="cancelTitle"
+					:cancelIcon="cancelIcon"
+					:cancelState="cancelState"
+					:formValidation="'form'"
+					@cancelClick="cancelClick"></form-button>
 
-		</form>
+			</form>
+		</VeeForm>
 
 	</div>
 </template>
@@ -70,6 +84,8 @@
 	import formButton from "../../components/formButton.vue";
 	import formInfo from "../../components/formInfo.vue";
 	import wajibBadge from "../../components/wajibBadge.vue";
+	import { Field } from 'vee-validate';
+	import VeeForm from '../../components/VeeForm.vue';
 
 	export default {
 		props:['id_cu'],
@@ -78,7 +94,9 @@
 			message,
 			formButton,
 			formInfo,
-			wajibBadge
+			wajibBadge,
+			VeeForm,
+			Field,
 		},
 		data() {
 			return {
@@ -97,16 +115,18 @@
 			}
 		},
 		methods: {
-			save() {
-				this.form.id_cu = this.id_cu;
-				this.$validator.validateAll('form').then((result) => {
-					if(result){
-						this.artikelPenulisStore.store(this.form);
-					}else{
-						window.scrollTo(0, 0);
-						this.submited = true;
-					}
-				});	
+			onValid(values) {
+				const payload = {
+					...this.form,
+					...values,
+					id_cu: this.id_cu,
+				};
+				this.artikelPenulisStore.store(payload);
+				this.submited = false;
+			},
+			onInvalid() {
+				window.scrollTo(0, 0);
+				this.submited = true;
 			},
 			cancelClick(){
 				this.$emit('cancelClick');

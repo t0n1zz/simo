@@ -38,6 +38,7 @@
                       </span>
                       <select class="form-control" @input="selectColumn(f, i, $event)" :disabled="itemDataStat !== 'success'">
                         <option disabled value="">Silahkan masukkan kolom pencarian</option>
+                        <option :value="JSON.stringify(semuaColumn)" :selected="f.column && f.column.name === '*'">Semua Kolom</option>
                         <template v-for="x in columnData" :key="x.name">
                           <option v-if="x && x.filter && !x.disable" :value="JSON.stringify(x)" :selected="f.column && x.name === f.column.name">
                             {{x.title}}
@@ -224,6 +225,7 @@
                       </span>
                       <select class="form-control" @input="selectColumn(f, i, $event)" :disabled="itemDataStat !== 'success'">
                         <option disabled value="">Silahkan masukkan kolom pencarian</option>
+                        <option :value="JSON.stringify(semuaColumn)" :selected="f.column && f.column.name === '*'">Semua Kolom</option>
                         <template v-for="x in columnData" :key="x.name">
                           <option v-if="x && x.filter && !x.disable" :value="JSON.stringify(x)" :selected="f.column && x.name === f.column.name">
                             {{x.title}}
@@ -233,7 +235,7 @@
                     </div>
                   </div>
 
-                  <div class="col-md-3 pb-2" v-if="f.column">
+                  <div class="col-md-3 pb-2" v-if="f.column && f.column.name !== '*'">
                     <div class="input-group">
                       <span class="input-group-prepend">
                         <span class="input-group-text">Operator</span>
@@ -247,12 +249,12 @@
                   </div>
 
                   <template v-if="f.column && f.operator">
-                    <div class="col-md-4 pb-2" v-if="f.operator.component === 'single'">
+                    <div :class="f.column.name === '*' ? 'col-md-7 pb-2' : 'col-md-4 pb-2'" v-if="f.operator.component === 'single'">
                       <div class="input-group">
                         <span class="input-group-prepend">
                           <span class="input-group-text">Kata Kunci</span>
                         </span>
-                        <input type="text" class="form-control" v-model="f.query_1" placeholder="Masukkan kata kunci pencarian" :disabled="itemDataStat !== 'success'">
+                        <input type="text" class="form-control" v-model="f.query_1" :placeholder="f.column.name === '*' ? 'Cari di semua kolom...' : 'Masukkan kata kunci pencarian'" :disabled="itemDataStat !== 'success'">
                       </div>
                     </div>
                     <template v-if="f.operator.component === 'double'">
@@ -983,6 +985,7 @@
 <script>
   import { toMulipartedForm } from '../helpers/form';
   import _ from 'lodash';
+  import { useGlobalStore } from '../stores/global';
   import ExcelButton from './ExcelButton.vue';
   import appModal from '../components/modal.vue';
   import { saveAs } from 'file-saver';
@@ -995,6 +998,7 @@
     },
     data() {
       return {
+        semuaColumn: { name: '*', title: 'Semua Kolom', tipe: 'string', filter: true },
         appliedFilters: [],
         filterCandidates: [],
         pages: [],
@@ -1197,34 +1201,10 @@
         })
       },
       defaultFilter(){
-        // set default filter
-        let data = _.find(this.columnData,{'filterDefault':true})
-        if(data){
-            this.filterCandidates[0].column = data
-            
-            switch (data.tipe) {
-            case 'numeric':
-                this.filterCandidates[0].operator = this.availableOperators()[6]
-                this.filterCandidates[0].query_1 = null
-                this.filterCandidates[0].query_2 = null
-                break;
-            case 'string':
-                this.filterCandidates[0].operator = this.availableOperators()[6]
-                this.filterCandidates[0].query_1 = null
-                this.filterCandidates[0].query_2 = null
-                break;
-            case 'datetime':
-                this.filterCandidates[0].operator = this.availableOperators()[6]
-                this.filterCandidates[0].query_1 = null
-                this.filterCandidates[0].query_2 = null
-                break;
-            case 'counter':
-                this.filterCandidates[0].operator = this.availableOperators()[6]
-                this.filterCandidates[0].query_1 = null
-                this.filterCandidates[0].query_2 = null
-                break;
-            }
-        }
+        this.filterCandidates[0].column = this.semuaColumn
+        this.filterCandidates[0].operator = this.availableOperators()[6]
+        this.filterCandidates[0].query_1 = null
+        this.filterCandidates[0].query_2 = null
       },
       applyChange() {
         this.fetch()
@@ -1363,7 +1343,7 @@
         axios.post('/api/' + this.excelUploads[index].url, this.files)
         .then(response => {
           if(response.data.uploaded){
-            this.$store.dispatch('global/setDataExcel', response.data);
+            useGlobalStore().setDataExcel(response.data);
             this.updateStat = 'success';
             this.updateResponse = response.data;
           }else{

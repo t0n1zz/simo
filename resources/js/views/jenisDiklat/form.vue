@@ -13,7 +13,8 @@
 					</message>
 
 					<!-- main panel -->
-					<form @submit.prevent="save" data-vv-scope="form">
+					<VeeForm :form="form" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
+					<form @submit.prevent="handleSubmit(onValid)">
 
 						<!-- main form -->
 						<div class="card">
@@ -30,7 +31,20 @@
 												Nama: <wajib-badge></wajib-badge></h5>
 
 											<!-- text -->
-											<input type="text" name="name" class="form-control" placeholder="Silahkan masukkan nama" v-validate="'required'" data-vv-as="Nama" v-model="form.name">
+											<Field
+												name="name"
+												rules="required"
+												v-model="form.name"
+												v-slot="{ field }"
+											>
+												<input
+													type="text"
+													class="form-control"
+													placeholder="Silahkan masukkan nama"
+													v-bind="field"
+												>
+												</input>
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.name')">
@@ -71,6 +85,7 @@
 						</div>
 
 					</form>
+					</VeeForm>
 				</div>
 			</div>
 		</div>
@@ -87,6 +102,8 @@
 	import { useAuthStore } from '../../stores/auth';
 	import { useJenisDiklatStore } from '../../stores/jenisDiklat';
 	import { useCuStore } from '../../stores/cu';
+	import VeeForm from '../../components/VeeForm.vue';
+	import { Field } from 'vee-validate';
 	import pageHeader from "../../components/pageHeader.vue";
 	import appImageUpload from '../../components/ImageUpload.vue';
 	import appModal from '../../components/modal.vue';
@@ -103,6 +120,8 @@
 			formButton,
 			formInfo,
 			wajibBadge,
+			VeeForm,
+			Field,
 		},
 			data() {
 			return {
@@ -181,20 +200,23 @@
 					}
 				}
 			},
-			save() {
-				this.$validator.validateAll('form').then((result) => {
-					if (result) {
-						if(this.$route.meta.mode == 'edit'){
-							this.jenisDiklatStore.update(this.$route.params.id, this.form);
-						}else{
-							this.jenisDiklatStore.store(this.form);
-						}
-						this.submited = false;
-					}else{
-						window.scrollTo(0, 0);
-						this.submited = true;
-					}
-				});
+			onValid(values) {
+				const payload = {
+					...this.form,
+					...values,
+				};
+
+				if (this.$route.meta.mode == 'edit') {
+					this.jenisDiklatStore.update(this.$route.params.id, payload);
+				} else {
+					this.jenisDiklatStore.store(payload);
+				}
+
+				this.submited = false;
+			},
+			onInvalid() {
+				window.scrollTo(0, 0);
+				this.submited = true;
 			},
 			back(){
 				this.$router.push({name: this.kelas});
@@ -227,7 +249,7 @@
 			formStat: 'dataStat',
 			rules: 'rules',
 			options: 'options',
-			updateResponse: 'update',
+			updateResponse: 'updateData',
 			updateStat: 'updateStat'
 		}),
 		...mapState(useCuStore, {

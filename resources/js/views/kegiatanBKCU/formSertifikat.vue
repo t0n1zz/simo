@@ -1,6 +1,7 @@
 <template>
 	<div>
-		<form @submit.prevent="save" data-vv-scope="formSertifikat">
+		<VeeForm :form="formSertifikat" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
+		<form @submit.prevent="handleSubmit(onValid)">
 
 		<!-- asal -->
 		<div class="form-group" :class="{'has-error' : errors && errors.has && errors.has('formSertifikat')}" v-if="mode == 'create'">
@@ -33,11 +34,11 @@
 		</data-viewer>
 
 		<!-- message -->
-		<message v-if="errors && errors.any && errors.any('formSertifikat') && submited" :title="'Oops terjadi kesalahan'" :errorItem="errors && errors.items">
+		<message v-if="errors && errors.any && errors.any() && submited" :title="'Oops terjadi kesalahan'" :errorItem="errors && errors.items">
 		</message>
 		<!-- divider -->
 		<hr>
-		
+
 		<!-- tombol desktop-->
 		<div class="text-center d-none d-md-block">
 			<button type="button" class="btn btn-light" @click.prevent="tutup">
@@ -45,7 +46,7 @@
 
 			<button type="submit" class="btn btn-primary" :disabled="formSertifikat.id == ''">
 				<i class="icon-floppy-disk"></i> Simpan</button>
-		</div>  
+		</div>
 
 		<!-- tombol mobile-->
 		<div class="d-block d-md-none">
@@ -56,7 +57,8 @@
 				<i class="icon-cross"></i> Tutup</button>
 		</div>
 
-		</form> 
+		</form>
+		</VeeForm>
 
 	</div>
 </template>
@@ -68,13 +70,15 @@
 	import checkValue from '../../components/checkValue.vue';
 	import DataViewer from '../../components/dataviewer2.vue';
 	import message from "../../components/message.vue";
+	import VeeForm from "../../components/VeeForm.vue";
 
 	export default {
 		props: ['mode','selected'],
 		components: {
 			DataViewer,
 			checkValue,
-			message
+			message,
+			VeeForm
 		},
 		data() {
 			return {
@@ -107,14 +111,6 @@
 					},
 				],
 				submited: false,
-        // SHIM: Add dummy errors object for VeeValidate 2 compatibility in Vue 3
-        errors: {
-          any: () => false,
-          has: () => false,
-          first: () => '',
-          collect: () => [],
-          items: []
-        },
 			}
 		},
 		created(){
@@ -145,19 +141,16 @@
 				this.formSertifikat.kode_sertifikat = item.kode_sertifikat;
 				
 			},
-			save(){
-				this.$validator.validateAll('formSertifikat').then((result) => {
-					if (result) {
-						if(this.mode == 'edit'){
-							this.$emit('editSertifikat',this.formSertifikat);
-						}else{
-							this.$emit('createSertifikat',this.formSertifikat);
-						}
-						this.submited = false;
-					}else{
-						this.submited = true;
-					}	
-				});
+			onValid() {
+				if (this.mode == 'edit') {
+					this.$emit('editSertifikat', this.formSertifikat);
+				} else {
+					this.$emit('createSertifikat', this.formSertifikat);
+				}
+				this.submited = false;
+			},
+			onInvalid() {
+				this.submited = true;
 			},
 			tutup(){
 				this.$emit('tutup');

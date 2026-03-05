@@ -8,12 +8,15 @@
 			<div class="content-wrapper">
 				<div class="content">
 
-					<!-- message -->
-					<message v-if="errors.any('form') && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors.items">
-					</message>
+					<VeeForm :form="form" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
 
-					<!-- main panel -->
-					<form @submit.prevent="save" data-vv-scope="form">
+						<!-- message -->
+						<message v-if="errors.any('form') && submited" :title="'Oops, terjadi kesalahan'"
+							:errorItem="errors.items">
+						</message>
+
+						<!-- main panel -->
+						<form @submit.prevent="handleSubmit(onValid)">
 
 						<!-- main form -->
 						<div class="card">
@@ -30,7 +33,10 @@
 												Nama: <wajib-badge></wajib-badge></h5>
 
 											<!-- text -->
-											<input type="text" name="name" class="form-control" placeholder="Silahkan masukkan nama" v-validate="'required'" data-vv-as="Nama" v-model="form.name">
+											<Field name="name" rules="required" v-model="form.name" v-slot="{ field }">
+												<input type="text" class="form-control" placeholder="Silahkan masukkan nama"
+													v-bind="field">
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.name')">
@@ -59,18 +65,18 @@
 						</div>
 
 						<!-- form info -->
-						<form-info></form-info>	
-						<br/>
+						<form-info></form-info>
+						<br />
 
 						<!-- form button -->
 						<div class="panel panel-flat panel-body">
-							<form-button
-								:cancelState="'methods'"
-								:formValidation="'form'"
+							<form-button :cancelState="'methods'" :formValidation="'form'"
 								@cancelClick="back"></form-button>
 						</div>
 
 					</form>
+
+					</VeeForm>
 				</div>
 			</div>
 		</div>
@@ -94,6 +100,8 @@
 	import formButton from "../../components/formButton.vue";
 	import formInfo from "../../components/formInfo.vue";
 	import wajibBadge from "../../components/wajibBadge.vue";
+	import VeeForm from '../../components/VeeForm.vue';
+	import { Field } from 'vee-validate';
 
 	export default {
 		components: {
@@ -103,6 +111,8 @@
 			formButton,
 			formInfo,
 			wajibBadge,
+			VeeForm,
+			Field,
 		},
 		data() {
 			return {
@@ -156,6 +166,23 @@
 			}
     },
 		methods: {
+			onValid(values) {
+				const payload = {
+					...this.form,
+					...values,
+					id_cu: this.currentUser.id_cu,
+				};
+				if (this.$route.meta.mode == 'edit') {
+					this.kubnUsahaStore.update(this.$route.params.id, payload);
+				} else {
+					this.kubnUsahaStore.store(payload);
+				}
+				this.submited = false;
+			},
+			onInvalid() {
+				window.scrollTo(0, 0);
+				this.submited = true;
+			},
 			fetch(){
 				if(this.$route.meta.mode === 'edit'){
 					this.kubnUsahaStore.edit(this.$route.params.id);	
@@ -180,22 +207,6 @@
 						}
 					}
 				}
-			},
-			save() {
-				this.$validator.validateAll('form').then((result) => {
-					if (result) {
-						if(this.$route.meta.mode == 'edit'){
-							this.kubnUsahaStore.update(this.$route.params.id, this.form);
-						}else{
-							this.kubnUsahaStore.store(this.form);
-						}
-						this.submited = false;
-					}else{
-						window.scrollTo(0, 0);
-						this.submited = true;
-					}
-				});
-			},
 			back(){
 				this.$router.push({name: this.kelas});
 			},
@@ -227,7 +238,7 @@
 				formStat: 'dataStat',
 				rules: 'rules',
 				options: 'options',
-				updateResponse: 'update',
+				updateResponse: 'updateData',
 				updateStat: 'updateStat'
 			}),
 			...mapState(useCuStore, {

@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import { getLocalUser } from '../helpers/auth';
+import { clearLastActivity, updateLastActivity } from '../helpers/inactivity';
 
 const user = getLocalUser();
 
@@ -42,10 +43,14 @@ export const useAuthStore = defineStore('auth', {
             this.authError = null;
             this.isLoggedIn = true;
             this.isLoading = false;
-            this.currentUser = Object.assign({}, payload.user, { token: payload.access_token });
+            this.currentUser = Object.assign({}, payload.user, {
+                token: payload.access_token,
+                expires_at: payload.expires_at ?? null,
+            });
             localStorage.setItem('user', JSON.stringify(this.currentUser));
             this.isTokenExpired = false;
             this.isFromLogin = true;
+            updateLastActivity();
         },
 
         loginFailed(payload) {
@@ -61,6 +66,7 @@ export const useAuthStore = defineStore('auth', {
             localStorage.removeItem('user');
             this.isLoggedIn = false;
             this.currentUser = null;
+            clearLastActivity();
         },
 
         setNotification(data) {

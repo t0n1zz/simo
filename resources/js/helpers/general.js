@@ -1,8 +1,11 @@
 import { refreshToken } from "./auth.js";
-import Token from "./token";
 import { getLocalUser } from "./auth";
 import { useGlobalStore } from "../stores/global";
 import { useAuthStore } from "../stores/auth";
+import { updateLastActivity, startInactivityCheck, bindActivityListeners } from "./inactivity";
+
+// Refresh token when within this many seconds of expiry (backend sends expires_at as Unix timestamp)
+const REFRESH_BUFFER_SECONDS = 600;
 
 export function initialize(pinia, router) {
 	router.beforeEach((to, from, next) => {
@@ -40,28 +43,29 @@ export function initialize(pinia, router) {
 		setAuthorization(authStore.currentUser.token);
 	}
 
+	// Update last activity on every API request (for inactivity timeout)
+	axios.interceptors.request.use((config) => {
+		if (authStore.isLoggedIn) {
+			updateLastActivity();
+		}
+		return config;
+	});
+
 	axios.interceptors.response.use(response => {
 		const authStore = useAuthStore(pinia);
 
 		if (authStore.isLoggedIn) {
-			const currentTime = new Date().getTime() / 1000;
 			const user = getLocalUser();
-			const token = Token.payload(user.token);
+			const expiresAt = user?.expires_at; // Unix timestamp from API (Sanctum tokens are not JWT)
+			const nowSec = Math.floor(Date.now() / 1000);
 
-			if (currentTime > token.exp - 600 && !authStore.isLoading) {
+			if (expiresAt != null && nowSec > expiresAt - REFRESH_BUFFER_SECONDS && !authStore.isLoading) {
 				authStore.login();
 
 				refreshToken()
 					.then((res) => {
-						if (Token.isValid(res.access_token)) {
-							authStore.loginSuccess(res);
-							return response;
-						} else {
-							authStore.loginFailed();
-							authStore.logout();
-							router.push('/login/redirect');
-							return Promise.reject(error);
-						}
+						authStore.loginSuccess(res);
+						return response;
 					})
 					.catch((error) => {
 						authStore.loginFailed();
@@ -78,13 +82,17 @@ export function initialize(pinia, router) {
 	}, error => {
 		const authStore = useAuthStore(pinia);
 
-		if (error.response.status == 401) {
+		if (error?.response?.status === 401) {
 			authStore.logout();
 			router.push('/login/redirect');
 		}
 
 		return Promise.reject(error);
 	});
+
+	// Inactivity auto-logout (e.g. 6–12 hours of no activity)
+	startInactivityCheck(router, pinia);
+	bindActivityListeners();
 }
 
 export function setAuthorization(token) {

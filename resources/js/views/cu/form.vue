@@ -8,12 +8,15 @@
 			<div class="content-wrapper">
 				<div class="content">
 
-					<!-- message -->
-					<message v-if="errors.any('form') && submited" :title="'Oops terjadi kesalahan'" :errorItem="errors.items">
-					</message>
+					<VeeForm :form="form" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
 
-					<!-- main panel -->
-					<form @submit.prevent="save" enctype="multipart/form-data" data-vv-scope="form">
+						<!-- message -->
+						<message v-if="errors.any('form') && submited" :title="'Oops terjadi kesalahan'"
+							:errorItem="errors.items">
+						</message>
+
+						<!-- main panel -->
+						<form @submit.prevent="handleSubmit(onValid)" enctype="multipart/form-data">
 					
 						<!-- informasi umum -->
 						<div class="card">
@@ -57,13 +60,18 @@
 												No. BA: <wajib-badge></wajib-badge></h5>
 
 											<!-- text -->
-											<cleave 
-												name="no_ba"
-												v-model="form.no_ba" 
-												class="form-control" 
-												:options="cleaveOption.number3"
-												placeholder="Silahkan masukkan no ba."
-												v-validate="'required'" data-vv-as="No. BA" :readonly="currentUser.id_cu != 0" ></cleave>
+											<Field name="no_ba" rules="required" v-model="form.no_ba" v-slot="{ field }">
+												<cleave
+													:name="field.name"
+													:value="field.value"
+													@input="field.onChange"
+													@blur="field.onBlur"
+													class="form-control"
+													:options="cleaveOption.number3"
+													placeholder="Silahkan masukkan no ba."
+													:readonly="currentUser.id_cu != 0"
+												></cleave>
+											</Field>
 											
 
 											<!-- error message -->
@@ -84,7 +92,11 @@
 												Nama: <wajib-badge></wajib-badge></h5>
 
 											<!-- text -->
-											<input type="text" name="name" class="form-control" placeholder="Silahkan masukkan nama CU" v-validate="'required|min:5'" data-vv-as="Nama" v-model="form.name" :readonly="currentUser.id_cu != 0" >
+											<Field name="name" rules="required|min:5" v-model="form.name" v-slot="{ field }">
+												<input type="text" class="form-control"
+													placeholder="Silahkan masukkan nama CU" v-bind="field"
+													:readonly="currentUser.id_cu != 0">
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.name')">
@@ -221,7 +233,11 @@
 												Aplikasi Keuangan Utama: <wajib-badge></wajib-badge></h5>
 
 											<!-- text -->
-											<input type="text" name="app" class="form-control" placeholder="Silahkan masukkan nama aplikasi keuangan utama" v-validate="'required'" data-vv-as="Aplikasi keuangan utama" v-model="form.app" >
+											<Field name="app" rules="required" v-model="form.app" v-slot="{ field }">
+												<input type="text" class="form-control"
+													placeholder="Silahkan masukkan nama aplikasi keuangan utama"
+													v-bind="field">
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.app')">
@@ -241,8 +257,10 @@
 												Tgl. Berdiri: <wajib-badge></wajib-badge></h5>
 
 											<!-- input -->
-											<date-picker @dateSelected="form.ultah = $event" :defaultDate="form.ultah"></date-picker>	
-											<input v-model="form.ultah" v-show="false" v-validate="'required'" data-vv-as="Tgl. berdiri"/>
+											<date-picker @dateSelected="form.ultah = $event" :defaultDate="form.ultah"></date-picker>
+											<Field name="ultah" rules="required" v-model="form.ultah" v-slot="{ field }">
+												<input v-bind="field" type="text" v-show="false" aria-hidden="true" />
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.ultah')">
@@ -262,8 +280,10 @@
 												Tgl. Bergabung: <wajib-badge></wajib-badge></h5>
 
 											<!-- input  -->
-											<date-picker @dateSelected="form.bergabung = $event" :defaultDate="form.bergabung"></date-picker>	
-											<input v-model="form.bergabung" v-show="false" v-validate="'required'" data-vv-as="Tgl. bergabung"/>
+											<date-picker @dateSelected="form.bergabung = $event" :defaultDate="form.bergabung"></date-picker>
+											<Field name="bergabung" rules="required" v-model="form.bergabung" v-slot="{ field }">
+												<input v-bind="field" type="text" v-show="false" aria-hidden="true" />
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.bergabung')">
@@ -296,13 +316,18 @@
 											</h5>
 
 											<!-- select -->
-											<select class="form-control" name="id_provinces" v-model="form.id_provinces" data-width="100%" v-validate="'required'" data-vv-as="Provinsi" :disabled="modelProvinces.length === 0 || !currentUser.can['update_' + kelas]" @change="changeProvinces($event.target.value)">
+											<Field name="id_provinces" rules="required" v-model="form.id_provinces"
+												v-slot="{ field }">
+												<select class="form-control" data-width="100%" v-bind="field"
+													:disabled="modelProvinces.length === 0 || !currentUser.can['update_' + kelas]"
+													@change="changeProvinces($event.target.value)">
 												<option disabled value="">
 													<span v-if="modelProvincesStat === 'loading'">Mohon tunggu...</span>
 													<span v-else>Silahkan pilih provinsi</span>
 												</option>
 												<option v-for="(provinces, index) in modelProvinces" :value="provinces.id" :key="index">{{provinces.name}}</option>
 											</select>
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.id_provinces')">
@@ -403,7 +428,11 @@
 												Alamat: <wajib-badge></wajib-badge></h5>
 
 											<!-- text -->
-											<input type="text" name="alamat" class="form-control" placeholder="Silahkan masukkan alamat" v-validate="'required|min:5'" data-vv-as="Alamat" v-model="form.alamat" >
+											<Field name="alamat" rules="required|min:5" v-model="form.alamat"
+												v-slot="{ field }">
+												<input type="text" class="form-control"
+													placeholder="Silahkan masukkan alamat" v-bind="field">
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.alamat')">
@@ -549,7 +578,10 @@
 												Website:</h5>
 
 											<!-- text -->
-											<input type="text" name="website" class="form-control" placeholder="Silahkan masukkan alamat website" v-model="form.website" v-validate="'url'" data-vv-as="Website" >
+											<Field name="website" rules="url" v-model="form.website" v-slot="{ field }">
+												<input type="text" class="form-control"
+													placeholder="Silahkan masukkan alamat website" v-bind="field">
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.website')">
@@ -571,7 +603,10 @@
 											</h5>
 
 											<!-- text -->
-											<input type="text" name="facebook" class="form-control" placeholder="Silahkan masukkan link facebook" v-model="form.facebook" v-validate="'url'" data-vv-as="Facebook" >
+											<Field name="facebook" rules="url" v-model="form.facebook" v-slot="{ field }">
+												<input type="text" class="form-control"
+													placeholder="Silahkan masukkan link facebook" v-bind="field">
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.facebook')">
@@ -593,7 +628,10 @@
 											</h5>
 
 											<!-- text -->
-											<input type="text" name="instagram" class="form-control" placeholder="Silahkan masukkan link instagram" v-model="form.instagram" v-validate="'url'" data-vv-as="Instagram" >
+											<Field name="instagram" rules="url" v-model="form.instagram" v-slot="{ field }">
+												<input type="text" class="form-control"
+													placeholder="Silahkan masukkan link instagram" v-bind="field">
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.instagram')">
@@ -615,7 +653,10 @@
 											</h5>
 
 											<!-- text -->
-											<input type="text" name="youtube" class="form-control" placeholder="Silahkan masukkan link youtube" v-model="form.youtube" v-validate="'url'" data-vv-as="Youtube" >
+											<Field name="youtube" rules="url" v-model="form.youtube" v-slot="{ field }">
+												<input type="text" class="form-control"
+													placeholder="Silahkan masukkan link youtube" v-bind="field">
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.youtube')">
@@ -637,7 +678,10 @@
 											</h5>
 
 											<!-- text -->
-											<input type="text" name="tiktok" class="form-control" placeholder="Silahkan masukkan link tiktok" v-model="form.tiktok" v-validate="'url'" data-vv-as="Youtube" >
+											<Field name="tiktok" rules="url" v-model="form.tiktok" v-slot="{ field }">
+												<input type="text" class="form-control"
+													placeholder="Silahkan masukkan link tiktok" v-bind="field">
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.tiktok')">
@@ -767,6 +811,8 @@
 
 					</form>
 
+					</VeeForm>
+
 				</div>
 			</div>
 		</div>
@@ -797,6 +843,8 @@
 	import wajibBadge from "../../components/wajibBadge.vue";
 	import infoIcon from "../../components/infoIcon.vue";
 	import DatePicker from "../../components/datePicker.vue";
+	import VeeForm from '../../components/VeeForm.vue';
+	import { Field } from 'vee-validate';
 
 	export default {
 		components: {
@@ -809,7 +857,9 @@
 			Cleave,
 			wajibBadge,
 			infoIcon,
-			DatePicker
+			DatePicker,
+			VeeForm,
+			Field,
 		},
 		data() {
 			return {
@@ -940,21 +990,19 @@
 
 				this.fetchProvinces();
 			},
-			save() {
-				const formData = toMulipartedForm(this.form, this.$route.meta.mode);
-				this.$validator.validateAll('form').then((result) => {
-					if (result) {
-						if(this.$route.meta.mode == 'edit' || this.$route.meta.mode == 'profile'){
-							this.update([this.$route.params.id, formData]);
-						}else{
-						this.store(formData);
-					}
-						this.submited = false;
-					}else{
-						window.scrollTo(0, 0);
-						this.submited = true;
-					}
-				});
+			onValid(values) {
+				const payload = { ...this.form, ...values };
+				const formData = toMulipartedForm(payload, this.$route.meta.mode);
+				if (this.$route.meta.mode == 'edit' || this.$route.meta.mode == 'profile') {
+					this.update([this.$route.params.id, formData]);
+				} else {
+					this.store(formData);
+				}
+				this.submited = false;
+			},
+			onInvalid() {
+				window.scrollTo(0, 0);
+				this.submited = true;
 			},
 			back(){
 				this.$router.push({name: this.kelas});
@@ -1000,7 +1048,7 @@
 				formStat: 'dataStat',
 				rules: 'rules',
 				options: 'options',
-				updateResponse: 'update',
+				updateResponse: 'updateData',
 				updateStat: 'updateStat'
 			}),
 			...mapState(useProvincesStore, {

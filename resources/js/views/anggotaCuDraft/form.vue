@@ -21,12 +21,12 @@
 
 <script>
 	import { mapState } from 'pinia';
-  import { useAnggotaCuStore } from '../../stores/anggotaCu';
-	import pageHeader from "../../components/pageHeader.vue";
+	import { useAuthStore } from '../../stores/auth';
+	import { useAnggotaCuStore } from '../../stores/anggotaCu';
+	import pageHeader from '../../components/pageHeader.vue';
 	import appModal from '../../components/modal.vue';
-	import anggotaCuAPI from '../../api/anggotaCu.js';
 	import Cleave from 'vue-cleave-component';
-	import formEdit from "./edit.vue";
+	import formEdit from './edit.vue';
 
 	export default {
 		components: {
@@ -37,6 +37,8 @@
 		},
 		data() {
 			return {
+				authStore: useAuthStore(),
+				anggotaCuStore: useAnggotaCuStore(),
 				title: '',
 				titleDesc: '',
 				titleIcon: '',
@@ -61,26 +63,26 @@
 			this.titleIcon = 'icon-pencil5';
 		},
 		methods: {
-			resetData(){
-				this.$store.commit(this.kelas + '/setData',{});
-				this.$store.commit(this.kelas + '/setDataStat','');
+			resetData() {
+				this.anggotaCuStore.data = {};
+				this.anggotaCuStore.dataStat = '';
 			},
-			back(){
-				if(this.currentUser.id_cu == 0){
-					this.$router.push({name: this.kelas + 'Cu', params:{cu: 'semua'}});
-				}else{
-					this.$router.push({name: this.kelas + 'Cu', params:{cu: this.currentUser.id_cu}});
+			back() {
+				if (this.currentUser.id_cu === 0) {
+					this.$router.push({ name: this.kelas + 'Cu', params: { cu: 'semua' } });
+				} else {
+					this.$router.push({ name: this.kelas + 'Cu', params: { cu: this.currentUser.id_cu } });
 				}
 			},
 		},
 		computed: {
-			...mapGetters('auth', {
-				currentUser: 'currentUser'
-			}),
+			currentUser() {
+				return this.authStore.currentUser;
+			},
 			...mapState(useAnggotaCuStore, {
 				itemData: 'data',
-				itemDataStat: 'dataStat'
+				itemDataStat: 'dataStat',
 			}),
-		}
+		},
 	}
 </script>

@@ -26,7 +26,9 @@
 								<select class="form-control" data-width="100%" v-model="dataShown[index].name" @change="changeColumn($event.target.value,index)">
 									<option disabled value="">Silahkan pilih data</option>
 									<slot></slot>
-									<option v-for="(column, colIndex) in columnData" :key="colIndex" :value="column.name" v-if="column && column.isChart" v-html="column.title"></option>
+									<template v-for="(column, colIndex) in columnData" :key="colIndex">
+										<option v-if="column && column.isChart" :value="column.name" v-html="column.title"></option>
+									</template>
 								</select>
 							</div>
 						</div>
@@ -150,43 +152,35 @@ export default {
   },
   methods: {
     setGraph() {
-      // title
       this.line.title.text = this.titleText;
-
-      // yAxis
       this.line.xAxis.data = _.map(this.itemData, this.axisLabelKey);
-
-      // series
       for (let i = 0, len = this.dataShown.length; i < len; i++) {
-        this.line.series[i].data = _.map(
-          this.itemData,
-          this.dataShown[i].name
-        );
+        if (this.line.series[i]) {
+          this.line.series[i].data = _.map(this.itemData, this.dataShown[i].name);
+        }
       }
     },
     addSeries() {
-      let data = _.find(this.columnData, { 'name': this.dataShown[0].name });
-      let series = { name: data.title, data: [], type: "line", smooth: true, stack: data.title };
+      const data = _.find(this.columnData, { name: this.dataShown[0].name });
+      if (!data) return;
+      const series = { name: data.title, data: [], type: 'line', smooth: true, stack: data.title };
       this.line.series.push(series);
     },
     
     emptyGraph() {
-      // resetAll
-      this.line.title.text = "";
-      this.line.title.subtext = "";
-
+      this.line.title.text = '';
+      this.line.title.subtext = '';
       this.line.yAxis.data = [];
       for (let i = 0, len = this.dataShown.length; i < len; i++) {
-        this.line.series[i].data = [];
+        if (this.line.series[i]) this.line.series[i].data = [];
       }
     },
 
     changeColumn(value, index) {
-      let data = _.find(this.columnData, { 'name': value });
-
+      const data = _.find(this.columnData, { name: value });
+      if (!data) return;
       this.line.series[index].name = data.title;
       this.line.series[index].data = _.map(this.itemData, value);
-
       this.dataShown[index].title = data.title;
       this.dataShown[index].name = value;
     },

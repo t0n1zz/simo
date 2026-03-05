@@ -673,7 +673,7 @@
 				return this.cuStore.dataStatS;
 			},
 			updateMessage() {
-				return this.aktivisStore.update;
+				return this.aktivisStore.updateData;
 			},
 			updateStat() {
 				return this.aktivisStore.updateStat;

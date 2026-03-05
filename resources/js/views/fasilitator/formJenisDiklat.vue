@@ -1,6 +1,7 @@
 <template>
 	<div>
-		<form @submit.prevent="save" data-vv-scope="formJenisDiklat">
+		<VeeForm :form="formJenisDiklat" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
+		<form @submit.prevent="handleSubmit(onValid)">
 
 			<div class="form-group">
 
@@ -12,13 +13,19 @@
 				<div class="input-group">
 
 					<!-- select -->
-					<select class="form-control" name="id" v-model="formJenisDiklat.jenis_diklat_id" data-width="100%" :disabled="modelJenisDiklat.length === 0" v-validate="'required'" data-vv-as="JenisDiklat" @change="changeJenisDiklat($event.target.value)">
-						<option disabled value="">
-							<span v-if="modelJenisDiklatStat === 'loading'">Mohon tunggu...</span>
-							<span v-else>Silahkan pilih jenis diklat</span>
-						</option>
-						<option v-for="jenisDiklat in modelJenisDiklat" v-if="jenisDiklat" :value="jenisDiklat.id">{{ jenisDiklat.name }}</option>
-					</select>
+					<Field name="formJenisDiklat.jenis_diklat_id" rules="required" v-model="formJenisDiklat.jenis_diklat_id" v-slot="{ field }">
+						<select class="form-control" data-width="100%" v-bind="field" :disabled="modelJenisDiklat.length === 0" @change="changeJenisDiklat($event.target.value)">
+							<option disabled value="">
+								<span v-if="modelJenisDiklatStat === 'loading'">Mohon tunggu...</span>
+								<span v-else>Silahkan pilih jenis diklat</span>
+							</option>
+							<template v-for="jenisDiklat in modelJenisDiklat" :key="jenisDiklat ? jenisDiklat.id : undefined">
+								<option v-if="jenisDiklat" :value="jenisDiklat.id">
+									{{ jenisDiklat.name }}
+								</option>
+							</template>
+						</select>
+					</Field>
 
 				</div>
 
@@ -48,72 +55,80 @@
 				<i class="icon-cross"></i> Tutup</button>
 		</div>
 
-		</form> 
+		</form>
+		</VeeForm>
 
 	</div>
 </template>
 
 <script>
 	import _ from 'lodash';
-	import { mapGetters } from 'vuex';
-	import message from "../../components/message.vue";
+	import { useAuthStore } from '../../stores/auth';
+	import { useJenisDiklatStore } from '../../stores/jenisDiklat';
+	import message from '../../components/message.vue';
+	import VeeForm from '../../components/VeeForm.vue';
+	import { Field } from 'vee-validate';
 
 	export default {
-		props: ['mode','selected'],
+		props: ['mode', 'selected'],
 		components: {
 			message,
+			VeeForm,
+			Field,
 		},
 		data() {
 			return {
+				authStore: useAuthStore(),
+				jenisDiklatStore: useJenisDiklatStore(),
 				title: '',
-				formJenisDiklat:{
+				formJenisDiklat: {
 					id: '',
-					jenis_diklat_id:'',
+					jenis_diklat_id: '',
 					name: '',
 					deskripsi: '',
 				},
 				submited: false,
-			}
+			};
 		},
-		created(){
-			this.$store.dispatch('jenisDiklat/get');
-			if(this.mode == 'edit'){
+		created() {
+			this.jenisDiklatStore.get();
+			if (this.mode === 'edit') {
 				this.formJenisDiklat = Object.assign({}, this.selected);
 			}
 		},
 		methods: {
-			save(){
-				this.$validator.validateAll('formJenisDiklat').then((result) => {
-					if (result) {
-						if(this.mode == 'edit'){
-							this.$emit('editJenisDiklat',this.formJenisDiklat);
-						}else{
-							this.$emit('createJenisDiklat',this.formJenisDiklat);
-						}
-						this.submited = false;
-					}else{
-						this.submited = true;
-					}	
-				});
+			onValid() {
+				if (this.mode === 'edit') {
+					this.$emit('editJenisDiklat', this.formJenisDiklat);
+				} else {
+					this.$emit('createJenisDiklat', this.formJenisDiklat);
+				}
+				this.submited = false;
 			},
-			changeJenisDiklat(value){
-				let valJenisDiklat = {};
-				valJenisDiklat = _.find(this.modelJenisDiklat, { id: Number(value) });
-				this.formJenisDiklat.name = valJenisDiklat.name;
-				this.formJenisDiklat.deskripsi = valJenisDiklat.deskripsi;
+			onInvalid() {
+				this.submited = true;
 			},
-			tutup(){
+			changeJenisDiklat(value) {
+				const valJenisDiklat = _.find(this.modelJenisDiklat, { id: Number(value) });
+				if (valJenisDiklat) {
+					this.formJenisDiklat.name = valJenisDiklat.name;
+					this.formJenisDiklat.deskripsi = valJenisDiklat.deskripsi;
+				}
+			},
+			tutup() {
 				this.$emit('tutup');
-			}
+			},
 		},
 		computed: {
-			...mapGetters('auth',{
-				currentUser: 'currentUser'
-			}),
-			...mapGetters('jenisDiklat',{
-				modelJenisDiklat: 'dataS',
-				modelJenisDiklatStat: 'dataStatS',
-			}),
-		}
+			currentUser() {
+				return this.authStore.currentUser;
+			},
+			modelJenisDiklat() {
+				return this.jenisDiklatStore.dataS;
+			},
+			modelJenisDiklatStat() {
+				return this.jenisDiklatStore.dataStatS;
+			},
+		},
 	}
 </script>

@@ -262,7 +262,7 @@
 				return this.jalinanIuranStore.dataStatS;
 			},
 			updateMessage() {
-				return this.jalinanIuranStore.update;
+				return this.jalinanIuranStore.updateData;
 			},
 			updateStat() {
 				return this.jalinanIuranStore.updateStat;

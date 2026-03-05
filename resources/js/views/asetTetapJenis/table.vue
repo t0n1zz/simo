@@ -305,7 +305,7 @@
 				return this.asetTetapJenisStore.dataStatS;
 			},
 			updateMessage() {
-				return this.asetTetapJenisStore.update;
+				return this.asetTetapJenisStore.updateData;
 			},
 			updateStat() {
 				return this.asetTetapJenisStore.updateStat;

@@ -11,6 +11,10 @@
 					<message v-if="message.show" :title="'Oops terjadi kesalahan'" :errorData="message.content" :showDebug="false">
 					</message>
 
+					<div v-if="isInactivityLogout" class="alert alert-info mb-3">
+						Anda telah logout karena tidak ada aktivitas. Silakan login kembali.
+					</div>
+
 					<!-- VeeValidate errors removed - will implement in Phase 5 -->
 				
 					<div class="card card-body mb-0">
@@ -143,6 +147,9 @@
 			redirect() {
 				const authStore = useAuthStore();
 				return authStore.getRedirect;
+			},
+			isInactivityLogout() {
+				return this.$route.query.reason === 'inactivity';
 			}
 		}
 	}

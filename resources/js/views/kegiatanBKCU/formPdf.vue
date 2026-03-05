@@ -1,8 +1,5 @@
 <template>
 	<div>
-		<!-- message -->
-		<message v-if="errors && errors.any && errors.any('formMateri') && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors && errors.items">
-		</message>
 		<div class="row">
 			<div class="col-sm-6">
 				<button class="btn btn-light btn-block pb-2" @click.prevent="prev">
@@ -83,11 +80,6 @@
 				currentPage: 1,
 				pageCount: 0,
 				page: 1,
-				errors: {
-					any: () => false,
-					items: []
-				},
-				submited: false,
 			}
 		},
 		created() {

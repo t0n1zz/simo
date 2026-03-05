@@ -1,6 +1,7 @@
 <template>
 	<div>
-		<form @submit.prevent="save" data-vv-scope="formPeserta">
+		<VeeForm :form="formPeserta" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
+		<form @submit.prevent="handleSubmit(onValid)">
 
 			<!-- message -->
 			<message v-if="message.show" @close="messageClose" :title="'Oops terjadi kesalahan'"
@@ -8,26 +9,27 @@
 			</message>
 
 			<!-- asal -->
-			<div class="form-group" :class="{ 'has-error': errors && errors.has && errors.has('formPeserta.asal') }"
+			<div class="form-group" :class="{ 'has-error': errors && errors.has && errors.has('asal') }"
 				v-if="mode == 'create' && currentUser.id_cu == 0 && formPeserta.aktivis_id == '' && formPeserta.mitra_orang_id == ''">
 
 				<!-- title -->
-				<h5 :class="{ 'text-danger': errors && errors.has && errors.has('formPeserta.asal') }">
-					<i class="icon-cross2" v-if="errors && errors.has && errors.has('formPeserta.asal')"></i>
+				<h5 :class="{ 'text-danger': errors && errors.has && errors.has('asal') }">
+					<i class="icon-cross2" v-if="errors && errors.has && errors.has('asal')"></i>
 					Asal:
 				</h5>
 
 				<!-- select -->
-				<select class="form-control" name="asal" v-model="formPeserta.asal" data-width="100%"
-					v-validate="'required'" data-vv-as="asal" @change="changeAsal($event.target.value)">
-					<option disabled value="">Silahkan pilih asal</option>
-					<option value="dalam">Dalam gerakan</option>
-					<option value="luar">Luar gerakan (Perseorangan)</option>
-				</select>
+				<Field name="asal" v-slot="{ field }" :rules="'required'" label="Asal">
+					<select class="form-control" data-width="100%" v-bind="field" v-model="formPeserta.asal" @change="changeAsal($event.target.value)">
+						<option disabled value="">Silahkan pilih asal</option>
+						<option value="dalam">Dalam gerakan</option>
+						<option value="luar">Luar gerakan (Perseorangan)</option>
+					</select>
+				</Field>
 
 				<!-- error message -->
-				<small class="text-muted text-danger" v-if="errors && errors.has && errors.has('formPeserta.asal')">
-					<i class="icon-arrow-small-right"></i> {{ errors && errors.first && errors.first('formPeserta.asal') }}
+				<small class="text-muted text-danger" v-if="errors && errors.has && errors.has('asal')">
+					<i class="icon-arrow-small-right"></i> {{ errors && errors.first && errors.first('asal') }}
 				</small>
 				<small class="text-muted" v-else>&nbsp;</small>
 			</div>
@@ -246,22 +248,23 @@
 
 				<!-- name nametag -->
 				<div class="col-md-6" v-if="item.tipe_tempat !== 'ONLINE'">
-					<div class="form-group" :class="{ 'has-error': errors && errors.has && errors.has('formPeserta.name_nametag') }">
+					<div class="form-group" :class="{ 'has-error': errors && errors.has && errors.has('name_nametag') }">
 
 						<!-- title -->
-						<h5 :class="{ 'text-danger': errors && errors.has && errors.has('formPeserta.name_nametag') }">
-							<i class="icon-cross2" v-if="errors && errors.has && errors.has('formPeserta.name_nametag')"></i>
+						<h5 :class="{ 'text-danger': errors && errors.has && errors.has('name_nametag') }">
+							<i class="icon-cross2" v-if="errors && errors.has && errors.has('name_nametag')"></i>
 							Nama di nametag: <wajib-badge></wajib-badge>
 						</h5>
 
 						<!-- text -->
-						<input type="text" name="name_nametag" class="form-control"
-							placeholder="Silahkan masukkan nama di nametag" v-validate="'required'"
-							data-vv-as="Nama di nametag" v-model="formPeserta.name_nametag">
+						<Field name="name_nametag" v-slot="{ field }" :rules="'required'" label="Nama di nametag">
+							<input type="text" class="form-control"
+								placeholder="Silahkan masukkan nama di nametag" v-bind="field" v-model="formPeserta.name_nametag">
+						</Field>
 
 						<!-- error message -->
-						<small class="text-muted text-danger" v-if="errors && errors.has && errors.has('formPeserta.name_nametag')">
-							<i class="icon-arrow-small-right"></i> {{ errors && errors.first && errors.first('formPeserta.name_nametag') }}
+						<small class="text-muted text-danger" v-if="errors && errors.has && errors.has('name_nametag')">
+							<i class="icon-arrow-small-right"></i> {{ errors && errors.first && errors.first('name_nametag') }}
 						</small>
 						<small class="text-muted" v-else>&nbsp;
 						</small>
@@ -270,22 +273,23 @@
 
 				<!-- name sertifikat -->
 				<div :class="'col-md-6'">
-					<div class="form-group" :class="{ 'has-error': errors && errors.has && errors.has('formPeserta.name_sertifikat') }">
+					<div class="form-group" :class="{ 'has-error': errors && errors.has && errors.has('name_sertifikat') }">
 
 						<!-- title -->
-						<h5 :class="{ 'text-danger': errors && errors.has && errors.has('formPeserta.name_sertifikat') }">
-							<i class="icon-cross2" v-if="errors && errors.has && errors.has('formPeserta.name_sertifikat')"></i>
+						<h5 :class="{ 'text-danger': errors && errors.has && errors.has('name_sertifikat') }">
+							<i class="icon-cross2" v-if="errors && errors.has && errors.has('name_sertifikat')"></i>
 							Nama di sertifikat: <wajib-badge></wajib-badge>
 						</h5>
 
 						<!-- text -->
-						<input type="text" name="name_sertifikat" class="form-control"
-							placeholder="Silahkan masukkan nama di sertifikat" v-validate="'required'"
-							data-vv-as="Nama di sertifikat" v-model="formPeserta.name_sertifikat">
+						<Field name="name_sertifikat" v-slot="{ field }" :rules="'required'" label="Nama di sertifikat">
+							<input type="text" class="form-control"
+								placeholder="Silahkan masukkan nama di sertifikat" v-bind="field" v-model="formPeserta.name_sertifikat">
+						</Field>
 
 						<!-- error message -->
-						<small class="text-muted text-danger" v-if="errors && errors.has && errors.has('formPeserta.name_sertifikat')">
-							<i class="icon-arrow-small-right"></i> {{ errors && errors.first && errors.first('formPeserta.name_sertifikat') }}
+						<small class="text-muted text-danger" v-if="errors && errors.has && errors.has('name_sertifikat')">
+							<i class="icon-arrow-small-right"></i> {{ errors && errors.first && errors.first('name_sertifikat') }}
 						</small>
 						<small class="text-muted" v-else>&nbsp;
 						</small>
@@ -501,6 +505,7 @@
 			</div>
 
 		</form>
+		</VeeForm>
 
 	</div>
 </template>
@@ -520,6 +525,8 @@ import DatePicker from "../../components/datePicker.vue";
 import Cleave from 'vue-cleave-component';
 import wajibBadge from "../../components/wajibBadge.vue";
 import appFileUpload from '../../components/documentUpload.vue';
+import VeeForm from '../../components/VeeForm.vue';
+import { Field } from 'vee-validate';
 import { toMulipartedForm } from '../../helpers/form';
 import filters from '../../helpers/filters';
 
@@ -534,6 +541,8 @@ export default {
 		infoIcon,
 		wajibBadge,
 		appFileUpload,
+		VeeForm,
+		Field,
 	},
 	data() {
 		return {
@@ -643,14 +652,6 @@ export default {
 			},
 
 			submited: false,
-			// SHIM: Add dummy errors object for VeeValidate 2 compatibility in Vue 3
-			errors: {
-				any: () => false,
-				has: () => false,
-				first: () => '',
-				collect: () => [],
-				items: []
-			},
 		}
 	},
 	created() {
@@ -781,21 +782,17 @@ export default {
 				this.formPeserta.pendidikan_tingkat = item.pendidikan_tingkat;
 			}
 		},
-		save() {
-
+		onValid() {
 			const formData = toMulipartedForm(this.formPeserta, this.$route.meta.mode);
-			this.$validator.validateAll('formPeserta').then((result) => {
-				if (result) {
-					if (this.mode == 'edit') {
-						this.updatePeserta([this.formPeserta.id, formData]);
-					} else {
-						this.formPeserta.status = this.item.status;
-						this.storePeserta([this.item.tipe, this.item.id, formData]);
-					}
-				} else {
-					this.submited = true;
-				}
-			});
+			if (this.mode == 'edit') {
+				this.updatePeserta([this.formPeserta.id, formData]);
+			} else {
+				this.formPeserta.status = this.item.status;
+				this.storePeserta([this.item.tipe, this.item.id, formData]);
+			}
+		},
+		onInvalid() {
+			this.submited = true;
 		},
 		messageClose() {
 			this.message.show = false;

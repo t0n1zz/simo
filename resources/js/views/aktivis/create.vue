@@ -1070,7 +1070,7 @@
 				return this.aktivisStore.options;
 			},
 			updateResponse() {
-				return this.aktivisStore.update;
+				return this.aktivisStore.updateData;
 			},
 			updateStat() {
 				return this.aktivisStore.updateStat;

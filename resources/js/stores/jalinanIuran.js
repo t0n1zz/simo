@@ -11,7 +11,7 @@ export const useJalinanIuranStore = defineStore('jalinanIuran', {
     dataStatS: '',
     dataStatS2: '',
     countStat: '',
-    update: [], //update data
+    updateData: [], //update data
     updateStat: '',
     rules: [], //laravel rules
     options: [], //laravel options
@@ -26,7 +26,7 @@ export const useJalinanIuranStore = defineStore('jalinanIuran', {
     getDataStatS: state => state.dataStatS,
     getDataStatS2: state => state.dataStatS2,
     getCountStat: state => state.countStat,
-    getUpdate: state => state.update,
+    getUpdate: state => state.updateData,
     getUpdateStat: state => state.updateStat,
     getRules: state => state.rules,
     getOptions: state => state.options,
@@ -79,13 +79,13 @@ export const useJalinanIuranStore = defineStore('jalinanIuran', {
       try {
         const response = await JalinanIuranAPI.create(idCu, periodeBulan, periodeTahun);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -115,13 +115,13 @@ export const useJalinanIuranStore = defineStore('jalinanIuran', {
       try {
         const response = await JalinanIuranAPI.update(id, form);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -133,14 +133,14 @@ export const useJalinanIuranStore = defineStore('jalinanIuran', {
       try {
         const response = await JalinanIuranAPI.destroy(id);
         if (response.data.deleted) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },

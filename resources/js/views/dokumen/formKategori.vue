@@ -1,13 +1,14 @@
 <template>
 	<div>
-		<form @submit.prevent="save" data-vv-scope="form">
+		<VeeForm :form="form" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
+		<form @submit.prevent="handleSubmit(onValid)">
 
 			<!-- message -->
 			<message v-if="errors.any('form') && submited" :title="'Oops terjadi kesalahan'" :errorItem="errors.items">
 			</message>
 
 			<!-- name -->
-			<div class="form-group" :class="{'has-error' : errors.has('form.kategoriNama')}">
+			<div class="form-group" :class="{'has-error' : errors.has('form.name')}">
 
 				<!-- title -->
 				<h5 :class="{ 'text-danger' : errors.has('form.name')}">
@@ -16,7 +17,9 @@
 				</h5>
 
 				<!-- text -->
-				<input type="text" name="name" class="form-control" placeholder="Silahkan masukkan name kategori" v-validate="'required'" data-vv-as="Nama" v-model="form.name">
+				<Field name="name" rules="required" v-model="form.name" v-slot="{ field }">
+					<input type="text" class="form-control" placeholder="Silahkan masukkan name kategori" v-bind="field">
+				</Field>
 
 				<!-- error message -->
 				<small class="text-muted text-danger" v-if="errors.has('form.name')">
@@ -48,6 +51,7 @@
 				@cancelClick="cancelClick"></form-button>
 
 		</form>
+		</VeeForm>
 
 	</div>
 </template>
@@ -58,6 +62,8 @@
 	import formButton from "../../components/formButton.vue";
 	import formInfo from "../../components/formInfo.vue";
 	import wajibBadge from "../../components/wajibBadge.vue";
+	import VeeForm from '../../components/VeeForm.vue';
+	import { Field } from 'vee-validate';
 
 	export default {
 		props:['id_cu'],
@@ -65,7 +71,9 @@
 			message,
 			formButton,
 			formInfo,
-			wajibBadge
+			wajibBadge,
+			VeeForm,
+			Field
 		},
 		data() {
 			return {
@@ -83,16 +91,13 @@
 			}
 		},
 		methods: {
-			save() {
+			onValid() {
 				this.form.id_cu = this.id_cu;
-				this.$validator.validateAll('form').then((result) => {
-					if(result){
-						this.dokumenKategoriStore.store(this.form);
-					}else{
-						window.scrollTo(0, 0);
-						this.submited = true;
-					}
-				});	
+				this.dokumenKategoriStore.store(this.form);
+			},
+			onInvalid() {
+				window.scrollTo(0, 0);
+				this.submited = true;
 			},
 			cancelClick(){
 				this.$emit('cancelClick');

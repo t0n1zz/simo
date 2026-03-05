@@ -1,6 +1,7 @@
 <template>
 	<div>
-		<form @submit.prevent="save" data-vv-scope="formDataCu">
+		<VeeForm :form="formDataCu" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
+		<form @submit.prevent="handleSubmit(onValid)">
 
 		<!-- message -->
 		<message v-if="message.show" @close="messageClose" :title="'Oops terjadi kesalahan'" :errorData="message.content" :showDebug="false">
@@ -19,13 +20,15 @@
 					</h5>
 
 					<!-- select -->
-					<select class="form-control" name="cu_id" v-model="formDataCu.cu_id" data-width="100%" @change="changeCu($event.target.value)" v-validate="'required'" data-vv-as="CU" :disabled="modelCU.length === 0">
-						<option disabled value="0">
-							<span v-if="modelCUStat === 'loading'">Mohon tunggu...</span>
-							<span v-else>Silahkan pilih CU</span>
-						</option>
-						<option v-for="(cu, index) in modelCU" :value="cu.id" :key="index">{{cu.name}}</option>
-					</select>
+					<Field name="formDataCu.cu_id" rules="required" v-model="formDataCu.cu_id" v-slot="{ field }">
+						<select class="form-control" data-width="100%" v-bind="field" @change="changeCu($event.target.value)" :disabled="modelCU.length === 0">
+							<option disabled value="0">
+								<span v-if="modelCUStat === 'loading'">Mohon tunggu...</span>
+								<span v-else>Silahkan pilih CU</span>
+							</option>
+							<option v-for="(cu, index) in modelCU" :value="cu.id" :key="index">{{cu.name}}</option>
+						</select>
+					</Field>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('formDataCu.cu_id')">
@@ -46,13 +49,15 @@
 					</h6>
 
 					<!-- select -->
-					<select class="form-control" name="id_tp" v-model="formDataCu.tp_id" data-width="100%" v-validate="'required'" data-vv-as="TP/KP" @change="changeTp($event.target.value)">
-						<option disabled value="">
-							<span v-if="modelTpStat === 'loading'">Mohon tunggu...</span>
-							<span v-else>Silahkan pilih TP/KP</span>
-						</option>
-						<option v-for="(tp, index) in modelTp" :value="tp.id" :key="index">{{tp.name}}</option>
-					</select>
+					<Field name="formDataCu.tp_id" rules="required" v-model="formDataCu.tp_id" v-slot="{ field }">
+						<select class="form-control" data-width="100%" v-bind="field" @change="changeTp($event.target.value)">
+							<option disabled value="">
+								<span v-if="modelTpStat === 'loading'">Mohon tunggu...</span>
+								<span v-else>Silahkan pilih TP/KP</span>
+							</option>
+							<option v-for="(tp, index) in modelTp" :value="tp.id" :key="index">{{tp.name}}</option>
+						</select>
+					</Field>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('formDataCu.tp_id')">
@@ -73,13 +78,14 @@
 					</h5>
 
 					<!-- text -->
-					<cleave 
-						name="anggota_no_ba"
-						v-model="formDataCu.no_ba" 
-						class="form-control" 
+					<Field name="formDataCu.no_ba" rules="required" v-model="formDataCu.no_ba" v-slot="{ field }">
+						<input type="hidden" v-bind="field" />
+					</Field>
+					<cleave
+						v-model="formDataCu.no_ba"
+						class="form-control"
 						:options="cleaveOption.number16"
-						placeholder="Silahkan masukkan no buku anggota"
-						v-validate="'required'" data-vv-as="No. Buku Anggota"></cleave>
+						placeholder="Silahkan masukkan no buku anggota"></cleave>
 
 
 					<!-- error message -->
@@ -102,8 +108,10 @@
 					</h5>
 
 					<!-- text -->
-					<date-picker @dateSelected="formDataCu.tanggal_masuk = $event" :defaultDate="formDataCu.tanggal_masuk"></date-picker>	
-					<input v-model="formDataCu.tanggal_masuk" v-show="false" v-validate="'required'" data-vv-as="Tgl. jadi anggota"/>
+					<date-picker @dateSelected="formDataCu.tanggal_masuk = $event" :defaultDate="formDataCu.tanggal_masuk"></date-picker>
+					<Field name="formDataCu.tanggal_masuk" rules="required" v-model="formDataCu.tanggal_masuk" v-slot="{ field }">
+						<input type="hidden" v-bind="field" />
+					</Field>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('formDataCu.tanggal_masuk')">
@@ -151,6 +159,7 @@
 		</div> 
 
 		</form>
+		</VeeForm>
 
 	</div>
 </template>
@@ -167,6 +176,8 @@
 	import produkCuAPI from '../../api/produkCu.js';
 	import wajibBadge from "../../components/wajibBadge.vue";
 	import DatePicker from "../../components/datePicker.vue";
+	import VeeForm from '../../components/VeeForm.vue';
+	import { Field } from 'vee-validate';
 
 	export default {
 		props: ['mode','selected'],
@@ -175,7 +186,9 @@
 			Message,
 			Cleave,
 			wajibBadge,
-			DatePicker
+			DatePicker,
+			VeeForm,
+			Field
 		},
 		data() {
 			return {
@@ -287,18 +300,16 @@
 			fetchTp(value){
 				this.getTpCu(value);
 			},
-			save(){
-				this.$validator.validateAll('formDataCu').then((result) => {
-					if (result) {
-						if(this.mode == 'edit'){
-							this.$emit('editCu',this.formDataCu);
-						}else{
-							this.$emit('createCu',this.formDataCu);
-						}
-					}else{
-						this.submited = true;
-					}	
-				});
+			onValid() {
+				if(this.mode == 'edit'){
+					this.$emit('editCu', this.formDataCu);
+				}else{
+					this.$emit('createCu', this.formDataCu);
+				}
+				this.submited = false;
+			},
+			onInvalid() {
+				this.submited = true;
 			},
 			messageClose(){
 				this.message.show = false;

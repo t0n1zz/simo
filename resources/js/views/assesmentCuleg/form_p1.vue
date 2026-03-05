@@ -1152,7 +1152,7 @@ export default {
 	},
 	computed: {
 		updateMessage() {
-			return this.laporanCuStore.update;
+			return this.laporanCuStore.updateData;
 		},
 		updateStat() {
 			return this.laporanCuStore.updateStat;

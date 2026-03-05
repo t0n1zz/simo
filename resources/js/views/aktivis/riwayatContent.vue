@@ -823,7 +823,7 @@
 				return this.aktivisStore.dataStatS5;
 			},
 			updateResponse() {
-				return this.aktivisStore.update;
+				return this.aktivisStore.updateData;
 			},
 			updateStat() {
 				return this.aktivisStore.updateStat;

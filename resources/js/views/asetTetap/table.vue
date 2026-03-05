@@ -546,7 +546,7 @@
 				return this.authStore.currentUser;
 			},
 			updateMessage() {
-				return this.asetTetapStore.update;
+				return this.asetTetapStore.updateData;
 			},
 			updateStat() {
 				return this.asetTetapStore.updateStat;

@@ -9,12 +9,15 @@
 			<div class="content-wrapper ">
 				<div class="content">
 
-					<!-- message -->
-					<message v-if="errors.any('form') && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors.items">
-					</message>
+					<VeeForm :form="form" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
 
-					<!-- main panel -->
-					<form @submit.prevent="save" enctype="multipart/form-data" data-vv-scope="form">
+						<!-- message -->
+						<message v-if="errors.any('form') && submited" :title="'Oops, terjadi kesalahan'"
+							:errorItem="errors.items">
+						</message>
+
+						<!-- main panel -->
+						<form @submit.prevent="handleSubmit(onValid)" enctype="multipart/form-data">
 
 						<!-- main form -->
 						<div class="card">
@@ -45,14 +48,18 @@
 											</h5>
 
 											<!-- select -->
-											<select class="form-control" name="id_cu" v-model="form.id_cu" data-width="100%"
-												v-validate="'required'" data-vv-as="CU" :disabled="modelCU.length === 0">
-												<option disabled value="">Silahkan pilih CU</option>
-												<option value="0"><span v-if="currentUser.pus">{{ currentUser.pus.name }}</span> <span
-														v-else>PUSKOPCUINA</span></option>
-												<option disabled value="">----------------</option>
-												<option v-for="cu in modelCU" :value="cu.id">{{ cu.name }}</option>
-											</select>
+											<Field name="id_cu" rules="required" v-model="form.id_cu" v-slot="{ field }">
+												<select class="form-control" data-width="100%" v-bind="field"
+													:disabled="modelCU.length === 0">
+													<option disabled value="">Silahkan pilih CU</option>
+													<option value="0">
+														<span v-if="currentUser.pus">{{ currentUser.pus.name }}</span>
+														<span v-else>PUSKOPCUINA</span>
+													</option>
+													<option disabled value="">----------------</option>
+													<option v-for="cu in modelCU" :value="cu.id">{{ cu.name }}</option>
+												</select>
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.id_cu')">
@@ -73,8 +80,10 @@
 											</h5>
 
 											<!-- text -->
-											<input type="text" name="name" class="form-control" placeholder="Silahkan masukkan nama media"
-												v-validate="'required|min:5'" data-vv-as="Nama" v-model="form.name">
+											<Field name="name" rules="required|min:5" v-model="form.name" v-slot="{ field }">
+												<input type="text" class="form-control"
+													placeholder="Silahkan masukkan nama media" v-bind="field">
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.name')">
@@ -95,8 +104,10 @@
 											</h5>
 
 											<!-- text -->
-											<input type="text" name="link" class="form-control" placeholder="Silahkan masukkan link media"
-												v-validate="'required|min:5'" data-vv-as="Link" v-model="form.link">
+											<Field name="link" rules="required|min:5" v-model="form.link" v-slot="{ field }">
+												<input type="text" class="form-control"
+													placeholder="Silahkan masukkan link media" v-bind="field">
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.link')">
@@ -119,6 +130,8 @@
 						</div>
 
 					</form>
+
+					</VeeForm>
 
 				</div>
 			</div>
@@ -146,6 +159,8 @@ import message from "../../components/message.vue";
 import formButton from "../../components/formButton.vue";
 import formInfo from "../../components/formInfo.vue";
 import wajibBadge from "../../components/wajibBadge.vue";
+import VeeForm from '../../components/VeeForm.vue';
+import { Field } from 'vee-validate';
 
 export default {
 	components: {
@@ -155,7 +170,9 @@ export default {
 		message,
 		formButton,
 		formInfo,
-		wajibBadge
+		wajibBadge,
+		VeeForm,
+		Field,
 	},
 		data() {
 			return {
@@ -208,7 +225,25 @@ export default {
 			}
 		}
 	},
-	methods: {
+		methods: {
+		onValid(values) {
+			const payload = {
+				...this.form,
+				...values,
+			};
+			const formData = toMulipartedForm(payload, this.$route.meta.mode);
+
+			if (this.$route.meta.mode == 'edit') {
+				this.artikelPenulisStore.update(this.$route.params.id, formData);
+			} else {
+				this.artikelPenulisStore.store(formData);
+			}
+			this.submited = false;
+		},
+		onInvalid() {
+			window.scrollTo(0, 0);
+			this.submited = true;
+		},
 		fetch() {
 			if (this.currentUser.id_cu == 0) {
 				if (this.modelCuStat != 'success') {
@@ -239,22 +274,6 @@ export default {
 					}
 				}
 			}
-		},
-		save() {
-			const formData = toMulipartedForm(this.form, this.$route.meta.mode);
-			this.$validator.validateAll('form').then((result) => {
-				if (result) {
-					if (this.$route.meta.mode == 'edit') {
-						this.artikelPenulisStore.update(this.$route.params.id, formData);
-					} else {
-						this.artikelPenulisStore.store(formData);
-					}
-					this.submited = false;
-				} else {
-					window.scrollTo(0, 0);
-					this.submited = true;
-				}
-			});
 		},
 		back() {
 			if (this.$route.meta.mode == 'edit' && this.currentUser.id_cu == 0) {
@@ -302,7 +321,7 @@ export default {
 			formStat: 'dataStat',
 			rules: 'rules',
 			options: 'options',
-			updateResponse: 'update',
+			updateResponse: 'updateData',
 			updateStat: 'updateStat'
 		}),
 		...mapState(useCuStore, {

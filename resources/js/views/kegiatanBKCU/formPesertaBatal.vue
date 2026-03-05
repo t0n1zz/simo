@@ -1,25 +1,28 @@
 <template>
 	<div>
+		<VeeForm :form="formPeserta" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
 		<!-- message -->
-		<message v-if="errors && errors.any && errors.any('formPeserta') && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors && errors.items">
+		<message v-if="errors && errors.any && errors.any() && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors && errors.items">
 		</message>
 
-		<form @submit.prevent="save" data-vv-scope="formPeserta">
+		<form @submit.prevent="handleSubmit(onValid)">
 
       <!-- keteranganBatal batal -->
-      <div class="form-group" :class="{'has-error' : errors && errors.has && errors.has('formPeserta.keteranganBatal')}">
+      <div class="form-group" :class="{'has-error' : errors && errors.has && errors.has('keteranganBatal')}">
 
         <!-- title -->
-        <h5 :class="{ 'text-danger' : errors && errors.has && errors.has('formPeserta.keteranganBatal')}">
+        <h5 :class="{ 'text-danger' : errors && errors.has && errors.has('keteranganBatal')}">
           Alasan penolakkan peserta?
         </h5>
 
         <!-- textarea -->
-        <textarea rows="5" type="text" name="keteranganBatal" class="form-control" placeholder="Silahkan masukkan keteranganBatal " v-validate="'required|min:5'" data-vv-as="Keterangan" v-model="formPeserta.keteranganBatal"></textarea>
+        <Field name="keteranganBatal" v-slot="{ field }" :rules="'required|min:5'" label="Keterangan">
+          <textarea rows="5" type="text" class="form-control" placeholder="Silahkan masukkan keteranganBatal " v-bind="field" v-model="formPeserta.keteranganBatal"></textarea>
+        </Field>
 
         <!-- error message -->
-        <small class="text-muted text-danger" v-if="errors && errors.has && errors.has('formPeserta.keteranganBatal')">
-          <i class="icon-arrow-small-right"></i> {{ errors && errors.first && errors.first('formPeserta.keteranganBatal') }}
+        <small class="text-muted text-danger" v-if="errors && errors.has && errors.has('keteranganBatal')">
+          <i class="icon-arrow-small-right"></i> {{ errors && errors.first && errors.first('keteranganBatal') }}
         </small>
         <small class="text-muted" v-else>&nbsp;
         </small>
@@ -44,8 +47,9 @@
 
         <button type="submit" class="btn btn-primary btn-block pb-2">
           <i class="icon-floppy-disk"></i> Simpan</button>
-      </div> 
-    </form>	
+      </div>
+    </form>
+		</VeeForm>
 
 	</div>
 </template>
@@ -56,12 +60,16 @@
 	import { useKegiatanBKCUStore } from '../../stores/kegiatanBKCU';
 	import message from "../../components/message.vue";
 	import formInfo from "../../components/formInfo.vue";
+	import VeeForm from "../../components/VeeForm.vue";
+	import { Field } from 'vee-validate';
 
 	export default {
 		props: ['kelas','tipe', 'id'],
 		components: {
 			formInfo,
-			message
+			message,
+			VeeForm,
+			Field
 		},
 		data() {
 			return {
@@ -69,17 +77,9 @@
 				formPeserta: {
 					status: '',
 					keteranganBatal: ''
-        },
-        penjelasanStatus: '',
+				},
+				penjelasanStatus: '',
 				submited: false,
-        // SHIM: Add dummy errors object for VeeValidate 2 compatibility in Vue 3
-        errors: {
-          any: () => false,
-          has: () => false,
-          first: () => '',
-          collect: () => [],
-          items: []
-        },
 			}
 		},
 		created() {
@@ -90,11 +90,12 @@
 			...mapActions(useKegiatanBKCUStore, {
 				batalPeserta: 'batalPeserta',
 			}),
-      save(){
-				this.$validator.validateAll('formPeserta').then((result) => {
-					this.batalPeserta([this.tipe, this.id, this.formPeserta]);
-				});
-      },
+			onValid() {
+				this.batalPeserta([this.tipe, this.id, this.formPeserta]);
+			},
+			onInvalid() {
+				this.submited = true;
+			},
 			tutup() {
 				this.$emit('tutup');
 			}

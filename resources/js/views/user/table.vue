@@ -652,7 +652,7 @@ export default {
       return this.userStore.dataStat;
     },
     updateMessage() {
-      return this.userStore.update;
+      return this.userStore.updateData;
     },
     updateStat() {
       return this.userStore.updateStat;

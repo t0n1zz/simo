@@ -282,7 +282,7 @@
 				return this.artikelKategoriStore.dataStatS;
 			},
 			updateMessage() {
-				return this.artikelKategoriStore.update;
+				return this.artikelKategoriStore.updateData;
 			},
 			updateStat() {
 				return this.artikelKategoriStore.updateStat;

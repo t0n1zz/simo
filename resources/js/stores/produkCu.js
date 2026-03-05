@@ -11,7 +11,7 @@ export const useProdukCuStore = defineStore('produkCu', {
     dataStatS: '',
     headerDataStatS: '',
     countStat: '',
-    update: [], //update data
+    updateData: [], //update data
     updateStat: '',
     rules: [], //laravel rules
     options: [], //laravel options
@@ -26,7 +26,7 @@ export const useProdukCuStore = defineStore('produkCu', {
     getDataStatS: state => state.dataStatS,
     getHeaderDataStatS: state => state.headerDataStatS,
     getCountStat: state => state.countStat,
-    getUpdate: state => state.update,
+    getUpdate: state => state.updateData,
     getUpdateStat: state => state.updateStat,
     getRules: state => state.rules,
     getOptions: state => state.options,
@@ -98,13 +98,13 @@ export const useProdukCuStore = defineStore('produkCu', {
       try {
         const response = await ProdukCuAPI.store(form);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -135,13 +135,13 @@ export const useProdukCuStore = defineStore('produkCu', {
       try {
         const response = await ProdukCuAPI.update(id, form);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -153,13 +153,13 @@ export const useProdukCuStore = defineStore('produkCu', {
       try {
         const response = await ProdukCuAPI.destroy(id);
         if (response.data.deleted) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },

@@ -13,7 +13,8 @@
 					</message>
 
 					<!-- main panel -->
-					<form @submit.prevent="save" data-vv-scope="form">
+					<VeeForm :form="form" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
+					<form @submit.prevent="handleSubmit(onValid)">
 
 						<!-- main form -->
 						<div class="card">
@@ -30,7 +31,9 @@
 												Nama: <wajib-badge></wajib-badge></h5>
 
 											<!-- text -->
-											<input type="text" name="name" class="form-control" placeholder="Silahkan masukkan nama" v-validate="'required'" data-vv-as="Nama" v-model="form.name">
+											<Field name="name" rules="required" v-model="form.name" v-slot="{ field }">
+												<input type="text" class="form-control" placeholder="Silahkan masukkan nama" v-bind="field">
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.name')">
@@ -50,7 +53,9 @@
 												Kode Awal: <wajib-badge></wajib-badge></h5>
 
 											<!-- text -->
-											<input type="text" name="name" class="form-control" placeholder="Silahkan masukkan kode awal" v-validate="'required'" data-vv-as="Kode Awal" v-model="form.kode">
+											<Field name="kode" rules="required" v-model="form.kode" v-slot="{ field }">
+												<input type="text" class="form-control" placeholder="Silahkan masukkan kode awal" v-bind="field">
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.kode')">
@@ -70,14 +75,15 @@
 												Periode: <wajib-badge></wajib-badge> <info-icon :message="'Format: tahun. Contoh: 2019'"></info-icon></h5>
 
 											<!-- input -->
-											<cleave 
-												name="periode"
-												v-model="form.periode" 
-												class="form-control" 
-												:raw="false" 
-												:options="cleaveOption.year" 
-												placeholder="Silahkan masukkan periode"
-												v-validate="'required'" data-vv-as="Periode"></cleave>
+											<Field name="periode" rules="required" v-model="form.periode" v-slot="{ field }">
+												<input type="hidden" v-bind="field" />
+											</Field>
+											<cleave
+												v-model="form.periode"
+												class="form-control"
+												:raw="false"
+												:options="cleaveOption.year"
+												placeholder="Silahkan masukkan periode"></cleave>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.periode')">
@@ -104,6 +110,7 @@
 						</div>
 
 					</form>
+					</VeeForm>
 				</div>
 			</div>
 		</div>
@@ -130,6 +137,8 @@
 	import wajibBadge from "../../components/wajibBadge.vue";
 	import Cleave from 'vue-cleave-component';
 	import infoIcon from "../../components/infoIcon.vue";
+	import VeeForm from '../../components/VeeForm.vue';
+	import { Field } from 'vee-validate';
 
 	export default {
 		components: {
@@ -142,6 +151,8 @@
 			wajibBadge,
 			Cleave,
 			infoIcon,
+			VeeForm,
+			Field
 		},
 		data() {
 			return {
@@ -251,21 +262,18 @@
 					}
 				}
 			},
-			save() {
+			onValid() {
 				this.form.id_cu = this.currentUser.id_cu;
-				this.$validator.validateAll('form').then((result) => {
-					if (result) {
-						if(this.$route.meta.mode == 'edit'){
-							this.suratKodeStore.update([this.$route.params.id, this.form]);
-						}else{
-							this.suratKodeStore.store(this.form);
-						}
-						this.submited = false;
-					}else{
-						window.scrollTo(0, 0);
-						this.submited = true;
-					}
-				});
+				if(this.$route.meta.mode == 'edit'){
+					this.suratKodeStore.update([this.$route.params.id, this.form]);
+				}else{
+					this.suratKodeStore.store(this.form);
+				}
+				this.submited = false;
+			},
+			onInvalid() {
+				window.scrollTo(0, 0);
+				this.submited = true;
 			},
 			back(){
 				this.$router.push({name: this.kelas + 'Cu', params:{cu: this.currentUser.id_cu}});

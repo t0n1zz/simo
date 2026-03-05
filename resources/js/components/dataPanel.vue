@@ -115,7 +115,7 @@
                 <ul class="dropdown-menu dropdown-menu-right">
                   <li class="dropdown-header">Pencarian berdasarkan</li>
                   <li class="divider"></li>
-                  <li v-for="column in columnData" v-if="column.filter && !column.disable" :class="{'active' : params.search_column == column.key || params.search_column === column.filterKey}">
+                  <li v-for="column in columnData" v-show="column.filter && !column.disable" :class="{'active' : params.search_column == column.key || params.search_column === column.filterKey}">
                     <a @click.prevent="searchColumnData(column.key,column.title,column.filterType,column.filterKey)">{{column.title }}</a>
                   </li>
                 </ul>
@@ -460,7 +460,8 @@
     <!-- modal -->
     <app-modal :show="modalShow" :state="modalState" :title="modalTitle" :button="modalButton" @batal="modalTutup" @tutup="modalTutup" @errorOk="modalTutup" @backgroundClick="modalTutup">
 
-      <div slot="modal-body1" class="text-center">
+      <template #modal-body1>
+      <div class="text-center">
         <div v-if="excelLoadStat === ''">
           <span class="text-warning">
             <i class="icon-exclamation" style="font-size: 5em"></i>
@@ -506,14 +507,15 @@
           </ul>
         </div>
       </div>
+      </template>
 
-      <div slot="modal-body2">
+      <template #modal-body2>
 
         <!-- filter -->
         <div v-if="modalMobileOptionState === 'filter'">
           <h2 class="text-center">Pencarian berdasarkan</h2>
           <hr/>
-          <a class="btn btn-default btn-block" v-for="column in columnData" v-if="column.filter && !column.disable" :class="{'btn-primary' : params.search_column === column.key || params.search_column === column.filterKey}" @click.prevent="searchColumnData(column.key,column.title,column.filterType,column.filterKey)" >{{column.title}}</a>
+          <a class="btn btn-default btn-block" v-for="column in columnData" v-show="column.filter && !column.disable" :class="{'btn-primary' : params.search_column === column.key || params.search_column === column.filterKey}" @click.prevent="searchColumnData(column.key,column.title,column.filterType,column.filterKey)" >{{column.title}}</a>
           <hr/>
           <a class="btn btn-default btn-block" @click.prevent="modalTutup"><i class="icon-cross"></i> Tutup</a>
         </div>
@@ -533,7 +535,7 @@
           <hr/>
           <a class="btn btn-default btn-block" @click.prevent="showAllColumn" >Semua kolom</a>
           <hr/>
-          <a class="btn btn-default btn-block" v-for="(column,index) in columnData" :class="{'btn-primary' : !column.hide}" v-if="column.hide != null && !column.disable" @click.prevent="hideColumn(index)" >{{column.title}}</a>
+          <a class="btn btn-default btn-block" v-for="(column,index) in columnData" :class="{'btn-primary' : !column.hide}" v-show="column.hide != null && !column.disable" @click.prevent="hideColumn(index)" >{{column.title}}</a>
           <hr/>
           <a class="btn btn-default btn-block" @click.prevent="modalTutup"><i class="icon-cross"></i> Tutup</a>
         </div>
@@ -553,7 +555,7 @@
         <div v-if="modalMobileOptionState === 'sort'">
           <h2 class="text-center">Urutkan berdasarkan</h2>
           <hr/>
-          <a class="btn btn-default btn-block" v-for="item in columnData" v-if="!item.hide && !item.disable && item.sort" @click.prevent="sort(item.key)">
+          <a class="btn btn-default btn-block" v-for="item in columnData" v-show="!item.hide && !item.disable && item.sort" @click.prevent="sort(item.key)">
             {{item.title}}
             <span v-if="params.column === item.key">
               <span v-if="params.direction === 'asc'"><i class="icon-sort-amount-asc"></i></span>
@@ -581,7 +583,7 @@
           <hr/>
           <a class="btn btn-default btn-block" @click.prevent="modalTutup"><i class="icon-cross"></i> Tutup</a>
         </div>
-      </div>
+      </template>
     </app-modal>
 
   </div>

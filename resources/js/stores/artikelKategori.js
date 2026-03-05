@@ -7,7 +7,7 @@ export const useArtikelKategoriStore = defineStore('artikelKategori', {
         dataS: [], // collection
         dataStat: '',
         dataStatS: '',
-        update: [], // update data
+        updateData: [], // update data
         updateStat: '',
         rules: [], // laravel rules
         options: [], // laravel options
@@ -93,13 +93,13 @@ export const useArtikelKategoriStore = defineStore('artikelKategori', {
             try {
                 const response = await ArtikelKategoriAPI.store(form);
                 if (response.data.saved) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -129,13 +129,13 @@ export const useArtikelKategoriStore = defineStore('artikelKategori', {
             try {
                 const response = await ArtikelKategoriAPI.update(id, form);
                 if (response.data.saved) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -147,13 +147,13 @@ export const useArtikelKategoriStore = defineStore('artikelKategori', {
             try {
                 const response = await ArtikelKategoriAPI.destroy(id);
                 if (response.data.deleted) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },

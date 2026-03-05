@@ -1,25 +1,28 @@
 <template>
 	<div>
+		<VeeForm :form="formMateri" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
 		<!-- message -->
-		<message v-if="errors && errors.any && errors.any('formMateri') && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors && errors.items">
+		<message v-if="errors && errors.any && errors.any() && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors && errors.items">
 		</message>
 
-		<form @submit.prevent="save" enctype="multipart/form-data" data-vv-scope="formMateri">
+		<form @submit.prevent="handleSubmit(onValid)" enctype="multipart/form-data">
       <!-- nama -->
-			<div class="form-group" :class="{'has-error' : errors && errors.has && errors.has('formMateri.name')}">
+			<div class="form-group" :class="{'has-error' : errors && errors.has && errors.has('name')}">
 
 				<!-- title -->
-				<h5 :class="{ 'text-danger' : errors && errors.has && errors.has('formMateri.name')}">
-					<i class="icon-cross2" v-if="errors && errors.has && errors.has('formMateri.name')"></i>
+				<h5 :class="{ 'text-danger' : errors && errors.has && errors.has('name')}">
+					<i class="icon-cross2" v-if="errors && errors.has && errors.has('name')"></i>
 					Nama :
 				</h5>
 
 				<!-- text -->
-				<input type="text" name="name" class="form-control" placeholder="Silahkan masukkan nama" v-validate="'required'" data-vv-as="Nama di nametag" v-model="formMateri.name">
+				<Field name="name" v-slot="{ field }" :rules="'required'" label="Nama">
+					<input type="text" class="form-control" placeholder="Silahkan masukkan nama" v-bind="field" v-model="formMateri.name">
+				</Field>
 
 				<!-- error message -->
-				<small class="text-muted text-danger" v-if="errors && errors.has && errors.has('formMateri.name')">
-					<i class="icon-arrow-small-right"></i> {{ errors && errors.first && errors.first('formMateri.name') }}
+				<small class="text-muted text-danger" v-if="errors && errors.has && errors.has('name')">
+					<i class="icon-arrow-small-right"></i> {{ errors && errors.first && errors.first('name') }}
 				</small>
 				<small class="text-muted" v-else>&nbsp;
 				</small>
@@ -37,24 +40,26 @@
       </div>
 
 			<!-- format -->
-			<div class="form-group" :class="{'has-error' : errors && errors.has && errors.has('formMateri.format')}" v-if="mode == 'create'">
+			<div class="form-group" :class="{'has-error' : errors && errors.has && errors.has('format')}" v-if="mode == 'create'">
 
 				<!-- title -->
-				<h5 :class="{ 'text-danger' : errors && errors.has && errors.has('formMateri.format')}">
-					<i class="icon-cross2" v-if="errors && errors.has && errors.has('formMateri.format')"></i>
+				<h5 :class="{ 'text-danger' : errors && errors.has && errors.has('format')}">
+					<i class="icon-cross2" v-if="errors && errors.has && errors.has('format')"></i>
 					Pilih Format:
 				</h5>
 
 				<!-- select -->
-				<select class="form-control" name="format" v-model="formMateri.format" data-width="100%" v-validate="'required'" data-vv-as="format">
-					<option disabled value="">Silahkan pilih format</option>
-					<option value="upload">Upload</option>
-					<option value="link">Link</option>
-				</select>
+				<Field name="format" v-slot="{ field }" :rules="'required'" label="Format">
+					<select class="form-control" data-width="100%" v-bind="field" v-model="formMateri.format">
+						<option disabled value="">Silahkan pilih format</option>
+						<option value="upload">Upload</option>
+						<option value="link">Link</option>
+					</select>
+				</Field>
 
 				<!-- error message -->
-				<small class="text-muted text-danger" v-if="errors && errors.has && errors.has('formMateri.format')">
-					<i class="icon-arrow-small-right"></i> {{ errors && errors.first && errors.first('formMateri.format') }}
+				<small class="text-muted text-danger" v-if="errors && errors.has && errors.has('format')">
+					<i class="icon-arrow-small-right"></i> {{ errors && errors.first && errors.first('format') }}
 				</small>
 				<small class="text-muted" v-else>&nbsp;</small>
 			</div>
@@ -104,8 +109,9 @@
 
         <button class="btn btn-light btn-block pb-2" @click.prevent="tutup">
           <i class="icon-cross"></i> Tutup</button>
-      </div> 
-    </form>	
+      </div>
+    </form>
+		</VeeForm>
 
 	</div>
 </template>
@@ -117,33 +123,29 @@
 	import { toMulipartedForm } from '../../helpers/form';
 	import message from "../../components/message.vue";
 	import formInfo from "../../components/formInfo.vue";
+	import VeeForm from "../../components/VeeForm.vue";
+	import { Field } from 'vee-validate';
 
 	export default {
 		props: ['mode','selected','kegiatan_id','kegiatan_tipe'],
 		components: {
 			formInfo,
-			message
+			message,
+			VeeForm,
+			Field
 		},
 		data() {
 			return {
 				title: '',
-				formMateri: { 
+				formMateri: {
 					name: '',
 					keterangan: '',
 					content: '',
 					format: '',
-					link:'',
-        },
-        penjelasanStatus: '',
+					link: '',
+				},
+				penjelasanStatus: '',
 				submited: false,
-        // SHIM: Add dummy errors object for VeeValidate 2 compatibility in Vue 3
-        errors: {
-          any: () => false,
-          has: () => false,
-          first: () => '',
-          collect: () => [],
-          items: []
-        },
 			}
 		},
 		created() {
@@ -164,20 +166,17 @@
 					return
 				this.formMateri.content = files[0];
 			},
-      save(){
+			onValid() {
 				const formData = toMulipartedForm(this.formMateri, this.mode);
-				this.$validator.validateAll('formMateri').then((result) => {
-					if (result) {
-						if(this.mode == 'edit'){
-							this.updateMateri([this.formMateri.id, formData]);
-						}else{
-							this.storeMateri([this.kegiatan_tipe, this.kegiatan_id, formData]);
-						}
-					}else{
-						this.submited = true;
-					}	
-				});
-      },
+				if (this.mode == 'edit') {
+					this.updateMateri([this.formMateri.id, formData]);
+				} else {
+					this.storeMateri([this.kegiatan_tipe, this.kegiatan_id, formData]);
+				}
+			},
+			onInvalid() {
+				this.submited = true;
+			},
 			tutup() {
 				this.$emit('tutup');
 			}

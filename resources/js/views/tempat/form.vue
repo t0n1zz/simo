@@ -13,7 +13,7 @@
 					</message>
 
 					<!-- main panel -->
-					<form @submit.prevent="save" enctype="multipart/form-data" data-vv-scope="form">
+					<form @submit.prevent="save" enctype="multipart/form-data">
 
 						<!-- main form -->
 						<div class="card">
@@ -42,7 +42,7 @@
 													Nama: <wajib-badge></wajib-badge></h5>
 
 												<!-- text -->
-												<input type="text" name="name" class="form-control" placeholder="Silahkan masukkan nama tempat kegiatan" v-validate="'required|min:5'" data-vv-as="Nama" v-model="form.name">
+												<input type="text" name="name" class="form-control" placeholder="Silahkan masukkan nama tempat kegiatan" v-model="form.name">
 
 												<!-- error message -->
 												<small class="text-muted text-danger" v-if="errors.has('form.name')">
@@ -63,7 +63,7 @@
 												</h5>
 
 												<!-- select -->
-												<select class="form-control" name="id_provinces" v-model="form.id_provinces" data-width="100%" v-validate="'required'" data-vv-as="Provinsi" :disabled="modelProvinces.length === 0" @change="changeProvinces($event.target.value)">
+												<select class="form-control" name="id_provinces" v-model="form.id_provinces" data-width="100%" :disabled="modelProvinces.length === 0" @change="changeProvinces($event.target.value)">
 													<option disabled value="">Silahkan pilih Provinsi</option>
 													<option v-for="provinces in modelProvinces" :value="provinces.id">{{provinces.name}}</option>
 												</select>
@@ -87,7 +87,7 @@
 												</h5>
 
 												<!-- select -->
-												<select class="form-control"  name="id_regencies" v-model="form.id_regencies" data-width="100%" v-validate="'required'" data-vv-as="Kabupaten" @change="changeRegencies($event.target.value)" :disabled="modelRegencies.length === 0">
+												<select class="form-control" name="id_regencies" v-model="form.id_regencies" data-width="100%" @change="changeRegencies($event.target.value)" :disabled="modelRegencies.length === 0">
 													<option disabled value="">
 														<span v-if="modelRegenciesStat === 'loading'"><i class="icon-spinner spinner"></i></span>
 														<span v-else>Silahkan pilih kabupaten</span>
@@ -114,7 +114,7 @@
 												</h5>
 
 												<!-- select -->
-												<select class="form-control"  name="id_districts" v-model="form.id_districts" data-width="100%" v-validate="'required'" data-vv-as="Kabupaten" :disabled="modelDistricts.length === 0" @change="changeDistricts($event.target.value)">
+												<select class="form-control" name="id_districts" v-model="form.id_districts" data-width="100%" :disabled="modelDistricts.length === 0" @change="changeDistricts($event.target.value)">
 													<option disabled value="">
 														<span v-if="modelDistrictsStat === 'loading'"><i class="icon-spinner spinner"></i></span>
 														<span v-else>Silahkan pilih kecamatan</span>
@@ -123,8 +123,8 @@
 												</select>
 
 												<!-- error message -->
-												<small class="text-muted text-danger" v-if="errors.has('form.id_regency')">
-													<i class="icon-arrow-small-right"></i> {{ errors.first('form.id_regency') }}
+												<small class="text-muted text-danger" v-if="errors.has('form.id_districts')">
+													<i class="icon-arrow-small-right"></i> {{ errors.first('form.id_districts') }}
 												</small>
 												<small class="text-muted" v-else>&nbsp;</small>
 											</div>
@@ -141,7 +141,7 @@
 												</h5>
 
 												<!-- select -->
-												<select class="form-control"  name="id_villages" v-model="form.id_villages" data-width="100%" v-validate="'required'" data-vv-as="Desa" :disabled="modelVillages.length === 0">
+												<select class="form-control" name="id_villages" v-model="form.id_villages" data-width="100%" :disabled="modelVillages.length === 0">
 													<option disabled value="">
 														<span v-if="modelVillagesStat === 'loading'"><i class="icon-spinner spinner"></i> mohon tunggu</span>
 														<span v-else>Silahkan pilih kelurahan</span>
@@ -167,7 +167,7 @@
 													Alamat: <wajib-badge></wajib-badge></h5>
 
 												<!-- text -->
-												<input type="text" name="alamat" class="form-control" placeholder="Silahkan masukkan alamat" v-validate="'required|min:5'" data-vv-as="Alamat" v-model="form.alamat">
+												<input type="text" name="alamat" class="form-control" placeholder="Silahkan masukkan alamat" v-model="form.alamat">
 
 												<!-- error message -->
 												<small class="text-muted text-danger" v-if="errors.has('form.alamat')">
@@ -250,7 +250,7 @@
 													E-mail:</h5>
 
 												<!-- text -->
-												<input type="text" name="email" class="form-control" placeholder="Silahkan masukkan alamat e-mail" v-validate="'email'" data-vv-as="E-mail" v-model="form.email">
+												<input type="text" name="email" class="form-control" placeholder="Silahkan masukkan alamat e-mail" v-model="form.email">
 
 												<!-- error message -->
 												<small class="text-muted text-danger" v-if="errors.has('form.email')">
@@ -270,7 +270,7 @@
 													Website:</h5>
 
 												<!-- text -->
-												<input type="text" name="website" class="form-control" placeholder="Silahkan masukkan alamat website" v-model="form.website" v-validate="'url'" data-vv-as="Website">
+												<input type="text" name="website" class="form-control" placeholder="Silahkan masukkan alamat website" v-model="form.website">
 
 												<!-- error message -->
 												<small class="text-muted text-danger" v-if="errors.has('form.website')">
@@ -316,9 +316,11 @@
 	import { useProvincesStore } from '../../stores/provinces';
 	import { useRegenciesStore } from '../../stores/regencies';
 	import { useDistrictsStore } from '../../stores/districts';
+	import { computed } from 'vue';
 	import { useVillagesStore } from '../../stores/villages';
 	import { useCuStore } from '../../stores/cu';
-	import pageHeader from "../../components/pageHeader.vue";
+	import { useFormValidation } from '../../composables/useFormValidation';
+	import pageHeader from '../../components/pageHeader.vue';
 	import { toMulipartedForm } from '../../helpers/form';
 	import appImageUpload from '../../components/ImageUpload.vue';
 	import appModal from '../../components/modal.vue';
@@ -326,7 +328,18 @@
 	import formButton from "../../components/formButton.vue";
 	import formInfo from "../../components/formInfo.vue";
 	import Cleave from 'vue-cleave-component';
-	import wajibBadge from "../../components/wajibBadge.vue";
+	import wajibBadge from '../../components/wajibBadge.vue';
+
+	const TEMPAT_SCHEMA = {
+		name: 'required|min:5',
+		id_provinces: 'required',
+		id_regencies: 'required',
+		id_districts: 'required',
+		id_villages: 'required',
+		alamat: 'required|min:5',
+		email: 'email',
+		website: 'url',
+	};
 
 	export default {
 		components: {
@@ -337,7 +350,13 @@
 			formButton,
 			formInfo,
 			Cleave,
-			wajibBadge
+			wajibBadge,
+		},
+		setup() {
+			const tempatStore = useTempatStore();
+			const formRef = computed(() => tempatStore.data);
+			const { errors, handleSubmit, setValues } = useFormValidation(formRef, TEMPAT_SCHEMA);
+			return { errors, handleSubmit, setValues };
 		},
 		data() {
 			return {
@@ -346,12 +365,6 @@
 				titleIcon: 'icon-plus3',
 				kelas: 'tempat',
 				level2Title: 'Tempat',
-				errors: { // SHIM for VeeValidate migration
-					any: () => false,
-					has: () => false,
-					first: () => '',
-					collect: () => []
-				},
 				cleaveOption: {
           date:{
             date: true,
@@ -449,20 +462,22 @@
 				this.getProvinces();
 			},
 			save() {
-				const formData = toMulipartedForm(this.form, this.$route.meta.mode);
-				this.$validator.validateAll('form').then((result) => {
-					if (result) {
-						if(this.$route.meta.mode == 'edit'){
+				this.setValues(this.form);
+				this.handleSubmit(
+					() => {
+						const formData = toMulipartedForm(this.form, this.$route.meta.mode);
+						if (this.$route.meta.mode === 'edit') {
 							this.update([this.$route.params.id, formData]);
-						}else{
+						} else {
 							this.store(formData);
-					}
+						}
 						this.submited = false;
-					}else{
+					},
+					() => {
 						window.scrollTo(0, 0);
 						this.submited = true;
 					}
-				});
+				);
 			},
 			back(){
 				this.$router.push({name: this.kelas});
@@ -523,7 +538,7 @@
 			...mapState(useVillagesStore,{
 				modelVillages: 'dataS',
 				modelVillagesStat: 'dataStatS'
-			})
-		}
+			}),
+		},
 	}
 </script>

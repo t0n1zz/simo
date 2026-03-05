@@ -952,7 +952,8 @@
 					<hr>
 					<div v-if="modalDetail.canUbah">
 						<div class="well well-sm border-top-lg border-top-warning">
-							<div v-if="form.title" v-for="form in modalDetail.form">
+							<template v-for="(form, fi) in modalDetail.form" :key="fi">
+							<div v-if="form && form.title">
 								<div class="form-group">
 									<h5>{{form.title}}</h5>
 									<cleave 
@@ -962,6 +963,7 @@
 										:placeholder="'Silahkan masukkan ' + form.title"></cleave>
 								</div>
 							</div>
+							</template>
 						</div>
 					</div>
 					<div v-else>

@@ -109,7 +109,7 @@
 				return this.cuStore.headerDataStatS;
 			},
 			updateMessage() {
-				return this.cuStore.update;
+				return this.cuStore.updateData;
 			},
 			updateStat() {
 				return this.cuStore.updateStat;

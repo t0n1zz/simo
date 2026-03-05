@@ -284,7 +284,7 @@
 				return this.artikelPenulisStore.dataStatS;
 			},
 			updateMessage() {
-				return this.artikelPenulisStore.update;
+				return this.artikelPenulisStore.updateData;
 			},
 			updateStat() {
 				return this.artikelPenulisStore.updateStat;

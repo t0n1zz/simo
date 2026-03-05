@@ -412,7 +412,7 @@
 				return this.kubnStore.dataStatS;
 			},
 			updateMessage() {
-				return this.kubnStore.update;
+				return this.kubnStore.updateData;
 			},
 			updateStat() {
 				return this.kubnStore.updateStat;

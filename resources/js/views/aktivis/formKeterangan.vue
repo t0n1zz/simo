@@ -1,11 +1,12 @@
 <template>
 	<div>
-	<form @submit.prevent="save" data-vv-scope="form">
+		<VeeForm :form="form" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
+		<form @submit.prevent="handleSubmit(onValid)">
 		<div class="row">
 
 			<!-- tipe -->
 			<div class="col-md-12">
-				<div class="form-group" :class="{'has-error' : errors.has('form.jabatan')}">
+				<div class="form-group" :class="{'has-error' : errors.has('form.tipe')}">
 
 					<!-- title -->
 					<h5>
@@ -13,12 +14,14 @@
 					</h5>
 
 					<!-- select -->
-					<select name="tipe" data-width="100%" class="form-control" v-validate="'required'" data-vv-as="Tipe" v-model="form.tipe">
-						<option disabled value="">Silahkan pilih tipe</option>
-						<option value="PENGHARGAAN">PENGHARGAAN</option>
-						<option value="PELANGGARAN">PELANGGARAN</option>
-						<option value="LAINNYA">LAINNYA</option>
-					</select>
+					<Field name="tipe" rules="required" v-model="form.tipe" v-slot="{ field }">
+						<select data-width="100%" class="form-control" v-bind="field">
+							<option disabled value="">Silahkan pilih tipe</option>
+							<option value="PENGHARGAAN">PENGHARGAAN</option>
+							<option value="PELANGGARAN">PELANGGARAN</option>
+							<option value="LAINNYA">LAINNYA</option>
+						</select>
+					</Field>
 
 					<small class="text-muted">&nbsp;</small>
 				</div>
@@ -34,7 +37,9 @@
 						Nama:</h6>
 
 					<!-- text -->
-					<input type="text" name="name" class="form-control" placeholder="Silahkan masukkan nama" v-validate="'required'" data-vv-as="Nama" v-model="form.name">
+					<Field name="name" rules="required" v-model="form.name" v-slot="{ field }">
+						<input type="text" class="form-control" placeholder="Silahkan masukkan nama" v-bind="field">
+					</Field>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('form.name')">
@@ -68,7 +73,9 @@
 
 					<!-- input -->
 					<date-picker @dateSelected="form.tanggal = $event" :defaultDate="form.tanggal"></date-picker>
-					<input v-model="form.tanggal" v-show="false" v-validate="'required'" data-vv-as="Tanggal"/>
+					<Field name="tanggal" rules="required" v-model="form.tanggal" v-slot="{ field }">
+						<input type="hidden" v-bind="field" />
+					</Field>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('form.tanggal')">
@@ -101,7 +108,8 @@
 			<button type="button" class="btn btn-light btn-block pb-2" @click.prevent="tutup">
 				<i class="icon-cross"></i> Tutup</button>
 		</div> 
-	</form>	
+		</form>
+		</VeeForm>
 	</div>
 </template>
 
@@ -109,12 +117,16 @@
 	import { useAktivisStore } from '../../stores/aktivis';
 	import Cleave from 'vue-cleave-component';
 	import DatePicker from "../../components/datePicker.vue";
+	import VeeForm from '../../components/VeeForm.vue';
+	import { Field } from 'vee-validate';
 
 	export default {
 		props:['formState','selected','id_aktivis'],
 		components: {
 			Cleave,
 			DatePicker,
+			VeeForm,
+			Field
 		},
 		data() {
 			return {
@@ -141,17 +153,13 @@
 			}
 		},
 		methods: {
-			save(){
-				let formData = {};
-				formData.keterangan = this.form;
-				this.$validator.validateAll('form').then((result) => {
-					if (result) {
-						this.aktivisStore.saveKeterangan([this.id_aktivis, formData]);
-						this.submited = false;
-					}else{
-						this.submited = true;
-					}	
-				});	
+			onValid() {
+				const formData = { keterangan: this.form };
+				this.aktivisStore.saveKeterangan([this.id_aktivis, formData]);
+				this.submited = false;
+			},
+			onInvalid() {
+				this.submited = true;
 			},
 			tutup(){
 				this.$emit('tutup');

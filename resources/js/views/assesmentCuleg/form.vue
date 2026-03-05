@@ -12,31 +12,35 @@
           <message v-if="errors.any('form') && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors.items">
           </message>
 
-          <form @submit.prevent="save" enctype="multipart/form-data" data-vv-scope="form">
+          <VeeForm :form="form" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
+          <form @submit.prevent="handleSubmit(onValid)" enctype="multipart/form-data">
             <div class="card card-body">
               <div class="row">
                 <!-- cu -->
                 <div class="col-md-6" v-if="currentUser.id_cu == 0">
-                  <div class="form-group" :class="{ 'has-error': errors.has('form.id_cu') }">
+                  <div class="form-group" :class="{ 'has-error': errors.has('id_cu') }">
                     <!-- title -->
-                    <h5 :class="{ 'text-danger': errors.has('form.id_cu') }">
-                      <i class="icon-cross2" v-if="errors.has('form.id_cu')"></i>
+                    <h5 :class="{ 'text-danger': errors.has('id_cu') }">
+                      <i class="icon-cross2" v-if="errors.has('id_cu')"></i>
                       CU:
                       <wajib-badge></wajib-badge>
                     </h5>
 
                     <!-- select -->
-                    <select class="form-control" name="id_cu" v-model="form.id_cu" data-width="100%"
-                      v-validate="'required'" data-vv-as="CU" @change="changeCU($event.target.value)"
-                      :disabled="modelCU.length == 0 || $route.meta.mode == 'penilaian_bkcu' || $route.meta.mode == 'lihat' || $route.meta.mode == 'edit'">
-                      <option disabled value="0">Silahkan pilih CU</option>
-                      <option v-for="(cu, index) in modelCU" :value="cu.id" :key="index">{{ cu.name }}</option>
-                    </select>
+                    <Field name="id_cu" rules="required" v-model="form.id_cu" v-slot="{ field }">
+                      <select class="form-control" data-width="100%"
+                        v-bind="field"
+                        @change="changeCU($event.target.value)"
+                        :disabled="modelCU.length == 0 || $route.meta.mode == 'penilaian_bkcu' || $route.meta.mode == 'lihat' || $route.meta.mode == 'edit'">
+                        <option disabled value="0">Silahkan pilih CU</option>
+                        <option v-for="(cu, index) in modelCU" :value="cu.id" :key="index">{{ cu.name }}</option>
+                      </select>
+                    </Field>
 
                     <!-- error message -->
-                    <small class="text-muted text-danger" v-if="errors.has('form.id_cu')">
+                    <small class="text-muted text-danger" v-if="errors.has('id_cu')">
                       <i class="icon-arrow-small-right"></i>
-                      {{ errors.first('form.id_cu') }}
+                      {{ errors.first('id_cu') }}
                     </small>
                     <small class="text-muted" v-else>&nbsp;</small>
                   </div>
@@ -44,31 +48,34 @@
 
                 <!-- periode -->
                 <div :class="{ 'col-md-6': currentUser.id_cu == 0, 'col-md-12': currentUser.id_cu != 0 }">
-                  <div class="form-group" :class="{ 'has-error': errors.has('form.periode') }">
+                  <div class="form-group" :class="{ 'has-error': errors.has('id_laporan_cu') }">
                     <!-- title -->
-                    <h5 :class="{ 'text-danger': errors.has('form.periode') }">
-                      <i class="icon-cross2" v-if="errors.has('form.periode')"></i>
+                    <h5 :class="{ 'text-danger': errors.has('id_laporan_cu') }">
+                      <i class="icon-cross2" v-if="errors.has('id_laporan_cu')"></i>
                       Periode:
                       <wajib-badge></wajib-badge>
                       <info-icon :message="'Periode diambil dari laporan perkembangan CU'"></info-icon>
                     </h5>
 
                     <!-- select -->
-                    <select class="form-control" name="periode" v-model="form.id_laporan_cu" data-width="100%"
-                      v-validate="'required'" data-vv-as="CU" @change="changePeriode($event.target.value)"
-                      :disabled="modelPeriode.length == 0 || $route.meta.mode == 'penilaian_bkcu' || $route.meta.mode == 'lihat' || $route.meta.mode == 'edit'">
-                      <option disabled value>
-                        <span v-if="modelPeriodeStat == 'loading'">Mohon tunggu...</span>
-                        <span v-else>Silahkan pilih periode</span>
-                      </option>
-                      <option v-for="(periode, index) in modelPeriode" :value="periode.id" :key="index">
-                        {{ periode.periode }}</option>
-                    </select>
+                    <Field name="id_laporan_cu" rules="required" v-model="form.id_laporan_cu" v-slot="{ field }">
+                      <select class="form-control" data-width="100%"
+                        v-bind="field"
+                        @change="changePeriode($event.target.value)"
+                        :disabled="modelPeriode.length == 0 || $route.meta.mode == 'penilaian_bkcu' || $route.meta.mode == 'lihat' || $route.meta.mode == 'edit'">
+                        <option disabled value>
+                          <span v-if="modelPeriodeStat == 'loading'">Mohon tunggu...</span>
+                          <span v-else>Silahkan pilih periode</span>
+                        </option>
+                        <option v-for="(periode, index) in modelPeriode" :value="periode.id" :key="index">
+                          {{ periode.periode }}</option>
+                      </select>
+                    </Field>
 
                     <!-- error message -->
-                    <small class="text-muted text-danger" v-if="errors.has('form.periode')">
+                    <small class="text-muted text-danger" v-if="errors.has('id_laporan_cu')">
                       <i class="icon-arrow-small-right"></i>
-                      {{ errors.first('form.periode') }}
+                      {{ errors.first('id_laporan_cu') }}
                     </small>
                     <small class="text-muted" v-else>&nbsp;</small>
                   </div>
@@ -94,7 +101,7 @@
                   <div
                     v-if="($route.meta.mode == 'create' && periodeStat == 'success' && periode == null) || ($route.meta.mode != 'create' && form.periode != '' && formStat == 'success')">
 
-                    <button type="button" class="btn btn-warning btn-block" @click.prevent="saveDraft">
+                    <button type="button" class="btn btn-warning btn-block" @click.prevent="handleSubmit(onValidDraft)">
                       <i class="icon-floppy-disk"></i> Simpan Draft
                     </button>
 
@@ -268,7 +275,7 @@
                 v-show="tabName == 'p1'">
                 <form-p1 v-if="formStat == 'success'" :form="form"
                   :mode="$route.meta.mode" :itemData="modelPearls" :updateSingleStat="updateSingleStat"
-                  @saveSingle="saveSingle" @reloadPearls="reloadPearls()" @next="changeTab('p2')" @prev="back"
+                  @saveSingle="perspektif => saveSingle(handleSubmit, perspektif)" @reloadPearls="reloadPearls()" @next="changeTab('p2')" @prev="back"
                   @skorCUA="skorCUP1" @skorBKCUA="skorBKCUP1"></form-p1>
               </div>
             </transition>
@@ -276,7 +283,7 @@
             <transition enter-active-class="animated fadeIn" mode="out-in">
               <div v-show="tabName == 'p2'">
                 <form-p2 v-if="formStat == 'success'" :form="form"
-                  :mode="$route.meta.mode" :updateSingleStat="updateSingleStat" @saveSingle="saveSingle"
+                  :mode="$route.meta.mode" :updateSingleStat="updateSingleStat" @saveSingle="perspektif => saveSingle(handleSubmit, perspektif)"
                   @prev="changeTab('p2')" @next="changeTab('p3')" @skorCUA="skorCUP2" @skorBKCUA="skorBKCUP2"
                   ></form-p2>
               </div>
@@ -285,7 +292,7 @@
             <transition enter-active-class="animated fadeIn" mode="out-in">
               <div v-show="tabName == 'p3'">
                 <form-p3 v-if="formStat == 'success'" :form="form"
-                  :mode="$route.meta.mode" :updateSingleStat="updateSingleStat" @saveSingle="saveSingle"
+                  :mode="$route.meta.mode" :updateSingleStat="updateSingleStat" @saveSingle="perspektif => saveSingle(handleSubmit, perspektif)"
                   @prev="changeTab('p3')" @next="changeTab('p4')" @skorCUA="skorCUP3" @skorBKCUA="skorBKCUP3"
                   ></form-p3>?
               </div>
@@ -294,7 +301,7 @@
             <transition enter-active-class="animated fadeIn" mode="out-in">
               <div v-show="tabName == 'p4'">
                 <form-p4 v-if="formStat == 'success'" :form="form"
-                  :mode="$route.meta.mode" :updateSingleStat="updateSingleStat" @saveSingle="saveSingle"
+                  :mode="$route.meta.mode" :updateSingleStat="updateSingleStat" @saveSingle="perspektif => saveSingle(handleSubmit, perspektif)"
                   @prev="changeTab('p3')" @next="changeTab('p5')" @skorCUA="skorCUP4" @skorBKCUA="skorBKCUP4"
                  ></form-p4>
               </div>
@@ -303,7 +310,7 @@
             <transition enter-active-class="animated fadeIn" mode="out-in">
               <div v-show="tabName == 'p5'">
                 <form-p5 v-if="formStat == 'success'" :form="form"
-                  :mode="$route.meta.mode" :updateSingleStat="updateSingleStat" @saveSingle="saveSingle"
+                  :mode="$route.meta.mode" :updateSingleStat="updateSingleStat" @saveSingle="perspektif => saveSingle(handleSubmit, perspektif)"
                   @prev="changeTab('p4')" @next="changeTab('p6')" @skorCUA="skorCUP5" @skorBKCUA="skorBKCUP5"
                   ></form-p5>
               </div>
@@ -312,7 +319,7 @@
             <transition enter-active-class="animated fadeIn" mode="out-in">
               <div v-show="tabName == 'p6'">
                 <form-p6 v-if="formStat == 'success'" :form="form"
-                  :mode="$route.meta.mode" :updateSingleStat="updateSingleStat" @saveSingle="saveSingle"
+                  :mode="$route.meta.mode" :updateSingleStat="updateSingleStat" @saveSingle="perspektif => saveSingle(handleSubmit, perspektif)"
                   @prev="changeTab('p5')" @next="changeTab('p7')" @skorCUA="skorCUP6" @skorBKCUA="skorBKCUP6"
                   ></form-p6>
               </div>
@@ -321,7 +328,7 @@
             <transition enter-active-class="animated fadeIn" mode="out-in">
               <div v-show="tabName == 'p7'">
                 <form-p7 v-if="formStat == 'success'" :form="form"
-                  :mode="$route.meta.mode" :updateSingleStat="updateSingleStat" @saveSingle="saveSingle"
+                  :mode="$route.meta.mode" :updateSingleStat="updateSingleStat" @saveSingle="perspektif => saveSingle(handleSubmit, perspektif)"
                   @prev="changeTab('p6')" @next="changeTab('p8')" @skorCUA="skorCUP7" @skorBKCUA="skorBKCUP7"
                   ></form-p7>
               </div>
@@ -330,7 +337,7 @@
             <transition enter-active-class="animated fadeIn" mode="out-in">
               <div v-show="tabName == 'p8'">
                 <form-p8 v-if="formStat == 'success'" :form="form"
-                  :mode="$route.meta.mode" :updateSingleStat="updateSingleStat" @saveSingle="saveSingle"
+                  :mode="$route.meta.mode" :updateSingleStat="updateSingleStat" @saveSingle="perspektif => saveSingle(handleSubmit, perspektif)"
                   @prev="changeTab('p7')" @next="changeTab('p9')" @skorCUA="skorCUP8" @skorBKCUA="skorBKCUP8"
                   ></form-p8>
               </div>
@@ -339,7 +346,7 @@
             <transition enter-active-class="animated fadeIn" mode="out-in">
               <div v-show="tabName == 'p9'">
                 <form-p9 v-if="formStat == 'success'" :form="form"
-                  :mode="$route.meta.mode" :updateSingleStat="updateSingleStat" @saveSingle="saveSingle"
+                  :mode="$route.meta.mode" :updateSingleStat="updateSingleStat" @saveSingle="perspektif => saveSingle(handleSubmit, perspektif)"
                   @prev="changeTab('p8')" @next="changeTab('p10')" @skorCUA="skorCUP9" @skorBKCUA="skorBKCUP9"
                  ></form-p9>
               </div>
@@ -348,7 +355,7 @@
             <transition enter-active-class="animated fadeIn" mode="out-in">
               <div v-show="tabName == 'p10'">
                 <form-p10 v-if="formStat == 'success'" :form="form"
-                  :mode="$route.meta.mode" :updateSingleStat="updateSingleStat" @saveSingle="saveSingle"
+                  :mode="$route.meta.mode" :updateSingleStat="updateSingleStat" @saveSingle="perspektif => saveSingle(handleSubmit, perspektif)"
                   @prev="changeTab('p9')" @next="changeTab('p11')" @skorCUA="skorCUP10" @skorBKCUA="skorBKCUP10"
                   ></form-p10>
               </div>
@@ -357,7 +364,7 @@
             <transition enter-active-class="animated fadeIn" mode="out-in">
               <div v-show="tabName == 'p11'">
                 <form-p11 v-if="formStat == 'success'" :form="form"
-                  :mode="$route.meta.mode" :updateSingleStat="updateSingleStat" @saveSingle="saveSingle"
+                  :mode="$route.meta.mode" :updateSingleStat="updateSingleStat" @saveSingle="perspektif => saveSingle(handleSubmit, perspektif)"
                   @prev="changeTab('p10')" @next="changeTab('p12')" @skorCUA="skorCUP11" @skorBKCUA="skorBKCUP11" 
                   @skorCUA1="skorCUP11A" @skorBKCUA1="skorBKCUP11A" @skorCUA2="skorCUP11B" @skorBKCUA2="skorBKCUP11B"
                   @skorCUA3="skorCUP11C" @skorBKCUA3="skorBKCUP11C" @skorCUA4="skorCUP11D" @skorBKCUA4="skorBKCUP11D"
@@ -463,6 +470,7 @@
               </div>
             </transition>
           </form>
+          </VeeForm>
         </div>
       </div>
     </div>
@@ -493,6 +501,8 @@ import formButton from "../../components/formButton.vue";
 import formInfo from "../../components/formInfo.vue";
 import Cleave from "vue-cleave-component";
 import wajibBadge from "../../components/wajibBadge.vue";
+import VeeForm from "../../components/VeeForm.vue";
+import { Field } from "vee-validate";
 import formP1 from "./form_p1.vue";
 import formP2 from "./form_p2.vue";
 import formP3 from "./form_p3.vue";
@@ -531,6 +541,8 @@ export default {
     Cleave,
     infoIcon,
     wajibBadge,
+    VeeForm,
+    Field,
     formP1,
     formP2,
     formP3,
@@ -732,84 +744,82 @@ export default {
       this.laporanCuStore.detailPearls(this.form.id_laporan_cu);
     },
     saveDraft() {
-      this.$validator.validateAll("form").then(result => {
-        if (result) {
-          if (this.$route.meta.mode == "edit") {
-            this.form.status = "BELUM SELESAI DIISI";
-            this.assesmentCulegStore.update([
-              this.$route.params.id,
-              this.form
-            ]);
-          } else if (this.$route.meta.mode == "penilaianBkcu") {
-            this.form.status = "BELUM SELESAI DINILAI";
-            this.assesmentCulegStore.update([
-              this.$route.params.id,
-              this.form
-            ]);
-          } else {
-            this.form.status = "BELUM SELESAI DIISI";
-            this.assesmentCulegStore.store(this.form);
-          }
-          this.submited = false;
-        } else {
-          window.scrollTo(0, 0);
-          this.submited = true;
-        }
-      });
+      // deprecated; kept for backward compatibility, now handled via VeeForm onValidDraft
+      this.onValidDraft();
     },
     saveSingle(perspektif) {
-      this.$validator.validateAll("form").then(result => {
-        if (result) {
-          if (this.$route.meta.mode == "edit") {
-            this.form.status = "BELUM SELESAI DIISI";
-            this.assesmentCulegStore.updateSingle([
-              this.$route.params.id,
-              perspektif,
-              this.form
-            ]);
-          } else if (this.$route.meta.mode == "penilaianBkcu") {
-            this.form.status = "BELUM SELESAI DINILAI";
-            this.assesmentCulegStore.updateSingle([
-              this.$route.params.id,
-              perspektif,
-              this.form
-            ]);
-          } else {
-            this.form.status = "BELUM SELESAI DIISI";
-            this.assesmentCulegStore.store(this.form);
-          }
-          this.submited = false;
-        } else {
-          window.scrollTo(0, 0);
-          this.submited = true;
-        }
-      });
+      // deprecated; now wired through VeeForm handleSubmit in template
+      this.onValidSingle(perspektif);
     },
     save() {
-      this.$validator.validateAll("form").then(result => {
-        if (result) {
-          if (this.$route.meta.mode == "edit") {
-            this.form.status = "BELUM DINILAI";
-            this.assesmentCulegStore.update([
-              this.$route.params.id,
-              this.form
-            ]);
-          } else if (this.$route.meta.mode == "penilaianBkcu") {
-            this.form.status = "SUDAH DINILAI";
-            this.assesmentCulegStore.update([
-              this.$route.params.id,
-              this.form
-            ]);
-          } else {
-            this.form.status = "BELUM DINILAI";
-            this.assesmentCulegStore.store(this.form);
-          }
-          this.submited = false;
-        } else {
-          window.scrollTo(0, 0);
-          this.submited = true;
-        }
-      });
+      // deprecated; main submit now handled via onValid
+      this.onValid();
+    },
+    onValidDraft() {
+      if (this.$route.meta.mode == "edit") {
+        this.form.status = "BELUM SELESAI DIISI";
+        this.assesmentCulegStore.update([
+          this.$route.params.id,
+          this.form
+        ]);
+      } else if (this.$route.meta.mode == "penilaianBkcu") {
+        this.form.status = "BELUM SELESAI DINILAI";
+        this.assesmentCulegStore.update([
+          this.$route.params.id,
+          this.form
+        ]);
+      } else {
+        this.form.status = "BELUM SELESAI DIISI";
+        this.assesmentCulegStore.store(this.form);
+      }
+      this.submited = false;
+    },
+    saveSingle(handleSubmit, perspektif) {
+      handleSubmit(() => this.onValidSingle(perspektif))();
+    },
+    onValidSingle(perspektif) {
+      if (this.$route.meta.mode == "edit") {
+        this.form.status = "BELUM SELESAI DIISI";
+        this.assesmentCulegStore.updateSingle([
+          this.$route.params.id,
+          perspektif,
+          this.form
+        ]);
+      } else if (this.$route.meta.mode == "penilaianBkcu") {
+        this.form.status = "BELUM SELESAI DINILAI";
+        this.assesmentCulegStore.updateSingle([
+          this.$route.params.id,
+          perspektif,
+          this.form
+        ]);
+      } else {
+        this.form.status = "BELUM SELESAI DIISI";
+        this.assesmentCulegStore.store(this.form);
+      }
+      this.submited = false;
+    },
+    onValid() {
+      if (this.$route.meta.mode == "edit") {
+        this.form.status = "BELUM DINILAI";
+        this.assesmentCulegStore.update([
+          this.$route.params.id,
+          this.form
+        ]);
+      } else if (this.$route.meta.mode == "penilaianBkcu") {
+        this.form.status = "SUDAH DINILAI";
+        this.assesmentCulegStore.update([
+          this.$route.params.id,
+          this.form
+        ]);
+      } else {
+        this.form.status = "BELUM DINILAI";
+        this.assesmentCulegStore.store(this.form);
+      }
+      this.submited = false;
+    },
+    onInvalid() {
+      window.scrollTo(0, 0);
+      this.submited = true;
     },
     back() {
       if (this.currentUser.id_cu == 0) {
@@ -1007,7 +1017,7 @@ export default {
       return this.assesmentCulegStore.options;
     },
     updateResponse() {
-      return this.assesmentCulegStore.update;
+      return this.assesmentCulegStore.updateData;
     },
     updateStat() {
       return this.assesmentCulegStore.updateStat;

@@ -10,17 +10,30 @@
         </button>
 
         <!-- batal -->
-        <router-link type="button" :to="{ name: cancelLink }" class="btn btn-light"  v-if="cancelState ==='link'">
+        <router-link type="button" :to="{ name: cancelLink }" class="btn btn-light" v-if="cancelState ==='link'">
           <i :class="cancelIcon"></i> {{ cancelTitle }}
         </router-link>
 
         <!-- simpan -->
-        <button type="submit" class="btn btn-primary" :disabled="buttonErrors && buttonErrors.any && buttonErrors.any(formValidation)" v-if="confirmState ==='submit'">
-          <i :class="confirmIcon"></i> {{ confirmTitle }}
+        <button
+          type="submit"
+          class="btn btn-primary ml-1"
+          :disabled="loading || (resolvedButtonErrors && resolvedButtonErrors.any && resolvedButtonErrors.any(formValidation))"
+          v-if="confirmState ==='submit'"
+        >
+          <template v-if="loading"><i class="icon-spinner2 spinner"></i> {{ loadingTitle }}</template>
+          <template v-else><i :class="confirmIcon"></i> {{ confirmTitle }}</template>
         </button>
 
-        <button type="button" class="btn btn-primary" @click.prevent="confirmClick" v-else>
-          <i :class="confirmIcon"></i> {{ confirmTitle }}
+        <button
+          type="button"
+          class="btn btn-primary ml-1"
+          :disabled="loading"
+          @click.prevent="confirmClick"
+          v-else
+        >
+          <template v-if="loading"><i class="icon-spinner2 spinner"></i> {{ loadingTitle }}</template>
+          <template v-else><i :class="confirmIcon"></i> {{ confirmTitle }}</template>
         </button>
 
       </div>
@@ -29,13 +42,14 @@
       <div class="d-block d-md-none" v-if="!isSingleButton">
 
         <!-- simpan -->
-        <!-- simpan -->
-        <button type="submit" class="btn btn-primary btn-block pb-2" :disabled="buttonErrors && buttonErrors.any && buttonErrors.any(formValidation)" v-if="confirmState ==='submit'">
-          <i :class="confirmIcon"></i> {{ confirmTitle }}
+        <button type="submit" class="btn btn-primary btn-block pb-2" :disabled="loading || (resolvedButtonErrors && resolvedButtonErrors.any && resolvedButtonErrors.any(formValidation))" v-if="confirmState ==='submit'">
+          <template v-if="loading"><i class="icon-spinner2 spinner"></i> {{ loadingTitle }}</template>
+          <template v-else><i :class="confirmIcon"></i> {{ confirmTitle }}</template>
         </button>
 
-        <button type="button" class="btn btn-primary btn-block pb-2" @click.prevent="confirmClick" v-else>
-          <i :class="confirmIcon"></i> {{ confirmTitle }}
+        <button type="button" class="btn btn-primary btn-block pb-2" :disabled="loading" @click.prevent="confirmClick" v-else>
+          <template v-if="loading"><i class="icon-spinner2 spinner"></i> {{ loadingTitle }}</template>
+          <template v-else><i :class="confirmIcon"></i> {{ confirmTitle }}</template>
         </button>
 
         <!-- tutup -->
@@ -88,6 +102,17 @@
     props: {
       isSingleButton: false,
       formValidation:{},
+      buttonErrors: {
+        type: Object,
+        default: null,
+      },
+      loading: {
+        type: Boolean,
+        default: false,
+      },
+      loadingTitle: {
+        default: 'Menyimpan...'
+      },
       confirmTitle: {
         default: 'Simpan'
       },
@@ -115,22 +140,21 @@
     },
     data() {
       return {
-        // SHIM: Add dummy errors object for VeeValidate 2 compatibility in Vue 3
-        buttonErrors: {
+        _defaultButtonErrors: {
           any: () => false,
           has: () => false,
           first: () => '',
           collect: () => [],
-          items: []
-        }
-      }
+          items: [],
+        },
+      };
     },
-    mounted() {
-      console.log('🔘 FormButton mounted. buttonErrors:', this.buttonErrors);
-      if(this.buttonErrors){
-         console.log('🔘 FormButton buttonErrors.any type:', typeof this.buttonErrors.any);
-      }
+    computed: {
+      resolvedButtonErrors() {
+        return this.buttonErrors != null ? this.buttonErrors : this._defaultButtonErrors;
+      },
     },
+    mounted() {},
     methods:{
       confirmClick(){
         this.$emit('confirmClick');

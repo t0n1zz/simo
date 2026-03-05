@@ -1,25 +1,28 @@
 <template>
 	<div>
+		<VeeForm :form="formTugas" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
 		<!-- message -->
-		<message v-if="errors && errors.any && errors.any('formTugas') && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors && errors.items">
+		<message v-if="errors && errors.any && errors.any() && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors && errors.items">
 		</message>
 
-		<form @submit.prevent="save" enctype="multipart/form-data" data-vv-scope="formTugas">
+		<form @submit.prevent="handleSubmit(onValid)" enctype="multipart/form-data">
       <!-- nama -->
-			<div class="form-group" :class="{'has-error' : errors && errors.has && errors.has('formTugas.name')}">
+			<div class="form-group" :class="{'has-error' : errors && errors.has && errors.has('name')}">
 
 				<!-- title -->
-				<h5 :class="{ 'text-danger' : errors && errors.has && errors.has('formTugas.name')}">
-					<i class="icon-cross2" v-if="errors && errors.has && errors.has('formTugas.name')"></i>
+				<h5 :class="{ 'text-danger' : errors && errors.has && errors.has('name')}">
+					<i class="icon-cross2" v-if="errors && errors.has && errors.has('name')"></i>
 					Tugas:
 				</h5>
 
 				<!-- text -->
-				<input type="text" name="name" class="form-control" placeholder="Silahkan masukkan nama" v-validate="'required'" data-vv-as="Nama di nametag" v-model="formTugas.name">
+				<Field name="name" v-slot="{ field }" :rules="'required'" label="Tugas">
+					<input type="text" class="form-control" placeholder="Silahkan masukkan nama" v-bind="field" v-model="formTugas.name">
+				</Field>
 
 				<!-- error message -->
-				<small class="text-muted text-danger" v-if="errors && errors.has && errors.has('formTugas.name')">
-					<i class="icon-arrow-small-right"></i> {{ errors && errors.first && errors.first('formTugas.name') }}
+				<small class="text-muted text-danger" v-if="errors && errors.has && errors.has('name')">
+					<i class="icon-arrow-small-right"></i> {{ errors && errors.first && errors.first('name') }}
 				</small>
 				<small class="text-muted" v-else>&nbsp;
 				</small>
@@ -38,25 +41,27 @@
 
 
 			<!-- tipe -->
-			<div class="form-group" :class="{'has-error' : errors && errors.has && errors.has('formTugas.tipe')}" v-if="mode == 'create'">
+			<div class="form-group" :class="{'has-error' : errors && errors.has && errors.has('tipe')}" v-if="mode == 'create'">
 
 				<!-- title -->
-				<h5 :class="{ 'text-danger' : errors && errors.has && errors.has('formTugas.tipe')}">
-					<i class="icon-cross2" v-if="errors && errors.has && errors.has('formTugas.tipe')"></i>
+				<h5 :class="{ 'text-danger' : errors && errors.has && errors.has('tipe')}">
+					<i class="icon-cross2" v-if="errors && errors.has && errors.has('tipe')"></i>
 					Pilih Tipe:
 				</h5>
 
 				<!-- select -->
-				<select class="form-control" name="tipe" v-model="formTugas.tipe" data-width="100%" v-validate="'required'" data-vv-as="tipe">
-					<option disabled value="">Silahkan pilih tipe</option>
-					<option value="isian">Isian langsung</option>
-					<option value="upload">Upload tugas</option>
-					<option value="google form">Google form</option>
-				</select>
+				<Field name="tipe" v-slot="{ field }" :rules="'required'" label="Tipe">
+					<select class="form-control" data-width="100%" v-bind="field" v-model="formTugas.tipe">
+						<option disabled value="">Silahkan pilih tipe</option>
+						<option value="isian">Isian langsung</option>
+						<option value="upload">Upload tugas</option>
+						<option value="google form">Google form</option>
+					</select>
+				</Field>
 
 				<!-- error message -->
-				<small class="text-muted text-danger" v-if="errors && errors.has && errors.has('formTugas.tipe')">
-					<i class="icon-arrow-small-right"></i> {{ errors && errors.first && errors.first('formTugas.tipe') }}
+				<small class="text-muted text-danger" v-if="errors && errors.has && errors.has('tipe')">
+					<i class="icon-arrow-small-right"></i> {{ errors && errors.first && errors.first('tipe') }}
 				</small>
 				<small class="text-muted" v-else>&nbsp;</small>
 			</div>
@@ -83,24 +88,26 @@
 						</h5>
 
 						<!-- format -->
-						<div class="form-group" :class="{'has-error' : errors && errors.has && errors.has('formTugas.format')}" v-if="mode == 'create'">
+						<div class="form-group" :class="{'has-error' : errors && errors.has && errors.has('format')}" v-if="mode == 'create'">
 
 							<!-- title -->
-							<h5 :class="{ 'text-danger' : errors && errors.has && errors.has('formTugas.format')}">
-								<i class="icon-cross2" v-if="errors && errors.has && errors.has('formTugas.format')"></i>
+							<h5 :class="{ 'text-danger' : errors && errors.has && errors.has('format')}">
+								<i class="icon-cross2" v-if="errors && errors.has && errors.has('format')"></i>
 								Pilih Format:
 							</h5>
 
 							<!-- select -->
-							<select class="form-control" name="format" v-model="formTugas.format" data-width="100%" v-validate="'required'" data-vv-as="format">
-								<option disabled value="">Silahkan pilih format</option>
-								<option value="upload">Upload</option>
-								<option value="link">Link</option>
-							</select>
+							<Field name="format" v-slot="{ field }" :rules="'required'" label="Format">
+								<select class="form-control" data-width="100%" v-bind="field" v-model="formTugas.format">
+									<option disabled value="">Silahkan pilih format</option>
+									<option value="upload">Upload</option>
+									<option value="link">Link</option>
+								</select>
+							</Field>
 
 							<!-- error message -->
-							<small class="text-muted text-danger" v-if="errors && errors.has && errors.has('formTugas.format')">
-								<i class="icon-arrow-small-right"></i> {{ errors && errors.first && errors.first('formTugas.format') }}
+							<small class="text-muted text-danger" v-if="errors && errors.has && errors.has('format')">
+								<i class="icon-arrow-small-right"></i> {{ errors && errors.first && errors.first('format') }}
 							</small>
 							<small class="text-muted" v-else>&nbsp;</small>
 						</div>
@@ -147,8 +154,9 @@
 
         <button class="btn btn-light btn-block pb-2" @click.prevent="tutup">
           <i class="icon-cross"></i> Tutup</button>
-      </div> 
-    </form>	
+      </div>
+    </form>
+		</VeeForm>
 
 	</div>
 </template>
@@ -160,34 +168,31 @@
 	import { toMulipartedForm } from '../../helpers/form';
 	import message from "../../components/message.vue";
 	import formInfo from "../../components/formInfo.vue";
+	import VeeForm from "../../components/VeeForm.vue";
+	import { Field } from 'vee-validate';
 
 	export default {
 		props: ['mode','selected','kegiatan_id','kegiatan_tipe'],
 		components: {
 			formInfo,
-			message
+			message,
+			VeeForm,
+			Field
 		},
 		data() {
 			return {
 				title: '',
-				formTugas: { 
+				formTugas: {
 					id_cu: '',
 					id_user: '',
 					name: '',
+					keterangan: '',
 					tipe: '',
-					format:'',
+					format: '',
 					content: '',
-					link:'',
-        },
+					link: '',
+				},
 				submited: false,
-        // SHIM: Add dummy errors object for VeeValidate 2 compatibility in Vue 3
-        errors: {
-          any: () => false,
-          has: () => false,
-          first: () => '',
-          collect: () => [],
-          items: []
-        },
 			}
 		},
 		created() {
@@ -208,22 +213,19 @@
 					return
 				this.formTugas.content = files[0];
 			},
-      save(){
+			onValid() {
 				this.formTugas.id_user = this.currentUser.id;
 				this.formTugas.id_cu = this.currentUser.id_cu;
 				const formData = toMulipartedForm(this.formTugas, this.mode);
-				this.$validator.validateAll('formTugas').then((result) => {
-					if (result) {
-						if(this.mode == 'edit'){
-							this.updateTugas([this.formTugas.id, formData]);
-						}else{
-							this.storeTugas([this.kegiatan_tipe, this.kegiatan_id, formData]);
-						}
-					}else{
-						this.submited = true;
-					}	
-				});
-      },
+				if (this.mode == 'edit') {
+					this.updateTugas([this.formTugas.id, formData]);
+				} else {
+					this.storeTugas([this.kegiatan_tipe, this.kegiatan_id, formData]);
+				}
+			},
+			onInvalid() {
+				this.submited = true;
+			},
 			tutup() {
 				this.$emit('tutup');
 			}

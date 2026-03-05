@@ -1,6 +1,7 @@
 <template>
 	<div>
-		<form @submit.prevent="save" data-vv-scope="formProduk">
+		<VeeForm :form="formProduk" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
+		<form @submit.prevent="handleSubmit(onValid)">
 
 		<!-- message -->
 		<message v-if="message.show" @close="messageClose" :title="'Oops terjadi kesalahan'" :errorData="message.content" :showDebug="false">
@@ -28,13 +29,15 @@
 					</h5>
 
 					<!-- select -->
-					<select class="form-control" name="produk_cu_id" v-model="formProduk.produk_cu.id" data-width="100%" @change="changeProdukCu($event.target.value)" v-validate="'required'" data-vv-as="Produk CU" :disabled="formStateProdukCu.length === 0">
-						<option disabled value="0">
-							<span v-if="formStateProdukCuStat === 'loading'">Mohon tunggu...</span>
-							<span v-else>Silahkan pilih Produk CU</span>
-						</option>
-						<option v-for="(produk, index) in formStateProdukCu" :value="produk.id" :key="index">{{produk.name}} | {{produk.tipe}}</option>
-					</select>
+					<Field name="formProduk.produk_cu.id" rules="required" v-model="formProduk.produk_cu.id" v-slot="{ field }">
+						<select class="form-control" data-width="100%" v-bind="field" @change="changeProdukCu($event.target.value)" :disabled="formStateProdukCu.length === 0">
+							<option disabled value="0">
+								<span v-if="formStateProdukCuStat === 'loading'">Mohon tunggu...</span>
+								<span v-else>Silahkan pilih Produk CU</span>
+							</option>
+							<option v-for="(produk, index) in formStateProdukCu" :value="produk.id" :key="index">{{produk.name}} | {{produk.tipe}}</option>
+						</select>
+					</Field>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('formProduk.produk_cu.id')">
@@ -55,13 +58,14 @@
 					</h5>
 
 					<!-- text -->
-					<cleave 
-						name="no_rek"
-						v-model="formProduk.no_rek" 
-						class="form-control" 
+					<Field name="formProduk.no_rek" rules="required" v-model="formProduk.no_rek" v-slot="{ field }">
+						<input type="hidden" v-bind="field" />
+					</Field>
+					<cleave
+						v-model="formProduk.no_rek"
+						class="form-control"
 						:options="cleaveOption.number30"
-						placeholder="Silahkan masukkan jumlah no. rekening"
-						v-validate="'required'" data-vv-as="No. Rekening" ></cleave>
+						placeholder="Silahkan masukkan jumlah no. rekening"></cleave>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('formProduk.no_rek')">
@@ -83,13 +87,14 @@
 					</h5>
 
 					<!-- text -->
-					<cleave 
-						name="saldo"
-						v-model="formProduk.saldo" 
-						class="form-control" 
+					<Field name="formProduk.saldo" rules="required" v-model="formProduk.saldo" v-slot="{ field }">
+						<input type="hidden" v-bind="field" />
+					</Field>
+					<cleave
+						v-model="formProduk.saldo"
+						class="form-control"
 						:options="cleaveOption.numeric"
-						placeholder="Silahkan masukkan jumlah saldo"
-						v-validate="'required'" data-vv-as="Saldo" ></cleave>
+						placeholder="Silahkan masukkan jumlah saldo"></cleave>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('formProduk.saldo')">
@@ -110,8 +115,10 @@
 					</h5>
 
 					<!-- input -->
-					<date-picker @dateSelected="formProduk.tanggal_buka = $event" :defaultDate="formProduk.tanggal_buka"></date-picker>	
-					<input v-model="formProduk.tanggal_buka" v-show="false" v-validate="'required'" data-vv-as="Tanggal buka"/>
+					<date-picker @dateSelected="formProduk.tanggal_buka = $event" :defaultDate="formProduk.tanggal_buka"></date-picker>
+					<Field name="formProduk.tanggal_buka" rules="required" v-model="formProduk.tanggal_buka" v-slot="{ field }">
+						<input type="hidden" v-bind="field" />
+					</Field>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('formProduk.tanggal_buka')">
@@ -133,8 +140,10 @@
 					</h5>
 
 					<!-- input -->
-					<date-picker @dateSelected="formProduk.tanggal_transaksi = $event" :defaultDate="formProduk.tanggal_transaksi"></date-picker>	
-					<input v-model="formProduk.tanggal_transaksi" v-show="false" v-validate="'required'" data-vv-as="Tanggal transaksi"/>
+					<date-picker @dateSelected="formProduk.tanggal_transaksi = $event" :defaultDate="formProduk.tanggal_transaksi"></date-picker>
+					<Field name="formProduk.tanggal_transaksi" rules="required" v-model="formProduk.tanggal_transaksi" v-slot="{ field }">
+						<input type="hidden" v-bind="field" />
+					</Field>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('formProduk.tanggal_transaksi')">
@@ -175,13 +184,14 @@
 					</h5>
 
 					<!-- text -->
-					<cleave 
-						name="lama_pinjaman"
-						v-model="formProduk.lama_pinjaman" 
-						class="form-control" 
+					<Field name="formProduk.lama_pinjaman" rules="required" v-model="formProduk.lama_pinjaman" v-slot="{ field }">
+						<input type="hidden" v-bind="field" />
+					</Field>
+					<cleave
+						v-model="formProduk.lama_pinjaman"
+						class="form-control"
 						:options="cleaveOption.number4"
-						placeholder="Silahkan masukkan lama pinjaman"
-						v-validate="'required'" data-vv-as="Lama pinjaman" ></cleave>
+						placeholder="Silahkan masukkan lama pinjaman"></cleave>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('formProduk.lama_pinjaman')">
@@ -232,20 +242,24 @@
 		</div> 
 
 		</form>
+		</VeeForm>
 
 	</div>
 </template>
 
 <script>
 	import _ from 'lodash';
-	import { mapState } from 'pinia';
-  import { useAnggotaCuStore } from '../../stores/anggotaCu';
+	import { useAuthStore } from '../../stores/auth';
+	import { useCuStore } from '../../stores/cu';
+	import { useAnggotaCuStore } from '../../stores/anggotaCu';
 	import checkValue from '../../components/checkValue.vue';
 	import Message from "../../components/message.vue";
 	import Cleave from 'vue-cleave-component';
 	import produkCuAPI from '../../api/produkCu.js';
 	import infoIcon from "../../components/infoIcon.vue";
 	import DatePicker from "../../components/datePicker.vue";
+	import VeeForm from '../../components/VeeForm.vue';
+	import { Field } from 'vee-validate';
 
 	export default {
 		props: ['selected'],
@@ -254,10 +268,15 @@
 			Message,
 			Cleave,
 			infoIcon,
-			DatePicker
+			DatePicker,
+			VeeForm,
+			Field
 		},
 		data() {
 			return {
+				authStore: useAuthStore(),
+				cuStore: useCuStore(),
+				anggotaCuStore: useAnggotaCuStore(),
 				kelas: 'anggotaCu',
 				tipeProduk: '',
 				formProduk:{
@@ -386,9 +405,9 @@
 					}
 				}
 			},
-			fetchCU(){
-				if(this.formStateCuStat != 'success'){
-					this.$store.dispatch('cu/getHeader');
+			fetchCU() {
+				if (this.modelCuStat !== 'success') {
+					this.cuStore.getHeader();
 				}
 			},
 			fetchProdukCu(id){
@@ -402,15 +421,12 @@
           this.formStateProdukCuStat = 'fail';
 				});
 			},
-			save(){
-				this.$validator.validateAll('formProduk').then((result) => {
-					if (result) {
-						this.$store.dispatch(this.kelas + '/updateProdukCuDraft', [this.formProduk.id, this.formProduk]);
-						this.submited = false;
-					}else{
-						this.submited = true;
-					}	
-				});	
+			onValid() {
+				this.anggotaCuStore.updateProdukCuDraft([this.formProduk.id, this.formProduk]);
+				this.submited = false;
+			},
+			onInvalid() {
+				this.submited = true;
 			},
 			messageClose(){
 				this.message.show = false;
@@ -420,13 +436,15 @@
 			}
 		},
 		computed: {
-			...mapGetters('auth',{
-				currentUser: 'currentUser'
-			}),
-			...mapGetters('cu',{
-				modelCu: 'headerDataS',
-				modelCuStat: 'headerDataStatS',
-			}),
-		}
+			currentUser() {
+				return this.authStore.currentUser;
+			},
+			modelCu() {
+				return this.cuStore.headerDataS;
+			},
+			modelCuStat() {
+				return this.cuStore.headerDataStatS;
+			},
+		},
 	}
 </script>

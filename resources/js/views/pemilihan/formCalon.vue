@@ -1,6 +1,7 @@
 6204045305820001<template>
 	<div>
-		<form @submit.prevent="save" data-vv-scope="formCalon">
+		<VeeForm :form="formCalon" v-slot="{ errors, handleSubmit }">
+		<form @submit.prevent="handleSubmit(onValid, onInvalid)">
 
 		<div class="card" v-if="formCalon.aktivis_id">
 			<div class="card-header bg-info text-white header-elements-inline">
@@ -120,56 +121,70 @@
 		</data-viewer>
 
 		<!-- message -->
-		<message v-if="errors.any('formCalon') && submited" :title="'Oops terjadi kesalahan'" :errorItem="errors.items">
+		<message v-if="errors.any('form') && submited" :title="'Oops terjadi kesalahan'" :errorItem="errors.items">
 		</message>
 		<!-- divider -->
 
 		<!-- no urut -->
-		<div class="form-group" :class="{'has-error' : errors.has('formCalon.no_urut')}">
+		<div class="form-group" :class="{'has-error' : errors.has('form.no_urut')}">
 
 			<!-- title -->
-			<h5 :class="{ 'text-danger' : errors.has('formCalon.no_urut')}">
-				<i class="icon-cross2" v-if="errors.has('formCalon.no_urut')"></i>
+			<h5 :class="{ 'text-danger' : errors.has('form.no_urut')}">
+				<i class="icon-cross2" v-if="errors.has('form.no_urut')"></i>
 				No. Urut: <wajib-badge></wajib-badge></h5>
 
 			<!-- input -->
-			<cleave 
+			<Field
 				name="no_urut"
-				v-model="formCalon.no_urut" 
-				class="form-control" 
-				:raw="false" 
-				:options="cleaveOption.number3" 
-				placeholder="Silahkan masukkan no urut"
-				v-validate="'required'" data-vv-as="No. Urut"></cleave>
+				rules="required"
+				v-model="formCalon.no_urut"
+				v-slot="{ field }"
+			>
+				<cleave 
+					class="form-control" 
+					:raw="false" 
+					:options="cleaveOption.number3" 
+					placeholder="Silahkan masukkan no urut"
+					v-bind="field"
+				></cleave>
+			</Field>
 
 			<!-- error message -->
-			<small class="text-muted text-danger" v-if="errors.has('formCalon.no_urut')">
-				<i class="icon-arrow-small-right"></i> {{ errors.first('formCalon.no_urut') }}
+			<small class="text-muted text-danger" v-if="errors.has('form.no_urut')">
+				<i class="icon-arrow-small-right"></i> {{ errors.first('form.no_urut') }}
 			</small>
 			<small class="text-muted" v-else>&nbsp;</small>
 		</div>
 
 		<!-- CU -->
-		<div class="form-group" :class="{'has-error' : errors.has('formCalon.pengusung_cu_id')}" v-if="this.currentUser.id_cu == 0">
+		<div class="form-group" :class="{'has-error' : errors.has('form.pengusung_cu_id')}" v-if="this.currentUser.id_cu == 0">
 
 			<!-- title -->
-			<h5 :class="{ 'text-danger' : errors.has('formCalon.pengusung_cu_id')}">
-				<i class="icon-cross2" v-if="errors.has('formCalon.pengusung_cu_id')"></i>
+			<h5 :class="{ 'text-danger' : errors.has('form.pengusung_cu_id')}">
+				<i class="icon-cross2" v-if="errors.has('form.pengusung_cu_id')"></i>
 				CU Pengusung: <wajib-badge></wajib-badge>
 			</h5>
 
 			<!-- select -->
-			<select class="form-control" name="pengusung_cu_id" v-model="formCalon.pengusung_cu_id" data-width="100%" data-vv-as="CU" :disabled="modelCU.length === 0">
+			<Field
+				as="select"
+				name="pengusung_cu_id"
+				rules="required"
+				v-model="formCalon.pengusung_cu_id"
+				class="form-control"
+				data-width="100%"
+				:disabled="modelCU.length === 0"
+			>
 				<option disabled value="">
 					<span v-if="modelCUStat === 'loading'">Mohon tunggu...</span>
 					<span v-else>Silahkan pilih CU</span>
 				</option>
 				<option v-for="(cu, index) in modelCU" :value="cu.id" :key="index">{{cu.name}}</option>
-			</select>
+			</Field>
 
 			<!-- error message -->
-			<small class="text-muted text-danger" v-if="errors.has('formCalon.pengusung_cu_id')">
-				<i class="icon-arrow-small-right"></i> {{ errors.first('formCalon.pengusung_cu_id') }}
+			<small class="text-muted text-danger" v-if="errors.has('form.pengusung_cu_id')">
+				<i class="icon-arrow-small-right"></i> {{ errors.first('form.pengusung_cu_id') }}
 			</small>
 			<small class="text-muted" v-else>&nbsp;</small>
 		</div>
@@ -195,6 +210,7 @@
 		</div>
 
 		</form> 
+		</VeeForm>
 
 	</div>
 </template>
@@ -209,6 +225,8 @@
 	import message from "../../components/message.vue";
 	import Cleave from 'vue-cleave-component';
 	import wajibBadge from "../../components/wajibBadge.vue";
+	import { Field } from 'vee-validate';
+	import VeeForm from '../../components/VeeForm.vue';
 
 	export default {
 		props: ['mode','selected'],
@@ -217,7 +235,9 @@
 			checkValue,
 			message,
 			Cleave,
-			wajibBadge
+			wajibBadge,
+			VeeForm,
+			Field,
 		},
 		data() {
 			return {
@@ -322,22 +342,19 @@
 					this.formCalon.pendidikan = item.pendidikan_tertinggi.tingkat + ' ' + item.pendidikan_tertinggi.name
 				}
 			},
-			save(){
+			onValid(){
 				if(this.currentUser.id_cu != 0){
 					this.formCalon.pengusung_cu_id = this.currentUser.id_cu;
 				}
-				this.$validator.validateAll('formCalon').then((result) => {
-					if (result) {
-						if(this.mode == 'edit'){
-							this.$emit('editCalon',this.formCalon);
-						}else{
-							this.$emit('createCalon',this.formCalon);
-						}
-						this.submited = false;
-					}else{
-						this.submited = true;
-					}	
-				});
+				if(this.mode == 'edit'){
+					this.$emit('editCalon',this.formCalon);
+				}else{
+					this.$emit('createCalon',this.formCalon);
+				}
+				this.submited = false;
+			},
+			onInvalid(){
+				this.submited = true;
 			},
 			tutup(){
 				this.$emit('tutup');

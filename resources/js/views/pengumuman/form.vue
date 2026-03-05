@@ -1,6 +1,7 @@
 <template>
 	<div>
-		<form @submit.prevent="save" data-vv-scope="form">
+		<VeeForm :form="form" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
+		<form @submit.prevent="handleSubmit(onValid)">
 
 			<!-- message -->
 			<message v-if="errors.any('form') && submited" :title="'Oops terjadi kesalahan'" :errorItem="errors.items">
@@ -16,8 +17,20 @@
 				</h5>
 
 				<!-- textarea -->
-				<textarea rows="5" type="text" name="name" class="form-control" placeholder="Silahkan masukkan pengumuman di website anda"
-					v-validate="'required|min:5|max:160'" v-model="form.name"></textarea>
+				<Field
+					name="name"
+					rules="required|min:5|max:160"
+					v-model="form.name"
+					v-slot="{ field }"
+				>
+					<textarea
+						rows="5"
+						type="text"
+						class="form-control"
+						placeholder="Silahkan masukkan pengumuman di website anda"
+						v-bind="field"
+					></textarea>
+				</Field>
 
 				<!-- error message -->
 				<small class="text-muted text-danger" v-if="errors.has('form.name')">
@@ -37,12 +50,24 @@
 				</h5>
 
 				<!-- select -->
-				<select class="form-control" name="id_cu" v-model="form.id_cu" data-width="100%" v-validate="'required'" data-vv-as="CU" :disabled="modelCU.length === 0">
-					<option disabled value="">Silahkan pilih CU</option>
-					<option value="0"><span v-if="currentUser.pus">{{currentUser.pus.name}}</span> <span v-else>PUSKOPCUINA</span></option>
-					<option disabled value="">----------------</option>
-					<option v-for="(cu, index) in modelCU" :value="cu.id" :key="index">{{cu.name}}</option>
-				</select>
+				<Field
+					name="id_cu"
+					rules="required"
+					v-model="form.id_cu"
+					v-slot="{ field }"
+				>
+					<select
+						class="form-control"
+						data-width="100%"
+						v-bind="field"
+						:disabled="modelCU.length === 0"
+					>
+						<option disabled value="">Silahkan pilih CU</option>
+						<option value="0"><span v-if="currentUser.pus">{{currentUser.pus.name}}</span> <span v-else>PUSKOPCUINA</span></option>
+						<option disabled value="">----------------</option>
+						<option v-for="(cu, index) in modelCU" :value="cu.id" :key="index">{{cu.name}}</option>
+					</select>
+				</Field>
 
 				<!-- error message -->
 				<small class="text-muted text-danger" v-if="errors.has('form.id_cu')">
@@ -60,6 +85,7 @@
 				@cancelClick="cancelClick"></form-button>
 
 		</form>
+		</VeeForm>
 
 	</div>
 </template>
@@ -70,12 +96,16 @@
 	import { useCuStore } from '../../stores/cu';
 	import message from "../../components/message.vue";
 	import formButton from "../../components/formButton.vue";
+	import VeeForm from '../../components/VeeForm.vue';
+	import { Field } from 'vee-validate';
 
 	export default {
 		props: ['currentUser','state','id'],
 		components: {
 			message,
 			formButton,
+			VeeForm,
+			Field,
 		},
 		data() {
 			return {
@@ -112,22 +142,26 @@
 					this.pengumumanStore.create();
 				}
 			},
-			save() {
-				this.$validator.validateAll('form').then((result) => {
-					if(result){
-						if(this.state == 'ubah'){
-							this.pengumumanStore.update([this.id,this.form]);
-						}else{
-							if(this.currentUser.id_cu != 0){
-								this.form.id_cu = this.currentUser.id_cu;
-							}
-							this.pengumumanStore.store(this.form);
-						}
-					}else{
-						window.scrollTo(0, 0);
-						this.submited = true;
+			onValid(values) {
+				const payload = {
+					...this.form,
+					...values,
+				};
+
+				if (this.state == 'ubah') {
+					this.pengumumanStore.update([this.id, payload]);
+				} else {
+					if (this.currentUser.id_cu != 0) {
+						payload.id_cu = this.currentUser.id_cu;
 					}
-				});	
+					this.pengumumanStore.store(payload);
+				}
+
+				this.submited = false;
+			},
+			onInvalid() {
+				window.scrollTo(0, 0);
+				this.submited = true;
 			},
 			cancelClick(){
 				this.$emit('cancelClick');
@@ -137,7 +171,7 @@
 			...mapState(usePengumumanStore, {
 				form: 'data',
 				formStat: 'dataStat',
-				updateMessage: 'update',
+				updateMessage: 'updateData',
 				updateStat: 'updateStat'
 			}),
 			...mapState(useCuStore, {

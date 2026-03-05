@@ -21,7 +21,9 @@
 								<option value="0" v-if="isPus"><span v-if="currentUser.pus">{{currentUser.pus.name}}</span> <span v-else>PUSKOPCUINA</span></option>
 								<option value="mitra" v-if="isPus">Mitra</option>
 								<option disabled value="">----------------</option>
-								<option v-for="cu in modelCU" :value="cu.id" v-if="cu">{{cu.name}}</option>
+								<template v-for="cu in modelCU" :key="cu ? cu.id : undefined">
+								<option v-if="cu" :value="cu.id">{{cu.name}}</option>
+							</template>
 							</select>
 
 							<!-- reload cu -->
@@ -84,7 +86,9 @@
 							<option value="0" v-if="isPus"><span v-if="currentUser.pus">{{currentUser.pus.name}}</span> <span v-else>PUSKOPCUINA</span></option>
 							<option value="mitra" v-if="isPus">Mitra</option>
 							<option disabled value="">----------------</option>
-							<option v-for="cu in modelCU" :value="cu.id" v-if="cu">{{cu.name}}</option>
+							<template v-for="cu in modelCU" :key="cu ? cu.id : undefined">
+								<option v-if="cu" :value="cu.id">{{cu.name}}</option>
+							</template>
 						</select>
 					</div>
 

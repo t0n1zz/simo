@@ -161,12 +161,14 @@
 														<div class="table-responsive">
 															<table class="table">
 																<tbody>
-																	<tr v-for="(produk, index) in form.produk" v-if="produk.tipe == 'Simpanan Pokok' || produk.tipe == 'Simpanan Wajib' || produk.tipe == 'Simpanan Non Saham'">
+																	<template v-for="(produk, index) in form.produk" :key="index">
+																	<tr v-if="produk && (produk.tipe == 'Simpanan Pokok' || produk.tipe == 'Simpanan Wajib' || produk.tipe == 'Simpanan Non Saham')">
 																		<th>{{ produk.name }}</th>
 																		<td class="text-right">
 																			<check-value :value="produk.saldo" valueType="currency"></check-value>
 																		</td>
 																	</tr>
+																	</template>
 																	<tr>
 																		<th>Jumlah Simpanan yang disolidaritaskan</th>
 																		<td class="text-right"></td>
@@ -308,12 +310,14 @@
 														<div class="table-responsive">
 															<table class="table">
 																<tbody>
-																	<tr v-for="(produk, index) in form.produk" :key="index" v-if="produk.tipe == 'Pinjaman Kapitalisasi' || produk.tipe == 'Pinjaman Umum' || produk.tipe == 'Pinjaman Produktif'">
+																	<template v-for="(produk, index) in form.produk" :key="index">
+																	<tr v-if="produk && (produk.tipe == 'Pinjaman Kapitalisasi' || produk.tipe == 'Pinjaman Umum' || produk.tipe == 'Pinjaman Produktif')">
 																		<th>{{ produk.name }}</th>
 																		<td class="text-right">
 																			<check-value :value="produk.saldo" valueType="currency"></check-value>
 																		</td>
 																	</tr>
+																	</template>
 																	<tr>
 																		<th>Jumlah Piutang yang disolidaritaskan</th>
 																		<td class="text-right"></td>
@@ -827,7 +831,7 @@
 				return this.jalinanIuranStore.dataStatS2;
 			},
 			updateResponse() {
-				return this.jalinanIuranStore.update;
+				return this.jalinanIuranStore.updateData;
 			},
 			updateStat() {
 				return this.jalinanIuranStore.updateStat;

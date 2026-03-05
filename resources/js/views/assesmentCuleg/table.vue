@@ -343,7 +343,7 @@
 				return this.assesmentCulegStore.dataStatS;
 			},
 			updateMessage() {
-				return this.assesmentCulegStore.update;
+				return this.assesmentCulegStore.updateData;
 			},
 			updateStat() {
 				return this.assesmentCulegStore.updateStat;

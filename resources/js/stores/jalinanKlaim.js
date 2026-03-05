@@ -41,7 +41,7 @@ export const useJalinanKlaimStore = defineStore('jalinanKlaim', {
     dataDeletedStatS: '',
     countStat: '',
     headerDataStatS: '',
-    update: [], //update data
+    updateData: [], //update data
     updateStat: '',
     rules: [], //laravel rules
     options: [], //laravel options
@@ -86,7 +86,7 @@ export const useJalinanKlaimStore = defineStore('jalinanKlaim', {
     getDataDeletedStatS: state => state.dataDeletedStatS,
     getCountStat: state => state.countStat,
     getHeaderDataStatS: state => state.headerDataStatS,
-    getUpdate: state => state.update,
+    getUpdate: state => state.updateData,
     getUpdateStat: state => state.updateStat,
     getRules: state => state.rules,
     getOptions: state => state.options,
@@ -422,6 +422,19 @@ export const useJalinanKlaimStore = defineStore('jalinanKlaim', {
       }
     },
 
+    async getPencairan() {
+      this.periodeStat = 'loading';
+
+      try {
+        const response = await JalinanKlaimAPI.getPencairan();
+        this.periode = response.data.model;
+        this.periodeStat = 'success';
+      } catch (error) {
+        this.periode = error.response;
+        this.periodeStat = 'fail';
+      }
+    },
+
     async create() {
       this.dataStat = 'loading';
       try {
@@ -441,13 +454,13 @@ export const useJalinanKlaimStore = defineStore('jalinanKlaim', {
       try {
         const response = await JalinanKlaimAPI.store(form);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -476,13 +489,13 @@ export const useJalinanKlaimStore = defineStore('jalinanKlaim', {
       try {
         const response = await JalinanKlaimAPI.update(id, form);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -492,13 +505,13 @@ export const useJalinanKlaimStore = defineStore('jalinanKlaim', {
       try {
         const response = await JalinanKlaimAPI.destroy(id);
         if (response.data.deleted) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -530,6 +543,31 @@ export const useJalinanKlaimStore = defineStore('jalinanKlaim', {
       }
     },
 
+    async cariDataId(id) {
+      this.dataStat2 = 'loading';
+
+      try {
+        const response = await JalinanKlaimAPI.cariDataId(id);
+        if (response.data.model) {
+          this.data2 = response.data.model;
+          this.dataStat2 = 'success';
+        } else {
+          this.data2 = response.data.form;
+          this.rules = response.data.rules;
+          this.options = response.data.options;
+          this.dataStat2 = 'fail';
+        }
+      } catch (error) {
+        this.data2 = error.response;
+        this.dataStat2 = 'fail';
+      }
+    },
+
+    resetData() {
+      this.data = {};
+      this.dataStat = '';
+    },
+
     resetForm() {
       this.data = {};
       this.dataStat = '';
@@ -550,13 +588,13 @@ export const useJalinanKlaimStore = defineStore('jalinanKlaim', {
       try {
         const response = await JalinanKlaimAPI.updateStatus(id, form);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -566,13 +604,13 @@ export const useJalinanKlaimStore = defineStore('jalinanKlaim', {
       try {
         const response = await JalinanKlaimAPI.updateNoSurat(id, form);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -582,13 +620,13 @@ export const useJalinanKlaimStore = defineStore('jalinanKlaim', {
       try {
         const response = await JalinanKlaimAPI.updateSelesai(id);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -598,13 +636,13 @@ export const useJalinanKlaimStore = defineStore('jalinanKlaim', {
       try {
         const response = await JalinanKlaimAPI.periksaKoreksi(id, form);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -663,13 +701,13 @@ export const useJalinanKlaimStore = defineStore('jalinanKlaim', {
       try {
         const response = await JalinanKlaimAPI.updateVerifikasi(id, user);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -691,13 +729,13 @@ export const useJalinanKlaimStore = defineStore('jalinanKlaim', {
       try {
         const response = await JalinanKlaimAPI.updateCair(cu_id, awal, akhir);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -707,13 +745,13 @@ export const useJalinanKlaimStore = defineStore('jalinanKlaim', {
       try {
         const response = await JalinanKlaimAPI.updateCairAll(awal, akhir);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -723,19 +761,19 @@ export const useJalinanKlaimStore = defineStore('jalinanKlaim', {
       try {
         const response = await JalinanKlaimAPI.updateCairBatal(cu_id, awal, akhir);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
 
     resetUpdateStat() {
-      this.update = [];
+      this.updateData = [];
       this.updateStat = '';
     }
   }

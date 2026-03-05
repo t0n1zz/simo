@@ -1,6 +1,7 @@
 <template>
 	<div>
-	<form @submit.prevent="save" data-vv-scope="form">
+		<VeeForm :form="form" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
+		<form @submit.prevent="handleSubmit(onValid)">
 		<div class="row">
 
 			<!-- CU -->
@@ -14,7 +15,8 @@
 					</h6>
 
 					<!-- select -->
-					<select class="form-control" name="id_tempat" v-model="form.id_tempat" data-width="100%" v-validate="'required'" data-vv-as="Tempat pekerjaan" :disabled="modelCu.length == 0" @change="changeLembagaPekerjaan($event.target.value)">
+					<Field name="id_tempat" rules="required" v-model="form.id_tempat" v-slot="{ field }">
+						<select class="form-control" data-width="100%" v-bind="field" :disabled="modelCu.length == 0" @change="changeLembagaPekerjaan($event.target.value)">
 						<option disabled value="">
 							<span v-if="modelCuStat === 'loading'">Mohon tunggu...</span>
 							<span v-else>Silahkan pilih tempat bekerja</span>
@@ -22,7 +24,8 @@
 						<option value="0">PUSKOPCUINA</option>
 						<option value="lain" v-if="$route.meta.mode != 'create'">Lembaga lain</option>
 						<option v-for="(cu, index) in modelCu" :value="cu.id" :key="index">{{cu.name}}</option>
-					</select>
+						</select>
+					</Field>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('form.id_tempat')">
@@ -42,11 +45,13 @@
 						Lembaga:</h6>
 
 					<!-- text -->
-					<input type="text" name="lembaga" class="form-control" placeholder="Silahkan masukkan nama lembaga" v-validate="'required|min:5'" data-vv-as="Lembaga" v-model="form.lembaga_lain">
+					<Field name="lembaga_lain" rules="required|min:5" v-model="form.lembaga_lain" v-slot="{ field }">
+						<input type="text" class="form-control" placeholder="Silahkan masukkan nama lembaga" v-bind="field">
+					</Field>
 
 					<!-- error message -->
-					<small class="text-muted text-danger" v-if="errors.has('form.name')">
-						<i class="icon-arrow-small-right"></i> {{ errors.first('form.name') }}
+					<small class="text-muted text-danger" v-if="errors.has('form.lembaga_lain')">
+						<i class="icon-arrow-small-right"></i> {{ errors.first('form.lembaga_lain') }}
 					</small>
 					<small class="text-muted" v-else>&nbsp;</small>
 				</div>
@@ -84,7 +89,8 @@
 					</h6>
 
 					<!-- select -->
-					<select class="form-control" name="pekerjaan_tingkat" v-model="form.tingkat" data-width="100%" v-validate="'required'" data-vv-as="Tingkat Pekerjaan">
+					<Field name="tingkat" rules="required" v-model="form.tingkat" v-slot="{ field }">
+						<select class="form-control" data-width="100%" v-bind="field">
 						<option disabled value="">Silahkan pilih tingkat pekerjaan</option>
 						<option value="1" v-if="form.id_tempat != 'lain'">Pengurus</option>
 						<option value="2" v-if="form.id_tempat != 'lain'">Pengawas</option>
@@ -100,7 +106,8 @@
 						<option value="12">Supporting Unit</option>
 						<option value="13">Vendor sMartCu</option>
 						<option value="14">Magang</option>
-					</select>
+						</select>
+					</Field>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('form.tingkat')">
@@ -120,7 +127,9 @@
 						Jabatan:</h6>
 
 					<!-- text -->
-					<input type="text" name="name" class="form-control" placeholder="Silahkan masukkan nama jabatan" v-validate="'required'" data-vv-as="Jabatan pekerjaan" v-model="form.name">
+					<Field name="name" rules="required" v-model="form.name" v-slot="{ field }">
+						<input type="text" class="form-control" placeholder="Silahkan masukkan nama jabatan" v-bind="field">
+					</Field>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('form.name')">
@@ -141,7 +150,8 @@
 					</h6>
 
 					<!-- select -->
-					<select class="form-control" name="id_tp" v-model="form.id_tp" data-width="100%" v-validate="'required'" data-vv-as="CU">
+					<Field name="id_tp" rules="required" v-model="form.id_tp" v-slot="{ field }">
+						<select class="form-control" data-width="100%" v-bind="field">
 						<option disabled value="">
 							<span v-if="modelTpStat === 'loading'">Mohon tunggu...</span>
 							<span v-else>Silahkan pilih TP/KP</span>
@@ -150,7 +160,8 @@
 						<template v-if="modelTp">
 							<option v-for="(tp, index) in modelTp" :value="tp.id" :key="index">{{tp.name}}</option>
 						</template>
-					</select>
+						</select>
+					</Field>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('form.id_tp')">
@@ -170,8 +181,10 @@
 						Tgl. Mulai:</h6>
 
 					<!-- input -->
-					<date-picker @dateSelected="form.mulai = $event" :defaultDate="form.mulai"></date-picker>	
-					<input v-model="form.mulai" v-show="false" v-validate="'required'" data-vv-as="Tgl. mulai bekerja"/>
+					<date-picker @dateSelected="form.mulai = $event" :defaultDate="form.mulai"></date-picker>
+					<Field name="mulai" rules="required" v-model="form.mulai" v-slot="{ field }">
+						<input type="hidden" v-bind="field" />
+					</Field>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('form.mulai')">
@@ -232,7 +245,8 @@
 			<button type="button" class="btn btn-light btn-block pb-2" @click.prevent="tutup">
 				<i class="icon-cross"></i> Tutup</button>
 		</div> 
-	</form>
+		</form>
+		</VeeForm>
 	</div>
 </template>
 
@@ -243,12 +257,16 @@
 	import { useTpStore } from '../../stores/tp';
 	import Cleave from 'vue-cleave-component';
 	import DatePicker from "../../components/datePicker.vue";
+	import VeeForm from '../../components/VeeForm.vue';
+	import { Field } from 'vee-validate';
 
 	export default {
 		props:['formState','selected','id_aktivis'],
 		components: {
 			Cleave,
-			DatePicker
+			DatePicker,
+			VeeForm,
+			Field
 		},
 		data() {
 			return {
@@ -330,17 +348,13 @@
 					this.tpStore.getCu(value);
 				}
 			},
-			save(){
-				let formData = {};
-				formData.pekerjaan = this.form;
-				this.$validator.validateAll('form').then((result) => {
-					if (result) {
-						this.aktivisStore.savePekerjaan([this.id_aktivis, formData]);
-						this.submited = false;
-					}else{
-						this.submited = true;
-					}	
-				});	
+			onValid() {
+				const formData = { pekerjaan: this.form };
+				this.aktivisStore.savePekerjaan([this.id_aktivis, formData]);
+				this.submited = false;
+			},
+			onInvalid() {
+				this.submited = true;
 			},
 			tutup(){
 				this.$emit('tutup');

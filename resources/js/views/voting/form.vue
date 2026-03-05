@@ -8,12 +8,14 @@
 			<div class="content-wrapper">
 				<div class="content">
 
-					<!-- message -->
-					<message v-if="errors.any('form') && submited" :title="'Oops terjadi kesalahan'" :errorItem="errors.items">
-					</message>
+				<!-- main panel: VeeForm + Field rules, no schema -->
+				<VeeForm :form="form" v-slot="{ errors, handleSubmit }">
 
-					<!-- main panel -->
-					<form @submit.prevent="save" enctype="multipart/form-data" data-vv-scope="form">
+				<!-- message -->
+				<message v-if="errors.any('form') && submited" :title="'Oops terjadi kesalahan'" :errorItem="errors.items">
+				</message>
+
+				<form @submit.prevent="handleSubmit(onValid, onInvalid)" enctype="multipart/form-data">
 					
 						<!-- informasi umum -->
 						<div class="card">
@@ -33,7 +35,19 @@
 												Nama: <wajib-badge></wajib-badge></h5>
 
 											<!-- text -->
-											<input type="text" name="name" class="form-control" placeholder="Silahkan masukkan nama" v-validate="'required|min:5'" data-vv-as="Nama" v-model="form.name">
+											<Field
+												name="name"
+												rules="required|min:5"
+												v-model="form.name"
+												v-slot="{ field }"
+											>
+												<input
+													type="text"
+													class="form-control"
+													placeholder="Silahkan masukkan nama"
+													v-bind="field"
+												>
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.name')">
@@ -54,14 +68,23 @@
 											</h5>
 
 											<!-- select -->
-											<select class="form-control" name="id_cu" v-model="form.id_cu" data-width="100%" v-validate="'required'" data-vv-as="CU" :disabled="modelCU.length === 0" @change="changeCU($event.target.value)">
+											<Field
+												as="select"
+												name="id_cu"
+												rules="required"
+												v-model="form.id_cu"
+												class="form-control"
+												data-width="100%"
+												:disabled="modelCU.length === 0"
+												@change="changeCU($event.target.value)"
+											>
 												<option disabled value="">
 													<span v-if="modelCUStat === 'loading'">Mohon tunggu...</span>
 													<span v-else>Silahkan pilih CU</span>
 												</option>
 												<option value="0"><span v-if="currentUser.pus">{{currentUser.pus.name}}</span> <span v-else>PUSKOPCUINA</span></option>
 												<option v-for="(cu, index) in modelCU" :value="cu.id" :key="index">{{cu.name}}</option>
-											</select>
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.id_cu')">
@@ -81,11 +104,18 @@
 
 											<!-- input -->
 											<!-- select -->
-											<select class="form-control"  name="lihat_hasil" v-model="form.lihat_hasil" data-width="100%" v-validate="'required'" data-vv-as="tipe suara">
+											<Field
+												as="select"
+												name="lihat_hasil"
+												rules="required"
+												v-model="form.lihat_hasil"
+												class="form-control"
+												data-width="100%"
+											>
 												<option disabled value="">Silahkan pilih</option>
 												<option value="0">Tidak menampilkan hasil</option>
 												<option value="1">Menampilkan hasil</option>
-											</select>
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.lihat_hasil')">
@@ -106,7 +136,15 @@
 											</h5>
 
 											<!-- select -->
-											<select class="form-control"  name="id_kegiatan" v-model="form.id_kegiatan" data-width="100%" v-validate="'required'" data-vv-as="Penulis" :disabled="modelKegiatanStat === 'loading'">
+											<Field
+												as="select"
+												name="id_kegiatan"
+												rules="required"
+												v-model="form.id_kegiatan"
+												class="form-control"
+												data-width="100%"
+												:disabled="modelKegiatanStat === 'loading'"
+											>
 												<option disabled value="">
 													<span v-if="modelKegiatanStat === 'loading'">Mohon tunggu...</span>
 													<span v-else>Silahkan pilih kegiatan</span>
@@ -114,7 +152,7 @@
 												<option value="0">Kegiatan yang tidak terdaftar</option>
 												<option disabled value="">----------------</option>
 												<option v-for="(kegiatan, index) in modelKegiatan" :value="kegiatan.id" :key="index">{{kegiatan.name}} | <span v-html="$filters.date(kegiatan.mulai)"></span></option>
-											</select>
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.id_kegiatan')">
@@ -134,7 +172,19 @@
 												Nama Kegiatan: <wajib-badge></wajib-badge></h5>
 
 											<!-- text -->
-											<input type="text" name="name_kegiatan" class="form-control" placeholder="Silahkan masukkan nama kegiatan" v-validate="'required'" data-vv-as="Nama Kegiatan" v-model="form.name_kegiatan">
+											<Field
+												name="name_kegiatan"
+												rules="required"
+												v-model="form.name_kegiatan"
+												v-slot="{ field }"
+											>
+												<input
+													type="text"
+													class="form-control"
+													placeholder="Silahkan masukkan nama kegiatan"
+													v-bind="field"
+												>
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.name_kegiatan')">
@@ -166,7 +216,15 @@
 												</h5>
 
 												<!-- select -->
-												<select class="form-control"  name="sumberSuara" v-model="form.sumberSuara" data-width="100%" v-validate="'required'" data-vv-as="Sumber Suara" :disabled="modelVotingStat === 'loading'">
+												<Field
+													as="select"
+													name="sumberSuara"
+													rules="required"
+													v-model="form.sumberSuara"
+													class="form-control"
+													data-width="100%"
+													:disabled="modelVotingStat === 'loading'"
+												>
 													<option disabled value="">
 														<span v-if="modelVotingStat === 'loading'">Mohon tunggu...</span>
 														<span v-else>Silahkan pilih sumber data suara</span>
@@ -174,7 +232,7 @@
 													<option value="0">Data Suara Baru</option>
 													<option disabled value="">----------------</option>
 													<option v-for="(voting, index) in modelVoting" :value="voting.id" :key="index">{{voting.name}} | jumlah suara: {{voting.suara}}</option>
-												</select>
+												</Field>
 
 												<!-- error message -->
 												<small class="text-muted text-danger" v-if="errors.has('form.sumberSuara')">
@@ -194,14 +252,20 @@
 													Jumlah Suara: <wajib-badge></wajib-badge></h5>
 
 												<!-- input -->
-												<cleave 
+												<Field
 													name="suara"
-													v-model="form.suara" 
-													class="form-control" 
-													:raw="false" 
-													:options="cleaveOption.number4" 
-													placeholder="Silahkan masukkan suara"
-													v-validate="'required'" data-vv-as="Suara"></cleave>
+													rules="required"
+													v-model="form.suara"
+													v-slot="{ field }"
+												>
+													<cleave 
+														class="form-control" 
+														:raw="false" 
+														:options="cleaveOption.number4" 
+														placeholder="Silahkan masukkan suara"
+														v-bind="field"
+													></cleave>
+												</Field>
 
 												<!-- error message -->
 												<small class="text-muted text-danger" v-if="errors.has('form.suara')">
@@ -219,11 +283,18 @@
 
 												<!-- input -->
 												<!-- select -->
-												<select class="form-control"  name="suara_tipe" v-model="form.suara_tipe" data-width="100%" v-validate="'required'" data-vv-as="tipe suara">
+												<Field
+													as="select"
+													name="suara_tipe"
+													rules="required"
+													v-model="form.suara_tipe"
+													class="form-control"
+													data-width="100%"
+												>
 													<option disabled value="">Silahkan pilih tipe suara</option>
 													<option value="0">Link suara otomatis</option>
 													<option value="1">Link suara dari sumber data external</option>
-												</select>
+												</Field>
 
 												<!-- error message -->
 												<small class="text-muted text-danger" v-if="errors.has('form.suara_tipe')">
@@ -329,6 +400,7 @@
 						</div>	
 
 					</form>
+					</VeeForm>
 				</div>
 			</div>
 		</div>
@@ -372,6 +444,8 @@
 	import { useVotingStore } from '../../stores/voting';
 	import { useCuStore } from '../../stores/cu';
 	import { useKegiatanBKCUStore } from '../../stores/kegiatanBKCU';
+	import { Field } from 'vee-validate';
+	import VeeForm from '../../components/VeeForm.vue';
 	import _ from 'lodash';
 	import pageHeader from "../../components/pageHeader.vue";
 	import infoIcon from "../../components/infoIcon.vue";
@@ -399,7 +473,9 @@
 			dataTable,
 			infoIcon,
 			wajibBadge,
-			DatePicker
+			DatePicker,
+			VeeForm,
+			Field,
 		},
 		data() {
 			return {
@@ -588,24 +664,24 @@
 					this.resetDataS();
 				}
 			},
-			save() {
+			onValid() {
 				this.form.pilihan = this.itemDataPilihan;
 				this.form.tanggapan = this.itemDataTanggapan;
 				this.state = '';
-				
-				this.$validator.validateAll('form').then((result) => {
-					if (result) {
-						if(this.$route.meta.mode == 'edit'){
-							this.update([this.$route.params.id, this.form]);
-						}else{
-							this.store(this.form);
-					}
-						this.submited = false;
-					}else{
-						window.scrollTo(0, 0);
-						this.submited = true;
-					}
-				});
+
+				if (this.$route.meta.mode == 'edit') {
+					this.update([this.$route.params.id, this.form]);
+				} else {
+					this.store(this.form);
+				}
+				this.submited = false;
+			},
+			onInvalid() {
+				this.form.pilihan = this.itemDataPilihan;
+				this.form.tanggapan = this.itemDataTanggapan;
+				this.state = '';
+				window.scrollTo(0, 0);
+				this.submited = true;
 			},
 			back(){
 				this.$router.push({name: this.kelas, params:{cu: this.currentUser.id_cu}});

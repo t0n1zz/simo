@@ -4,7 +4,8 @@
 			<card-data :itemData="selectedItem"></card-data>
 		</div>
 
-		<form @submit.prevent="save" data-vv-scope="formData">
+		<VeeForm :form="formData" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
+		<form @submit.prevent="handleSubmit(onValid)">
 
 		<div class="row">
 			<!-- lokasi -->
@@ -18,13 +19,17 @@
 					</h6>
 
 					<!-- select -->
-					<select class="form-control" name="lokasi" v-model="formData.aset_tetap_lokasi_id" data-width="100%" v-validate="'required'" data-vv-as="Lokasi" :disabled="modelLokasi.length == 0" @change="changeLokasi($event.target.value)">
-						<option disabled value="">
-							<span v-if="modelLokasiStat === 'loading'">Mohon tunggu...</span>
-							<span v-else>Silahkan pilih lokasi</span>
-						</option>
-						<option v-for="datas in modelLokasi" :value="datas.id" v-if="datas">{{datas.name}}</option>
-					</select>
+					<Field name="formData.aset_tetap_lokasi_id" rules="required" v-model="formData.aset_tetap_lokasi_id" v-slot="{ field }">
+						<select class="form-control" data-width="100%" v-bind="field" :disabled="modelLokasi.length == 0" @change="changeLokasi($event.target.value)">
+							<option disabled value="">
+								<span v-if="modelLokasiStat === 'loading'">Mohon tunggu...</span>
+								<span v-else>Silahkan pilih lokasi</span>
+							</option>
+							<template v-for="datas in modelLokasi" :key="datas ? datas.id : undefined">
+								<option v-if="datas" :value="datas.id">{{ datas.name }}</option>
+							</template>
+						</select>
+					</Field>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('formData.aset_tetap_lokasi_id')">
@@ -59,6 +64,7 @@
 		</div> 
 
 		</form>
+		</VeeForm>
 
 	</div>
 </template>
@@ -75,6 +81,8 @@
 	import infoIcon from "../../components/infoIcon.vue";
 	import wajibBadge from "../../components/wajibBadge.vue";
 	import cardData from "./card.vue";
+	import VeeForm from '../../components/VeeForm.vue';
+	import { Field } from 'vee-validate';
 
 	export default {
 		props: ['kelas','selectedItem'],
@@ -85,7 +93,9 @@
 			infoIcon,
 			wajibBadge,
 			cardData,
-			formInfo
+			formInfo,
+			VeeForm,
+			Field
 		},
 		setup() {
 			const authStore = useAuthStore();
@@ -131,15 +141,11 @@
 			},
 		},
 		methods: {
-			save(){
-				this.$validator.validateAll('formData').then((result) => {
-					if (result) {
-						this.asetTetapStore.updateLokasi([this.selectedItem.lokasi.id, this.formData]);
-					}else{
-						
-						this.submited = true;
-					}	
-				});	
+			onValid() {
+				this.asetTetapStore.updateLokasi([this.selectedItem.lokasi.id, this.formData]);
+			},
+			onInvalid() {
+				this.submited = true;
 			},
 			fetch(){
 				this.asetTetapLokasiStore.resetDataS();
@@ -163,7 +169,7 @@
 				return this.asetTetapLokasiStore.dataStatS;
 			},
 			updateLokasiResponse() {
-				return this.asetTetapLokasiStore.update;
+				return this.asetTetapLokasiStore.updateData;
 			},
 			updateLokasiStat() {
 				return this.asetTetapLokasiStore.updateStat;

@@ -19,7 +19,7 @@ export const useUserStore = defineStore('user', {
         dataStatS2: '',
         dataStatS3: '',
         countStat: '',
-        update: [],
+        updateData: [],
         updateStat: '',
         rules: [],
         options: [],
@@ -42,7 +42,7 @@ export const useUserStore = defineStore('user', {
         getDataStatS2: (state) => state.dataStatS2,
         getDataStatS3: (state) => state.dataStatS3,
         getCountStat: (state) => state.countStat,
-        getUpdate: (state) => state.update,
+        getUpdate: (state) => state.updateData,
         getUpdateStat: (state) => state.updateStat,
         getRules: (state) => state.rules,
         getOptions: (state) => state.options,
@@ -164,13 +164,13 @@ export const useUserStore = defineStore('user', {
             try {
                 const response = await UserAPI.store(form);
                 if (response.data.saved) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -208,13 +208,13 @@ export const useUserStore = defineStore('user', {
             try {
                 const response = await UserAPI.update(id, form);
                 if (response.data.saved) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -224,13 +224,13 @@ export const useUserStore = defineStore('user', {
             try {
                 const response = await UserAPI.updateFoto(id, form);
                 if (response.data.saved) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -240,13 +240,13 @@ export const useUserStore = defineStore('user', {
             try {
                 const response = await UserAPI.updateIdentitas(id, form);
                 if (response.data.saved) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -256,13 +256,13 @@ export const useUserStore = defineStore('user', {
             try {
                 const response = await UserAPI.updatePassword(id, form);
                 if (response.data.saved) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -272,13 +272,13 @@ export const useUserStore = defineStore('user', {
             try {
                 const response = await UserAPI.updateResetPassword(id);
                 if (response.data.saved) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -288,13 +288,13 @@ export const useUserStore = defineStore('user', {
             try {
                 const response = await UserAPI.updateStatus(id);
                 if (response.data.saved) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -304,13 +304,13 @@ export const useUserStore = defineStore('user', {
             try {
                 const response = await UserAPI.updateHakAkses(id, form);
                 if (response.data.saved) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -320,13 +320,13 @@ export const useUserStore = defineStore('user', {
             try {
                 const response = await UserAPI.destroy(id);
                 if (response.data.deleted) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },

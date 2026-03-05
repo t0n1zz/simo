@@ -14,7 +14,7 @@
 					</message>
 
 					<!-- main panel -->
-					<form @submit.prevent="save" enctype="multipart/form-data" data-vv-scope="form">
+					<form @submit.prevent="save" enctype="multipart/form-data">
 
 						<!-- main form -->
 						<div class="card">
@@ -32,7 +32,7 @@
 												Judul: <wajib-badge></wajib-badge></h5>
 
 											<!-- text -->
-											<input type="text" name="name" class="form-control" placeholder="Silahkan masukkan judul artikel" v-validate="'required|min:5'" data-vv-as="Judul" v-model="form.name">
+											<input type="text" name="name" class="form-control" placeholder="Silahkan masukkan judul artikel" v-model="form.name">
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.name')">
@@ -53,7 +53,7 @@
 											</h5>
 
 											<!-- select -->
-											<select name="utamakan" data-width="100%" class="form-control" v-model="form.utamakan" v-validate="'required'" data-vv-as="utamakan">
+											<select name="utamakan" data-width="100%" class="form-control" v-model="form.utamakan">
 												<option disabled value="">Silahkan pilih tipe</option>
 												<option value="1">Jadikan artikel utama</option>
 												<option value="0">Tidak jadikan artikel utama</option>
@@ -156,7 +156,7 @@
 				<form-kategori
 				:id_cu="id_cu"
 				@cancelClick="modalTutup"></form-kategori>
-			</template>]
+			</template>
 
 		</app-modal>
 
@@ -164,11 +164,13 @@
 </template>
 
 <script>
+	import { computed } from 'vue';
 	import { mapState } from 'pinia';
 	import { useAuthStore } from '../../stores/auth';
 	import { useArtikelSimoStore } from '../../stores/artikelSimo';
 	import { useCuStore } from '../../stores/cu';
-	import pageHeader from "../../components/pageHeader.vue";
+	import { useFormValidation } from '../../composables/useFormValidation';
+	import pageHeader from '../../components/pageHeader.vue';
 	import { toMulipartedForm } from '../../helpers/form';
 	import appImageUpload from '../../components/ImageUpload.vue';
 	import appModal from '../../components/modal.vue';
@@ -177,7 +179,9 @@
 	import formInfo from "../../components/formInfo.vue";
 	import { getLocalUser } from "../../helpers/auth";
 	import { url_config } from '../../helpers/url.js';
-	import wajibBadge from "../../components/wajibBadge.vue";
+	import wajibBadge from '../../components/wajibBadge.vue';
+
+	const ARTIKEL_SIMO_SCHEMA = { name: 'required|min:5', utamakan: 'required' };
 
 	export default {
 		components: {
@@ -187,10 +191,17 @@
 			message,
 			formButton,
 			formInfo,
-			wajibBadge
+			wajibBadge,
+		},
+		setup() {
+			const store = useArtikelSimoStore();
+			const formRef = computed(() => store.data);
+			const { errors, handleSubmit, setValues } = useFormValidation(formRef, ARTIKEL_SIMO_SCHEMA);
+			return { errors, handleSubmit, setValues };
 		},
 		data() {
 			return {
+				authStore: useAuthStore(),
 				artikelSimoStore: useArtikelSimoStore(),
 				cuStore: useCuStore(),
 				title: 'Tambah Artikel SIMO',
@@ -287,20 +298,22 @@
 				}
 			},
 			save() {
-				const formData = toMulipartedForm(this.form, this.$route.meta.mode);
-				this.$validator.validateAll('form').then((result) => {
-					if (result) {
-						if(this.$route.meta.mode === 'edit'){
+				this.setValues(this.form);
+				this.handleSubmit(
+					() => {
+						const formData = toMulipartedForm(this.form, this.$route.meta.mode);
+						if (this.$route.meta.mode === 'edit') {
 							this.artikelSimoStore.update(this.$route.params.id, formData);
-						}else{
+						} else {
 							this.artikelSimoStore.store(formData);
 						}
 						this.submited = false;
-					}else{
+					},
+					() => {
 						window.scrollTo(0, 0);
 						this.submited = true;
 					}
-				});
+				);
 			},
 			back(){
 				this.$router.push({name: this.kelas});

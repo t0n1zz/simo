@@ -15,6 +15,7 @@
     <div class="page-content pt-0">
       <div class="content-wrapper">
         <div class="content">
+          <VeeForm :form="form" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
           <!-- message -->
           <message
             v-if="errors.any('form') && submited"
@@ -22,38 +23,37 @@
             :errorItem="errors.items"
           ></message>
 
-          <form @submit.prevent="save" enctype="multipart/form-data" data-vv-scope="form">
+          <form @submit.prevent="handleSubmit(onValid)" enctype="multipart/form-data">
             <div class="card card-body">
               <div class="row">
                 <!-- cu -->
                 <div class="col-md-6" v-if="currentUser.id_cu == 0">
-                  <div class="form-group" :class="{'has-error' : errors.has('form.id_cu')}">
+                  <div class="form-group" :class="{'has-error' : errors.has('id_cu')}">
                     <!-- title -->
-                    <h5 :class="{ 'text-danger' : errors.has('form.id_cu')}">
-                      <i class="icon-cross2" v-if="errors.has('form.id_cu')"></i>
+                    <h5 :class="{ 'text-danger' : errors.has('id_cu')}">
+                      <i class="icon-cross2" v-if="errors.has('id_cu')"></i>
                       CU:
                       <wajib-badge></wajib-badge>
                     </h5>
 
                     <!-- select -->
-                    <select
-                      class="form-control"
-                      name="id_cu"
-                      v-model="form.id_cu"
-                      data-width="100%"
-                      v-validate="'required'"
-                      data-vv-as="CU"
-                      @change="changeCU($event.target.value)"
-                      :disabled="modelCU.length == 0 || $route.meta.mode == 'penilaian_bkcu' || $route.meta.mode == 'lihat' || $route.meta.mode == 'edit'"
-                    >
-                      <option disabled value="0">Silahkan pilih CU</option>
-                      <option v-for="(cu, index) in modelCU" :value="cu.id" :key="index">{{cu.name}}</option>
-                    </select>
+                    <Field name="id_cu" rules="required" v-model="form.id_cu" v-slot="{ field }">
+                      <select
+                        class="form-control"
+                        data-width="100%"
+                        v-bind="field"
+                        @change="changeCU($event.target.value)"
+                        :disabled="modelCU.length == 0 || $route.meta.mode == 'penilaian_bkcu' || $route.meta.mode == 'lihat' || $route.meta.mode == 'edit'"
+                      >
+                        <option disabled value="0">Silahkan pilih CU</option>
+                        <option v-for="(cu, index) in modelCU" :value="cu.id" :key="index">{{cu.name}}</option>
+                      </select>
+                    </Field>
 
                     <!-- error message -->
-                    <small class="text-muted text-danger" v-if="errors.has('form.id_cu')">
+                    <small class="text-muted text-danger" v-if="errors.has('id_cu')">
                       <i class="icon-arrow-small-right"></i>
-                      {{ errors.first('form.id_cu') }}
+                      {{ errors.first('id_cu') }}
                     </small>
                     <small class="text-muted" v-else>&nbsp;</small>
                   </div>
@@ -63,40 +63,39 @@
                 <div
                   :class="{'col-md-6' : currentUser.id_cu == 0, 'col-md-12' : currentUser.id_cu != 0}"
                 >
-                  <div class="form-group" :class="{'has-error' : errors.has('form.periode')}">
+                  <div class="form-group" :class="{'has-error' : errors.has('id_laporan_cu')}">
                     <!-- title -->
-                    <h5 :class="{ 'text-danger' : errors.has('form.periode')}">
-                      <i class="icon-cross2" v-if="errors.has('form.periode')"></i>
+                    <h5 :class="{ 'text-danger' : errors.has('id_laporan_cu')}">
+                      <i class="icon-cross2" v-if="errors.has('id_laporan_cu')"></i>
                       Periode:
                       <wajib-badge></wajib-badge>
                       <info-icon :message="'Periode diambil dari laporan perkembangan CU'"></info-icon>
                     </h5>
 
                     <!-- select -->
-                    <select
-                      class="form-control"
-                      name="periode"
-                      v-model="form.id_laporan_cu"
-                      data-width="100%"
-                      v-validate="'required'"
-                      data-vv-as="CU"
-                      @change="changePeriode($event.target.value)"
-                      :disabled="modelPeriode.length == 0 || $route.meta.mode == 'penilaian_bkcu' || $route.meta.mode == 'lihat' || $route.meta.mode == 'edit'"
-                    >
-                      <option disabled value>
-                        <span v-if="modelPeriodeStat == 'loading'">Mohon tunggu...</span>
-                        <span v-else>Silahkan pilih periode</span>
-                      </option>
-                      <option
-                        v-for="(periode, index) in modelPeriode"
-                        :value="periode.id" :key="index"
-                      >{{periode.periode}}</option>
-                    </select>
+                    <Field name="id_laporan_cu" rules="required" v-model="form.id_laporan_cu" v-slot="{ field }">
+                      <select
+                        class="form-control"
+                        data-width="100%"
+                        v-bind="field"
+                        @change="changePeriode($event.target.value)"
+                        :disabled="modelPeriode.length == 0 || $route.meta.mode == 'penilaian_bkcu' || $route.meta.mode == 'lihat' || $route.meta.mode == 'edit'"
+                      >
+                        <option disabled value>
+                          <span v-if="modelPeriodeStat == 'loading'">Mohon tunggu...</span>
+                          <span v-else>Silahkan pilih periode</span>
+                        </option>
+                        <option
+                          v-for="(periode, index) in modelPeriode"
+                          :value="periode.id" :key="index"
+                        >{{periode.periode}}</option>
+                      </select>
+                    </Field>
 
                     <!-- error message -->
-                    <small class="text-muted text-danger" v-if="errors.has('form.periode')">
+                    <small class="text-muted text-danger" v-if="errors.has('id_laporan_cu')">
                       <i class="icon-arrow-small-right"></i>
-                      {{ errors.first('form.periode') }}
+                      {{ errors.first('id_laporan_cu') }}
                     </small>
                     <small class="text-muted" v-else>&nbsp;</small>
                   </div>
@@ -122,7 +121,7 @@
                       <button
                         type="button"
                         class="btn btn-warning btn-block"
-                        @click.prevent="saveDraft"
+                        @click.prevent="handleSubmit(onValidDraft)"
                       >
                         <i class="icon-floppy-disk"></i> Simpan Draft
                       </button>
@@ -263,7 +262,7 @@
                   :mode="$route.meta.mode"
                   :itemData="modelPearls"
                   :updateSingleStat="updateSingleStat"
-                  @saveSingle="saveSingle"
+                  @saveSingle="perspektif => saveSingle(handleSubmit, perspektif)"
                   @reloadPearls="reloadPearls()"
                   @next="changeTab('p2')"
                   @prev="back"
@@ -304,7 +303,7 @@
                   :bobotSkor="'20'"
                   :mode="$route.meta.mode"
                   :updateSingleStat="updateSingleStat"
-                  @saveSingle="saveSingle"
+                  @saveSingle="perspektif => saveSingle(handleSubmit, perspektif)"
                   @prev="changeTab('p2')"
                   @next="changeTab('p3')"
                   @skorCUA="skorCUP2A"
@@ -328,7 +327,7 @@
                   :bobotSkor="'20'"
                   :mode="$route.meta.mode"
                   :updateSingleStat="updateSingleStat"
-                  @saveSingle="saveSingle"
+                  @saveSingle="perspektif => saveSingle(handleSubmit, perspektif)"
                   @prev="changeTab('p3')"
                   @next="changeTab('p4')"
                   @skorCUA="skorCUP3A"
@@ -352,7 +351,7 @@
                   :bobotSkor="'20'"
                   :mode="$route.meta.mode"
                   :updateSingleStat="updateSingleStat"
-                  @saveSingle="saveSingle"
+                  @saveSingle="perspektif => saveSingle(handleSubmit, perspektif)"
                   @prev="changeTab('p3')"
                   @next="changeTab('p5')"
                   @skorCUA="skorCUP4A"
@@ -575,7 +574,6 @@
 </template>
 
 <script>
-import { mapState } from 'pinia';
 import { useAuthStore } from '../../stores/auth';
 import { useAssesmentAccessStore } from '../../stores/assesmentAccess';
 import { useCuStore } from '../../stores/cu';
@@ -588,6 +586,8 @@ import formButton from "../../components/formButton.vue";
 import formInfo from "../../components/formInfo.vue";
 import Cleave from "vue-cleave-component";
 import wajibBadge from "../../components/wajibBadge.vue";
+import VeeForm from "../../components/VeeForm.vue";
+import { Field } from "vee-validate";
 import formP1 from "./form_p1.vue";
 import formP2 from "./form_p2.vue";
 import formP3 from "./form_p3.vue";
@@ -612,6 +612,8 @@ export default {
     Cleave,
     infoIcon,
     wajibBadge,
+    VeeForm,
+    Field,
     formP1,
     formP2,
     formP3,
@@ -624,6 +626,7 @@ export default {
   },
   data() {
     return {
+      authStore: useAuthStore(),
       assesmentAccessStore: useAssesmentAccessStore(),
       cuStore: useCuStore(),
       laporanCuStore: useLaporanCuStore(),
@@ -804,99 +807,84 @@ export default {
     },
     changeCU(id) {
       this.form.id_cu = id;
-      this.$store.dispatch("laporanCu/getPeriodeCu", id);
+      this.laporanCuStore.fetchPeriodeCu(id);
     },
     changePeriode(id) {
       let _periode = "";
       _periode = _.find(this.modelPeriode, { id: parseInt(id, 10) });
       this.form.id_laporan_cu = id;
 			this.form.periode = _periode.periode;
-      this.$store.dispatch(this.kelas + "/cariData", [this.form.id_cu, this.form.periode]);
-      this.$store.dispatch("laporanCu/detailPearls", id);
+      this.assesmentAccessStore.cariData([this.form.id_cu, this.form.periode]);
+      this.laporanCuStore.detailPearls(id);
     },
     reloadPearls() {
-      this.$store.dispatch("laporanCu/detailPearls", this.form.id_laporan_cu);
+      this.laporanCuStore.detailPearls(this.form.id_laporan_cu);
     },
-    saveDraft() {
-      this.$validator.validateAll("form").then(result => {
-        if (result) {
-          if (this.$route.meta.mode == "edit") {
-            this.form.status = "BELUM SELESAI DIISI";
-            this.$store.dispatch(this.kelas + "/update", [
-              this.$route.params.id,
-              this.form
-            ]);
-          } else if (this.$route.meta.mode == "penilaianBkcu") {
-            this.form.status = "BELUM SELESAI DINILAI";
-            this.$store.dispatch(this.kelas + "/update", [
-              this.$route.params.id,
-              this.form
-            ]);
-          } else {
-            this.form.status = "BELUM SELESAI DIISI";
-            this.$store.dispatch(this.kelas + "/store", this.form);
-          }
-          this.submited = false;
-        } else {
-          window.scrollTo(0, 0);
-          this.submited = true;
-        }
-      });
+    onValidDraft() {
+      if (this.$route.meta.mode == "edit") {
+        this.form.status = "BELUM SELESAI DIISI";
+        this.assesmentAccessStore.update([
+          this.$route.params.id,
+          this.form
+        ]);
+      } else if (this.$route.meta.mode == "penilaianBkcu") {
+        this.form.status = "BELUM SELESAI DINILAI";
+        this.assesmentAccessStore.update([
+          this.$route.params.id,
+          this.form
+        ]);
+      } else {
+        this.form.status = "BELUM SELESAI DIISI";
+        this.assesmentAccessStore.store(this.form);
+      }
+      this.submited = false;
     },
-    saveSingle(perspektif) {
-      console.log(perspektif);
-      this.$validator.validateAll("form").then(result => {
-        if (result) {
-          if (this.$route.meta.mode == "edit") {
-            this.form.status = "BELUM SELESAI DIISI";
-            this.$store.dispatch(this.kelas + "/updateSingle", [
-              this.$route.params.id,
-              perspektif,
-              this.form
-            ]);
-          } else if (this.$route.meta.mode == "penilaianBkcu") {
-            this.form.status = "BELUM SELESAI DINILAI";
-            this.$store.dispatch(this.kelas + "/updateSingle", [
-              this.$route.params.id,
-              perspektif,
-              this.form
-            ]);
-          } else {
-            this.form.status = "BELUM SELESAI DIISI";
-            this.$store.dispatch(this.kelas + "/store", this.form);
-          }
-          this.submited = false;
-        } else {
-          window.scrollTo(0, 0);
-          this.submited = true;
-        }
-      });
+    saveSingle(handleSubmit, perspektif) {
+      handleSubmit(() => this.onValidSingle(perspektif))();
     },
-    save() {
-      this.$validator.validateAll("form").then(result => {
-        if (result) {
-          if (this.$route.meta.mode == "edit") {
-            this.form.status = "BELUM DINILAI";
-            this.$store.dispatch(this.kelas + "/update", [
-              this.$route.params.id,
-              this.form
-            ]);
-          } else if (this.$route.meta.mode == "penilaianBkcu") {
-            this.form.status = "SUDAH DINILAI";
-            this.$store.dispatch(this.kelas + "/update", [
-              this.$route.params.id,
-              this.form
-            ]);
-          } else {
-            this.form.status = "BELUM DINILAI";
-            this.$store.dispatch(this.kelas + "/store", this.form);
-          }
-          this.submited = false;
-        } else {
-          window.scrollTo(0, 0);
-          this.submited = true;
-        }
-      });
+    onValidSingle(perspektif) {
+      if (this.$route.meta.mode == "edit") {
+        this.form.status = "BELUM SELESAI DIISI";
+        this.assesmentAccessStore.updateSingle([
+          this.$route.params.id,
+          perspektif,
+          this.form
+        ]);
+      } else if (this.$route.meta.mode == "penilaianBkcu") {
+        this.form.status = "BELUM SELESAI DINILAI";
+        this.assesmentAccessStore.updateSingle([
+          this.$route.params.id,
+          perspektif,
+          this.form
+        ]);
+      } else {
+        this.form.status = "BELUM SELESAI DIISI";
+        this.assesmentAccessStore.store(this.form);
+      }
+      this.submited = false;
+    },
+    onValid() {
+      if (this.$route.meta.mode == "edit") {
+        this.form.status = "BELUM DINILAI";
+        this.assesmentAccessStore.update([
+          this.$route.params.id,
+          this.form
+        ]);
+      } else if (this.$route.meta.mode == "penilaianBkcu") {
+        this.form.status = "SUDAH DINILAI";
+        this.assesmentAccessStore.update([
+          this.$route.params.id,
+          this.form
+        ]);
+      } else {
+        this.form.status = "BELUM DINILAI";
+        this.assesmentAccessStore.store(this.form);
+      }
+      this.submited = false;
+    },
+    onInvalid() {
+      window.scrollTo(0, 0);
+      this.submited = true;
     },
     back() {
       if (this.currentUser.id_cu == 0) {
@@ -1156,31 +1144,57 @@ export default {
     }
   },
   computed: {
-    ...mapGetters("auth", {
-      currentUser: "currentUser"
-    }),
-    ...mapGetters("assesmentAccess", {
-      form: "data",
-      formStat: "dataStat",
-      rules: "rules",
-      options: "options",
-      updateResponse: "update",
-			updateStat: "updateStat",
-      updateSingleResponse: "updateSingle",
-			updateSingleStat: "updateSingleStat",
-			periode: "periode",
-			periodeStat: "periodeStat"
-    }),
-    ...mapGetters("cu", {
-      modelCU: "headerDataS",
-      modelCUStat: "headerDataStatS"
-    }),
-    ...mapGetters("laporanCu", {
-      modelPeriode: "periode",
-      modelPeriodeStat: "periodeStat",
-      modelPearls: "pearls",
-      modelPearlsStat: "pearlsStat"
-    })
+    currentUser() {
+      return this.authStore.currentUser;
+    },
+    form() {
+      return this.assesmentAccessStore.data;
+    },
+    formStat() {
+      return this.assesmentAccessStore.dataStat;
+    },
+    rules() {
+      return this.assesmentAccessStore.rules;
+    },
+    options() {
+      return this.assesmentAccessStore.options;
+    },
+    updateResponse() {
+      return this.assesmentAccessStore.updateData;
+    },
+    updateStat() {
+      return this.assesmentAccessStore.updateStat;
+    },
+    updateSingleResponse() {
+      return this.assesmentAccessStore.updateSingle;
+    },
+    updateSingleStat() {
+      return this.assesmentAccessStore.updateSingleStat;
+    },
+    periode() {
+      return this.assesmentAccessStore.periode;
+    },
+    periodeStat() {
+      return this.assesmentAccessStore.periodeStat;
+    },
+    modelCU() {
+      return this.cuStore.headerDataS;
+    },
+    modelCUStat() {
+      return this.cuStore.headerDataStatS;
+    },
+    modelPeriode() {
+      return this.laporanCuStore.periode;
+    },
+    modelPeriodeStat() {
+      return this.laporanCuStore.periodeStat;
+    },
+    modelPearls() {
+      return this.laporanCuStore.pearls;
+    },
+    modelPearlsStat() {
+      return this.laporanCuStore.pearlsStat;
+    }
   }
 };
 </script>

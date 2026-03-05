@@ -314,7 +314,7 @@
 				return this.umkmStore.dataStatS;
 			},
 			updateMessage() {
-				return this.umkmStore.update;
+				return this.umkmStore.updateData;
 			},
 			updateStat() {
 				return this.umkmStore.updateStat;

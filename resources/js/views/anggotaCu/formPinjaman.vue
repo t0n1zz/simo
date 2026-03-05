@@ -1,6 +1,7 @@
 <template>
 	<div>
-		<form @submit.prevent="save" data-vv-scope="formPinjaman">
+		<VeeForm :form="formPinjaman" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
+		<form @submit.prevent="handleSubmit(onValid)">
 
 		<!-- message -->
 		<message v-if="message.show" @close="messageClose" :title="'Oops terjadi kesalahan'" :errorData="message.content" :showDebug="false">
@@ -19,13 +20,15 @@
 					</h5>
 
 					<!-- select -->
-					<select class="form-control" name="cu_id" v-model="formPinjaman.cu.id" data-width="100%" @change="changeCu($event.target.value)" v-validate="'required'" data-vv-as="CU" :disabled="modelCU.length === 0">
-						<option disabled value="0">
-							<span v-if="modelCUStat === 'loading'">Mohon tunggu...</span>
-							<span v-else>Silahkan pilih CU</span>
-						</option>
-						<option v-for="(cu, index) in modelCU" :value="cu.id" :key="index">{{cu.name}}</option>
-					</select>
+					<Field name="formPinjaman.cu.id" rules="required" v-model="formPinjaman.cu.id" v-slot="{ field }">
+						<select class="form-control" data-width="100%" v-bind="field" @change="changeCu($event.target.value)" :disabled="modelCU.length === 0">
+							<option disabled value="0">
+								<span v-if="modelCUStat === 'loading'">Mohon tunggu...</span>
+								<span v-else>Silahkan pilih CU</span>
+							</option>
+							<option v-for="(cu, index) in modelCU" :value="cu.id" :key="index">{{cu.name}}</option>
+						</select>
+					</Field>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('formPinjaman.cu.id')">
@@ -56,13 +59,14 @@
 					</h5>
 
 					<!-- text -->
-					<cleave 
-						name="no_rek"
-						v-model="formPinjaman.no_rek" 
-						class="form-control" 
+					<Field name="formPinjaman.no_rek" rules="required" v-model="formPinjaman.no_rek" v-slot="{ field }">
+						<input type="hidden" v-bind="field" />
+					</Field>
+					<cleave
+						v-model="formPinjaman.no_rek"
+						class="form-control"
 						:options="cleaveOption.number12"
-						placeholder="Silahkan masukkan jumlah no. spp"
-						v-validate="'required'" data-vv-as="No. SPP" ></cleave>
+						placeholder="Silahkan masukkan jumlah no. spp"></cleave>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('formPinjaman.no_rek')">
@@ -84,13 +88,15 @@
 					</h5>
 
 					<!-- select -->
-					<select class="form-control" name="produk_cu_id" v-model="formPinjaman.produk_cu.id" data-width="100%" @change="changeProdukCu($event.target.value)" v-validate="'required'" data-vv-as="Produk CU" :disabled="modelProdukCu.length === 0">
-						<option disabled value="0">
-							<span v-if="modelProdukCuStat === 'loading'">Mohon tunggu...</span>
-							<span v-else>Silahkan pilih Produk CU</span>
-						</option>
-						<option v-for="(produk, index) in modelProdukCu" :value="produk.id" :key="index">{{produk.name}}</option>
-					</select>
+					<Field name="formPinjaman.produk_cu.id" rules="required" v-model="formPinjaman.produk_cu.id" v-slot="{ field }">
+						<select class="form-control" data-width="100%" v-bind="field" @change="changeProdukCu($event.target.value)" :disabled="modelProdukCu.length === 0">
+							<option disabled value="0">
+								<span v-if="modelProdukCuStat === 'loading'">Mohon tunggu...</span>
+								<span v-else>Silahkan pilih Produk CU</span>
+							</option>
+							<option v-for="(produk, index) in modelProdukCu" :value="produk.id" :key="index">{{produk.name}}</option>
+						</select>
+					</Field>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('formPinjaman.produk_cu.id')">
@@ -108,8 +114,10 @@
 					<h5 :class="{ 'text-danger' : errors.has('formPinjaman.tanggal')}"><i class="icon-cross2" v-if="errors.has('formPinjaman.tanggal')"></i> Tanggal: </h5>
 
 					<!-- input -->
-					<date-picker @dateSelected="formPinjaman.tanggal = $event" :defaultDate="formPinjaman.tanggal"></date-picker>	
-					<input v-model="formPinjaman.tanggal" v-show="false" v-validate="'required'" data-vv-as="Tanggal"/>
+					<date-picker @dateSelected="formPinjaman.tanggal = $event" :defaultDate="formPinjaman.tanggal"></date-picker>
+					<Field name="formPinjaman.tanggal" rules="required" v-model="formPinjaman.tanggal" v-slot="{ field }">
+						<input type="hidden" v-bind="field" />
+					</Field>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('formPinjaman.tanggal')">
@@ -132,13 +140,14 @@
 					</h5>
 
 					<!-- text -->
-					<cleave 
-						name="lama_pinjaman"
-						v-model="formPinjaman.lama_pinjaman" 
-						class="form-control" 
+					<Field name="formPinjaman.lama_pinjaman" rules="required" v-model="formPinjaman.lama_pinjaman" v-slot="{ field }">
+						<input type="hidden" v-bind="field" />
+					</Field>
+					<cleave
+						v-model="formPinjaman.lama_pinjaman"
+						class="form-control"
 						:options="cleaveOption.number4"
-						placeholder="Silahkan masukkan lama pinjaman"
-						v-validate="'required'" data-vv-as="lama pinjaman" ></cleave>
+						placeholder="Silahkan masukkan lama pinjaman"></cleave>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('formPinjaman.lama_pinjaman')">
@@ -173,6 +182,7 @@
 		</div> 
 
 		</form>
+		</VeeForm>
 
 	</div>
 </template>
@@ -188,6 +198,8 @@
 	import produkCuAPI from '../../api/produkCu.js';
 	import infoIcon from "../../components/infoIcon.vue";
 	import DatePicker from "../../components/datePicker.vue";
+	import VeeForm from '../../components/VeeForm.vue';
+	import { Field } from 'vee-validate';
 
 	export default {
 		props: ['mode','selected'],
@@ -196,7 +208,9 @@
 			Message,
 			Cleave,
 			infoIcon,
-			DatePicker
+			DatePicker,
+			VeeForm,
+			Field
 		},
 		data() {
 			return {
@@ -328,18 +342,16 @@
           this.modelProdukCuStat = 'fail';
 				});
 			},
-			save(){
-				this.$validator.validateAll('formPinjaman').then((result) => {
-					if (result) {
-						if(this.mode == 'edit'){
-							this.$emit('editPinjaman',this.formPinjaman);
-						}else{
-							this.$emit('createPinjaman',this.formPinjaman);
-						}
-					}else{
-						this.submited = true;
-					}	
-				});	
+			onValid() {
+				if(this.mode == 'edit'){
+					this.$emit('editPinjaman', this.formPinjaman);
+				}else{
+					this.$emit('createPinjaman', this.formPinjaman);
+				}
+				this.submited = false;
+			},
+			onInvalid() {
+				this.submited = true;
 			},
 			messageClose(){
 				this.message.show = false;

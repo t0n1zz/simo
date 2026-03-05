@@ -38,18 +38,18 @@
 		<div class="page-content pt-0">
 			<div class="content-wrapper">
 				<div class="content">
-					<form @submit.prevent="save" enctype="multipart/form-data" data-vv-scope="form">
+					<form @submit.prevent="save" enctype="multipart/form-data">
 
 						<div class="card card-body">
 							<div class="row">
 								<div class="col-md-12">
 									<div class="form-group">
 										<h5>Silahkan masukan kode voting</h5>
-										<input type="text" name="kode" class="form-control" placeholder="Silahkan masukkan kode voting" v-validate="'required'" data-vv-as="kode" v-model="form.kode">
+										<input type="text" name="kode" class="form-control" placeholder="Silahkan masukkan kode voting" v-model="form.kode">
 									</div>
 								</div>
 								<div class="col-md-12">
-									<button type="submit" class="btn btn-primary btn-block pb-2" :disabled="errors.any('form')">
+									<button type="submit" class="btn btn-primary btn-block pb-2" :disabled="!form.kode">
 										<i :class="titleIcon"></i> Ok
 									</button>
 								</div>

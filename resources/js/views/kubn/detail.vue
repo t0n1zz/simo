@@ -388,7 +388,7 @@
 				return this.kubnStore.options;
 			},
 			updateResponse() {
-				return this.kubnStore.update;
+				return this.kubnStore.updateData;
 			},
 			updateStat() {
 				return this.kubnStore.updateStat;

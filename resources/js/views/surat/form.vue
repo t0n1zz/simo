@@ -8,12 +8,14 @@
 			<div class="content-wrapper">
 				<div class="content">
 
+					<VeeForm :form="form" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
+
 					<!-- message -->
 					<message v-if="errors.any('form') && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors.items">
 					</message>
 
 					<!-- main panel -->
-					<form @submit.prevent="save" enctype="multipart/form-data" data-vv-scope="form">
+					<form @submit.prevent="handleSubmit(onValid)" enctype="multipart/form-data">
 
 						<!-- main form -->
 						<div class="card">
@@ -33,7 +35,8 @@
 											<div class="input-group">
 
 												<!-- select -->
-												<select class="form-control" name="id_surat_kode" v-model="form.id_surat_kode" data-width="100%" v-validate="'required'" data-vv-as="Tipe" @change="changeKode($event.target.value)">
+												<Field name="id_surat_kode" rules="required" v-model="form.id_surat_kode" v-slot="{ field }">
+												<select class="form-control" data-width="100%" v-bind="field" @change="changeKode($event.target.value)">
 													<option disabled value="">
 														<span v-if="modelKode.length < 1">
 															Silahkan menambahkan terlebih dahulu tipe surat di menu tipe surat
@@ -43,8 +46,11 @@
 															<span v-else>Silahkan pilih tipe surat</span>
 														</span>
 													</option>
-													<option v-for="kode in modelKode" v-if="kode" :value="kode.id">{{kode.name}} | {{kode.periode}}</option>
+													<template v-for="kode in modelKode" :key="kode ? kode.id : undefined">
+														<option v-if="kode" :value="kode.id">{{ kode.name }} | {{ kode.periode }}</option>
+													</template>
 												</select>
+												</Field>
 
 											</div>
 
@@ -101,7 +107,8 @@
 												<div class="input-group">
 
 													<!-- select -->
-													<select class="form-control" name="id_surat_kategori" v-model="form.id_surat_kategori" data-width="100%" v-validate="'required'" data-vv-as="Kategori" @change="changeKategori($event.target.value)">
+													<Field name="id_surat_kategori" rules="required" v-model="form.id_surat_kategori" v-slot="{ field }">
+													<select class="form-control" data-width="100%" v-bind="field" @change="changeKategori($event.target.value)">
 														<option disabled value="">
 															<span v-if="itemData.kategori.length < 1">
 																Silahkan menambahkan terlebih dahulu tipe surat di menu tipe surat
@@ -111,8 +118,11 @@
 																<span v-else>Silahkan pilih kategori</span>
 															</span>
 														</option>
-														<option v-for="kategori in itemData.kategori" v-if="kategori" :value="kategori.id">{{ kategori.name }} | {{ kategori.deskripsi }}</option>
+														<template v-for="kategori in itemData.kategori" :key="kategori ? kategori.id : undefined">
+															<option v-if="kategori" :value="kategori.id">{{ kategori.name }} | {{ kategori.deskripsi }}</option>
+														</template>
 													</select>
+													</Field>
 
 												</div>
 
@@ -211,11 +221,13 @@
 												</h5>
 
 												<!-- select -->
-												<select class="form-control" name="format" v-model="form.format" data-width="100%" v-validate="'required'" data-vv-as="format">
+												<Field name="format" rules="required" v-model="form.format" v-slot="{ field }">
+												<select class="form-control" data-width="100%" v-bind="field">
 													<option disabled value="">Silahkan pilih format</option>
 													<option value="upload">Upload</option>
 													<option value="link">Link</option>
 												</select>
+												</Field>
 
 												<!-- error message -->
 												<small class="text-muted text-danger" v-if="errors.has('form.format')">
@@ -284,6 +296,8 @@
 						
 					</form>
 
+					</VeeForm>
+
 				</div>
 			</div>
 		</div>
@@ -323,6 +337,8 @@
 	import formButton from "../../components/formButton.vue";
 	import formInfo from "../../components/formInfo.vue";
 	import wajibBadge from "../../components/wajibBadge.vue";
+	import VeeForm from '../../components/VeeForm.vue';
+	import { Field } from 'vee-validate';
 
 	export default {
 		components: {
@@ -332,7 +348,9 @@
 			message,
 			formButton,
 			formInfo,
-			wajibBadge
+			wajibBadge,
+			VeeForm,
+			Field
 		},
 		data() {
 			return {
@@ -413,9 +431,9 @@
     },
 		methods: {
 			fetch(){
-				if(this.currentUser.id_cu === 0){
-					if(this.modelCuStat != 'success'){
-						this.$store.dispatch('cu/getHeader');
+				if (this.currentUser.id_cu === 0) {
+					if (this.modelCuStat !== 'success') {
+						this.cuStore.getHeader();
 					}
 				}
 
@@ -461,7 +479,7 @@
 					return
 				this.form.content = files[0];
 			},
-			save() {
+			onValid() {
 				this.form.id_surat_kode = this.itemData.suratKode.id;
 				this.form.kode = this.itemData.kode;
 				this.form.periode = this.itemData.periode;
@@ -469,19 +487,16 @@
 				this.form.tipe = this.itemData.suratKode.name;
 
 				const formData = toMulipartedForm(this.form, this.$route.meta.mode);
-				this.$validator.validateAll('form').then((result) => {
-					if (result) {
-						if(this.$route.meta.mode === 'edit'){
-							this.suratStore.update([this.$route.params.id, formData]);
-						}else{
-							this.suratStore.store(formData);
-						}
-						this.submited = false;
-					}else{
-						window.scrollTo(0, 0);
-						this.submited = true;
-					}
-				});
+				if(this.$route.meta.mode === 'edit'){
+					this.suratStore.update([this.$route.params.id, formData]);
+				}else{
+					this.suratStore.store(formData);
+				}
+				this.submited = false;
+			},
+			onInvalid() {
+				window.scrollTo(0, 0);
+				this.submited = true;
 			},
 			back(){
 				this.$router.push({name: this.kelas + 'Cu', params:{cu: this.currentUser.id_cu,tipe: 'semua', periode: this.momentYear() }});

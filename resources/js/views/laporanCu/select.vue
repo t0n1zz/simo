@@ -19,7 +19,9 @@
 								<slot></slot>
 								<option value="semua">Semua CU</option>
 								<option disabled value="">----------------</option>
-								<option v-for="cu in modelCu" :value="cu.id" v-if="cu">{{cu.name}}</option>
+								<template v-for="cu in modelCu" :key="cu ? cu.id : undefined">
+								<option v-if="cu" :value="cu.id">{{cu.name}}</option>
+							</template>
 							</select>
 
 							<!-- reload -->
@@ -43,7 +45,9 @@
 							:disabled="modelPeriodeStat === 'loading'">
 								<option disabled value="">Silahkan pilih periode laporan</option>
 								<slot></slot>
-								<option v-for="periode in modelPeriode" :value="periode.periode" v-if="periode">{{periode.periode | dateMonth}}</option>
+								<template v-for="periode in modelPeriode" :key="periode ? periode.periode : undefined">
+								<option v-if="periode" :value="periode.periode">{{periode.periode | dateMonth}}</option>
+							</template>
 							</select>
 
 							<!-- reload -->
@@ -68,7 +72,9 @@
 								<option value="konsolidasi">Konsolidasi</option>
 								<option value="semua">Semua Tp</option>
 								<option disabled value="">----------------</option>
-								<option v-for="tp in modelTp" :value="tp.id" v-if="tp">{{tp.name}}</option>
+								<template v-for="tp in modelTp" :key="tp ? tp.id : undefined">
+								<option v-if="tp" :value="tp.id">{{tp.name}}</option>
+							</template>
 							</select>
 
 							<!-- reload -->
@@ -93,7 +99,9 @@
 							:disabled="modelPeriodeTpStat === 'loading'">
 								<option disabled value="">Silahkan pilih periode laporan Tp</option>
 								<slot></slot>
-								<option v-for="periode in modelPeriodeTp" :value="periode.periode" v-if="periode">{{periode.periode | dateMonth}}</option>
+								<template v-for="periode in modelPeriodeTp" :key="periode ? periode.periode : undefined">
+								<option v-if="periode" :value="periode.periode">{{periode.periode | dateMonth}}</option>
+							</template>
 							</select>
 
 							<!-- reload -->

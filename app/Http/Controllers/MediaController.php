@@ -1,158 +1,156 @@
 <?php
+
 namespace App\Http\Controllers;
 
-use DB;
 use App\Models\Media;
 use App\Support\Helper;
-use Illuminate\Http\Request;
 use File;
-use Image;
+use Illuminate\Http\Request;
 
-class MediaController extends Controller{
+class MediaController extends Controller
+{
+    protected $imagepath = 'files/media/';
 
-	protected $imagepath = 'files/media/';
-	protected $width = 300;
-	protected $height = 200;
-	protected $message = 'Media';
+    protected $width = 300;
 
-	public function index()
-	{
-		$table_data = Media::with('Cu')->select('id','id_cu','name','gambar','link','created_at','updated_at',
-		DB::raw(
-			'(SELECT name FROM cu WHERE media.id_cu = cu.id) as cu_name'
-		))
-		->advancedFilter();
+    protected $height = 200;
 
-		return response()
-		->json([
-			'model' => $table_data
-		]);
-	}
+    protected $message = 'Media';
 
-	public function indexCu($cu)
-	{
-		$table_data = Media::with('Cu')->select('id','id_cu','name','gambar','link','created_at','updated_at',
-		DB::raw(
-			'(SELECT name FROM cu WHERE media.id_cu = cu.id) as cu_name'
-		))
-		->where('id_cu',$cu)
-		->advancedFilter();
+    public function index()
+    {
+        $table_data = Media::with('Cu')
+            ->advancedFilter();
 
-		return response()
-		->json([
-			'model' => $table_data
-		]);
-	}
+        return response()
+            ->json([
+                'model' => $table_data,
+            ]);
+    }
 
-	public function create()
-	{
-		return response()
-			->json([
-					'form' => Media::initialize(),
-					'rules' => Media::$rules,
-					'option' => []
-			]);
-	}
+    public function indexCu($cu)
+    {
+        $table_data = Media::with('Cu')
+            ->where('id_cu', $cu)
+            ->advancedFilter();
 
-	public function store(Request $request)
-	{
-		$this->validate($request,Media::$rules);
+        return response()
+            ->json([
+                'model' => $table_data,
+            ]);
+    }
 
-		$name = $request->name;
+    public function create()
+    {
+        return response()
+            ->json([
+                'form' => Media::initialize(),
+                'rules' => Media::$rules,
+                'option' => [],
+            ]);
+    }
 
-		if(!empty($request->gambar))
-			$fileName = Helper::image_processing($this->imagepath,$this->width,$this->height,$request->gambar,'',$name);
-		else
-			$fileName = '';
+    public function store(Request $request)
+    {
+        $this->validate($request, Media::$rules);
 
-		$kelas = Media::create($request->except('gambar') + [
-			'gambar' => $fileName
-		]);
+        $name = $request->name;
 
-		return response()
-			->json([
-				'saved' => true,
-				'message' => $this->message. ' ' .$name. ' berhasil ditambah'
-			]);
-	}
+        if (! empty($request->gambar)) {
+            $fileName = Helper::image_processing($this->imagepath, $this->width, $this->height, $request->gambar, '', $name);
+        } else {
+            $fileName = '';
+        }
 
-	public function show($id)
-	{
-		$kelas = Media::with('Cu')->findOrFail($id);
+        $kelas = Media::create($request->except('gambar') + [
+            'gambar' => $fileName,
+        ]);
 
-		return response()
-			->json([
-				'model' => $kelas
-			]);
-	}
+        return response()
+            ->json([
+                'saved' => true,
+                'message' => $this->message.' '.$name.' berhasil ditambah',
+            ]);
+    }
 
-	public function edit($id)
-	{
-		$kelas = Media::findOrFail($id);
+    public function show($id)
+    {
+        $kelas = Media::with('Cu')->findOrFail($id);
 
-		return response()
-				->json([
-						'form' => $kelas,
-						'option' => []
-				]);
-	}
+        return response()
+            ->json([
+                'model' => $kelas,
+            ]);
+    }
 
-	public function update(Request $request, $id)
-	{
-		$this->validate($request,Media::$rules);
+    public function edit($id)
+    {
+        $kelas = Media::findOrFail($id);
 
-		$name = $request->name;
+        return response()
+            ->json([
+                'form' => $kelas,
+                'option' => [],
+            ]);
+    }
 
-		$kelas = Media::findOrFail($id);
+    public function update(Request $request, $id)
+    {
+        $this->validate($request, Media::$rules);
 
-		if(!empty($request->gambar))
-			$fileName = Helper::image_processing($this->imagepath,$this->width,$this->height,$request->gambar,$kelas->gambar, $name);
-		else
-			$fileName = '';
+        $name = $request->name;
 
-		$kelas->update($request->except('gambar') + [
-			'gambar' => $fileName
-		]);
+        $kelas = Media::findOrFail($id);
 
-		return response()
-			->json([
-				'saved' => true,
-				'message' => $this->message. ' ' .$name. ' berhasil diubah'
-			]);
-	}
+        if (! empty($request->gambar)) {
+            $fileName = Helper::image_processing($this->imagepath, $this->width, $this->height, $request->gambar, $kelas->gambar, $name);
+        } else {
+            $fileName = '';
+        }
 
-	public function destroy($id)
-	{
-		$kelas = Media::findOrFail($id);
-		$name = $kelas->name;
+        $kelas->update($request->except('gambar') + [
+            'gambar' => $fileName,
+        ]);
 
-		if(!empty($kelas->gambar)){
-			File::delete($this->imagepath . $kelas->gambar . '.jpg');
-			File::delete($this->imagepath . $kelas->gambar . 'n.jpg');
-		}
+        return response()
+            ->json([
+                'saved' => true,
+                'message' => $this->message.' '.$name.' berhasil diubah',
+            ]);
+    }
 
-		$kelas->delete();
+    public function destroy($id)
+    {
+        $kelas = Media::findOrFail($id);
+        $name = $kelas->name;
 
-		return response()
-			->json([
-				'deleted' => true,
-				'message' => $this->message. ' ' .$name. 'berhasil dihapus'
-			]);
-	}
+        if (! empty($kelas->gambar)) {
+            File::delete($this->imagepath.$kelas->gambar.'.jpg');
+            File::delete($this->imagepath.$kelas->gambar.'n.jpg');
+        }
 
-	public function count()
-	{
-			$id = \Auth::user()->id_cu;
+        $kelas->delete();
 
-			if($id == 0){
-					$table_data = Media::count();
-			}else{
-					$table_data = Media::where('id_cu',$id)->count();
-			}
-			
-			return response()
-			->json([
-					'model' => $table_data
-			]);
-	}
+        return response()
+            ->json([
+                'deleted' => true,
+                'message' => $this->message.' '.$name.'berhasil dihapus',
+            ]);
+    }
+
+    public function count()
+    {
+        $id = \Auth::user()->id_cu;
+
+        if ($id == 0) {
+            $table_data = Media::count();
+        } else {
+            $table_data = Media::where('id_cu', $id)->count();
+        }
+
+        return response()
+            ->json([
+                'model' => $table_data,
+            ]);
+    }
 }

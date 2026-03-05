@@ -13,7 +13,7 @@ export const useMitraLembagaStore = defineStore('mitraLembaga', {
     dataDeletedStatS: '',
     countStat: '',
     headerDataStatS: '',
-    update: [], //update data
+    updateData: [], //update data
     updateStat: '',
     rules: [], //laravel rules
     options: [], //laravel options
@@ -30,7 +30,7 @@ export const useMitraLembagaStore = defineStore('mitraLembaga', {
     getDataDeletedStatS: state => state.dataDeletedStatS,
     getCountStat: state => state.countStat,
     getHeaderDataStatS: state => state.headerDataStatS,
-    getUpdate: state => state.update,
+    getUpdate: state => state.updateData,
     getUpdateStat: state => state.updateStat,
     getRules: state => state.rules,
     getOptions: state => state.options,
@@ -89,13 +89,13 @@ export const useMitraLembagaStore = defineStore('mitraLembaga', {
       try {
         const response = await MitraLembagaAPI.store(form);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -126,13 +126,13 @@ export const useMitraLembagaStore = defineStore('mitraLembaga', {
       try {
         const response = await MitraLembagaAPI.update(id, form);
         if (response.data.saved) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },
@@ -144,13 +144,13 @@ export const useMitraLembagaStore = defineStore('mitraLembaga', {
       try {
         const response = await MitraLembagaAPI.destroy(id);
         if (response.data.deleted) {
-          this.update = response.data;
+          this.updateData = response.data;
           this.updateStat = 'success';
         } else {
           this.updateStat = 'fail';
         }
       } catch (error) {
-        this.update = error.response;
+        this.updateData = error.response;
         this.updateStat = 'fail';
       }
     },

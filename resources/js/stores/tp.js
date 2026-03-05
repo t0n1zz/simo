@@ -11,7 +11,7 @@ export const useTpStore = defineStore('tp', {
         dataStatS: '',
         headerDataStatS: '',
         countStat: '',
-        update: [],
+        updateData: [],
         updateStat: '',
         rules: [],
         options: [],
@@ -26,7 +26,7 @@ export const useTpStore = defineStore('tp', {
         getDataStatS: (state) => state.dataStatS,
         getHeaderDataStatS: (state) => state.headerDataStatS,
         getCountStat: (state) => state.countStat,
-        getUpdate: (state) => state.update,
+        getUpdate: (state) => state.updateData,
         getUpdateStat: (state) => state.updateStat,
         getRules: (state) => state.rules,
         getOptions: (state) => state.options,
@@ -134,13 +134,13 @@ export const useTpStore = defineStore('tp', {
             try {
                 const response = await TpAPI.store(form);
                 if (response.data.saved) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -166,13 +166,13 @@ export const useTpStore = defineStore('tp', {
             try {
                 const response = await TpAPI.update(id, form);
                 if (response.data.saved) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },
@@ -182,13 +182,13 @@ export const useTpStore = defineStore('tp', {
             try {
                 const response = await TpAPI.destroy(id);
                 if (response.data.deleted) {
-                    this.update = response.data;
+                    this.updateData = response.data;
                     this.updateStat = 'success';
                 } else {
                     this.updateStat = 'fail';
                 }
             } catch (error) {
-                this.update = error.response;
+                this.updateData = error.response;
                 this.updateStat = 'fail';
             }
         },

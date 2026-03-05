@@ -2,42 +2,73 @@
 
 namespace App\Support;
 
-class CustomQueryBuilder {
+use Illuminate\Support\Str;
 
-    public function apply($query, $data)
+class CustomQueryBuilder
+{
+    /** @var array<string> */
+    protected array $allowedFilters = [];
+
+    public function apply($query, $data, array $allowedFilters = [])
     {
-        if(isset($data['f'])) {
-            foreach($data['f'] as $filter) {
-                $filter['match'] = isset($filter['filter_match']) ? $ $filter['filter_match'] : 'and';
+        $this->allowedFilters = $allowedFilters;
+
+        if (isset($data['f'])) {
+            foreach ($data['f'] as $filter) {
+                $filter['match'] = $data['filter_match'] ?? 'and';
                 $this->makeFilter($query, $filter);
             }
         }
+
         return $query;
     }
 
     protected function makeFilter($query, $filter)
     {
-        // find the type of column
+        if ($filter['column'] === '*') {
+            $this->globalSearch($filter, $query);
 
-        if(strpos($filter['column'], '.') !== false) {
-            // nested column
+            return;
+        }
 
-            list($relation, $filter['column']) = explode('.', $filter['column']);
+        if (strpos($filter['column'], '.') !== false) {
+            [$relation, $filter['column']] = explode('.', $filter['column']);
             $filter['match'] = 'and';
 
-            if($filter['column'] == 'count') {
-                $this->{camel_case($filter['operator'])}($filter, $query, $relation);
+            if ($filter['column'] == 'count') {
+                $this->{Str::camel($filter['operator'])}($filter, $query, $relation);
             } else {
-                $query->whereHas($relation, function($q) use ($filter) {
-                    $this->{camel_case($filter['operator'])}($filter, $q);
+                $query->whereHas($relation, function ($q) use ($filter) {
+                    $this->{Str::camel($filter['operator'])}($filter, $q);
                 });
             }
         } else {
-
-            // normal column
-            $this->{camel_case($filter['operator'])}($filter, $query);
+            $this->{Str::camel($filter['operator'])}($filter, $query);
         }
+    }
 
+    /**
+     * Searches across all allowed filter columns using OR conditions.
+     */
+    protected function globalSearch(array $filter, $query): void
+    {
+        $searchTerm = $filter['query_1'];
+
+        $query->where(function ($q) use ($searchTerm) {
+            foreach ($this->allowedFilters as $column) {
+                if (strpos($column, '.') !== false) {
+                    [$relation, $relatedColumn] = explode('.', $column);
+                    if ($relatedColumn === 'count') {
+                        continue;
+                    }
+                    $q->orWhereHas($relation, function ($subQ) use ($searchTerm, $relatedColumn) {
+                        $subQ->where($relatedColumn, 'like', '%'.$searchTerm.'%');
+                    });
+                } else {
+                    $q->orWhere($column, 'like', '%'.$searchTerm.'%');
+                }
+            }
+        });
     }
 
     public function equalTo($filter, $query)
@@ -63,14 +94,14 @@ class CustomQueryBuilder {
     public function between($filter, $query)
     {
         return $query->whereBetween($filter['column'], [
-            $filter['query_1'], $filter['query_2']
+            $filter['query_1'], $filter['query_2'],
         ], $filter['match']);
     }
 
     public function notBetween($filter, $query)
     {
         return $query->whereNotBetween($filter['column'], [
-            $filter['query_1'], $filter['query_2']
+            $filter['query_1'], $filter['query_2'],
         ], $filter['match']);
     }
 

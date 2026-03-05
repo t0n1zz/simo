@@ -13,12 +13,12 @@
     <app-modal :show="modalShow" :state="modalState" :title="modalTitle" :button="modalButton" :content="modalContent" :color="modalColor" :size="'modal-lg'" @backgroundClick="modalTutup">
 
 			<!-- title -->
-			<template slot="modal-title">
+			<template #modal-title>
 				{{ modalTitle }}
 			</template>
 
 			<!-- keluar -->
-			<template slot="modal-body1">
+			<template #modal-body1>
 				<div>
 					<h2>Apa itu hard reload?</h2>
 					<p>

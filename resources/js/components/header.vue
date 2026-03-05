@@ -42,7 +42,7 @@
 
 					<!-- saran -->
 					<li class="nav-item">
-						<a href="#" class="navbar-nav-link " @click.prevent="modalOpen('saran')">
+						<a href="#" class="navbar-nav-link " @click.prevent.stop="modalOpen('saran')">
 							<i class="icon-lifebuoy mr-2"></i>Saran
 						</a>
 					</li>
@@ -50,7 +50,7 @@
 
 					<!-- notification -->
 					<li class="nav-item dropdown" @mouseenter="showDropdown('notification')" @mouseleave="hideDropdown('notification')">
-						<a href="#" class="navbar-nav-link dropdown-toggle caret-0" @click.prevent>
+						<a href="#" class="navbar-nav-link dropdown-toggle caret-0" @click.prevent.stop>
 							<i class="icon-bell2"></i>
 							<span class="d-lg-none ml-2">Pemberitahuan</span>
 
@@ -64,12 +64,12 @@
 
 						<div class="dropdown-menu dropdown-menu-right dropdown-content wmin-lg-350" :class="{'show': activeDropdown === 'notification'}" v-if="unreadNotificationStat == 'success'">
 							<div class="dropdown-content-header" v-if="unreadNotification > 0">
-								<a href="#" class="text-default" @click.prevent="fetchNotif()" title="Refresh"><i class="icon-sync"></i></a>
+								<a href="#" class="text-default" @click.prevent.stop="fetchNotif()" title="Refresh"><i class="icon-sync"></i></a>
 								<span class="font-weight-semibold">TERDAPAT {{unreadNotification}} PEMBERITAHUAN</span>
-								<a href="#" class="text-default" @click.prevent="markAllNotifRead()" title="Tandai sudah dibaca"><i class="icon-checkbox-checked"></i></a>
+								<a href="#" class="text-default" @click.prevent.stop="markAllNotifRead()" title="Tandai sudah dibaca"><i class="icon-checkbox-checked"></i></a>
 							</div>
 							<div class="dropdown-content-header" v-else>
-								<a href="#" class="text-default" @click.prevent="fetchNotif()" title="Refresh"><i class="icon-sync"></i></a>
+								<a href="#" class="text-default" @click.prevent.stop="fetchNotif()" title="Refresh"><i class="icon-sync"></i></a>
 								<span class="font-weight-semibold">TIDAK ADA PEMBERITAHUAN <span v-if="notification && notification.length> 0">BARU</span></span>
 								<a href="#" class="text-default" disabled><i class="icon-checkbox-checked"></i></a>
 							</div>
@@ -78,7 +78,7 @@
 								<ul class="media-list" v-if="notification && notification.length > 0">
 									<li class="media" v-for="(notif, index) in notification" :key="index">
 
-										<div class="media-body" @click.prevent="goToPage(notif)" style="cursor:pointer;">
+										<div class="media-body" @click.prevent.stop="goToPage(notif)" style="cursor:pointer;">
 											<div class="media-title pb-1" :class="{'text-muted' : notif.read_at != null}">
 												<span class="font-size-sm"> 
 													<span v-if="notif.data.tipe == 'laporanCu' || notif.data.tipe == 'laporanTp' "><i class="icon-stats-bars2"></i> Laporan Statistik CU</span>
@@ -115,12 +115,12 @@
 
 					<!-- user -->
 					<li class="nav-item dropdown dropdown-user" @mouseenter="showDropdown('user')" @mouseleave="hideDropdown('user')">
-						<a href="#" class="navbar-nav-link dropdown-toggle" @click.prevent v-if="currentUser.aktivis == null">
+						<a href="#" class="navbar-nav-link dropdown-toggle" @click.prevent.stop v-if="currentUser.aktivis == null">
 							<img :src="'/images/user/' + currentUser.gambar + '.jpg'" alt="user image" class="rounded-circle" v-if="currentUser && currentUser.gambar" width="36" height="36">
 							<img src="/images/no_image_man.jpg" alt="user image" class="rounded-circle" width="36" height="36" v-else>
 							<span>{{ currentUser ? currentUser.name : "" }}</span>
 						</a>
-						<a href="#" class="navbar-nav-link dropdown-toggle" @click.prevent v-else>
+						<a href="#" class="navbar-nav-link dropdown-toggle" @click.prevent.stop v-else>
 							<img :src="'/images/aktivis/' + currentUser.aktivis.gambar + '.jpg'" alt="user image" class="rounded-circle" v-if="currentUser && currentUser.aktivis.gambar" width="36" height="36">
 							<img src="/images/no_image_man.jpg" alt="user image" class="rounded-circle" width="36" height="36" v-else>
 							<span>{{ currentUser.aktivis ? currentUser.aktivis.name : "" }}</span>
@@ -136,7 +136,7 @@
 							<div class="dropdown-divider"></div> 
 							
 							<!-- logout -->
-							<a href="#" class="dropdown-item" @click.prevent="modalOpen('logout')"><i class="icon-switch2"></i> Logout</a>
+							<a href="#" class="dropdown-item" @click.prevent.stop="modalOpen('logout')"><i class="icon-switch2"></i> Logout</a>
 						</div>
 					</li>
 					
@@ -170,7 +170,7 @@
 
 					<!-- publikasi -->
 					<li class="nav-item dropdown" v-if="currentUser && currentUser.can['create_artikel'] || currentUser.can['create_artikel_kategori'] || currentUser.can['create_artikel_penulis'] || currentUser.can['index_artikel'] || currentUser.can['index_artikel_kategori'] || currentUser.can['index_artikel_penulis']" @mouseenter="showDropdown('publikasi')" @mouseleave="hideDropdown('publikasi')">
-						<a href="#" class="navbar-nav-link dropdown-toggle" @click.prevent>
+						<a href="#" class="navbar-nav-link dropdown-toggle" @click.prevent.stop>
 							<i class="icon-newspaper mr-2"></i>
 							Publikasi
 						</a>
@@ -179,7 +179,7 @@
 							
 							<!-- tambah -->
 							<div class="dropdown-submenu" v-if="currentUser && currentUser.can['create_artikel'] || currentUser.can['create_artikel_kategori'] || currentUser.can['create_artikel_penulis']" @mouseenter="dropdown('tambahPublikasi')" @mouseleave="dropdown('')">
-								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent>
+								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent.stop>
 									<i class="icon-plus22"></i> Tambah
 								</a>
 								<div class="dropdown-menu dropdown-scrollable" :class="{'show' : dropdownMenu2 == 'tambahPublikasi'}">
@@ -206,7 +206,7 @@
 							<!-- artikel -->
 							<!-- if bkcu account -->
 							<div class="dropdown-submenu" v-if="currentUser.can['index_artikel'] && currentUser.id_cu == 0" :class="{'show' : dropdownMenu2 == 'artikel'}" @mouseenter="dropdown('artikel')" @mouseleave="dropdown('')">
-								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent>
+								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent.stop>
 									<i class="icon-magazine"></i> Artikel
 								</a>
 								<div class="dropdown-menu dropdown-scrollable" :class="{'show' : dropdownMenu2 == 'artikel'}">
@@ -238,7 +238,7 @@
 							<!-- kategori artikel -->
 							<!-- if bkcu account -->
 							<div class="dropdown-submenu" v-if="currentUser.can['index_artikel_kategori'] && currentUser.id_cu == 0" :class="{'show' : dropdownMenu2 == 'kategoriArtikel'}" @mouseenter="dropdown('kategoriArtikel')" @mouseleave="dropdown('')">
-								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent>
+								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent.stop>
 									<i class="icon-grid6"></i> Kategori Artikel
 								</a>
 								<div class="dropdown-menu dropdown-scrollable" :class="{'show' : dropdownMenu2 == 'kategoriArtikel'}">
@@ -270,7 +270,7 @@
 							<!-- penulis artikel -->
 							<!-- if bkcu account -->
 							<div class="dropdown-submenu" v-if="currentUser.can['index_artikel_penulis'] && currentUser.id_cu == 0" :class="{'show' : dropdownMenu2 == 'penulisArtikel'}" @mouseenter="dropdown('penulisArtikel')" @mouseleave="dropdown('')">
-								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent>
+								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent.stop>
 									<i class="icon-pencil6"></i> Penulis Artikel
 								</a>
 								<div class="dropdown-menu dropdown-scrollable" :class="{'show' : dropdownMenu2 == 'penulisArtikel'}">
@@ -305,7 +305,7 @@
 							<!-- pengumuman -->
 							<!-- if bkcu account -->
 							<div class="dropdown-submenu" v-if="currentUser.can['index_pengumuman'] && currentUser.id_cu == 0" :class="{'show' : dropdownMenu2 == 'pengumuman'}" @mouseenter="dropdown('pengumuman')" @mouseleave="dropdown('')">
-								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent>
+								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent.stop>
 									<i class="icon-megaphone"></i> Pengumuman
 								</a>
 								<div class="dropdown-menu dropdown-scrollable" :class="{'show' : dropdownMenu2 == 'pengumuman'}">
@@ -339,7 +339,7 @@
 
 					<!-- kegiatan -->
 					<li class="nav-item dropdown" @mouseenter="showDropdown('kegiatan')" @mouseleave="hideDropdown('kegiatan')">
-						<a href="#" class="navbar-nav-link dropdown-toggle" @click.prevent>
+						<a href="#" class="navbar-nav-link dropdown-toggle" @click.prevent.stop>
 							<i class="icon-calendar3 mr-2"></i>
 							Kegiatan
 						</a>
@@ -348,7 +348,7 @@
 							
 							<!-- tambah -->
 							<div class="dropdown-submenu" v-if="currentUser && currentUser.can['create_diklat_bkcu'] || currentUser.can['create_voting'] || currentUser.can['create_tempat'] " @mouseenter="dropdown('tambahKegiatan')" @mouseleave="dropdown('')">
-								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent>
+								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent.stop>
 									<i class="icon-plus22"></i> Tambah
 								</a>
 								<div class="dropdown-menu dropdown-scrollable" :class="{'show' : dropdownMenu2 == 'tambahKegiatan'}">
@@ -404,7 +404,7 @@
 							<div class="dropdown-divider" v-if="currentUser.can['create_diklat_bkcu'] || currentUser.can['create_pertemuan_bkcu'] || currentUser.can['create_tempat']"></div> 
 
 							<div class="dropdown-submenu" v-if="currentUser.id_cu == 0" :class="{'show' : dropdownMenu2 == 'diklat'}" @mouseenter="dropdown('diklat')" @mouseleave="dropdown('')">
-								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent>
+								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent.stop>
 									<i class="icon-graduation2"></i> Diklat
 								</a>
 								<div class="dropdown-menu dropdown-scrollable" :class="{'show' : dropdownMenu2 == 'diklat'}">
@@ -421,7 +421,7 @@
 							</div>
 
 							<div class="dropdown-submenu" v-if="currentUser.id_cu == 0" :class="{'show' : dropdownMenu2 == 'pertemuan'}" @mouseenter="dropdown('pertemuan')" @mouseleave="dropdown('')">
-								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent>
+								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent.stop>
 									<i class="icon-ungroup"></i> Pertemuan
 								</a>
 								<div class="dropdown-menu dropdown-scrollable" :class="{'show' : dropdownMenu2 == 'pertemuan'}">
@@ -449,7 +449,7 @@
 
 							<!-- peserta -->
 							<div class="dropdown-submenu" v-if="currentUser.id_cu == 0 && currentUser.can['index_diklat_bkcu']" :class="{'show' : dropdownMenu2 == 'pesertaDiklat'}" @mouseenter="dropdown('pesertaDiklat')" @mouseleave="dropdown('')">
-								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent>
+								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent.stop>
 									<i class="icon-people"></i> Peserta
 								</a>
 								<div class="dropdown-menu dropdown-scrollable" :class="{'show' : dropdownMenu2 == 'pesertaDiklat'}">
@@ -475,7 +475,7 @@
 
 							<!-- peserta -->
 							<div class="dropdown-submenu" v-if="currentUser.id_cu != 0 && currentUser.can['index_diklat_bkcu']" :class="{'show' : dropdownMenu2 == 'pesertaDiklat'}" @mouseenter="dropdown('pesertaDiklat')" @mouseleave="dropdown('')">
-								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent>
+								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent.stop>
 									<i class="icon-people"></i> Peserta
 								</a>
 								<div class="dropdown-menu dropdown-scrollable" :class="{'show' : dropdownMenu2 == 'pesertaDiklat'}">
@@ -493,7 +493,7 @@
 
 							<!-- pengaturan -->
 							<div class="dropdown-submenu" v-if="currentUser.id_cu == 0 && currentUser.can['create_diklat_bkcu']" :class="{'show' : dropdownMenu2 == 'pengaturanKegiatan'}" @mouseenter="dropdown('pengaturanKegiatan')" @mouseleave="dropdown('')">
-								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent>
+								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent.stop>
 									<i class="icon-cogs"></i> Pengaturan
 								</a>
 								<div class="dropdown-menu dropdown-scrollable" :class="{'show' : dropdownMenu2 == 'pengaturanKegiatan'}">
@@ -535,7 +535,7 @@
 							<!-- voting -->
 							<!-- if bkcu account -->
 							<div class="dropdown-submenu" v-if="currentUser.can['index_voting'] && currentUser.id_cu == 0" :class="{'show' : dropdownMenu2 == 'voting'}" @mouseenter="dropdown('voting')" @mouseleave="dropdown('')">
-								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent>
+								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent.stop>
 									<i class="icon-point-up"></i> Voting
 								</a>
 								<div class="dropdown-menu dropdown-scrollable" :class="{'show' : dropdownMenu2 == 'voting'}">
@@ -570,7 +570,7 @@
 
 					<!-- anggota cu -->
 					<li class="nav-item dropdown" v-if="currentUser && currentUser.can['create_anggota_cu'] || currentUser.can['create_jalinan_klaim'] || currentUser.can['index_anggota_cu'] || currentUser.can['index_saldo'] || currentUser.can['index_jalinan_klaim'] || currentUser.can['index_jalinan_iuran']" @mouseenter="showDropdown('anggotaCu')" @mouseleave="hideDropdown('anggotaCu')">
-						<a href="#" class="navbar-nav-link dropdown-toggle" @click.prevent>
+						<a href="#" class="navbar-nav-link dropdown-toggle" @click.prevent.stop>
 							<i class="icon-man-woman mr-2"></i>
 							Anggota CU
 						</a>
@@ -579,7 +579,7 @@
 							
 							<!-- tambah -->
 							<div class="dropdown-submenu" v-if="currentUser && currentUser.can['create_anggota_cu'] || currentUser.can['create_jalinan_klaim'] || currentUser.can['create_artikel_penulis']" @mouseenter="dropdown('tambahAnggotaCU')" @mouseleave="dropdown('')">
-								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent>
+								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent.stop>
 									<i class="icon-plus22"></i> Tambah
 								</a>
 								<div class="dropdown-menu dropdown-scrollable" :class="{'show' : dropdownMenu2 == 'tambahAnggotaCU'}">
@@ -611,7 +611,7 @@
 							<!-- anggota cu -->
 							<!-- if bkcu account -->
 							<div class="dropdown-submenu" v-if="currentUser.can['index_anggota_cu'] && currentUser.id_cu == 0" :class="{'show' : dropdownMenu2 == 'anggota_cu'}" @mouseenter="dropdown('anggota_cu')" @mouseleave="dropdown('')">
-								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent>
+								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent.stop>
 									<i class="icon-man-woman"></i> Anggota CU
 								</a>
 								<div class="dropdown-menu dropdown-scrollable" :class="{'show' : dropdownMenu2 == 'anggota_cu'}">
@@ -647,7 +647,7 @@
 
 							<!-- if bkcu account -->
 							<div class="dropdown-submenu" v-if="currentUser.can['index_jalinan_klaim'] && currentUser.id_cu == 0" :class="{'show' : dropdownMenu2 == 'jalinan_klaim'}" @mouseenter="dropdown('jalinan_klaim')" @mouseleave="dropdown('')">
-								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent>
+								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent.stop>
 									<i class="icon-accessibility2"></i> Bantuan Solidaritas Jalinan
 								</a>
 								<div class="dropdown-menu dropdown-scrollable" :class="{'show' : dropdownMenu2 == 'jalinan_klaim'}">
@@ -679,7 +679,7 @@
 							</router-link>
 
 							<div class="dropdown-submenu" v-if="currentUser.can['laporan_jalinan_klaim']" :class="{'show' : dropdownMenu2 == 'laporan_jalinan_klaim'}" @mouseenter="dropdown('laporan_jalinan_klaim')" @mouseleave="dropdown('')">
-								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent>
+								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent.stop>
 									<i class="icon-archive"></i> Laporan Bantuan Solidaritas Jalinan
 								</a>
 								<div class="dropdown-menu dropdown-scrollable" :class="{'show' : dropdownMenu2 == 'laporan_jalinan_klaim'}">
@@ -708,7 +708,7 @@
 
 							<!-- if bkcu account -->
 							<div class="dropdown-submenu" v-if="currentUser.can['index_jalinan_iuran'] && currentUser.id_cu == 0" :class="{'show' : dropdownMenu2 == 'jalinan_iuran'}" @mouseenter="dropdown('jalinan_iuran')" @mouseleave="dropdown('')">
-								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent>
+								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent.stop>
 									<i class="icon-clipboard6"></i> Setoran Solidaritas Jalinan
 								</a>
 								<div class="dropdown-menu dropdown-scrollable" :class="{'show' : dropdownMenu2 == 'jalinan_iuran'}">
@@ -739,7 +739,7 @@
 
 					<!-- organisasi -->
 					<li class="nav-item dropdown" v-if="currentUser && currentUser.can['create_cu'] || currentUser.can['create_tp'] || currentUser.can['create_aktivis'] || currentUser.can['create_produk_cu'] || currentUser.can['create_mitra_orang'] ||  currentUser.can['create_mitra_lembaga'] || currentUser.can['create_pemilihan'] || currentUser.can['create_surat'] || currentUser.can['index_cu'] || currentUser.can['index_tp'] || currentUser.can['index_aktivis'] || currentUser.can['index_produk_cu'] || currentUser.can['index_mitra_orang'] || currentUser.can['index_pemilihan'] || currentUser.can['index_surat']" @mouseenter="showDropdown('organisasi')" @mouseleave="hideDropdown('organisasi')">
-						<a href="#" class="navbar-nav-link dropdown-toggle" @click.prevent>
+						<a href="#" class="navbar-nav-link dropdown-toggle" @click.prevent.stop>
 							<i class="icon-library2 mr-2"></i>
 							Organisasi
 						</a>
@@ -748,7 +748,7 @@
 
 							<!-- tambah -->
 							<div class="dropdown-submenu" v-if="currentUser && currentUser.can['create_cu'] || currentUser.can['create_tp'] || currentUser.can['create_aktivis'] || currentUser.can['create_produk_cu'] || currentUser.can['create_mitra_orang'] ||  currentUser.can['create_mitra_lembaga'] ||  currentUser.can['create_surat']" @mouseenter="dropdown('tambahOrganisasi')" @mouseleave="dropdown('')">
-								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent>
+								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent.stop>
 									<i class="icon-plus22"></i> Tambah
 								</a>
 								<div class="dropdown-menu dropdown-scrollable" :class="{'show' : dropdownMenu2 == 'tambahOrganisasi'}">
@@ -836,7 +836,7 @@
 							<!-- tp -->
 							<!-- if bkcu account -->
 							<div class="dropdown-submenu" v-if="currentUser.can['index_tp'] && currentUser.id_cu == 0" :class="{'show' : dropdownMenu2 == 'tp'}" @mouseenter="dropdown('tp')" @mouseleave="dropdown('')">
-								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent>
+								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent.stop>
 									<i class="icon-home9"></i> TP/KP
 								</a>
 								<div class="dropdown-menu dropdown-scrollable" :class="{'show' : dropdownMenu2 == 'tp'}">
@@ -865,7 +865,7 @@
 							<!-- produkcu -->
 							<!-- if bkcu account -->
 							<div class="dropdown-submenu" v-if="currentUser.can['index_produk_cu'] && currentUser.id_cu == 0" :class="{'show' : dropdownMenu2 == 'produkCu'}" @mouseenter="dropdown('produkCu')" @mouseleave="dropdown('')">
-								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent>
+								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent.stop>
 									<i class="icon-list3"></i> Produk & Pelayanan
 								</a>
 								<div class="dropdown-menu dropdown-scrollable" :class="{'show' : dropdownMenu2 == 'produkCu'}">
@@ -895,7 +895,7 @@
 
 							<!-- if cu account -->
 							<div class="dropdown-submenu" v-if="currentUser.can['index_aktivis']" :class="{'show' : dropdownMenu2 == 'aktivis'}" @mouseenter="dropdown('aktivis')" @mouseleave="dropdown('')">
-								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent>
+								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent.stop>
 									<i class="icon-user-tie"></i> Aktivis
 								</a>
 								<div class="dropdown-menu dropdown-scrollable" :class="{'show' : dropdownMenu2 == 'aktivis'}">
@@ -976,7 +976,7 @@
 							<!-- pemilihan -->
 							<!-- if bkcu account -->
 							<div class="dropdown-submenu" v-if="currentUser.can['index_pemilihan'] && currentUser.id_cu == 0" :class="{'show' : dropdownMenu2 == 'pemilihan'}" @mouseenter="dropdown('pemilihan')" @mouseleave="dropdown('')">
-								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent>
+								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent.stop>
 									<i class="icon-quill4"></i> Pemilihan
 								</a>
 								<div class="dropdown-menu dropdown-scrollable" :class="{'show' : dropdownMenu2 == 'pemilihan'}">
@@ -1010,7 +1010,7 @@
 
 							<!-- surat -->
 							<div class="dropdown-submenu" :class="{'show' : dropdownMenu2 == 'surat'}" v-if="currentUser.can['index_surat'] || currentUser.can['index_surat_masuk']" @mouseenter="dropdown('surat')" @mouseleave="dropdown('')">
-								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent>
+								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent.stop>
 									<i class="icon-envelop2"></i> Surat
 								</a>
 
@@ -1045,7 +1045,7 @@
 
 							<!-- dokumen -->
 							<div class="dropdown-submenu" :class="{'show' : dropdownMenu2 == 'dokumen'}" @mouseenter="dropdown('dokumen')" @mouseleave="dropdown('')">
-								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent>
+								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent.stop>
 									<i class="icon-books"></i> Dokumen
 								</a>
 
@@ -1068,7 +1068,7 @@
 
 							<!-- aset tetap -->
 							<div class="dropdown-submenu" :class="{'show' : dropdownMenu2 == 'asetTetap'}" v-if="currentUser.can['index_aset_tetap'] || currentUser.can['index_aset_tetap_jenis'] || currentUser.can['index_aset_tetap_lokasi']" @mouseenter="dropdown('asetTetap')" @mouseleave="dropdown('')">
-								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent>
+								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent.stop>
 									<i class="icon-bag"></i> Aset Tetap
 								</a>
 
@@ -1105,7 +1105,7 @@
 							
 
 							<div class="dropdown-submenu" v-if="currentUser.can['index_mitra_orang'] || currentUser.can['index_mitra_lembaga']" :class="{'show' : dropdownMenu2 == 'mitra'}" @mouseenter="dropdown('mitra')" @mouseleave="dropdown('')">
-								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent>
+								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent.stop>
 									<i class="icon-briefcase"></i> Mitra
 								</a>
 
@@ -1130,7 +1130,7 @@
 
 					<!-- tata kelola -->
 					<li class="nav-item dropdown" v-if="currentUser && currentUser.can['create_laporan_cu'] || currentUser.can['create_assesment_access'] || currentUser.can['create_assesment_culeg'] || currentUser.can['create_monitoring'] || currentUser.can['index_laporan_cu'] || currentUser.can['index_assesment_access'] || currentUser.can['index_assesment_culeg'] || currentUser.can['index_monitoring'] || currentUser.can['index_monitoring_cu']" @mouseenter="showDropdown('tataKelola')" @mouseleave="hideDropdown('tataKelola')">
-						<a href="#" class="navbar-nav-link dropdown-toggle" @click.prevent>
+						<a href="#" class="navbar-nav-link dropdown-toggle" @click.prevent.stop>
 							<i class="icon-microscope mr-2"></i>
 							Tata Kelola
 						</a>
@@ -1139,7 +1139,7 @@
 
 							<!-- tambah -->
 							<div class="dropdown-submenu" v-if="currentUser && currentUser.can['create_laporan_cu'] || currentUser.can['create_assesment_access'] || currentUser.can['create_monitoring'] || currentUser.can['create_monitoring_cu']" @mouseenter="dropdown('tambahKeuangan')" @mouseleave="dropdown('')">
-								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent>
+								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent.stop>
 									<i class="icon-plus22"></i> Tambah
 								</a>
 								<div class="dropdown-menu dropdown-scrollable" :class="{'show' : dropdownMenu2 == 'tambahKeuangan'}">
@@ -1175,7 +1175,7 @@
 
 							<!-- if bkcu account -->
 							<div class="dropdown-submenu" v-if="currentUser.can['index_laporan_cu'] && currentUser.id_cu == '0'" :class="{'show' : dropdownMenu2 == 'laporanCu'}" @mouseenter="dropdown('laporanCu')" @mouseleave="dropdown('')">
-								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent>
+								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent.stop>
 									<i class="icon-stats-bars2"></i> Laporan Statistik CU
 								</a>
 								<div class="dropdown-menu dropdown-scrollable" :class="{'show' : dropdownMenu2 == 'laporanCu'}">
@@ -1198,7 +1198,7 @@
 
 							<!-- if cu account -->
 							<div class="dropdown-submenu" v-if="currentUser.can['index_laporan_cu'] && currentUser.id_cu != '0'" :class="{'show' : dropdownMenu2 == 'laporanTp'}" @mouseenter="dropdown('laporanTp')" @mouseleave="dropdown('')">
-								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent>
+								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent.stop>
 									<i class="icon-stats-growth"></i> Laporan Statistik CU
 								</a>
 
@@ -1224,7 +1224,7 @@
 							<!-- assesment access -->
 							<!-- if bkcu account -->
 							<div class="dropdown-submenu" v-if="currentUser.can['index_assesment_access'] && currentUser.id_cu == '0'" :class="{'show' : dropdownMenu2 == 'assesmentAccess'}" @mouseenter="dropdown('assesmentAccess')" @mouseleave="dropdown('')">
-								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent>
+								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent.stop>
 									<i class="icon-reading"></i> Self Assesment ACCESS
 								</a>
 								<div class="dropdown-menu dropdown-scrollable" :class="{'show' : dropdownMenu2 == 'assesmentAccess'}">
@@ -1253,7 +1253,7 @@
 							<!-- assesment culeg -->
 							<!-- if bkcu account -->
 							<div class="dropdown-submenu" v-if="currentUser.can['index_assesment_culeg'] && currentUser.id_cu == '0'" :class="{'show' : dropdownMenu2 == 'assesmentCuleg'}" @mouseenter="dropdown('assesmentCuleg')" @mouseleave="dropdown('')">
-								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent>
+								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent.stop>
 									<i class="icon-bookmark4"></i> Self Assesment CULEG
 								</a>
 								<div class="dropdown-menu dropdown-scrollable" :class="{'show' : dropdownMenu2 == 'assesmentCuleg'}">
@@ -1282,7 +1282,7 @@
 							<!-- monitoring -->
 							<!-- if bkcu account -->
 							<div class="dropdown-submenu" v-if="currentUser.can['index_monitoring'] && currentUser.id_cu == '0'" :class="{'show' : dropdownMenu2 == 'monitoring'}" @mouseenter="dropdown('monitoring')" @mouseleave="dropdown('')">
-								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent>
+								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent.stop>
 									<i class="icon-collaboration"></i> Monitoring PUSKOPCUINA
 								</a>
 								<div class="dropdown-menu dropdown-scrollable" :class="{'show' : dropdownMenu2 == 'monitoring'}">
@@ -1315,7 +1315,7 @@
 							<!-- monitoring cu -->
 							<!-- if bkcu account -->
 							<div class="dropdown-submenu" v-if="currentUser.can['index_monitoring_cu'] && currentUser.id_cu == '0'" :class="{'show' : dropdownMenu2 == 'monitoringCu'}" @mouseenter="dropdown('monitoringCu')" @mouseleave="dropdown('')">
-								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent>
+								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent.stop>
 									<i class="icon-spotlight2"></i> Monitoring CU
 								</a>
 								<div class="dropdown-menu dropdown-scrollable" :class="{'show' : dropdownMenu2 == 'monitoringCu'}">
@@ -1357,16 +1357,16 @@
 					</li>
 
 					<!-- pemberdayaan -->
-					<li class="nav-item dropdown" v-if="currentUser && currentUser.can['create_kubn'] || currentUser.can['index_kubn']"">
-						<!-- <a href="#" class="navbar-nav-link dropdown-toggle" data-toggle="dropdown">
+					<li class="nav-item dropdown" v-if="currentUser && (currentUser.can['create_kubn'] || currentUser.can['index_kubn'])" @mouseenter="showDropdown('pemberdayaan')" @mouseleave="hideDropdown('pemberdayaan')">
+						<a href="#" class="navbar-nav-link dropdown-toggle" @click.prevent.stop>
 							<i class="icon-accessibility mr-2"></i>
 							Pemberdayaan
-						</a> -->
+						</a>
 
-						<div class="dropdown-menu">
+						<div class="dropdown-menu" :class="{'show': activeDropdown === 'pemberdayaan'}">
 
 							<div class="dropdown-submenu" v-if="currentUser && currentUser.can['create_kubn']" @mouseenter="dropdown('tambahPemberdayaan')" @mouseleave="dropdown('')">
-								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent>
+								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent.stop>
 									<i class="icon-plus22"></i> Tambah
 								</a>
 								<div class="dropdown-menu dropdown-scrollable" :class="{'show' : dropdownMenu2 == 'tambahPemberdayaan'}">
@@ -1422,7 +1422,7 @@
 
 							<!-- kubn -->
 							<div class="dropdown-submenu" v-if="currentUser.can['index_kubn'] && currentUser.id_cu == 0" :class="{'show' : dropdownMenu2 == 'kubn'}" @mouseenter="dropdown('kubn')" @mouseleave="dropdown('')">
-								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent>
+								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent.stop>
 									<i class="icon-versions"></i> KUBN
 								</a>
 								<div class="dropdown-menu dropdown-scrollable" :class="{'show' : dropdownMenu2 == 'kubn'}">
@@ -1444,7 +1444,7 @@
 
 							<!-- komunitas -->
 							<div class="dropdown-submenu" v-if="currentUser.can['index_kubn'] && currentUser.id_cu == 0" :class="{'show' : dropdownMenu2 == 'kombas'}" @mouseenter="dropdown('kombas')" @mouseleave="dropdown('')">
-								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent>
+								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent.stop>
 									<i class="icon-circles2"></i> Komunitas
 								</a>
 								<div class="dropdown-menu dropdown-scrollable" :class="{'show' : dropdownMenu2 == 'kombas'}">
@@ -1466,7 +1466,7 @@
 
 							<!-- enterpreneur -->
 							<div class="dropdown-submenu" v-if="currentUser.can['index_enterpreneur'] && currentUser.id_cu == 0" :class="{'show' : dropdownMenu2 == 'enterpreneur'}" @mouseenter="dropdown('enterpreneur')" @mouseleave="dropdown('')">
-								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent>
+								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent.stop>
 									<i class="icon-hat"></i> Enterpreneur
 								</a>
 								<div class="dropdown-menu dropdown-scrollable" :class="{'show' : dropdownMenu2 == 'enterpreneur'}">
@@ -1488,7 +1488,7 @@
 
 							<!-- umkm -->
 							<div class="dropdown-submenu" v-if="currentUser.can['index_umkm'] && currentUser.id_cu == 0" :class="{'show' : dropdownMenu2 == 'umkm'}" @mouseenter="dropdown('umkm')" @mouseleave="dropdown('')">
-								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent>
+								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent.stop>
 									<i class="icon-store2"></i> Umkm
 								</a>
 								<div class="dropdown-menu dropdown-scrollable" :class="{'show' : dropdownMenu2 == 'umkm'}">
@@ -1510,7 +1510,7 @@
 
 							<!-- mentor -->
 							<div class="dropdown-submenu" v-if="currentUser.can['index_mentor'] && currentUser.id_cu == 0" :class="{'show' : dropdownMenu2 == 'mentor'}" @mouseenter="dropdown('mentor')" @mouseleave="dropdown('')">
-								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent>
+								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent.stop>
 									<i class="icon-brain"></i> Mentor
 								</a>
 								<div class="dropdown-menu dropdown-scrollable" :class="{'show' : dropdownMenu2 == 'mentor'}">
@@ -1532,7 +1532,7 @@
 
 							<!-- fasilitator -->
 							<div class="dropdown-submenu" v-if="currentUser.can['index_fasilitator'] && currentUser.id_cu == 0" :class="{'show' : dropdownMenu2 == 'fasilitator'}" @mouseenter="dropdown('fasilitator')" @mouseleave="dropdown('')">
-								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent>
+								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent.stop>
 									<i class="icon-unlink2"></i> Fasilitator
 								</a>
 								<div class="dropdown-menu dropdown-scrollable" :class="{'show' : dropdownMenu2 == 'fasilitator'}">
@@ -1605,7 +1605,7 @@
 
 					<!-- pengaturan -->
 					<li class="nav-item dropdown" v-if="currentUser && (currentUser.can['create_user'] || currentUser.can['index_user'])" @mouseenter="showDropdown('settings')" @mouseleave="hideDropdown('settings')">
-						<a href="#" class="navbar-nav-link dropdown-toggle" @click.prevent>
+						<a href="#" class="navbar-nav-link dropdown-toggle" @click.prevent.stop>
 							<i class="icon-cog3"></i>
 							<span class="d-lg-none ml-2">Pengaturan</span>
 						</a>
@@ -1614,7 +1614,7 @@
 							
 							<!-- tambah -->
 							<div class="dropdown-submenu dropdown-submenu-left" v-if="currentUser && currentUser.can['create_user']" @mouseenter="dropdown('tambahPengaturan')" @mouseleave="dropdown('')">
-								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent>
+								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent.stop>
 									<i class="icon-plus22"></i> Tambah
 								</a>
 								<div class="dropdown-menu dropdown-scrollable" :class="{'show' : dropdownMenu2 == 'tambahPengaturan'}">
@@ -1636,7 +1636,7 @@
 							<!-- user -->
 							<!-- if bkcu account -->
 							<div class="dropdown-submenu dropdown-submenu-left" v-if="currentUser.can['index_user'] && currentUser.id_cu == 0" :class="{'show' : dropdownMenu2 == 'user'}" @mouseenter="dropdown('user')" @mouseleave="dropdown('')">
-								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent>
+								<a href="#" class="dropdown-item dropdown-toggle" @click.prevent.stop>
 									<i class="icon-users"></i> User
 								</a>
 								<div class="dropdown-menu dropdown-scrollable" :class="{'show' : dropdownMenu2 == 'user'}">
@@ -1699,7 +1699,7 @@
 		<div class="page-content pt-2 pb-0" v-if="!currentUser.isChangePassword">
 			<div class="content-wrapper">
 				<div class="content">
-					<div class="alert alert-warning alert-styled-left mb-0  cursor-pointer"  @click.prevent="goToProfil()">
+					<div class="alert alert-warning alert-styled-left mb-0  cursor-pointer"  @click.prevent.stop="goToProfil()">
 						<span class="font-weight-semibold">Perhatian!</span> Demi meningkatkan keamanan dari SIMO dan memperkenalkan cara pembuatan password yang lebih kuat dan tidak mudah ditebak, maka diharapkan untuk mengganti password user anda sekarang dengan menuju ke halaman profil dan mengikuti petunjuk penggantian password.
 					</div>
 				</div>
@@ -1756,6 +1756,7 @@
 	import { useTpStore } from '../stores/tp';
 	import { useCuStore } from '../stores/cu';
 	import { useKegiatanBKCUStore } from '../stores/kegiatanBKCU';
+	import { useAnggotaCuImportEsceteStore } from '../stores/anggotaCuImportEscete';
 	import formSaran from "../views/saran/form.vue";
 	import appModal from './modal.vue';
 	import formLogin from './loginForm.vue';
@@ -1777,7 +1778,8 @@
 navbarMenuOpen: false,
 				activeDropdown: null,
 				hideDropdownTimeout: null,
-navbarFirstOpen: false,
+				hideDropdownMenu2Timeout: null,
+				navbarFirstOpen: false,
 				dropdownMenu1: '',
 				dropdownMenu2: '',
 				state: '',
@@ -1854,18 +1856,18 @@ navbarFirstOpen: false,
 						this.notifData.data = data;
 						this.notifData.created_at = notification.created_at;
 						
-						this.$store.commit('notification/pushNotif', this.notifData);
-						this.$store.commit('notification/setUnreadNotification', tempUnread);
+						useNotificationStore().pushNotif(this.notifData);
+						useNotificationStore().setUnreadNotification(tempUnread);
 
 						if(notification.tipe=='NotifUpload'){
 							let data ={}
-							data.message = 'Data Berhasil Diupload' 
-							this.$store.commit('anggotaCuImportEscete/setUpdateStat', 'success');
-							this.$store.commit('anggotaCuImportEscete/setUpdate', data);
+							data.message = 'Data Berhasil Diupload'
+							useAnggotaCuImportEsceteStore().setUpdateStat('success');
+							useAnggotaCuImportEsceteStore().setUpdateData(data);
 						}
 						if(notification.tipe == 'NotifSimpanDraft'){
 							data.message = 'Draft Berhasil Disimpan';
-							this.$store.commit('anggotaCuImportEscete/setUpdateStat', 'success');
+							useAnggotaCuImportEsceteStore().setUpdateStat('success');
 						}
 						// add ui
  					});
@@ -1894,7 +1896,7 @@ navbarFirstOpen: false,
 				}
 
 				if(this.state == 'logout-confirmed'){
-					this.$store.dispatch('auth/logout');
+					useAuthStore().logout();
 					this.$router.push('/login');
 				}
 			},
@@ -1904,14 +1906,20 @@ navbarFirstOpen: false,
 					this.logout();
 				}
 			},
-			dropdown(value){
-				// if(this.isFromLogin){
-					if(this.dropdownMenu2 != value){
-						this.dropdownMenu2 = value;
-					}else{
+			dropdown(value) {
+				if (this.hideDropdownMenu2Timeout) {
+					clearTimeout(this.hideDropdownMenu2Timeout);
+					this.hideDropdownMenu2Timeout = null;
+				}
+				if (value) {
+					this.dropdownMenu2 = value;
+				} else {
+					// Delay clearing so mouse can move from parent item to nested panel without closing
+					this.hideDropdownMenu2Timeout = setTimeout(() => {
 						this.dropdownMenu2 = '';
-					}
-				// }
+						this.hideDropdownMenu2Timeout = null;
+					}, 120);
+				}
 			},
 			goToProfil(){
 				this.$router.push({name: 'profile', params: {id: this.currentUser.id}});
@@ -1935,7 +1943,7 @@ navbarFirstOpen: false,
 				}else if(notif.data.tipe == 'klaimJALINAN'){
 					this.$router.push({name: 'jalinanKlaimCu', params: { cu:  notif.data.url, tp:'semua' }});
 				}
-				this.$store.dispatch('notification/markRead',notif.id);
+				useNotificationStore().markRead(notif.id);
 			},
 			fetchTp(){
 				if(this.currentUser.id_cu != '0'){
@@ -1962,14 +1970,14 @@ navbarFirstOpen: false,
 					page: 1
 				};
 				if(this.modelKegiatanStat != 'success'){
-					this.$store.dispatch('kegiatanBKCU/indexJalanHeader', query);
+					useKegiatanBKCUStore().indexJalanHeader(query);
 				}
 			},
 			fetchNotif(){
-				this.$store.dispatch('notification/get');
+				useNotificationStore().get();
 			},
 			markAllNotifRead(){
-				this.$store.dispatch('notification/markAllRead');
+				useNotificationStore().markAllRead();
 			},
 			logout() {
 				this.modalState = 'loading';
@@ -1990,20 +1998,23 @@ navbarFirstOpen: false,
 				return moment().year();
 			},
 			showDropdown(name) {
-				// Clear any pending hide timeout
 				if (this.hideDropdownTimeout) {
 					clearTimeout(this.hideDropdownTimeout);
 					this.hideDropdownTimeout = null;
 				}
+				if (this.hideDropdownMenu2Timeout) {
+					clearTimeout(this.hideDropdownMenu2Timeout);
+					this.hideDropdownMenu2Timeout = null;
+				}
 				this.activeDropdown = name;
 			},
 			hideDropdown(name) {
-				// Use a small delay before hiding to allow mouse movement to submenus
 				this.hideDropdownTimeout = setTimeout(() => {
 					if (this.activeDropdown === name) {
 						this.activeDropdown = null;
 					}
-				}, 150); // 150ms delay
+					this.hideDropdownTimeout = null;
+				}, 180);
 			}
 		},
 		computed: {

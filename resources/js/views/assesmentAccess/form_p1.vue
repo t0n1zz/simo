@@ -1915,7 +1915,6 @@
 </template>
 
 <script>
-	import { mapGetters } from 'vuex';
 	import Cleave from 'vue-cleave-component';
 	import formKatex from '../laporanCu/formKatex.vue';
 	import appModal from '../../components/modal.vue';
@@ -2741,7 +2740,7 @@
 		},
 		computed: {
 			...mapState(useLaporanCuStore, {
-				updateMessage: 'update',
+				updateMessage: 'updateData',
 				updateStat: 'updateStat'
 			}),
 		}

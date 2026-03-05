@@ -1,10 +1,11 @@
 <template>
 	<div>
+		<VeeForm :form="formStatus" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
 		<!-- message -->
-		<message v-if="errors && errors.any && errors.any('formStatus') && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors && errors.items">
+		<message v-if="errors && errors.any && errors.any() && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors && errors.items">
 		</message>
 
-		<form @submit.prevent="save" data-vv-scope="formStatus">
+		<form @submit.prevent="handleSubmit(onValid)">
       <h5>Selamat Datang, silahkan mengisi presensi</h5>
 			<div class="card card-body">
 				Disini anda dapat mengakses materi untuk kegiatan ini serta anda dapat melakukan interaksi terhadap kegiatan ini.
@@ -67,9 +68,10 @@
           <i class="icon-arrow-right14"></i> Masuk</button>
 
         <button class="btn btn-light btn-block pb-2" @click.prevent="tutup">
-          <i class="icon-arror-left13"></i> Kembali</button>
-      </div> 
-    </form>	
+          <i class="icon-arrow-left13"></i> Kembali</button>
+      </div>
+    </form>
+		</VeeForm>
 
 	</div>
 </template>
@@ -81,6 +83,7 @@
 	import message from "../../components/message.vue";
 	import formInfo from "../../components/formInfo.vue";
 	import checkbox from '../../components/checkbox.vue';
+	import VeeForm from "../../components/VeeForm.vue";
 	import filters from '../../helpers/filters';
 
 	export default {
@@ -88,7 +91,8 @@
 		components: {
 			formInfo,
 			message,
-			checkbox
+			checkbox,
+			VeeForm
 		},
 		data() {
 			return {
@@ -108,15 +112,16 @@
         updatePesertaHadirAct: 'updatePesertaHadir',
         updatePanitiaHadirAct: 'updatePanitiaHadir'
       }),
-      save(){
-				this.$validator.validateAll('formStatus').then((result) => {
-					if(this.state == 'pesertaTerdaftar'){
-						this.updatePesertaHadirAct([this.item.id, this.currentUser.id_aktivis]);
-					}else{
-						this.updatePanitiaHadirAct([this.item.id, this.currentUser.id_aktivis]);
-					}
-				});
-      },
+			onValid() {
+				if (this.state == 'pesertaTerdaftar') {
+					this.updatePesertaHadirAct([this.item.id, this.currentUser.id_aktivis]);
+				} else {
+					this.updatePanitiaHadirAct([this.item.id, this.currentUser.id_aktivis]);
+				}
+			},
+			onInvalid() {
+				this.submited = true;
+			},
 			tutup() {
 				this.$router.push({name: 'dashboard'});
 			}

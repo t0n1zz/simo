@@ -24,10 +24,11 @@
                   </span>
                   <select class="form-control" @input="selectColumn(f, i, $event)" :disabled="itemDataStat !== 'success'">
                     <option disabled value="">Silahkan masukkan kolom pencarian</option>
-                    <option v-for="x in columnData" :value="JSON.stringify(x)" :selected="f.column && x.name === f.column.name"
-                      v-if="x.filter && !x.disable">
-                      {{x.title}}
-                    </option>
+                    <template v-for="x in columnData" :key="x ? x.name : undefined">
+                      <option v-if="x && x.filter && !x.disable" :value="JSON.stringify(x)" :selected="f.column && x.name === f.column.name">
+                        {{x.title}}
+                      </option>
+                    </template>
                   </select>
                 </div>
               </div>
@@ -171,10 +172,11 @@
                     <span class="input-group-text">Urutkan</span>
                   </span>
                   <select class="form-control" @input="updateOrderColumn" :disabled="itemDataStat !== 'success'">
-                    <option v-for="column in columnData" :value="column.name" :selected="column && column.name == query.order_column"
-                      v-if="column.sort && !column.disable">
-                      {{column.title}}
-                    </option>
+                    <template v-for="column in columnData" :key="column ? column.name : undefined">
+                      <option v-if="column && column.sort && !column.disable" :value="column.name" :selected="column && column.name == query.order_column">
+                        {{column.title}}
+                      </option>
+                    </template>
                   </select>
                 </div>  
               </div>
@@ -378,7 +380,8 @@
     <!-- modal -->
     <app-modal :show="modalShow" :state="modalState" :title="modalTitle" :content="modalContent" @batal="modalTutup" @tutup="modalTutup" @successOk="modalTutup" @failOk="modalTutup" @backgroundClick="modalTutup">
 
-      <div slot="modal-body1">
+      <template #modal-body1>
+      <div>
         <!-- excel -->
         <div v-else-if="modalOptionState === 'excel'">
           <h2 class="text-center">Excel</h2>
@@ -392,7 +395,7 @@
           <hr/>
 
           <!-- uploadexcel -->
-          <button class="btn btn-light btn-block" v-for="(ex, index) in excelUploads" v-if="ex.enabled" @click.prevent="modalExcelUploadOpen(index)"><i class="icon-file-upload"></i> {{ ex.button }}</button>
+          <button class="btn btn-light btn-block" v-for="(ex, index) in excelUploads" v-show="ex.enabled" @click.prevent="modalExcelUploadOpen(index)"><i class="icon-file-upload"></i> {{ ex.button }}</button>
 
           <hr v-if="excelUploads"/>
 
@@ -400,9 +403,11 @@
           <button class="btn btn-light btn-block" @click.prevent="modalTutup"><i class="icon-cross"></i> Tutup</button>
         </div>
       </div>
+      </template>
 
       <!-- excel download all data -->
-      <div slot="modal-body2" class="text-center">
+      <template #modal-body2>
+      <div class="text-center">
         
         <!-- excel table -->
         <div v-if="state === 'excel'">
@@ -481,8 +486,9 @@
               :name="title + '.xls'"
               class="btn btn-light">
               <i class="icon-folder-download2"></i> Download Excel</json-excel>   
-          </div>
         </div>
+      </div>
+      </template>
 
         <!-- upload excel -->
         <div v-else-if="state === 'upload'">

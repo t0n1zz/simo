@@ -129,62 +129,71 @@
 </template>
 
 <script>
-	import { mapGetters } from 'vuex';
+	import { useAuthStore } from '../../stores/auth';
+	import { useSuratStore } from '../../stores/surat';
+	import { useSuratKodeStore } from '../../stores/suratKode';
+
 	export default {
-		props:['kelas'],
-		data(){
+		props: ['kelas'],
+		data() {
 			return {
+				authStore: useAuthStore(),
+				suratStore: useSuratStore(),
+				suratKodeStore: useSuratKodeStore(),
 				tipe: '',
-				periode: ''
-			}
+				periode: '',
+			};
 		},
-		created(){
+		created() {
 			this.fetchData();
 		},
 		watch: {
-			'$route' (to, from){
-				// check current page meta
+			$route() {
 				this.fetchData();
 			},
-			modelDataStat(value){
-				if(value === "success"){
+			modelDataStat(value) {
+				if (value === 'success') {
 					this.periode = this.$route.params.periode;
 					this.changePeriode(this.periode);
 				}
 			},
-    },
+		},
 		methods: {
-			fetch(){
-				this.$router.push({name: this.kelas + 'Cu', params:{cu:this.$route.params.cu, tipe: this.tipe, periode: this.periode} });
+			fetch() {
+				this.$router.push({ name: this.kelas + 'Cu', params: { cu: this.$route.params.cu, tipe: this.tipe, periode: this.periode } });
 			},
-			fetchData(){
-				if(this.modelData.length == 0){
-					this.$store.dispatch(this.kelas + '/getPeriode', this.$route.params.cu);
+			fetchData() {
+				if (this.modelData.length === 0) {
+					this.suratStore.fetchPeriode(this.$route.params.cu);
 				}
 				this.periode = this.$route.params.periode;
 				this.tipe = this.$route.params.tipe;
 			},
-			fetchTipe(periode){
-				this.$store.dispatch('suratKode/getTipe', periode);
+			fetchTipe(periode) {
+				this.suratKodeStore.getTipe(periode);
 				this.tipe = this.$route.params.tipe;
 			},
-			changePeriode(periode){
+			changePeriode(periode) {
 				this.fetchTipe(periode);
 				this.tipe = 'semua';
-			}
+			},
 		},
 		computed: {
-			...mapGetters('auth',{
-				currentUser: 'currentUser'
-			}),
-			...mapGetters('surat',{
-				modelData: 'periode',
-				modelDataStat: 'periodeStat',
-			}),
-			...mapGetters('suratKode',{
-				modelTipe: 'dataS',
-				modelTipeStat: 'dataStatS',
-			}),
-		}
+			currentUser() {
+				return this.authStore.currentUser;
+			},
+			modelData() {
+				return this.suratStore.periode;
+			},
+			modelDataStat() {
+				return this.suratStore.periodeStat;
+			},
+			modelTipe() {
+				return this.suratKodeStore.dataS;
+			},
+			modelTipeStat() {
+				return this.suratKodeStore.dataStatS;
+			},
+		},
 	}
 </script>

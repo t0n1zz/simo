@@ -1,7 +1,9 @@
 <template>
 	<div>
 
-		<form @submit.prevent="save" data-vv-scope="formData">
+		<VeeForm :form="formData" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
+
+		<form @submit.prevent="handleSubmit(onValid)">
 
 		<div class="row">
 
@@ -17,18 +19,28 @@
 
 			<!-- select CU -->
 			<div class="col-md-12" v-if="currentUser.id_cu == 0">
-				<div class="form-group">
+				<div class="form-group" :class="{ 'has-error': errors && errors.has && errors.has('id_cu') }">
 
 					<!-- title -->
-					<h5>Tipe:</h5>
+					<h5 :class="{ 'text-danger': errors && errors.has && errors.has('id_cu') }">
+						<i class="icon-cross2" v-if="errors && errors.has && errors.has('id_cu')"></i>
+						Tipe:
+					</h5>
 
 					<!-- select -->
-					<select name="cu" data-width="100%" class="form-control" v-model="formData.id_cu" @change="changeCU($event.target.value)">
-						<option disabled value="">Silahkan pilih CU</option>
-						<option value="0">PUSKOPCUINA</option>
-						<option v-for="cu in modelCU" :value="cu.id">{{cu.name}}</option>
-					</select>
+					<Field name="id_cu" v-slot="{ field }" :rules="'required'" label="Tipe">
+						<select data-width="100%" class="form-control" v-bind="field" v-model="formData.id_cu" @change="changeCU($event.target.value)">
+							<option disabled value="">Silahkan pilih CU</option>
+							<option value="0">PUSKOPCUINA</option>
+							<option v-for="cu in modelCU" :key="cu.id" :value="cu.id">{{ cu.name }}</option>
+						</select>
+					</Field>
 
+					<!-- error message -->
+					<small class="text-muted text-danger" v-if="errors && errors.has && errors.has('id_cu')">
+						<i class="icon-arrow-small-right"></i> {{ errors && errors.first && errors.first('id_cu') }}
+					</small>
+					<small class="text-muted" v-else>&nbsp;</small>
 				</div>
 			</div>
 										
@@ -132,6 +144,7 @@
 		</div> 
 
 		</form>
+		</VeeForm>
 
 	</div>
 </template>
@@ -149,6 +162,8 @@
 	import wajibBadge from "../../components/wajibBadge.vue";
 	import identitas from "./identitas.vue";
 	import DataViewer from '../../components/dataviewer2.vue';
+	import VeeForm from "../../components/VeeForm.vue";
+	import { Field } from 'vee-validate';
 
 	export default {
 		props: ['selected'],
@@ -159,7 +174,9 @@
 			infoIcon,
 			wajibBadge,
 			identitas,
-			DataViewer
+			DataViewer,
+			VeeForm,
+			Field
 		},
 		data() {
 			return {
@@ -255,14 +272,12 @@
 				this.formData.aktivis = {};
 				this.fetchAktivis(this.query);
 			},
-			save(){
-				this.$validator.validateAll('formData').then((result) => {
-					if (result) {
-						this.userStore.update([this.selected.id, this.formData]);
-					}else{
-						this.submited = true;
-					}	
-				});
+			onValid(){
+				this.userStore.update([this.selected.id, this.formData]);
+				this.submited = false;
+			},
+			onInvalid(){
+				this.submited = true;
 			},
 			tutup(){
 				this.$emit('tutup');
@@ -279,7 +294,7 @@
 				return this.cuStore.headerDataStatS;
 			},
 			updateMessage() {
-				return this.cuStore.update;
+				return this.cuStore.updateData;
 			},
 			updateStat() {
 				return this.cuStore.updateStat;

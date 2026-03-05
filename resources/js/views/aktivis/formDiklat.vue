@@ -1,6 +1,7 @@
 <template>
 	<div>
-	<form @submit.prevent="save" data-vv-scope="form">	
+		<VeeForm :form="form" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
+		<form @submit.prevent="handleSubmit(onValid)">
 		<div class="row">
 
 			<!-- name -->
@@ -13,7 +14,8 @@
 						Tipe Kegiatan: <wajib-badge></wajib-badge></h6>
 
 					<!-- select -->
-					<select class="form-control" name="kegiatan_tipe" v-model="form.kegiatan_tipe" data-width="100%" v-validate="'required'" data-vv-as="Tipe Kegiatan">
+					<Field name="kegiatan_tipe" rules="required" v-model="form.kegiatan_tipe" v-slot="{ field }">
+						<select class="form-control" data-width="100%" v-bind="field">
 						<option disabled value="">Silahkan pilih tipe kegiatan</option>
 						<option value="diklat_bkcu">Diklat PUSKOPCUINA</option>
 						<option value="pertemuan_bkcu">Pertemuan PUSKOPCUINA</option>
@@ -23,7 +25,8 @@
 						<option value="pertemuan_eksternal">Pertemuan Eksternal</option>
 						<option value="diklat_bkcu_internal" v-if="currentUser.id_cu == 0">Diklat Internal PUSKOPCUINA</option>
 						<option value="pertemuan_bkcu_internal" v-if="currentUser.id_cu == 0">Pertemuan Internal PUSKOPCUINA</option>
-					</select>
+						</select>
+					</Field>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('form.kegiatan_tipe')">
@@ -43,7 +46,9 @@
 						Nama Diklat: <wajib-badge></wajib-badge></h6>
 
 					<!-- text -->
-					<input type="text" name="kegiatan_name" class="form-control" placeholder="Silahkan masukkan nama diklat" v-validate="'required'" data-vv-as="Nama Diklat" v-model="form.kegiatan_name">
+					<Field name="kegiatan_name" rules="required" v-model="form.kegiatan_name" v-slot="{ field }">
+						<input type="text" class="form-control" placeholder="Silahkan masukkan nama diklat" v-bind="field">
+					</Field>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('form.kegiatan_name')">
@@ -63,7 +68,9 @@
 						Tempat: <wajib-badge></wajib-badge></h6>
 
 					<!-- text -->
-					<input type="text" name="tempat" class="form-control" placeholder="Silahkan masukkan tempat diklat" v-validate="'required'" data-vv-as="Tempat diklat" v-model="form.tempat">
+					<Field name="tempat" rules="required" v-model="form.tempat" v-slot="{ field }">
+						<input type="text" class="form-control" placeholder="Silahkan masukkan tempat diklat" v-bind="field">
+					</Field>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('form.tempat')">
@@ -83,7 +90,9 @@
 						Nama Lembaga Penyelenggara: <wajib-badge></wajib-badge></h6>
 
 					<!-- text -->
-					<input type="text" name="penyelenggara" class="form-control" placeholder="Silahkan masukkan nama lembaga penyelenggara diklat" v-validate="'required'" data-vv-as="Penyelenggara" v-model="form.penyelenggara">
+					<Field name="penyelenggara" rules="required" v-model="form.penyelenggara" v-slot="{ field }">
+						<input type="text" class="form-control" placeholder="Silahkan masukkan nama lembaga penyelenggara diklat" v-bind="field">
+					</Field>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('form.penyelenggara')">
@@ -116,8 +125,10 @@
 						Tgl. Mulai: <wajib-badge></wajib-badge></h6>
 
 					<!-- input -->
-					<date-picker @dateSelected="form.datang = $event" :defaultDate="form.datang"></date-picker>	
-					<input name="datang" v-model="form.datang" v-show="false" v-validate="'required'" data-vv-as="Tgl. mulai"/>
+					<date-picker @dateSelected="form.datang = $event" :defaultDate="form.datang"></date-picker>
+					<Field name="datang" rules="required" v-model="form.datang" v-slot="{ field }">
+						<input type="hidden" v-bind="field" />
+					</Field>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('form.datang')">
@@ -137,8 +148,10 @@
 						Tgl. Selesai: <wajib-badge></wajib-badge></h6>
 
 					<!-- input -->
-					<date-picker @dateSelected="form.pulang = $event" :defaultDate="form.pulang"></date-picker>	
-					<input name="selesai" v-model="form.pulang" v-show="false" v-validate="'required'" data-vv-as="Tgl selesai"/>
+					<date-picker @dateSelected="form.pulang = $event" :defaultDate="form.pulang"></date-picker>
+					<Field name="pulang" rules="required" v-model="form.pulang" v-slot="{ field }">
+						<input type="hidden" v-bind="field" />
+					</Field>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('form.pulang')">
@@ -166,18 +179,21 @@
 		<div class="d-block d-md-none">
 
 			<button type="submit" class="btn btn-primary btn-block pb-2">
-				<i class="icon-floppy-d isk"></i> Simpan</button>
+				<i class="icon-floppy-disk"></i> Simpan</button>
 
 			<button type="button" class="btn btn-light btn-block pb-2" @click.prevent="tutup">
 				<i class="icon-cross"></i> Tutup</button>
 		</div> 
-	</form>	
+		</form>
+		</VeeForm>
 	</div>
 </template>
 
 <script>
 	import { useAuthStore } from '../../stores/auth';
 	import { useAktivisStore } from '../../stores/aktivis';
+	import VeeForm from '../../components/VeeForm.vue';
+	import { Field } from 'vee-validate';
 	import Cleave from 'vue-cleave-component';
 	import DatePicker from "../../components/datePicker.vue";
 	import wajibBadge from "../../components/wajibBadge.vue";
@@ -187,7 +203,9 @@
 		components: {
 			Cleave,
 			DatePicker,
-			wajibBadge
+			wajibBadge,
+			VeeForm,
+			Field
 		},
 		data() {
 			return {
@@ -236,17 +254,13 @@
 			}
 		},
 		methods: {
-			save(){
-				let formData = {};
-				formData.diklat = this.form;
-				this.$validator.validateAll('form').then((result) => {
-					if (result) {
-						this.aktivisStore.saveDiklat([this.id_aktivis, formData]);
-						this.submited = false;
-					}else{
-						this.submited = true;
-					}	
-				});	
+			onValid() {
+				const formData = { diklat: this.form };
+				this.aktivisStore.saveDiklat([this.id_aktivis, formData]);
+				this.submited = false;
+			},
+			onInvalid() {
+				this.submited = true;
 			},
 			tutup(){
 				this.$emit('tutup');

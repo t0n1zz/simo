@@ -1,31 +1,72 @@
 <?php
 
 namespace App\Support;
+
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Validation\ValidationException;
 
-trait Dataviewer {
-
+trait Dataviewer
+{
     public function scopeAdvancedFilter($query, $columns = [])
     {
-        return $this->process($query, request()->all())
-            ->orderBy(
-                request('order_column', 'created_at'),
-                request('order_direction', 'desc')
-            )
-            ->paginate(request('limit', 10));
+        $result = $this->process($query, request()->all());
 
-        // $result = $this->process($query, request()->all());
+        $orderColumn = request('order_column', 'created_at');
+        $orderDirection = request('order_direction', 'desc');
 
-        // if (count($columns) > 0) {
-        //     $result = $result->select($columns);
-        // }
+        $this->applyOrdering($result, $orderColumn, $orderDirection);
 
-        // return $result
-		// ->orderBy(
-        //         request('order_column', 'created_at'),
-        //         request('order_direction', 'desc')
-        //     )
-        //     ->paginate(request('limit', 10));
+        return $result->paginate(request('limit', 10));
+    }
+
+    /**
+     * Applies ordering, resolving relation columns (e.g. "kategori.name")
+     * into a subquery so the database can sort properly.
+     */
+    protected function applyOrdering($query, string $column, string $direction): void
+    {
+        if (strpos($column, '.') === false) {
+            $query->orderBy($column, $direction);
+
+            return;
+        }
+
+        [$relationName, $relatedColumn] = explode('.', $column, 2);
+
+        if (! method_exists($this, $relationName)) {
+            $query->orderBy($column, $direction);
+
+            return;
+        }
+
+        $relation = $this->{$relationName}();
+
+        if ($relation instanceof BelongsTo) {
+            $relatedTable = $relation->getRelated()->getTable();
+            $foreignKey = $relation->getForeignKeyName();
+            $ownerKey = $relation->getOwnerKeyName();
+
+            $subQuery = $relation->getRelated()->newQuery()
+                ->select($relatedColumn)
+                ->whereColumn("{$relatedTable}.{$ownerKey}", "{$this->getTable()}.{$foreignKey}")
+                ->limit(1);
+
+            $query->orderBy($subQuery, $direction);
+        } elseif ($relation instanceof HasOne) {
+            $relatedTable = $relation->getRelated()->getTable();
+            $foreignKey = $relation->getForeignKeyName();
+            $localKey = $relation->getLocalKeyName();
+
+            $subQuery = $relation->getRelated()->newQuery()
+                ->select($relatedColumn)
+                ->whereColumn("{$relatedTable}.{$foreignKey}", "{$this->getTable()}.{$localKey}")
+                ->limit(1);
+
+            $query->orderBy($subQuery, $direction);
+        } else {
+            $query->orderBy($column, $direction);
+        }
     }
 
     public function process($query, $data)
@@ -42,29 +83,27 @@ trait Dataviewer {
             'f.*.column' => 'required|in:'.$this->whiteListColumns(),
             'f.*.operator' => 'required_with:f.*.column|in:'.$this->allowedOperators(),
             'f.*.query_1' => 'required',
-            'f.*.query_2' => 'required_if:f.*.operator,between,not_between'
+            'f.*.query_2' => 'required_if:f.*.operator,between,not_between',
         ]);
 
-        if($v->fails()) {
-            // debug
-            return dd($v->messages()->all());
-
-            throw new ValidationException;
+        if ($v->fails()) {
+            throw ValidationException::withMessages($v->errors()->toArray());
         }
-        return (new CustomQueryBuilder)->apply($query, $data);
+
+        return (new CustomQueryBuilder)->apply($query, $data, $this->allowedFilters);
     }
 
-    protected function whiteListColumns()
+    protected function whiteListColumns(): string
     {
-        return implode(',', $this->allowedFilters);
+        return implode(',', array_merge(['*'], $this->allowedFilters));
     }
 
-    protected function orderableColumns()
+    protected function orderableColumns(): string
     {
         return implode(',', $this->orderable);
     }
 
-    protected function allowedOperators()
+    protected function allowedOperators(): string
     {
         return implode(',', [
             'equal_to',
@@ -82,7 +121,7 @@ trait Dataviewer {
             'less_than_count',
             'greater_than_count',
             'equal_to_count',
-            'not_equal_to_count'
+            'not_equal_to_count',
         ]);
     }
 }
