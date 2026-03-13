@@ -51,10 +51,13 @@ export const useDistrictsStore = defineStore('districts', {
             }
         },
 
+        // Load districts by kabupaten (regency) id
+        // Legacy code used `indexRegencies`, but the actual backend
+        // endpoint here is `getRegencies`, so we delegate to that.
         async indexRegencies(id) {
             this.dataStatS = 'loading';
             try {
-                const response = await DistrictsAPI.indexRegencies(id);
+                const response = await DistrictsAPI.getRegencies(id);
                 this.dataS = response.data.model;
                 this.dataStatS = 'success';
             } catch (error) {

@@ -1014,7 +1014,7 @@ class PublicController extends Controller
 
 	public function testroute()
 	{
-		// abort(404);
+		abort(404);
 
 		// $kelas = \App\Models\JalinanIuran::with('anggota.anggota_cu','anggota.anggota_cu_cu')->findOrFail(1);
 		// $produks = \App\Models\ProdukCu::where('id_cu',22)->where('jalinan',1)->get();
@@ -1050,6 +1050,12 @@ class PublicController extends Controller
 		// \Spatie\Permission\Models\Permission::create(['guard_name' => 'api', 'name' => 'create_monitoring_cu_keputusan']);
 		// \Spatie\Permission\Models\Permission::create(['guard_name' => 'api', 'name' => 'update_monitoring_cu']);
 		// \Spatie\Permission\Models\Permission::create(['guard_name' => 'api', 'name' => 'destroy_monitoring_cu']);
+
+		\Spatie\Permission\Models\Permission::create(['guard_name' => 'api', 'name' => 'upload_kubn']);
+		\Spatie\Permission\Models\Permission::create(['guard_name' => 'api', 'name' => 'upload_kombas']);
+		\Spatie\Permission\Models\Permission::create(['guard_name' => 'api', 'name' => 'upload_umkm']);
+		\Spatie\Permission\Models\Permission::create(['guard_name' => 'api', 'name' => 'upload_mentor']);
+		\Spatie\Permission\Models\Permission::create(['guard_name' => 'api', 'name' => 'upload_fasilitator']);
 
 		// give permission
 		// $users = App\Models\User::where('id','!=',1)->where('id_cu',0)->get();

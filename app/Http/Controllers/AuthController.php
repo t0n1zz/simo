@@ -3,8 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Date;
-use Illuminate\Support\Facades\Auth;
+
 
 class AuthController extends Controller
 {
@@ -13,19 +12,12 @@ class AuthController extends Controller
      *
      * @return void
      */
-    public function __construct()
-    {
-        $this->middleware('auth:api', ['except' => ['login']]);
-    }
-
-    /**
-     * Login user and generate Sanctum token.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function login()
     {
-        $credentials = request(['username', 'password']);
+        $credentials = $this->validate(request(), [
+            'username' => 'required|string|max:100',
+            'password' => 'required|string|max:200',
+        ]);
 
         // Attempt to authenticate user
         if (! auth()->attempt($credentials)) {
@@ -42,8 +34,8 @@ class AuthController extends Controller
         }
 
         // Update login timestamp
-        $user->login = Date::now();
-        $user->update();
+        $user->login = now();
+        $user->save();
 
         // Generate Sanctum token (expiration from config/sanctum.php)
         $token = $user->createToken('api-token')->plainTextToken;
@@ -116,8 +108,4 @@ class AuthController extends Controller
         ]);
     }
 
-    public function guard()
-    {
-        return Auth::guard('api');
-    }
 }

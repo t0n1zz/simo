@@ -1,107 +1,66 @@
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import { createRouter, createWebHistory } from 'vue-router';
-// import './helpers/filter.js'; // TODO: Migrate Vue 2 filters to Vue 3 (use methods/computed instead)
+import { vTooltip } from 'floating-vue';
+import 'floating-vue/dist/style.css';
 import Admin from './admin.vue';
 import routes from './routes';
 import axios from 'axios';
 import moment from 'moment';
 import { initialize } from './helpers/general';
-// Vuex store has been fully removed; Pinia is now the only state management.
-
-// Register ECharts renderer and components for vue-echarts (dashboard charts)
+import { filters } from './helpers/filters.js';
 import './echarts';
-
-// VeeValidate 4: define global rules so forms can use validation schemas
 import './helpers/veeValidate';
-
-console.log('🚀 App.js: Starting initialization...');
 
 // Configure axios
 window.axios = axios;
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-console.log('✅ Axios configured');
 
 // Configure moment
 window.moment = moment;
 window.moment.locale('id');
-console.log('✅ Moment configured');
 
 // Create Pinia store
-console.log('📦 Creating Pinia store...');
 const pinia = createPinia();
-console.log('✅ Pinia created');
 
 // Create Vue Router
-console.log('🧭 Creating Vue Router with', routes.length, 'routes...');
 const router = createRouter({
   history: createWebHistory('/admins'),
   routes
 });
-console.log('✅ Router created');
 
 // Create Vue app
-console.log('🏗️ Creating Vue app...');
 const app = createApp(Admin);
-console.log('✅ Vue app created');
 
 // Use plugins
-console.log('🔌 Installing Pinia plugin...');
 app.use(pinia);
-console.log('✅ Pinia installed');
-
-import { filters } from './helpers/filters.js';
 app.config.globalProperties.$filters = filters;
-console.log('✅ Global filters registered');
 
-// Import and configure Floating Vue (tooltip library)
-// TEMPORARILY DISABLED: Not compatible with v-tooltip:position syntax
-// TODO: Either migrate all v-tooltip:position to v-tooltip or find compatible library
-// import FloatingVue from 'floating-vue';
-// import 'floating-vue/dist/style.css';
-// console.log('🔌 Installing Floating Vue (tooltip library)...');
-// app.use(FloatingVue, {
-//   themes: {
-//     tooltip: {
-//       placement: 'top',
-//       delay: { show: 200, hide: 0 }
-//     }
-//   }
-// });
-// console.log('✅ Floating Vue installed');
-
-// Register a no-op tooltip directive to prevent errors
-// This is a temporary solution until we migrate to a proper tooltip library
-console.log('🔧 Registering stub tooltip directive...');
+// Tooltip directive — wraps FloatingVue's vTooltip with support for v-tooltip:position argument syntax
 app.directive('tooltip', {
-  mounted() {
-    // No-op: do nothing, just prevent Vue warnings
-  }
+  beforeMount(el, binding, vnode, prevVnode) {
+    vTooltip.beforeMount(el, normalizeTooltipBinding(binding), vnode, prevVnode);
+  },
+  updated(el, binding, vnode, prevVnode) {
+    vTooltip.updated(el, normalizeTooltipBinding(binding), vnode, prevVnode);
+  },
+  beforeUnmount(el, binding, vnode, prevVnode) {
+    vTooltip.beforeUnmount(el, binding, vnode, prevVnode);
+  },
 });
-console.log('✅ Stub tooltip directive registered');
+function normalizeTooltipBinding(binding) {
+  const value = typeof binding.value === 'string'
+    ? { content: binding.value, placement: binding.arg || 'top' }
+    : { placement: binding.arg || 'top', ...binding.value };
+  return { ...binding, value };
+}
 
-console.log('🔌 Installing Router plugin...');
 app.use(router);
-console.log('✅ Router installed');
 
-// Initialize app (auth guards, etc.)
-console.log('⚙️ Initializing helpers (auth guards, axios interceptors)...');
-try {
-  initialize(pinia, router);
-  console.log('✅ Helpers initialized');
-} catch (error) {
-  console.error('❌ Error initializing helpers:', error);
-}
+// Initialize app (auth guards, axios interceptors)
+initialize(pinia, router);
 
-// Mount app
-console.log('🎯 Mounting app to #app...');
-try {
-  app.mount('#app');
-  console.log('✅✅✅ APP MOUNTED SUCCESSFULLY! ✅✅✅');
-} catch (error) {
-  console.error('❌❌❌ ERROR MOUNTING APP:', error);
-  console.error('Error stack:', error.stack);
-}
+app.mount('#app');
 
 // Export for module usage
 export { router, pinia };

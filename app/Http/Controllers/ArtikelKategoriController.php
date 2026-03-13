@@ -1,121 +1,121 @@
 <?php
+
 namespace App\Http\Controllers;
 
-use DB;
 use App\Models\ArtikelKategori;
+use DB;
 use Illuminate\Http\Request;
 
-class ArtikelKategoriController extends Controller{
+class ArtikelKategoriController extends Controller
+{
+    public function index()
+    {
+        DB::statement('set @cnt:=0');
 
+        $table_data = ArtikelKategori::with('Cu')->withCount('hasArtikel')->advancedFilter();
 
-	public function index()
-	{
-			DB::statement(DB::raw('set @cnt:=0'));
+        return response()
+            ->json([
+                'model' => $table_data,
+            ]);
+    }
 
-    	$table_data = ArtikelKategori::with('Cu')->withCount('hasArtikel')->advancedFilter();
+    public function get()
+    {
+        $table_data = ArtikelKategori::where('id', '!=', 1)->select('id', 'name')->orderby('name', 'asc')->get();
 
-    	return response()
-			->json([
-				'model' => $table_data
-			]);
-	}
+        return response()
+            ->json([
+                'model' => $table_data,
+            ]);
+    }
 
-	public function get()
-	{
-		$table_data = ArtikelKategori::where('id','!=',1)->select('id','name')->orderby('name','asc')->get();
+    public function indexCu($id)
+    {
+        $table_data = ArtikelKategori::with('Cu')->withCount('hasArtikel')->where('id_cu', $id)->advancedFilter();
 
-		return response()
-			->json([
-				'model' => $table_data
-			]);
-  }
-  
-  public function indexCu($id)
-	{
-		$table_data = ArtikelKategori::with('Cu')->withCount('hasArtikel')->where('id_cu',$id)->advancedFilter();
+        return response()
+            ->json([
+                'model' => $table_data,
+            ]);
+    }
 
-		return response()
-			->json([
-				'model' => $table_data
-			]);
-	}
+    public function getCu($id)
+    {
+        $table_data = ArtikelKategori::where('id_cu', '=', $id)->select('id', 'name')->orderby('name', 'asc')->get();
 
-	public function getCu($id)
-	{
-		$table_data = ArtikelKategori::where('id_cu','=',$id)->select('id','name')->orderby('name','asc')->get();
+        return response()
+            ->json([
+                'model' => $table_data,
+            ]);
+    }
 
-		return response()
-			->json([
-				'model' => $table_data
-			]);
-	}
+    public function create()
+    {
+        return response()
+            ->json([
+                'form' => ArtikelKategori::initialize(),
+                'rules' => ArtikelKategori::$rules,
+                'option' => [],
+            ]);
+    }
 
-	public function create()
-	{
-		return response()
-			->json([
-					'form' => ArtikelKategori::initialize(),
-					'rules' => ArtikelKategori::$rules,
-					'option' => []
-			]);
-	}
+    public function store(Request $request)
+    {
+        $this->validate($request, ArtikelKategori::$rules);
 
-	public function store(Request $request)
-	{
-		$this->validate($request,ArtikelKategori::$rules);
+        $name = $request->name;
 
-		$name = $request->name;
+        $kelas = ArtikelKategori::create($request->all());
 
-		$kelas = ArtikelKategori::create($request->all());
-		
-		return response()
-			->json([
-				'saved' => true,
-				'message' => 'Kategori ' .$name. ' berhasil ditambah',
-				'id' => $kelas->id
-			]);	
-	}
+        return response()
+            ->json([
+                'saved' => true,
+                'message' => 'Kategori '.$name.' berhasil ditambah',
+                'id' => $kelas->id,
+            ]);
+    }
 
-	public function edit($id)
-	{
-		$kelas = ArtikelKategori::findOrFail($id);
+    public function edit($id)
+    {
+        $kelas = ArtikelKategori::findOrFail($id);
 
-		return response()
-				->json([
-						'form' => $kelas,
-						'option' => []
-				]);
-	}
+        return response()
+            ->json([
+                'form' => $kelas,
+                'option' => [],
+            ]);
+    }
 
-	public function update(Request $request, $id)
-	{
-		$this->validate($request,ArtikelKategori::$rules);
+    public function update(Request $request, $id)
+    {
+        $this->validate($request, ArtikelKategori::$rules);
 
-		$name = $request->name;
+        $name = $request->name;
 
-		$kelas = ArtikelKategori::findOrFail($id);
+        $kelas = ArtikelKategori::findOrFail($id);
 
-		$kelas->update($request->all());
-		
-		return response()
-			->json([
-				'saved' => true,
-				'message' => 'Kategori ' .$name. ' berhasil diubah',
-				'id' => $kelas->id
-			]);	
-	}
+        $kelas->update($request->all());
 
-	public function destroy($id)
-	{
-		$kelas = ArtikelKategori::findOrFail($id);
-		$name = $kelas->name;
+        return response()
+            ->json([
+                'saved' => true,
+                'message' => 'Kategori '.$name.' berhasil diubah',
+                'id' => $kelas->id,
+            ]);
+    }
 
-		$kelas->delete();
+    public function destroy($id)
+    {
+        $kelas = ArtikelKategori::findOrFail($id);
+        $name = $kelas->name;
 
-		return response()
-			->json([
-				'deleted' => true,
-				'message' => 'Kategori ' .$name. 'berhasil dihapus'
-			]);
-	}
+        $kelas->delete();
+
+        return response()
+            ->json([
+                'deleted' => true,
+                'message' => 'Kategori '.$name.'berhasil dihapus',
+            ]);
+    }
 }

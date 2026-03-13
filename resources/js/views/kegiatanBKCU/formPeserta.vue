@@ -20,7 +20,12 @@
 
 				<!-- select -->
 				<Field name="asal" v-slot="{ field }" :rules="'required'" label="Asal">
-					<select class="form-control" data-width="100%" v-bind="field" v-model="formPeserta.asal" @change="changeAsal($event.target.value)">
+					<select
+						class="form-control"
+						data-width="100%"
+						:value="formPeserta.asal"
+						@change="(e) => { field.onChange(e); changeAsal(e.target.value); }"
+					>
 						<option disabled value="">Silahkan pilih asal</option>
 						<option value="dalam">Dalam gerakan</option>
 						<option value="luar">Luar gerakan (Perseorangan)</option>

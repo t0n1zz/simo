@@ -51,10 +51,13 @@ export const useVillagesStore = defineStore('villages', {
             }
         },
 
+        // Load villages by district id
+        // Legacy code expected `indexDistricts`, but the actually
+        // working endpoint here is `getDistricts`, so we delegate.
         async indexDistricts(id) {
             this.dataStatS = 'loading';
             try {
-                const response = await VillagesAPI.indexDistricts(id);
+                const response = await VillagesAPI.getDistricts(id);
                 this.dataS = response.data.model;
                 this.dataStatS = 'success';
             } catch (error) {

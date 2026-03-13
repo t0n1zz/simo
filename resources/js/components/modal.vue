@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<Teleport to="body">
 		<div class="modal-mask" @click="backgroundClick" v-show="created">
 			<transition name="modal-effect" enter-active-class="animated bounceInUp" leave-active-class="animated bounceOutDown" mode="out-in"
 			  v-on:enter="beforeEnter" v-on:after-leave="afterLeave">
@@ -169,7 +169,7 @@
 									</div>
 
 									<!-- normal1 -->
-									<div v-else-if="state === 'normal1'" key="normal1">
+									<div v-else-if="state === 'normal1'" key="normal1" class="modal-body-content">
 										<slot name="modal-body1"></slot>
 										<div class="modal-footer no-padding">
 											<slot name="modal-footer1"></slot>
@@ -221,7 +221,7 @@
 				</div>
 			</transition>
 		</div>
-	</div>
+	</Teleport>
 </template>
 
 <script>
@@ -229,6 +229,7 @@
 	import ErrorLogAPI from '../api/errorLog.js';
 
 	export default {
+		emits: ['tutup', 'backgroundClick', 'batal', 'confirmOk', 'successOk', 'failOk'],
 		props: {
 			show: {
 				type: Boolean,

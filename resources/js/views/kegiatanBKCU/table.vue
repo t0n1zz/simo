@@ -952,7 +952,7 @@ export default {
       currentUser: "currentUser",
     }),
     ...mapState(useKegiatanBKCUStore, {
-      updateMessage: "update",
+      updateMessage: "updateData",
       updateStat: "updateStat",
     }),
   },

@@ -1249,26 +1249,22 @@
         }
       },
       getFilters() {
-        const f = {}
-
-        this.appliedFilters.forEach((filter, i) => {
-          f[`f[${i}][column]`] = filter.column.name
-          f[`f[${i}][operator]`] = filter.operator.name
-          f[`f[${i}][query_1]`] = filter.query_1
-          f[`f[${i}][query_2]`] = filter.query_2
-        })
-
-        return f
+        // Return nested f array so API can serialize to f[0][column]=* for Laravel
+        const f = this.appliedFilters.map((filter) => ({
+          column: filter.column?.name ?? filter.column,
+          operator: filter.operator?.name ?? filter.operator,
+          query_1: filter.query_1 != null ? String(filter.query_1) : '',
+          query_2: filter.query_2 != null ? String(filter.query_2) : ''
+        }))
+        return { f }
       },
       fetch() {
-        const filters = this.getFilters();
-
+        const filters = this.getFilters()
         const params = {
-          ...filters,
-          ...this.query
-        };
-
-        this.$emit('fetch', params);
+          ...this.query,
+          ...filters
+        }
+        this.$emit('fetch', params)
       },
       fetchExcelAll() {
         this.modalState = 'loading';

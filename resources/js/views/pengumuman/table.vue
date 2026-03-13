@@ -268,7 +268,7 @@
 			...mapState(usePengumumanStore, {
 				itemData: 'dataS',
 				itemDataStat: 'dataStatS',
-				updateMessage: 'update',
+				updateMessage: 'updateData',
 				updateStat: 'updateStat'
 			}),
 		}

@@ -49,25 +49,71 @@ class CustomQueryBuilder
 
     /**
      * Searches across all allowed filter columns using OR conditions.
+     * Only includes columns that exist on the model's table (skips virtual attributes like
+     * has_artikel_count, utamakan when not a real column, etc.).
+     * Supports nested relation columns (e.g. pekerjaan_aktif.cu.name) via nested whereHas.
      */
     protected function globalSearch(array $filter, $query): void
     {
-        $searchTerm = $filter['query_1'];
+        $searchTerm = trim((string) ($filter['query_1'] ?? request()->input('f.0.query_1') ?? ''));
+        if ($searchTerm === '') {
+            return;
+        }
 
-        $query->where(function ($q) use ($searchTerm) {
+        $model = $query->getModel();
+        $tableColumns = $model->getConnection()->getSchemaBuilder()->getColumnListing($model->getTable());
+
+        $query->where(function ($q) use ($searchTerm, $tableColumns) {
             foreach ($this->allowedFilters as $column) {
                 if (strpos($column, '.') !== false) {
-                    [$relation, $relatedColumn] = explode('.', $column);
-                    if ($relatedColumn === 'count') {
+                    $parts = explode('.', $column);
+                    if (end($parts) === 'count') {
                         continue;
                     }
-                    $q->orWhereHas($relation, function ($subQ) use ($searchTerm, $relatedColumn) {
-                        $subQ->where($relatedColumn, 'like', '%'.$searchTerm.'%');
-                    });
-                } else {
+                    if (count($parts) === 2) {
+                        [$relation, $relatedColumn] = $parts;
+                        $q->orWhereHas($relation, function ($subQ) use ($searchTerm, $relatedColumn) {
+                            $subQ->where($relatedColumn, 'like', '%'.$searchTerm.'%');
+                        });
+                    } else {
+                        $column = array_pop($parts);
+                        $this->globalSearchNestedRelation($q, $parts, $column, $searchTerm);
+                    }
+                } elseif (in_array($column, $tableColumns, true)) {
                     $q->orWhere($column, 'like', '%'.$searchTerm.'%');
                 }
             }
+        });
+    }
+
+    /**
+     * Builds nested whereHas for relation paths like pekerjaan_aktif.cu.name.
+     * The top-level call uses orWhereHas (OR with other search columns);
+     * deeper levels use whereHas (AND within the relation chain).
+     */
+    protected function globalSearchNestedRelation($query, array $relationChain, string $column, string $searchTerm): void
+    {
+        $relation = array_shift($relationChain);
+
+        $query->orWhereHas($relation, function ($subQ) use ($relationChain, $column, $searchTerm) {
+            $this->applyDeepWhereHas($subQ, $relationChain, $column, $searchTerm);
+        });
+    }
+
+    /**
+     * Recursively applies whereHas (AND) for deeper levels of the relation chain.
+     */
+    private function applyDeepWhereHas($query, array $relationChain, string $column, string $searchTerm): void
+    {
+        if (empty($relationChain)) {
+            $query->where($column, 'like', '%'.$searchTerm.'%');
+
+            return;
+        }
+
+        $relation = array_shift($relationChain);
+        $query->whereHas($relation, function ($subQ) use ($relationChain, $column, $searchTerm) {
+            $this->applyDeepWhereHas($subQ, $relationChain, $column, $searchTerm);
         });
     }
 

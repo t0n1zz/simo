@@ -127,10 +127,9 @@
 												Tgl. Mulai: <wajib-badge></wajib-badge></h5>
 
 											<!-- input -->
-											<Field name="mulai" rules="required" v-model="form.mulai" v-slot="{ field }">
-												<input type="hidden" v-bind="field" />
+											<Field name="mulai" rules="required" v-slot="{ handleChange }">
+												<date-picker @dateSelected="(val) => { form.mulai = val; handleChange(val); }" :defaultDate="form.mulai"></date-picker>
 											</Field>
-											<date-picker @dateSelected="form.mulai = $event" :defaultDate="form.mulai"></date-picker>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors && errors.has && errors.has('form.mulai')">
@@ -150,10 +149,9 @@
 												Tgl. Selesai: <wajib-badge></wajib-badge></h5>
 
 											<!-- input  -->
-											<Field name="selesai" rules="required" v-model="form.selesai" v-slot="{ field }">
-												<input type="hidden" v-bind="field" />
+											<Field name="selesai" rules="required" v-slot="{ handleChange }">
+												<date-picker @dateSelected="(val) => { form.selesai = val; handleChange(val); }" :defaultDate="form.selesai"></date-picker>
 											</Field>
-											<date-picker @dateSelected="form.selesai = $event" :defaultDate="form.selesai"></date-picker>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors && errors.has && errors.has('form.selesai')">
@@ -293,10 +291,13 @@
 
 									<!-- peserta -->
 									<div class="col-md-12">
-										<div class="form-group">
+										<div class="form-group" :class="{ 'has-error': sasaranError }">
 
 											<!-- title -->
-											<h5>Sasaran Peserta: <wajib-badge></wajib-badge></h5>
+											<h5 :class="{ 'text-danger': sasaranError }">
+												<i class="icon-cross2" v-if="sasaranError"></i>
+												Sasaran Peserta: <wajib-badge></wajib-badge>
+											</h5>
 
 											<div class="form-check form-check-inline">
 												<label class="form-check-label">
@@ -376,14 +377,20 @@
 													Vendor sMartCU
 												</label>
 											</div>
-
+											<div class="mt-1">
+												<small class="text-muted text-danger" v-if="sasaranError">
+													<i class="icon-arrow-small-right"></i> {{ sasaranError }}
+												</small>
+												<small class="text-muted" v-else>&nbsp;</small>
+											</div>
 										</div>
 									</div>
 									<!-- sasaran cu -->
 									<div class="col-md-12" v-if="this.$route.params.tipe == 'diklat_bkcu'">
-										<div class="form-group">
+										<div class="form-group" :class="{ 'has-error': sasaranCuError }">
 											<!-- title -->
-											<h5>
+											<h5 :class="{ 'text-danger': sasaranCuError }">
+												<i class="icon-cross2" v-if="sasaranCuError"></i>
 												Sasaran CU: <wajib-badge></wajib-badge>
 											</h5>
 											<div class="form-check form-check-inline">
@@ -400,6 +407,12 @@
 														@change="updateFormCu(cu.id, $event.target.checked)">CU {{ cu.name
 														}}
 												</label>
+											</div>
+											<div class="mt-1">
+												<small class="text-muted text-danger" v-if="sasaranCuError">
+													<i class="icon-arrow-small-right"></i> {{ sasaranCuError }}
+												</small>
+												<small class="text-muted" v-else>&nbsp;</small>
 											</div>
 										</div>
 									</div>
@@ -635,8 +648,12 @@
 											<!-- title -->
 											<h5>Kerangka Acuan:</h5>
 
-											<ckeditor type="classic" 
-											:config="ckeditorNoImageConfig" v-model="form.keterangan"></ckeditor>
+											<rich-text-editor
+												ref="richEditorKeterangan"
+												v-model="form.keterangan"
+												placeholder="Mulai menulis kerangka acuan..."
+												image-folder="kegiatan"
+											></rich-text-editor>
 
 										</div>
 									</div>
@@ -648,8 +665,12 @@
 											<!-- title -->
 											<h5>Jadwal:</h5>
 
-											<ckeditor type="classic"
-											:config="ckeditorNoImageConfig"  v-model="form.jadwal"></ckeditor>
+											<rich-text-editor
+												ref="richEditorJadwal"
+												v-model="form.jadwal"
+												placeholder="Mulai menulis jadwal..."
+												image-folder="kegiatan"
+											></rich-text-editor>
 										</div>
 									</div>
 									
@@ -686,7 +707,7 @@
 							</div>
 
 							<data-table :items="itemDataPanitia" :columnData="columnDataPanitia" :itemDataStat="itemDataPanitiaStat">
-								<template slot="item-desktop" slot-scope="props">
+								<template #item-desktop="props">
 									<tr :class="{ 'bg-info': selectedItemPanitia.index == props.index + 1}" class="text-nowrap" @click="selectedRow(props.item, props.index + 1, 'panitia')" v-if="props.item">
 										<td>{{ props.index + 1 }}</td>
 										<td>
@@ -778,29 +799,26 @@
 		<app-modal :show="modalShow" :state="modalState" :title="modalTitle" :content="modalContent" :size="modalSize" :color="modalColor" @batal="modalTutup" @tutup="modalTutup" @confirmOk="modalConfirmOk" @successOk="modalTutup" @failOk="modalTutup"  @backgroundClick="modalBackgroundClick">
 
 			<!-- title -->
-			<template slot="modal-title">
+			<template #modal-title>
 				{{ modalTitle }}
 			</template>
 
-			<template slot="modal-body1">
+			<template #modal-body1>
 				<!-- panitia -->
-				<form-panitia 
-				:mode="formPanitiaMode"
-				:selected="selectedItemPanitia"
-				@createPanitia="createPanitia"
-				@editPanitia="editPanitia"
-				@tutup="modalTutup" v-if="state == 'tambahPanitia' || state == 'ubahPanitia'"></form-panitia>
-				<!-- pilih -->
-				<form-pilih 
-				:mode="formPilihMode"
-				:selected="selectedItemPilih"
-				@createPilih="createPilih"
-				@editPilih="editPilih"
-				@tutup="modalTutup" v-else-if="state == 'tambahPilih' || state == 'ubahPilih'"></form-pilih>
+				<form-panitia
+					v-if="state == 'tambahPanitia' || state == 'ubahPanitia'"
+					:key="'panitia-' + state + '-' + (modalShow ? 1 : 0)"
+					:mode="formPanitiaMode"
+					:selected="selectedItemPanitia"
+					:formKey="'panitia-form-' + state + '-' + (modalShow ? 1 : 0)"
+					@createPanitia="createPanitia"
+					@editPanitia="editPanitia"
+					@tutup="modalTutup"
+				></form-panitia>
 			</template>
 
 			<!-- tambah tempat -->
-			<template slot="modal-body2">
+			<template #modal-body2>
 				<form-tempat 
 				:id_provinces="form.id_provinces"
 				:id_regencies="form.id_regencies"
@@ -838,6 +856,7 @@
 	import DatePicker from "../../components/datePicker.vue";
 	import VeeForm from "../../components/VeeForm.vue";
 	import { Field } from 'vee-validate';
+	import RichTextEditor from '../../components/RichTextEditor.vue';
 
 	export default {
 		components: {
@@ -855,7 +874,8 @@
 			wajibBadge,
 			DatePicker,
 			VeeForm,
-			Field
+			Field,
+			RichTextEditor,
 		},
 		data() {
 			return {
@@ -870,31 +890,8 @@
 				formAllCu: false,
 				sasaranCu: [],
 				isSasaran_cu: '',
-				ckeditorNoImageConfig: {
-					toolbar: {
-						items: [
-							'heading',
-							'|',
-							'bold',
-							'italic',
-							'link',
-							'bulletedList',
-							'numberedList',
-							'blockQuote',
-							'insertTable',
-							'mediaEmbed',
-							'undo',
-							'redo'
-						]
-					},
-					table: {
-						contentToolbar: [
-							'tableColumn',
-							'tableRow',
-							'mergeTableCells'
-						]
-					},
-				},
+				sasaranError: '',
+				sasaranCuError: '',
 				cleaveOption: {
           date:{
             date: true,
@@ -938,7 +935,7 @@
 					{ title: 'Email' },
 					{ title: 'No. Hp' },
 				],
-				selectedItemPanitia: '',
+				selectedItemPanitia: {},
 				formPanitiaMode: '',
 				itemDataPanitia: [],
 				piagamData:[],
@@ -1051,15 +1048,42 @@
 				}
 			},
 			updateStat(value){
+				// ignore initial/loading states
+				if (!value || value === 'loading') {
+					return;
+				}
+				
+				// default modal styling
 				this.modalShow = true;
-				this.modalState = value;
 				this.modalColor = '';
 
-				if(value === "success"){
-					this.modalTitle = this.updateResponse.message;
-				}else{
+				if (value === 'success') {
+					this.modalState = 'success';
+					this.modalTitle = this.updateResponse?.message || 'Data kegiatan berhasil disimpan';
+					this.modalContent = '';
+					return;
+				}
+
+				// Some older endpoints may return an empty array ([]) even when the
+				// operation actually succeeded. In that case, avoid showing an
+				// error modal and show a generic success instead.
+				if (
+					value === 'fail' &&
+					(
+						!this.updateResponse ||
+						(Array.isArray(this.updateResponse) && this.updateResponse.length === 0)
+					)
+				) {
+					this.modalState = 'success';
+					this.modalTitle = 'Data kegiatan berhasil disimpan';
+					this.modalContent = '';
+					return;
+				}
+
+				if (value === 'fail') {
+					this.modalState = 'fail';
 					this.modalTitle = 'Oops terjadi kesalahan :(';
-					this.modalContent = this.updateResponse;
+					this.modalContent = this.updateResponse || { message: 'Terjadi kesalahan saat menyimpan data.' };
 				}
 			},
 			updateTempatStat(value){
@@ -1077,12 +1101,48 @@
 			}
     },
 		methods: {
-			onValid() {
+			async onValid() {
 				this.form.sasaran = this.sasaran;
 				this.form.panitia = this.itemDataPanitia;
 				this.form.pilih = this.itemDataPilih;
 				this.form.sasaranCu = this.sasaranCu.map(String);
 				this.state = '';
+
+				// reset custom validation errors
+				this.sasaranError = '';
+				this.sasaranCuError = '';
+
+				// require at least one sasaran peserta
+				if (!this.sasaran || this.sasaran.length === 0) {
+					this.sasaranError = 'Minimal satu sasaran peserta harus dipilih.';
+				}
+
+				// require at least one sasaran CU when tipe diklat_bkcu
+				if (this.$route.params.tipe === 'diklat_bkcu' && (!this.sasaranCu || this.sasaranCu.length === 0)) {
+					this.sasaranCuError = 'Minimal satu sasaran CU harus dipilih.';
+				}
+
+				if (this.sasaranError || this.sasaranCuError) {
+					window.scrollTo(0, 0);
+					this.submited = true;
+					return;
+				}
+
+				try {
+					const [finalKeterangan, finalJadwal] = await Promise.all([
+						this.$refs.richEditorKeterangan.prepareForSave(),
+						this.$refs.richEditorJadwal.prepareForSave()
+					]);
+					this.form.keterangan = finalKeterangan;
+					this.form.jadwal = finalJadwal;
+				} catch (err) {
+					this.modalShow = true;
+					this.modalState = 'fail';
+					this.modalTitle = 'Gagal mengunggah gambar';
+					this.modalContent = { message: err?.message || 'Terjadi kesalahan. Silakan coba lagi.' };
+					this.submited = false;
+					return;
+				}
 
 				const formData = toMulipartedForm(this.form, this.$route.meta.mode);
 				if (this.$route.meta.mode == 'edit') {
@@ -1202,31 +1262,16 @@
 				this.selectedItemPilih = {};
 				this.modalTutup(); 
 			},
-			save() {
-				this.form.sasaran = this.sasaran;
-				this.form.panitia = this.itemDataPanitia;
-				this.form.pilih = this.itemDataPilih;
-				this.form.sasaranCu = this.sasaranCu.map(String);
-				this.state = '';
-				
-				const formData = toMulipartedForm(this.form, this.$route.meta.mode);
-				this.$validator.validateAll('form').then((result) => {
-					if (result) {
-						if(this.$route.meta.mode == 'edit'){
-							this.updateKegiatan([this.$route.params.id, formData]);
-						}else{
-							this.storeKegiatan([this.$route.params.tipe ,formData]);
-						}
-						this.submited = false;
-					}else{
-						window.scrollTo(0, 0);
-						this.submited = true;
-					}
-				});
-			},
 			back(){
 				if(this.$route.meta.isDetail){
-					this.$router.push({name: this.kelas + 'Detail', params: { id: this.form.id }});
+					// From detail -> edit -> back: return to detail view
+					this.$router.push({
+						name: this.kelas + 'Detail',
+						params: {
+							id: this.form.id,
+							tipe: this.form.tipe || this.$route.params.tipe,
+						},
+					});
 				}else{
 					if(this.$route.meta.mode == 'edit'){
 						this.$router.push({name: this.kelas, params:{tipe:this.form.tipe, periode: this.momentYear()}});
@@ -1250,6 +1295,10 @@
 
 				if(isMobile){
 					this.selectedItemPanitia = itemMobile;
+				}
+
+				if (state == 'tambahPanitia') {
+					this.selectedItemPanitia = {};
 				}
 
 				if (state == 'hapusPanitia') {
@@ -1302,10 +1351,15 @@
 				}
 			},
 			modalTutup() {
- 				if(this.updateStat == 'success' && this.state == ''){
+				// When the modal is in success state and we're not inside another
+				// modal flow (like hapusPanitia), treat closing as a successful save.
+				if (this.modalState === 'success' && this.state === '') {
 					this.resetUpdateStat();
 					this.back();
+					this.modalShow = false;
+					return;
 				}
+
 				this.modalShow = false;
 			},
 			modalBackgroundClick(){

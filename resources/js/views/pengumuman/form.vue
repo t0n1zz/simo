@@ -149,7 +149,7 @@
 				};
 
 				if (this.state == 'ubah') {
-					this.pengumumanStore.update([this.id, payload]);
+					this.pengumumanStore.update(this.id, payload);
 				} else {
 					if (this.currentUser.id_cu != 0) {
 						payload.id_cu = this.currentUser.id_cu;

@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<VeeForm :form="formPanitia" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
+		<VeeForm :form="formPanitia" :form-key="formKey" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit }">
 		<form @submit.prevent="handleSubmit(onValid)">
 
 		<!-- asal -->
@@ -12,9 +12,16 @@
 				Asal:
 			</h5>
 
-			<!-- select -->
+			<!-- select: value and change handled explicitly so formPanitia.asal updates and DataViewer shows -->
 			<Field name="asal" v-slot="{ field }" :rules="'required'" label="Asal">
-				<select class="form-control" data-width="100%" v-bind="field" v-model="formPanitia.asal" @change="changeAsal($event.target.value)">
+				<select
+					class="form-control"
+					data-width="100%"
+					:name="field.name"
+					:value="formPanitia.asal"
+					@change="(e) => { formPanitia.asal = e.target.value; field.onChange(e); changeAsal(e.target.value) }"
+					@blur="field.onBlur"
+				>
 					<option disabled value="">Silahkan pilih asal</option>
 					<option value="dalam">Dalam gerakan</option>
 					<option value="luar">Luar gerakan (Perseorangan)</option>
@@ -29,50 +36,16 @@
 			<small class="text-muted" v-else>&nbsp;</small>
 		</div>
 
-		<div class="card" v-if="formPanitia.aktivis_id">
-			<div class="card-header bg-info text-white header-elements-inline">
-				<h6 class="card-title"></h6>
-				<div class="header-elements" v-if="mode != 'edit'">
-					<button type="button" class="btn btn-danger" @click.prevent="deleteSelected"><i class="icon-cross2 mr-2"></i> Batal</button>
-				</div>
-			</div>
-			<div class="card-body">
-				<div class="media flex-column flex-sm-row mt-0">
-					<div class="mr-sm-3 mb-2 mb-sm-0">
-						<div class="card-img-actions" v-if="formPanitia.asal == 'dalam'">
-								<img :src="'/images/aktivis/' + formPanitia.gambar + '.jpg'" class="img-fluid img-preview rounded" v-if="formPanitia.gambar" >
-								<img :src="'/images/no_image.jpg'" class="img-fluid img-preview rounded" v-else>
-						</div>
-						<div class="card-img-actions" v-if="formPanitia.asal == 'luar'">
-								<img :src="'/images/mitra_orang/' + formPanitia.gambar + '.jpg'" class="img-fluid img-preview rounded" v-if="formPanitia.gambar" >
-								<img :src="'/images/no_image.jpg'" class="img-fluid img-preview rounded" v-else>
-						</div>
-						<div class="card-img-actions" v-if="formPanitia.asal == 'luar lembaga'">
-								<img :src="'/images/mitra_lembaga/' + formPanitia.gambar + '.jpg'" class="img-fluid img-preview rounded" v-if="formPanitia.gambar" >
-								<img :src="'/images/no_image.jpg'" class="img-fluid img-preview rounded" v-else>
-						</div>
-					</div>
-
-					<div class="media-body">
-						<ul class="list list-unstyled mb-0">
-							<li><b>Nama:</b> {{ formPanitia.name }}</li>
-							<li><b>Lembaga:</b> {{ formPanitia.lembaga }}</li>
-							<li><b>Email:</b> {{ formPanitia.email }}</li>
-							<li><b>Hp:</b> {{ formPanitia.hp }}</li>
-						</ul>
-					</div>
-				</div>
-			</div>
-		</div>
+		
 
 		<!-- if asal dalam -->
 		<data-viewer :title="'Aktivis'" :columnData="columnDataDalam" :itemData="itemDataDalam" :query="query" :itemDataStat="itemDataDalamStat" @fetch="fetchDalam" :isDasar="'true'" :isNoButtonRow="'true'" v-if="formPanitia.asal == 'dalam' && formPanitia.aktivis_id == '' && mode == 'create'">
 
 			<!-- item  -->
 			<template #item-desktop="props">
-				<tr :class="{ 'bg-info': selectedItem.id === props.item.id }" class="text-nowrap" @click="selectedRow(props.item)">
+				<tr :class="{ 'bg-info': selectedItem && selectedItem.id === props.item.id }" class="text-nowrap" @click="selectedRow(props.item)">
 					<td>
-						{{ props.index + 1 + (+itemDataDalam.current_page-1) * +itemDataDalam.per_page + '.'}}
+						{{ props.index + 1 + (+(itemDataDalam.current_page || 1) - 1) * +(itemDataDalam.per_page || 5) + '.'}}
 					</td>
 					<td>
 						<img :src="'/images/' + kelas + '/' + props.item.gambar + 'n.jpg'" class="img-rounded img-fluid wmin-sm" v-if="props.item.gambar">
@@ -98,18 +71,18 @@
 						</span>
 						<span v-else>-</span>
 					</td>
-					<td v-html="formatCheckTingkatAktivis(props.item.pekerjaan_aktif.tingkat)">
+					<td v-html="formatCheckTingkatAktivis(props.item.pekerjaan_aktif && props.item.pekerjaan_aktif.tingkat)">
 					</td>
 					<td>
-						<check-value :value="props.item.pekerjaan_aktif.name" v-if="props.item.pekerjaan_aktif"></check-value>
+						<check-value :value="props.item.pekerjaan_aktif && props.item.pekerjaan_aktif.name" v-if="props.item.pekerjaan_aktif"></check-value>
 						<span v-else>-</span>
 					</td>
 					<td>
-						<check-value :value="props.item.pendidikan_tertinggi.tingkat" v-if="props.item.pendidikan_tertinggi"></check-value>
+						<check-value :value="(props.item.pendidikan_tertinggi && props.item.pendidikan_tertinggi.tingkat)" v-if="props.item.pendidikan_tertinggi"></check-value>
 						<span v-else>-</span>
 					</td>
 					<td>
-						<check-value :value="props.item.pendidikan_tertinggi.name" v-if="props.item.pendidikan_tertinggi"></check-value>
+						<check-value :value="(props.item.pendidikan_tertinggi && props.item.pendidikan_tertinggi.name)" v-if="props.item.pendidikan_tertinggi"></check-value>
 						<span v-else>-</span>
 					</td>
 					<td v-html="formatDate(props.item.tanggal_lahir)">
@@ -158,9 +131,9 @@
 
 			<!-- item  -->
 			<template #item-desktop="props">
-				<tr :class="{ 'bg-info': selectedItem.id === props.item.id }" class="text-nowrap" @click="selectedRow(props.item)">
+				<tr :class="{ 'bg-info': selectedItem && selectedItem.id === props.item.id }" class="text-nowrap" @click="selectedRow(props.item)">
 					<td>
-						{{ props.index + 1 + (+itemDataLuar.current_page-1) * +itemDataLuar.per_page + '.'}}
+						{{ props.index + 1 + (+(itemDataLuar.current_page || 1) - 1) * +(itemDataLuar.per_page || 5) + '.'}}
 					</td>
 					<td>
 						<img :src="'/images/mitra_orang/' + props.item.gambar + 'n.jpg'" class="img-rounded img-fluid wmin-sm" v-if="props.item.gambar">
@@ -227,9 +200,9 @@
 
 			<!-- item  -->
 			<template #item-desktop="props">
-				<tr :class="{ 'bg-info': selectedItem.id === props.item.id }" class="text-nowrap" @click="selectedRow(props.item)">
+				<tr :class="{ 'bg-info': selectedItem && selectedItem.id === props.item.id }" class="text-nowrap" @click="selectedRow(props.item)">
 					<td>
-						{{ props.index + 1 + (+itemDataLuarLembaga.current_page-1) * +itemDataLuarLembaga.per_page + '.'}}
+						{{ props.index + 1 + (+(itemDataLuarLembaga.current_page || 1) - 1) * +(itemDataLuarLembaga.per_page || 5) + '.'}}
 					</td>
 					<td>
 						<img :src="'/images/mitra_orang/' + props.item.gambar + 'n.jpg'" class="img-rounded img-fluid wmin-sm" v-if="props.item.gambar">
@@ -277,47 +250,92 @@
 
 		</data-viewer>
 
-		<!-- peran -->
-		<div class="form-group" :class="{'has-error' : errors && errors.has && errors.has('peran')}">
-
-			<!-- title -->
-			<h5 :class="{ 'text-danger' : errors && errors.has && errors.has('peran')}">
-				<i class="icon-cross2" v-if="errors && errors.has && errors.has('peran')"></i>
-				Peran:
-			</h5>
-
-			<!-- select -->
-			<Field name="peran" v-slot="{ field }" :rules="'required'" label="Peran">
-				<select class="form-control" data-width="100%" v-bind="field" v-model="formPanitia.peran">
-					<option disabled value="">Silahkan pilih peran</option>
-					<option value="panitia">Panitia</option>
-					<option value="fasilitator">Fasilitator</option>
-					<option value="moderator">Moderator</option>
-					<option value="narasumber">Narasumber</option>
-					<option value="pimpinan">Pimpinan Rapat</option>
-					<option value="sekretaris">Sekretaris Rapat</option>
-				</select>
-			</Field>
-
-			<!-- error message -->
-			<small class="text-muted text-danger" v-if="errors && errors.has && errors.has('peran')">
-				<i class="icon-arrow-small-right"></i> {{ errors && errors.first && errors.first('peran') }}
-			</small>
-			<small class="text-muted" v-else>&nbsp;</small>
-		</div>
-
-		<!-- keterangan -->
-		<div class="form-group">
-
-			<!-- title -->
-			<h5>
-				Keterangan:
-			</h5>
-
-			<!-- textarea -->
-			<textarea rows="5" type="text" name="keterangan" class="form-control" placeholder="Silahkan masukkan keterangan" v-model="formPanitia.keterangan"></textarea>
-
-		</div>
+		<div v-if="formPanitia.aktivis_id">
+			<div class="card" v-if="formPanitia.aktivis_id">
+				<div class="card-header bg-info text-white header-elements-inline">
+					<h6 class="card-title"></h6>
+					<div class="header-elements" v-if="mode != 'edit'">
+						<button type="button" class="btn btn-danger" @click.prevent="deleteSelected"><i class="icon-cross2 mr-2"></i> Batal</button>
+					</div>
+				</div>
+				<div class="card-body">
+					<div class="media flex-column flex-sm-row mt-0">
+						<div class="mr-sm-3 mb-2 mb-sm-0">
+							<div class="card-img-actions" v-if="formPanitia.asal == 'dalam'">
+									<img :src="'/images/aktivis/' + formPanitia.gambar + '.jpg'" class="img-fluid img-preview rounded" v-if="formPanitia.gambar" >
+									<img :src="'/images/no_image.jpg'" class="img-fluid img-preview rounded" v-else>
+							</div>
+							<div class="card-img-actions" v-if="formPanitia.asal == 'luar'">
+									<img :src="'/images/mitra_orang/' + formPanitia.gambar + '.jpg'" class="img-fluid img-preview rounded" v-if="formPanitia.gambar" >
+									<img :src="'/images/no_image.jpg'" class="img-fluid img-preview rounded" v-else>
+							</div>
+							<div class="card-img-actions" v-if="formPanitia.asal == 'luar lembaga'">
+									<img :src="'/images/mitra_lembaga/' + formPanitia.gambar + '.jpg'" class="img-fluid img-preview rounded" v-if="formPanitia.gambar" >
+									<img :src="'/images/no_image.jpg'" class="img-fluid img-preview rounded" v-else>
+							</div>
+						</div>
+	
+						<div class="media-body">
+							<ul class="list list-unstyled mb-0">
+								<li><b>Nama:</b> {{ formPanitia.name }}</li>
+								<li><b>Lembaga:</b> {{ formPanitia.lembaga }}</li>
+								<li><b>Email:</b> {{ formPanitia.email }}</li>
+								<li><b>Hp:</b> {{ formPanitia.hp }}</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+	
+			<!-- peran -->
+			<div class="form-group" :class="{'has-error' : errors && errors.has && errors.has('peran')}">
+	
+				<!-- title -->
+				<h5 :class="{ 'text-danger' : errors && errors.has && errors.has('peran')}">
+					<i class="icon-cross2" v-if="errors && errors.has && errors.has('peran')"></i>
+					Peran:
+				</h5>
+	
+				<!-- select: value and change handled explicitly so vee-validate receives the update -->
+				<Field name="peran" v-slot="{ field }" :rules="'required'" label="Peran">
+					<select
+						class="form-control"
+						data-width="100%"
+						:name="field.name"
+						:value="formPanitia.peran"
+						@change="(e) => { formPanitia.peran = e.target.value; field.onChange(e) }"
+						@blur="field.onBlur"
+					>
+						<option disabled value="">Silahkan pilih peran</option>
+						<option value="panitia">Panitia</option>
+						<option value="fasilitator">Fasilitator</option>
+						<option value="moderator">Moderator</option>
+						<option value="narasumber">Narasumber</option>
+						<option value="pimpinan">Pimpinan Rapat</option>
+						<option value="sekretaris">Sekretaris Rapat</option>
+					</select>
+				</Field>
+	
+				<!-- error message -->
+				<small class="text-muted text-danger" v-if="errors && errors.has && errors.has('peran')">
+					<i class="icon-arrow-small-right"></i> {{ errors && errors.first && errors.first('peran') }}
+				</small>
+				<small class="text-muted" v-else>&nbsp;</small>
+			</div>
+	
+			<!-- keterangan -->
+			<div class="form-group">
+	
+				<!-- title -->
+				<h5>
+					Keterangan:
+				</h5>
+	
+				<!-- textarea -->
+				<textarea rows="5" type="text" name="keterangan" class="form-control" placeholder="Silahkan masukkan keterangan" v-model="formPanitia.keterangan"></textarea>
+	
+			</div>
+		</div>	
 
 		<!-- message -->
 		<message v-if="errors && errors.any && errors.any() && submited" :title="'Oops terjadi kesalahan'" :errorItem="errors && errors.items">
@@ -363,7 +381,11 @@
 	import { checkTingkatAktivis, date } from "../../helpers/filterHelpers";
 
 	export default {
-		props: ['mode','selected'],
+		props: {
+			mode: { type: String, default: 'create' },
+			selected: { type: Object, default: () => ({}) },
+			formKey: { type: [String, Number], default: '' },
+		},
 		components: {
 			DataViewer,
 			checkValue,
@@ -375,12 +397,14 @@
 			return {
 				title: '',
 				kelas: 'aktivis',
-				selectedItem: [],
+					selectedItem: {},
 				formPanitia:{
 					aktivis_id: '',
 					name: '',
 					lembaga: '',
 					gambar: '',
+					email: '',
+					hp: '',
 					peran: '',
 					asal: '',
 					keterangan: ''
@@ -479,9 +503,21 @@
 				submited: false,
 			}
 		},
-		created(){
-			if(this.mode == 'edit'){
-				this.formPanitia = Object.assign({}, this.selected);
+		created() {
+			if (this.mode === 'edit' && this.selected && Object.keys(this.selected).length) {
+				this.formPanitia = { ...this.formPanitia, ...this.selected };
+			}
+		},
+		mounted() {
+			// Trigger initial fetch when asal is already set so DataViewer shows data (e.g. after re-open)
+			if (this.mode === 'create' && this.formPanitia.asal) {
+				if (this.formPanitia.asal === 'dalam') {
+					this.fetchDalam(this.query);
+				} else if (this.formPanitia.asal === 'luar') {
+					this.fetchLuar(this.query);
+				} else if (this.formPanitia.asal === 'luar lembaga') {
+					this.fetchLuarLembaga(this.query);
+				}
 			}
 		},
     methods: {
@@ -533,27 +569,31 @@
 			},
 			deleteSelected(){
 				this.formPanitia.aktivis_id = '';
-				this.selectedItem = '';
+				this.formPanitia.name = '';
+				this.formPanitia.gambar = '';
+				this.formPanitia.email = '';
+				this.formPanitia.hp = '';
+				this.formPanitia.lembaga = '';
+				this.selectedItem = {};
 			},
 			selectedRow(item){
 				this.selectedItem = item;
 				this.formPanitia.aktivis_id = item.id;
 				this.formPanitia.name = item.name;
 				this.formPanitia.gambar = item.gambar;
-				this.formPanitia.email = item.email != '' ? item.email : '-';
-				this.formPanitia.hp = item.hp != '' ? item.hp : '-';
-				
+				this.formPanitia.email = item.email != null && item.email !== '' ? item.email : '-';
+				this.formPanitia.hp = item.hp != null && item.hp !== '' ? item.hp : '-';
 
-				if(this.formPanitia.asal == 'dalam'){
-					if(item.pekerjaan_aktif.tipe == 1){
-						this.formPanitia.lembaga = item.pekerjaan_aktif.cu.name
-					}else if(item.pekerjaan_aktif.tipe == 2){
-						this.formPanitia.lembaga = item.pekerjaan_aktif.lembaga_lain.name
-					}else if(item.pekerjaan_aktif.tipe == 3){
-						this.formPanitia.lembaga = "PUSKOPCUINA"
+				if (this.formPanitia.asal === 'dalam' && item.pekerjaan_aktif) {
+					if (item.pekerjaan_aktif.tipe === 1 && item.pekerjaan_aktif.cu) {
+						this.formPanitia.lembaga = item.pekerjaan_aktif.cu.name;
+					} else if (item.pekerjaan_aktif.tipe === 2 && item.pekerjaan_aktif.lembaga_lain) {
+						this.formPanitia.lembaga = item.pekerjaan_aktif.lembaga_lain.name;
+					} else if (item.pekerjaan_aktif.tipe === 3) {
+						this.formPanitia.lembaga = 'PUSKOPCUINA';
 					}
-				}else{
-					this.formPanitia.lembaga = item.lembaga != '' ? item.lembaga : '-';
+				} else {
+					this.formPanitia.lembaga = item.lembaga != null && item.lembaga !== '' ? item.lembaga : '-';
 				}
 			},
 			onValid() {

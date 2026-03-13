@@ -8,14 +8,14 @@
 			<div class="content-wrapper ">
 				<div class="content">
 
-				<!-- main panel: VeeForm + Field rules on tags -->
-				<VeeForm :form="form" v-slot="{ errors, handleSubmit }">
+				<!-- main panel: VeeForm + Field rules (no schema) -->
+				<VeeForm :form="form" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit, setValues }">
 
 				<!-- message -->
 				<message v-if="errors.any('form') && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors.items">
 				</message>
 
-				<form @submit.prevent="handleSubmit(onValid, onInvalid)" enctype="multipart/form-data">
+				<form @submit.prevent="setValues(form) || handleSubmit(onValid)" enctype="multipart/form-data">
 
 						<!-- main form -->
 						<div class="card">
@@ -127,6 +127,7 @@
 							<form-button
 								:cancelState="'methods'"
 								:formValidation="'form'"
+								:buttonErrors="errors"
 								@cancelClick="back"></form-button>
 						</div>
 
@@ -145,7 +146,6 @@
 </template>
 
 <script>
-	import { computed } from 'vue';
 	import { useAuthStore } from '../../stores/auth';
 	import { useArtikelPenulisStore } from '../../stores/artikelPenulis';
 	import { useCuStore } from '../../stores/cu';
@@ -193,7 +193,7 @@
 		created(){
 			this.fetch();
 			if(this.currentUser.id_cu == 0){
-				if(this.modelCuStat != 'success'){
+				if(this.modelCUStat != 'success'){
 					this.cuStore.getHeader();
 				}
 			}else{
@@ -226,7 +226,7 @@
 		methods: {
 			fetch(){
 				if(this.currentUser.id_cu == 0){
-					if(this.modelCuStat != 'success'){
+					if(this.modelCUStat != 'success'){
 						this.cuStore.getHeader();
 					}
 				}
@@ -294,7 +294,7 @@
 			},
 			modalBackgroundClick(){
 				if(this.modalState === 'success'){
-					this.modalTutup;
+					this.modalTutup();
 				}else if(this.modalState === 'loading'){
 					// do nothing
 				}else{

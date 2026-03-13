@@ -710,14 +710,12 @@ class KegiatanBKCUController extends Controller
 			'kode_diklat' => $kode_diklat
 		]);
 
-		$sasaran_ar = array();
-		foreach ($request->sasaran as $sasaran) {
-			array_push($sasaran_ar, implode('', $sasaran));
+		$sasaran_ar = [];
+		foreach ((array) ($request->sasaran ?? []) as $sasaran) {
+			$sasaran_ar[] = is_array($sasaran) ? implode('', $sasaran) : (string) $sasaran;
 		}
 
 		$kelas->sasaran()->sync($sasaran_ar);
-
-		// $kelas->sasaran()->sync(array_flatten($request->sasaran));
 
 		// sasaranCu
 		if ($request->sasaranCu) {
@@ -1152,18 +1150,18 @@ class KegiatanBKCUController extends Controller
 			'kode_diklat' => $kode_diklat
 		]);
 
-		$sasaran_ar = array();
-		foreach ($request->sasaran as $sasaran) {
-			array_push($sasaran_ar, implode('', $sasaran));
+		$sasaran_ar = [];
+		foreach ((array) ($request->sasaran ?? []) as $sasaran) {
+			$sasaran_ar[] = is_array($sasaran) ? implode('', $sasaran) : (string) $sasaran;
 		}
 
 		$kelas->sasaran()->sync($sasaran_ar);
 
 		// sasaranCu
 		if ($request->sasaranCu) {
-			$sasaran_cuAr = array();
-			foreach ($request->sasaranCu as $sasaran_cu) {
-				array_push($sasaran_cuAr, implode('', $sasaran_cu));
+			$sasaran_cuAr = [];
+			foreach ((array) $request->sasaranCu as $sasaran_cu) {
+				$sasaran_cuAr[] = is_array($sasaran_cu) ? implode('', $sasaran_cu) : (string) $sasaran_cu;
 			}
 			$kelas->sasaranCu()->sync($sasaran_cuAr);
 		}

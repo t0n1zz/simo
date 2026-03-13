@@ -851,10 +851,10 @@
 				this.regenciesStore.getProvinces(id);
 			},
 			changeRegencies(id){
-				this.districtsStore.getRegencies(id);
+				this.districtsStore.indexRegencies(id);
 			},
 			changeDistricts(id){
-				this.villagesStore.getDistricts(id);
+				this.villagesStore.indexDistricts(id);
 			},
 			modalOpen(state, isMobile, itemMobile) {
 				this.modalShow = true;

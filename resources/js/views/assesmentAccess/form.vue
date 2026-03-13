@@ -547,6 +547,7 @@
               </div>
             </transition>
           </form>
+          </VeeForm>
         </div>
       </div>
     </div>

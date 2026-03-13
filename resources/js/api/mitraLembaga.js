@@ -1,7 +1,10 @@
+import { flattenFilterParams } from './filterParams.js'
+
 export default {
-  
-  index: function( p ){
-    return axios.get('/api/mitraLembaga' , {params: p});
+
+  index: function (p) {
+    const params = flattenFilterParams(p)
+    return axios.get('/api/mitraLembaga', { params })
   },
 
   indexCu: function( p, id ){

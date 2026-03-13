@@ -51,11 +51,24 @@ export const useRegenciesStore = defineStore('regencies', {
             }
         },
 
-        // load by category (province id)
-        async indexProvinces(id) {
+        // load by category (province id) with filters
+        async indexProvinces([p, id]) {
             this.dataStatS = 'loading';
             try {
-                const response = await RegenciesAPI.indexProvinces(id);
+                const response = await RegenciesAPI.indexProvinces(p, id);
+                this.dataS = response.data.model;
+                this.dataStatS = 'success';
+            } catch (error) {
+                this.dataS = error.response;
+                this.dataStatS = 'fail';
+            }
+        },
+
+        // simple load by province id (no extra params)
+        async getProvinces(id) {
+            this.dataStatS = 'loading';
+            try {
+                const response = await RegenciesAPI.getProvinces(id);
                 this.dataS = response.data.model;
                 this.dataStatS = 'success';
             } catch (error) {

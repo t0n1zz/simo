@@ -63,7 +63,7 @@
 												</h5>
 
 												<!-- select -->
-												<select class="form-control" name="id_provinces" v-model="form.id_provinces" data-width="100%" :disabled="modelProvinces.length === 0" @change="changeProvinces($event.target.value)">
+												<select class="form-control" name="id_provinces" v-model="form.id_provinces" data-width="100%" :disabled="!modelProvinces || modelProvinces.length === 0" @change="changeProvinces($event.target.value)">
 													<option disabled value="">Silahkan pilih Provinsi</option>
 													<option v-for="provinces in modelProvinces" :value="provinces.id">{{provinces.name}}</option>
 												</select>
@@ -87,7 +87,7 @@
 												</h5>
 
 												<!-- select -->
-												<select class="form-control" name="id_regencies" v-model="form.id_regencies" data-width="100%" @change="changeRegencies($event.target.value)" :disabled="modelRegencies.length === 0">
+												<select class="form-control" name="id_regencies" v-model="form.id_regencies" data-width="100%" @change="changeRegencies($event.target.value)" :disabled="!modelRegencies || modelRegencies.length === 0">
 													<option disabled value="">
 														<span v-if="modelRegenciesStat === 'loading'"><i class="icon-spinner spinner"></i></span>
 														<span v-else>Silahkan pilih kabupaten</span>
@@ -114,7 +114,7 @@
 												</h5>
 
 												<!-- select -->
-												<select class="form-control" name="id_districts" v-model="form.id_districts" data-width="100%" :disabled="modelDistricts.length === 0" @change="changeDistricts($event.target.value)">
+												<select class="form-control" name="id_districts" v-model="form.id_districts" data-width="100%" :disabled="!modelDistricts || modelDistricts.length === 0" @change="changeDistricts($event.target.value)">
 													<option disabled value="">
 														<span v-if="modelDistrictsStat === 'loading'"><i class="icon-spinner spinner"></i></span>
 														<span v-else>Silahkan pilih kecamatan</span>
@@ -141,7 +141,7 @@
 												</h5>
 
 												<!-- select -->
-												<select class="form-control" name="id_villages" v-model="form.id_villages" data-width="100%" :disabled="modelVillages.length === 0">
+												<select class="form-control" name="id_villages" v-model="form.id_villages" data-width="100%" :disabled="!modelVillages || modelVillages.length === 0">
 													<option disabled value="">
 														<span v-if="modelVillagesStat === 'loading'"><i class="icon-spinner spinner"></i> mohon tunggu</span>
 														<span v-else>Silahkan pilih kelurahan</span>
@@ -441,7 +441,9 @@
 		methods: {
 			...mapActions(useTempatStore, ['create', 'store', 'edit', 'update', 'resetUpdateStat']),
 			...mapActions(useProvincesStore, { getProvinces: 'get' }),
-			...mapActions(useRegenciesStore, { getRegencies: 'indexProvinces' }),
+			// Load kabupaten (regencies) by selected provinsi
+			...mapActions(useRegenciesStore, { getRegencies: 'getProvinces' }),
+			// Load kecamatan & kelurahan by selected kabupaten / kecamatan
 			...mapActions(useDistrictsStore, { getDistricts: 'indexRegencies' }),
 			...mapActions(useVillagesStore, { getVillages: 'indexDistricts' }),
 			...mapActions(useCuStore, ['getPus']),

@@ -8,9 +8,15 @@ use Illuminate\Validation\ValidationException;
 
 trait Dataviewer
 {
-    public function scopeAdvancedFilter($query, $columns = [])
+    /**
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  array  $columns  Optional, reserved.
+     * @param  array|null  $data  Optional request data (e.g. request()->all()) so filter/order use current request.
+     */
+    public function scopeAdvancedFilter($query, $columns = [], $data = null)
     {
-        $result = $this->process($query, request()->all());
+        $data = $data ?? request()->all();
+        $result = $this->process($query, $data);
 
         $orderColumn = request('order_column', 'created_at');
         $orderDirection = request('order_direction', 'desc');
@@ -71,6 +77,8 @@ trait Dataviewer
 
     public function process($query, $data)
     {
+        $data = $this->normalizeFilterData($data);
+
         $v = validator()->make($data, [
             'order_column' => 'sometimes|required|in:'.$this->orderableColumns(),
             'order_direction' => 'sometimes|required|in:asc,desc',
@@ -91,6 +99,56 @@ trait Dataviewer
         }
 
         return (new CustomQueryBuilder)->apply($query, $data, $this->allowedFilters);
+    }
+
+    /**
+     * Ensure 'f' is a numeric array of filter rows (for GET query string parsing).
+     * Handles both nested $data['f'][0] and flat $data['f[0][column]'] style keys.
+     */
+    protected function normalizeFilterData(array $data): array
+    {
+        $f = $data['f'] ?? null;
+        if (is_array($f) && ! empty($f)) {
+            $data['f'] = array_values($f);
+
+            return $data;
+        }
+        if ($f !== null) {
+            return $data;
+        }
+        // Try dot notation (Laravel input)
+        $built = [];
+        for ($i = 0; request()->has("f.{$i}.column"); $i++) {
+            $built[$i] = [
+                'column' => request()->input("f.{$i}.column"),
+                'operator' => request()->input("f.{$i}.operator"),
+                'query_1' => request()->input("f.{$i}.query_1"),
+                'query_2' => request()->input("f.{$i}.query_2"),
+            ];
+        }
+        if ($built !== []) {
+            $data['f'] = array_values($built);
+
+            return $data;
+        }
+        // Fallback: flat keys like f[0][column], f[0][query_1] in $data (e.g. from some GET parsing)
+        $built = [];
+        foreach ($data as $key => $value) {
+            if (preg_match('/^f\[(\d+)\]\[(column|operator|query_1|query_2)\]$/', $key, $m)) {
+                $idx = (int) $m[1];
+                $field = $m[2];
+                if (! isset($built[$idx])) {
+                    $built[$idx] = ['column' => '', 'operator' => '', 'query_1' => '', 'query_2' => ''];
+                }
+                $built[$idx][$field] = $value ?? '';
+            }
+        }
+        if ($built !== []) {
+            ksort($built);
+            $data['f'] = array_values($built);
+        }
+
+        return $data;
     }
 
     protected function whiteListColumns(): string

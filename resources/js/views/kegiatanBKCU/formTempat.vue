@@ -391,10 +391,10 @@
 				getRegencies: 'getProvinces',
 			}),
 			...mapActions(useDistrictsStore, {
-				getDistricts: 'getRegencies',
+				getDistricts: 'indexRegencies',
 			}),
 			...mapActions(useVillagesStore, {
-				getVillages: 'getDistricts',
+				getVillages: 'indexDistricts',
 			}),
 			fetch(){
 				this.title = 'Tambah Tempat Kegiatan';

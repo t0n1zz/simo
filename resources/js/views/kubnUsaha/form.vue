@@ -207,6 +207,7 @@
 						}
 					}
 				}
+			},
 			back(){
 				this.$router.push({name: this.kelas});
 			},

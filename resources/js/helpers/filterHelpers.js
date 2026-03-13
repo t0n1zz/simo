@@ -1,10 +1,14 @@
 /**
  * Filter Helper Functions
- * 
+ *
  * Vue 3 removed the filters API. This file provides utility functions
  * to replace the old Vue 2 filters. Import and use these functions
  * directly in your components.
+ *
+ * This is the single source of truth for all filter functions.
+ * filters.js re-exports from here for $filters global compatibility.
  */
+import moment from 'moment';
 
 /**
  * Date and Time Filters
@@ -12,37 +16,37 @@
 
 export function date(value) {
     if (!value) return '-';
-    return window.moment(value).format('DD-MM-YYYY');
+    return moment(value).format('DD-MM-YYYY');
 }
 
 export function time(value) {
     if (!value) return '-';
-    return window.moment(value).format('kk:mm:ss');
+    return moment(value).format('kk:mm:ss');
 }
 
 export function dateTime(value) {
     if (!value) return '-';
-    return window.moment(value).format('DD-MM-YYYY') + '&nbsp; | &nbsp;' + window.moment(value).format('kk:mm:ss');
+    return moment(value).format('DD-MM-YYYY') + '&nbsp; | &nbsp;' + moment(value).format('kk:mm:ss');
 }
 
 export function dateMonth(value) {
     if (!value) return '-';
-    return window.moment(value).format('DD MMMM YYYY');
+    return moment(value).format('DD MMMM YYYY');
 }
 
 export function month(value) {
     if (!value) return '-';
-    return window.moment(value).format('MMMM');
+    return moment(value).format('MMMM');
 }
 
 export function year(value) {
     if (!value) return '-';
-    return window.moment(value).format('YYYY');
+    return moment(value).format('YYYY');
 }
 
 export function relativeHour(value) {
     if (!value) return '-';
-    return window.moment(value).fromNow();
+    return moment(value).fromNow();
 }
 
 export function age(dateString) {
@@ -80,11 +84,11 @@ export function uppercase(value) {
 
 export function trimString(string) {
     if (!string) return '';
-    return string
+    const cleaned = string
         .replace(/<(?:.|\\n)*?>/gm, '')
         .replace(/&nbsp;/g, '')
-        .replace(/&ldquo;/g, '')
-        .substring(0, 300) + '...';
+        .replace(/&ldquo;/g, '');
+    return cleaned.length > 300 ? cleaned.substring(0, 300) + '...' : cleaned;
 }
 
 /**
@@ -326,6 +330,48 @@ export function notificationIcon(value) {
     return '';
 }
 
+export function description(value) {
+    if (value == 'created') return 'Menambah';
+    if (value == 'updated') return 'Mengubah';
+    if (value == 'deleted') return 'Menghapus';
+    return value;
+}
+
+export function subjectType(value) {
+    const map = {
+        'App\\Aktivis': 'Aktivis',
+        'App\\AktivisAnggotaCu': 'Anggota CU Aktivis',
+        'App\\AktivisKeluarga': 'Keluarga Aktivis',
+        'App\\AktivisOrganisasi': 'Organisasi Aktivis',
+        'App\\AktivisPekerjaan': 'Pekerjaan Aktivis',
+        'App\\AktivisPendidikan': 'Pendidikan Aktivis',
+        'App\\Artikel': 'Artikel',
+        'App\\ArtikelKategori': 'Kategori Artikel',
+        'App\\ArtikelPenulis': 'Penulis Artikel',
+        'App\\Cu': 'CU',
+        'App\\Download': 'Download',
+        'App\\Kegiatan': 'Kegiatan',
+        'App\\KegiatanPanitia': 'Panitia Kegiatan',
+        'App\\KegiatanPeserta': 'Peserta Kegiatan',
+        'App\\KegiatanSasaran': 'Sasaran Kegiatan',
+        'App\\LaporanCu': 'Laporan CU',
+        'App\\LaporanCuDiskusi': 'Diskusi Laporan CU',
+        'App\\LaporanCuDraft': 'Draft Laporan CU',
+        'App\\LaporanTp': 'Laporan TP/KP',
+        'App\\LaporanTpDiskusi': 'Diskusi Laporan TP/KP',
+        'App\\LaporanTpDraft': 'Draft Laporan TP/KP',
+        'App\\MitraLembaga': 'Lembaga Mitra',
+        'App\\MitraOrang': 'Mitra Perseorangan',
+        'App\\Pengumuman': 'Pengumuman',
+        'App\\ProdukCu': 'Produk CU',
+        'App\\Saran': 'Saran',
+        'App\\Tempat': 'Tempat',
+        'App\\Tp': 'TP/KP',
+        'App\\User': 'User',
+    };
+    return map[value] || value;
+}
+
 // Export all functions as default object for convenience
 export default {
     // Date & Time
@@ -362,5 +408,9 @@ export default {
     kegiatanTipe,
     tipeRekom,
     tipeProdukCu,
-    notificationIcon
+    notificationIcon,
+
+    // Activity log
+    description,
+    subjectType,
 };

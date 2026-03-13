@@ -1,7 +1,10 @@
+import { flattenFilterParams } from './filterParams.js'
+
 export default {
-  
-  index: function( p, tingkat, status ){
-    return axios.get('/api/aktivis/index/' + tingkat + '/' + status ,{params: p});
+
+  index: function (p, tingkat, status) {
+    const params = flattenFilterParams(p)
+    return axios.get('/api/aktivis/index/' + tingkat + '/' + status, { params })
   },
 
   indexTingkat: function( p ){

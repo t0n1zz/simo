@@ -8,95 +8,119 @@
 			<div class="content-wrapper">
 				<div class="content">
 
-					<!-- message -->
-					<message v-if="errors.any('form') && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors.items">
-					</message>
+					<!-- main panel: VeeForm + Field rules (no schema) -->
+					<VeeForm :form="form" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit, setValues }">
 
-					<!-- main panel -->
-					<form @submit.prevent="save">
+						<!-- message -->
+						<message v-if="errors.any('form') && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors.items">
+						</message>
 
-						<!-- main form -->
-						<div class="card">
-							<div class="card-body">
-								<div class="row">
+						<form @submit.prevent="setValues(form) || handleSubmit(onValid)">
 
-									<!-- name -->
-									<div class="col-md-12">
-										<div class="form-group" :class="{'has-error' : errors.has('form.name')}">
+							<!-- main form -->
+							<div class="card">
+								<div class="card-body">
+									<div class="row">
 
-											<!-- title -->
-											<h5 :class="{ 'text-danger' : errors.has('form.name')}">
-												<i class="icon-cross2" v-if="errors.has('form.name')"></i>
-												Nama: <wajib-badge></wajib-badge></h5>
+										<!-- name -->
+										<div class="col-md-12">
+											<div class="form-group" :class="{'has-error' : errors.has('form.name')}">
 
-											<!-- text -->
-											<input type="text" name="name" class="form-control" placeholder="Silahkan masukkan nama kategori artikel" v-model="form.name">
+												<!-- title -->
+												<h5 :class="{ 'text-danger' : errors.has('form.name')}">
+													<i class="icon-cross2" v-if="errors.has('form.name')"></i>
+													Nama: <wajib-badge></wajib-badge></h5>
 
-											<!-- error message -->
-											<small class="text-muted text-danger" v-if="errors.has('form.name')">
-												<i class="icon-arrow-small-right"></i> {{ errors.first('form.name') }}
-											</small>
-											<small class="text-muted" v-else>&nbsp;</small>
+												<!-- text (rules on the tag) -->
+												<Field
+													name="name"
+													rules="required|min:5"
+													v-model="form.name"
+													v-slot="{ field }"
+												>
+													<input
+														type="text"
+														class="form-control"
+														placeholder="Silahkan masukkan nama kategori artikel"
+														v-bind="field"
+													>
+												</Field>
+
+												<!-- error message -->
+												<small class="text-muted text-danger" v-if="errors.has('form.name')">
+													<i class="icon-arrow-small-right"></i> {{ errors.first('form.name') }}
+												</small>
+												<small class="text-muted" v-else>&nbsp;</small>
+											</div>
 										</div>
-									</div>
 
-									<!-- CU -->
-									<div class="col-md-12" v-if="currentUser.id_cu == 0">
-										<div class="form-group" :class="{'has-error' : errors.has('form.id_cu')}">
+										<!-- CU -->
+										<div class="col-md-12" v-if="currentUser.id_cu == 0">
+											<div class="form-group" :class="{'has-error' : errors.has('form.id_cu')}">
 
-											<!-- title -->
-											<h5 :class="{ 'text-danger' : errors.has('form.id_cu')}">
-												<i class="icon-cross2" v-if="errors.has('form.id_cu')"></i>
-												CU: <wajib-badge></wajib-badge>
-											</h5>
+												<!-- title -->
+												<h5 :class="{ 'text-danger' : errors.has('form.id_cu')}">
+													<i class="icon-cross2" v-if="errors.has('form.id_cu')"></i>
+													CU: <wajib-badge></wajib-badge>
+												</h5>
 
-											<!-- select -->
-											<select class="form-control" name="id_cu" v-model="form.id_cu" data-width="100%" :disabled="modelCU.length === 0">
-												<option disabled value="">Silahkan pilih CU</option>
-												<option value="0"><span v-if="currentUser.pus">{{currentUser.pus.name}}</span> <span v-else>PUSKOPCUINA</span></option>
-												<option disabled value="">----------------</option>
-												<option v-for="cu in modelCU" :value="cu.id">{{cu.name}}</option>
-											</select>
+												<!-- select -->
+												<Field
+													as="select"
+													name="id_cu"
+													rules="required"
+													v-model="form.id_cu"
+													class="form-control"
+													data-width="100%"
+													:disabled="modelCU.length === 0"
+												>
+													<option disabled value="">Silahkan pilih CU</option>
+													<option value="0"><span v-if="currentUser.pus">{{currentUser.pus.name}}</span> <span v-else>PUSKOPCUINA</span></option>
+													<option disabled value="">----------------</option>
+													<option v-for="cu in modelCU" :key="cu.id" :value="cu.id">{{cu.name}}</option>
+												</Field>
 
-											<!-- error message -->
-											<small class="text-muted text-danger" v-if="errors.has('form.id_cu')">
-												<i class="icon-arrow-small-right"></i> {{ errors.first('form.id_cu') }}
-											</small>
-											<small class="text-muted" v-else>&nbsp;</small>
+												<!-- error message -->
+												<small class="text-muted text-danger" v-if="errors.has('form.id_cu')">
+													<i class="icon-arrow-small-right"></i> {{ errors.first('form.id_cu') }}
+												</small>
+												<small class="text-muted" v-else>&nbsp;</small>
+											</div>
 										</div>
-									</div>
 
-									<!-- deskripsi -->
-									<div class="col-md-12">
-										<div class="form-group">
+										<!-- deskripsi -->
+										<div class="col-md-12">
+											<div class="form-group">
 
-											<!-- title -->
-											<h5>
-												Keterangan:
-											</h5>
+												<!-- title -->
+												<h5>
+													Keterangan:
+												</h5>
 
-											<!-- textarea -->
-											<textarea rows="5" type="text" name="deskripsi" class="form-control" placeholder="Silahkan masukkan keterangan kategori" v-model="form.deskripsi"></textarea>
+												<!-- textarea -->
+												<textarea rows="5" type="text" name="deskripsi" class="form-control" placeholder="Silahkan masukkan keterangan kategori" v-model="form.deskripsi"></textarea>
 
+											</div>
 										</div>
 									</div>
 								</div>
 							</div>
-						</div>
 
-						<!-- form info -->
-						<form-info></form-info>	
-						<br/>
+							<!-- form info -->
+							<form-info></form-info>
+							<br/>
 
-						<!-- form button -->
-						<div class="panel panel-flat panel-body">
-							<form-button
-								:cancelState="'methods'"
-								:formValidation="'form'"
-								@cancelClick="back"></form-button>
-						</div>
+							<!-- form button -->
+							<div class="panel panel-flat panel-body">
+								<form-button
+									:cancelState="'methods'"
+									:formValidation="'form'"
+									:buttonErrors="errors"
+									@cancelClick="back"></form-button>
+							</div>
 
-					</form>
+						</form>
+					</VeeForm>
 				</div>
 			</div>
 		</div>
@@ -109,37 +133,28 @@
 </template>
 
 <script>
-	import { computed } from 'vue';
 	import { useAuthStore } from '../../stores/auth';
 	import { useArtikelKategoriStore } from '../../stores/artikelKategori';
 	import { useCuStore } from '../../stores/cu';
-	import { useFormValidation } from '../../composables/useFormValidation';
+	import { Field } from 'vee-validate';
+	import VeeForm from '../../components/VeeForm.vue';
 	import pageHeader from '../../components/pageHeader.vue';
-	import { toMulipartedForm } from '../../helpers/form';
-	import appImageUpload from '../../components/ImageUpload.vue';
 	import appModal from '../../components/modal.vue';
 	import message from "../../components/message.vue";
 	import formButton from "../../components/formButton.vue";
 	import formInfo from "../../components/formInfo.vue";
 	import wajibBadge from '../../components/wajibBadge.vue';
 
-	const ARTIKEL_KATEGORI_SCHEMA = { name: 'required|min:5', id_cu: 'required' };
-
 	export default {
 		components: {
 			pageHeader,
 			appModal,
-			appImageUpload,
 			message,
 			formButton,
 			formInfo,
 			wajibBadge,
-		},
-		setup() {
-			const store = useArtikelKategoriStore();
-			const formRef = computed(() => store.data);
-			const { errors, handleSubmit, setValues } = useFormValidation(formRef, ARTIKEL_KATEGORI_SCHEMA);
-			return { errors, handleSubmit, setValues };
+			VeeForm,
+			Field,
 		},
 		data() {
 			return {
@@ -164,7 +179,7 @@
 		},
 		created(){
 			if(this.currentUser.id_cu == 0){
-				if(this.modelCuStat != 'success'){
+				if(this.modelCUStat != 'success'){
 					this.cuStore.getHeader();
 				}
 			}
@@ -219,22 +234,17 @@
 					}
 				}
 			},
-			save() {
-				this.setValues(this.form);
-				this.handleSubmit(
-					() => {
-						if (this.$route.meta.mode === 'edit') {
-							this.artikelKategoriStore.update(this.$route.params.id, this.form);
-						} else {
-							this.artikelKategoriStore.store(this.form);
-						}
-						this.submited = false;
-					},
-					() => {
-						window.scrollTo(0, 0);
-						this.submited = true;
-					}
-				);
+			onValid() {
+				if (this.$route.meta.mode === 'edit') {
+					this.artikelKategoriStore.update(this.$route.params.id, this.form);
+				} else {
+					this.artikelKategoriStore.store(this.form);
+				}
+				this.submited = false;
+			},
+			onInvalid() {
+				window.scrollTo(0, 0);
+				this.submited = true;
 			},
 			back(){
 				if(this.$route.meta.mode == 'edit' && this.currentUser.id_cu == 0){
