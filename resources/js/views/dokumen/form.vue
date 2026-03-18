@@ -304,13 +304,16 @@
 			VeeForm,
 			Field,
 		},
-		data() {
+		setup() {
 			return {
 				dokumenStore: useDokumenStore(),
-				cuStore: useCuStore(),
-				dokumenKategoriStore: useDokumenKategoriStore(),
-				dokumenPenulisStore: useDokumenPenulisStore(),
-				title: 'Tambah Dokumen',
+			cuStore: useCuStore(),
+			dokumenKategoriStore: useDokumenKategoriStore(),
+			dokumenPenulisStore: useDokumenPenulisStore(),
+			};
+		},
+		data() {
+			return {title: 'Tambah Dokumen',
 				titleDesc: 'Menambah dokumen baru',
 				titleIcon: 'icon-plus3',
 				level2Title: 'Dokumen',

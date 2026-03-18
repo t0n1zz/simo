@@ -60,7 +60,7 @@ class RegenciesController extends Controller{
 
 	public function store(Request $request)
 	{
-		$this->validate($request,Regencies::$rules);
+		$request->validate(Regencies::$rules);
 
 		$name = $request->name;
 
@@ -88,7 +88,7 @@ class RegenciesController extends Controller{
 
 	public function update(Request $request, $id)
 	{
-		$this->validate($request,Regencies::$rules);
+		$request->validate(Regencies::$rules);
 
 		$name = $request->name;
 

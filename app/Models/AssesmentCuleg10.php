@@ -2,8 +2,8 @@
 namespace App\Models;
 
 use Spatie\Activitylog\LogOptions;
-use DB;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Support\Dataviewer;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -13,7 +13,6 @@ class AssesmentCuleg10 extends BaseEloquent {
     use Dataviewer, LogsActivity, SoftDeletes;
 
     protected $table = 'assesment_culeg10';
-    protected $dates = ['deleted_at'];
 
     protected $fillable = [
         'a1_cu_penilaian', 'a1_cu_keterangan', 'a1_bkcu_penilaian', 'a1_bkcu_keterangan', 'a1_bkcu_rekomendasi',

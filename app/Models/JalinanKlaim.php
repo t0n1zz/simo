@@ -1,9 +1,13 @@
 <?php
 namespace App\Models;
 
+use App\Models\AnggotaCu;
+use App\Models\AnggotaCuCu;
+use App\Models\AnggotaProdukCu;
+use App\Models\User;
 use Spatie\Activitylog\LogOptions;
-use DB;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Support\Dataviewer;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -14,7 +18,6 @@ class JalinanKlaim extends Model {
     use Dataviewer, LogsActivity, SoftDeletes;
 
     protected $table = 'jalinan_klaim';
-    protected $dates = ['deleted_at'];
 
     protected $revisionEnabled = true;
     protected $revisionCleanup = true;
@@ -66,33 +69,33 @@ class JalinanKlaim extends Model {
 
     public function anggota_cu()
     {
-        return $this->belongsTo('App\Models\AnggotaCu','anggota_cu_id','id')->select(DB::raw('*, TIMESTAMPDIFF(YEAR, tanggal_lahir, CURDATE()) AS usia, TIMESTAMPDIFF(YEAR, tanggal_lahir, tanggal_meninggal) AS usia_meninggal, TIMESTAMPDIFF(YEAR, tanggal_lahir, tanggal_cacat) AS usia_cacat'));
+        return $this->belongsTo(AnggotaCu::class,'anggota_cu_id','id')->select(DB::raw('*, TIMESTAMPDIFF(YEAR, tanggal_lahir, CURDATE()) AS usia, TIMESTAMPDIFF(YEAR, tanggal_lahir, tanggal_meninggal) AS usia_meninggal, TIMESTAMPDIFF(YEAR, tanggal_lahir, tanggal_cacat) AS usia_cacat'));
     }
 
     public function anggota_cu_cu()
     {
         // todo: bukan curdate tapi tanggal meninggal
-        return $this->belongsTo('App\Models\AnggotaCuCu','anggota_cu_cu_id','id')->select(DB::raw('*, TIMESTAMPDIFF(MONTH, tanggal_masuk, CURDATE()) AS lama_menjadi_anggota'));
+        return $this->belongsTo(AnggotaCuCu::class,'anggota_cu_cu_id','id')->select(DB::raw('*, TIMESTAMPDIFF(MONTH, tanggal_masuk, CURDATE()) AS lama_menjadi_anggota'));
     }
 
     public function pinjaman_anggota_terakhir()
     {
-        return $this->hasOne('App\Models\AnggotaProdukCu', 'anggota_cu_cu_id', 'anggota_cu_cu_id')->whereNotNull('lama_pinjaman')->latest('tanggal');
+        return $this->hasOne(AnggotaProdukCu::class, 'anggota_cu_cu_id', 'anggota_cu_cu_id')->whereNotNull('lama_pinjaman')->latest('tanggal');
     }
 
     public function verifikasi_pengurus_data()
     {
-        return $this->belongsTo('App\Models\User','verifikasi_pengurus','id')->select('id','id_aktivis','username','name');
+        return $this->belongsTo(User::class,'verifikasi_pengurus','id')->select('id','id_aktivis','username','name');
     }
 
     public function verifikasi_pengawas_data()
     {
-        return $this->belongsTo('App\Models\User','verifikasi_pengawas','id')->select('id','id_aktivis','username','name');
+        return $this->belongsTo(User::class,'verifikasi_pengawas','id')->select('id','id_aktivis','username','name');
     }
 
     public function verifikasi_manajemen_data()
     {
-        return $this->belongsTo('App\Models\User','verifikasi_manajemen','id')->select('id','id_aktivis','username','name');
+        return $this->belongsTo(User::class,'verifikasi_manajemen','id')->select('id','id_aktivis','username','name');
     }
 
 

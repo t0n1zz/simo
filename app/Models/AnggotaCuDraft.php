@@ -1,8 +1,15 @@
 <?php
 namespace App\Models;
 
+use App\Models\AnggotaCu;
+use App\Models\AnggotaCuCuDraft;
+use App\Models\Cu;
+use App\Models\Region\Districts;
+use App\Models\Region\Provinces;
+use App\Models\Region\Regencies;
+use App\Models\Region\Villages;
 use App\Support\Dataviewer;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 
 class AnggotaCuDraft extends Model {
     
@@ -43,43 +50,43 @@ class AnggotaCuDraft extends Model {
     ];
 
     public function anggota_cu(){
-        return $this->belongsToMany('App\Models\Cu','anggota_cu_cu_draft')->withPivot('id','cu_id','no_ba','tanggal_masuk','tanggal_keluar','keterangan_masuk','keterangan_keluar')->withTimestamps();
+        return $this->belongsToMany(Cu::class,'anggota_cu_cu_draft')->withPivot('id','cu_id','no_ba','tanggal_masuk','tanggal_keluar','keterangan_masuk','keterangan_keluar')->withTimestamps();
     }
 
     public function anggota_cu_cu(){
-        return $this->hasMany('App\Models\AnggotaCuCuDraft','anggota_cu_draft_id','id');
+        return $this->hasMany(AnggotaCuCuDraft::class,'anggota_cu_draft_id','id');
     }
 
     public function anggota_cu_cu_not_keluar(){
-        return $this->hasMany('App\Models\AnggotaCuCuDraft','anggota_cu_draft_id','id')->whereNull('tanggal_keluar');
+        return $this->hasMany(AnggotaCuCuDraft::class,'anggota_cu_draft_id','id')->whereNull('tanggal_keluar');
     }
 
     public function Provinces()
     {
-        return $this->belongsTo('App\Models\Region\Provinces','id_provinces','id')->select('id','name');
+        return $this->belongsTo(Provinces::class,'id_provinces','id')->select('id','name');
     }
 		
     public function Regencies()
     {
-        return $this->belongsTo('App\Models\Region\Regencies','id_regencies','id')->select('id','name');
+        return $this->belongsTo(Regencies::class,'id_regencies','id')->select('id','name');
     }
 		
     public function Districts()
     {
-        return $this->belongsTo('App\Models\Region\Districts','id_districts','id')->select('id','name');
+        return $this->belongsTo(Districts::class,'id_districts','id')->select('id','name');
     }
 		
     public function Villages()
     {
-        return $this->belongsTo('App\Models\Region\Villages','id_villages','id')->select('id','name');
+        return $this->belongsTo(Villages::class,'id_villages','id')->select('id','name');
     }
 
     public function anggota_cu_by_name(){
-        return $this->hasOne('App\Models\AnggotaCu',['name','tanggal_lahir'],['name','tanggal_lahir'])->select('name','tanggal_lahir','nik','id');
+        return $this->hasOne(AnggotaCu::class,['name','tanggal_lahir'],['name','tanggal_lahir'])->select('name','tanggal_lahir','nik','id');
     }
     
     public function anggota_cu_by_nik(){
-        return $this->hasOne('App\Models\AnggotaCu',['nik','name'],['nik','name'])->select('nik','name','id');
+        return $this->hasOne(AnggotaCu::class,['nik','name'],['nik','name'])->select('nik','name','id');
     }
     
 }

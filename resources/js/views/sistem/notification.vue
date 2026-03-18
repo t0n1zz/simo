@@ -294,11 +294,14 @@
 			pageHeader,
 			appModal,
 		},
-		data(){
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				notificationStore: useNotificationStore(),
-				title: 'Notifikasi',
+			notificationStore: useNotificationStore(),
+			};
+		},
+		data(){
+			return {title: 'Notifikasi',
 				kelas: 'notification',
 				titleDesc: 'Melihat semua notifikasi',
 				titleIcon: 'icon-bell2',

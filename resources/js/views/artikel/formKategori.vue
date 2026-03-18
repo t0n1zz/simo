@@ -85,10 +85,13 @@
 			VeeForm,
 			Field,
 		},
-		data() {
+		setup() {
 			return {
 				artikelKategoriStore: useArtikelKategoriStore(),
-				kelas: 'artikelKategori',
+			};
+		},
+		data() {
+			return {kelas: 'artikelKategori',
 				form: {
 					id_cu: '',
 					name: '',

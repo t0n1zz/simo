@@ -49,11 +49,14 @@
 			selectCu,
 			message,
 		},
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				jalinanIuranStore: useJalinanIuranStore(),
-				title: 'Setoran Solidaritas Jalinan',
+			jalinanIuranStore: useJalinanIuranStore(),
+			};
+		},
+		data() {
+			return {title: 'Setoran Solidaritas Jalinan',
 				kelas: 'jalinanIuran',
 				titleDesc: 'Mengelola data iuran Jalinan',
 				titleIcon: 'icon-clipboard6',

@@ -77,11 +77,14 @@
 			message,
 			selectData
 		},
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				aktivisStore: useAktivisStore(),
-				title: 'Aktivis CU',
+			aktivisStore: useAktivisStore(),
+			};
+		},
+		data() {
+			return {title: 'Aktivis CU',
 				kelas: 'aktivis',
 				titleDesc: 'Mengelola data Aktivis CU',
 				titleIcon: 'icon-user-tie',

@@ -138,10 +138,13 @@
 			checkValue
 		},
 		props:['title','kelas'],
-		data() {
+		setup() {
 			return {
 				dokumenStore: useDokumenStore(),
-				selectedItem: [],
+			};
+		},
+		data() {
+			return {selectedItem: [],
 				query: {
 					order_column: "created_at",
 					order_direction: "desc",

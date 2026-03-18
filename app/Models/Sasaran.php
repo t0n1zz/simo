@@ -1,7 +1,7 @@
 <?php
 namespace App\Models;
 
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 
 class Sasaran extends Model {
 

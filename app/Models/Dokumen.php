@@ -1,8 +1,10 @@
 <?php
 namespace App\Models;
 
+use App\Models\Cu;
+use App\Models\DokumenKategori;
 use Spatie\Activitylog\LogOptions;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 use App\Support\Dataviewer;
 
@@ -37,12 +39,12 @@ class Dokumen extends Model {
 
     public function kategori()
     {
-        return $this->belongsTo('App\Models\DokumenKategori','id_dokumen_kategori','id')->select('id','name','slug','created_at');
+        return $this->belongsTo(DokumenKategori::class,'id_dokumen_kategori','id')->select('id','name','slug','created_at');
     }
 
     public function Cu()
     {
-        return $this->belongsTo('App\Models\Cu','id_cu','id')->select('id','no_ba','name');
+        return $this->belongsTo(Cu::class,'id_cu','id')->select('id','no_ba','name');
     }
 
 

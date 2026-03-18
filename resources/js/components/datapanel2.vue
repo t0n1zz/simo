@@ -15,7 +15,7 @@
       <div class="card-body">
         <!-- search row -->
         <div class="row">
-          <div class="col-md-12" v-for="(f, i, index) in filterCandidates">
+          <div class="col-md-12" v-for="(f, i, index) in filterCandidates" :key="index">
             <div class="row">
               <div class="col-md-4 pb-2">
                 <div class="input-group">

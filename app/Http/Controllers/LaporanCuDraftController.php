@@ -116,7 +116,7 @@ class LaporanCuDraftController extends Controller{
 
 	public function update(Request $request, $id)
 	{
-		$this->validate($request,LaporanCuDraft::$rules);
+		$request->validate(LaporanCuDraft::$rules);
 
 		$name = $request->name;
 

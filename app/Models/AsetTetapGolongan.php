@@ -1,8 +1,9 @@
 <?php
 namespace App\Models;
 
+use App\Models\AsetTetapKelompok;
 use Spatie\Activitylog\LogOptions;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Support\Dataviewer;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -12,7 +13,6 @@ class AsetTetapGolongan extends BaseEloquent {
     use Dataviewer, LogsActivity, SoftDeletes;
 
     protected $table = 'aset_tetap_golongan';
-    protected $dates = ['deleted_at'];
 
     public static $rules = [
         'kode' => 'required',
@@ -37,7 +37,7 @@ class AsetTetapGolongan extends BaseEloquent {
 
     public function haskelompok()
     {
-        return $this->hasMany('App\Models\AsetTetapKelompok','aset_tetap_kelompok_id','id');
+        return $this->hasMany(AsetTetapKelompok::class,'aset_tetap_kelompok_id','id');
     }
 
     public function getActivitylogOptions(): LogOptions

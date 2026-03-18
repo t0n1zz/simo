@@ -98,10 +98,13 @@
 			VeeForm,
 			Field,
 		},
-		data() {
+		setup() {
 			return {
 				artikelPenulisStore: useArtikelPenulisStore(),
-				kelas: 'artikelPenulis',
+			};
+		},
+		data() {
+			return {kelas: 'artikelPenulis',
 				form: {
 					id_cu: '',
 					gambar: '',

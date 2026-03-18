@@ -867,7 +867,7 @@
 			<template #modal-title>{{ modalTitle }}</template>
 
 			<template #modal-body1>
-				<form @submit.prevent="save" data-vv-scope="form">
+				<form @submit.prevent="save">
 				<div class="nav-tabs-responsive mb-3">
 					<ul class="nav nav-tabs nav-tabs-bottom flex-nowrap mb-0">
 						<li class="nav-item">
@@ -907,20 +907,20 @@
 								</tr>
 							</thead>
 							<tbody>
-								<tr class="text-nowrap" v-for="grafik in modalDetail.grafikData" :class="{'info': Object.values(grafik)[0] == itemData.periode }">
-									<td>{{ Object.values(grafik)[0] | dateMonth }}</td>
-									<td v-if="modalDetail.isPercent">{{ Object.values(grafik)[1] | percentage(2) }}</td>
-									<td v-else>{{ Object.values(grafik)[1] | currency('',0,{ thousandsSeparator: '.'}) }}</td>
+								<tr class="text-nowrap" v-for="grafik in modalDetail.grafikData" :key="grafik" :class="{'info': Object.values(grafik)[0] == itemData.periode }">
+									<td>{{ $filters.dateMonth(Object.values(grafik)[0]) }}</td>
+									<td v-if="modalDetail.isPercent">{{ $filters.percentage(Object.values(grafik)[1], 2) }}</td>
+									<td v-else>{{ $filters.currency(Object.values(grafik)[1], '',0,{ thousandsSeparator: '.'}) }}</td>
 									<td v-if="itemData.periode != Object.values(grafik)[0]" :class="{
 											'text-primary' : countTotal(modalDetail.itemData,Object.values(grafik)[1]) > 0,
 											'text-danger' : countTotal(modalDetail.itemData,Object.values(grafik)[1]) < 0}">
 										<i class="icon-chevron-up" v-if="countTotal(modalDetail.itemData,Object.values(grafik)[1]) > 0"></i>
 										<i class="icon-chevron-down" v-else-if="countTotal(modalDetail.itemData,Object.values(grafik)[1]) < 0"></i>	
 										<span v-if="modalDetail.isPercent">
-											{{ Math.abs(countTotal(modalDetail.itemData,Object.values(grafik)[1])) | percentage(2) }}
+											{{ $filters.percentage(Math.abs(countTotal(modalDetail.itemData,Object.values(grafik)[1])), 2) }}
 										</span>
 										<span v-else>
-											{{ Math.abs(countTotal(modalDetail.itemData,Object.values(grafik)[1])) | currency('',0,{ thousandsSeparator: '.'}) }}
+											{{ $filters.currency(Math.abs(countTotal(modalDetail.itemData,Object.values(grafik)[1])), '',0,{ thousandsSeparator: '.'}) }}
 										</span>
 										
 									</td>
@@ -931,7 +931,7 @@
 											'badge-danger' : countTotal(modalDetail.itemData,Object.values(grafik)[1]) < 0}">
 											<span v-if="countTotal(modalDetail.itemData,Object.values(grafik)[1]) > 0">+</span>
 											<span v-else-if="countTotal(modalDetail.itemData,Object.values(grafik)[1]) < 0">-</span>	
-											{{ Math.abs(countPercentage(modalDetail.itemData,Object.values(grafik)[1])) | currency('',2,{ thousandsSeparator: '.', decimalSeparator: ','}) }} %
+											{{ $filters.currency(Math.abs(countPercentage(modalDetail.itemData,Object.values(grafik)[1])), '',2,{ thousandsSeparator: '.', decimalSeparator: ','}) }} %
 										</span>
 									</td>
 								</tr>

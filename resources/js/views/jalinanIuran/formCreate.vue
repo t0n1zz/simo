@@ -4,7 +4,8 @@
 		<message v-if="errors.any('form2') && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors.items">
 		</message>
 
-		<form @submit.prevent="save" data-vv-scope="form2">
+		<VeeForm :form="form2" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit, setValues }">
+		<form @submit.prevent="setValues(form2) || handleSubmit(onValid)">
 
       <div class="row">
 
@@ -99,7 +100,8 @@
 
       </div>
 
-    </form>	
+    </form>
+		</VeeForm>
 
 	</div>
 </template>
@@ -110,19 +112,24 @@
 	import { useJalinanIuranStore } from '../../stores/jalinanIuran';
 	import message from "../../components/message.vue";
 	import formInfo from "../../components/formInfo.vue";
+	import VeeForm from '../../components/VeeForm.vue';
 
 	export default {
 		props: ['kelas'],
 		components: {
 			formInfo,
-			message
+			message,
+			VeeForm,
 		},
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				cuStore: useCuStore(),
-				jalinanIuranStore: useJalinanIuranStore(),
-				title: '',
+			cuStore: useCuStore(),
+			jalinanIuranStore: useJalinanIuranStore(),
+			};
+		},
+		data() {
+			return {title: '',
 				form2: {
 					id_cu: '',
 					periodeBulan: '',
@@ -144,11 +151,12 @@
 					this.cuStore.getHeader();
 				}
 			},
-      save(){
-				this.$validator.validateAll('form2').then((result) => {
-					this.jalinanIuranStore.create([this.form2.id_cu, this.form2.periodeBulan, this.form2.periodeTahun]);
-				});
-      },
+      onValid(){
+				this.jalinanIuranStore.create([this.form2.id_cu, this.form2.periodeBulan, this.form2.periodeTahun]);
+			},
+			onInvalid(){
+				this.submited = true;
+			},
 			tutup() {
 				this.$emit('tutup');
 			},

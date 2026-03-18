@@ -8,12 +8,14 @@
 			<div class="content-wrapper">
 				<div class="content">
 
+					<VeeForm :form="form" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit, setValues }">
+
 					<!-- message -->
 					<message v-if="errors.any('form') && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors.items">
 					</message>
 
 					<!-- main panel -->
-					<form @submit.prevent="save" data-vv-scope="form">
+					<form @submit.prevent="setValues(form) || handleSubmit(onValid)">
 
 						<!-- main form -->
 						<div class="card">
@@ -31,8 +33,8 @@
 											</h5>
 
 											<!-- input -->
-											<date-picker @dateSelected="form.periode = $event" :defaultDate="form.periode"></date-picker>	
-											<input name="periode" v-model="form.periode" v-show="false" v-validate="'required'" data-vv-as="Periode"/>
+											<date-picker @dateSelected="form.periode = $event" :defaultDate="form.periode"></date-picker>
+											<Field name="periode" rules="required" v-model="form.periode" v-show="false" />
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.periode')">
@@ -250,6 +252,8 @@
 						</div>
 
 					</form>
+
+				</VeeForm>
 				</div>
 			</div>
 		</div>
@@ -274,6 +278,8 @@
 	import wajibBadge from "../../components/wajibBadge.vue";
 	import Cleave from 'vue-cleave-component';
 	import DatePicker from "../../components/datePicker.vue";
+	import { Field } from 'vee-validate';
+	import VeeForm from '../../components/VeeForm.vue';
 
 	export default {
 		components: {
@@ -285,6 +291,8 @@
 			wajibBadge,
 			Cleave,
 			DatePicker,
+			Field,
+			VeeForm,
 		},
 		data() {
 			return {
@@ -378,20 +386,17 @@
 					}
 				}
 			},
-			save() {
-				this.$validator.validateAll('form').then((result) => {
-					if (result) {
-						if(this.$route.meta.mode == 'edit'){
-							this.update([this.$route.params.id, this.form]);
-						}else{
-							this.store(this.form);
-						}
-						this.submited = false;
-					}else{
-						window.scrollTo(0, 0);
-						this.submited = true;
-					}
-				});
+			onValid(values) {
+				if(this.$route.meta.mode == 'edit'){
+					this.update([this.$route.params.id, this.form]);
+				}else{
+					this.store(this.form);
+				}
+				this.submited = false;
+			},
+			onInvalid() {
+				window.scrollTo(0, 0);
+				this.submited = true;
 			},
 			back(){
 				this.$router.push({name: this.kelas});

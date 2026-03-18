@@ -49,11 +49,14 @@
 			selectCu,
 			tableData,
 		},
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				artikelStore: useArtikelStore(),
-				title: 'Artikel',
+			artikelStore: useArtikelStore(),
+			};
+		},
+		data() {
+			return {title: 'Artikel',
 				kelas: 'artikel',
 				titleDesc: 'Mengelola data artikel',
 				titleIcon: 'icon-magazine',

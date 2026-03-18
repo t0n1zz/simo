@@ -283,13 +283,16 @@
 			VeeForm,
 			Field
 		},
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				fasilitatorStore: useFasilitatorStore(),
-				cuStore: useCuStore(),
-				anggotaCuStore: useAnggotaCuStore(),
-				title: 'Tambah Jenis Diklat',
+			fasilitatorStore: useFasilitatorStore(),
+			cuStore: useCuStore(),
+			anggotaCuStore: useAnggotaCuStore(),
+			};
+		},
+		data() {
+			return {title: 'Tambah Jenis Diklat',
 				titleDesc: 'Menambah Jenis Diklat baru',
 				titleIcon: 'icon-plus3',
 				kelas: 'fasilitator',

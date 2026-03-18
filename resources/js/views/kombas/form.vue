@@ -274,12 +274,15 @@
 			VeeForm,
 			Field
 		},
-		data() {
+		setup() {
 			return {
 				kombasStore: useKombasStore(),
-				cuStore: useCuStore(),
-				tpStore: useTpStore(),
-				title: 'Tambah Komunitas',
+			cuStore: useCuStore(),
+			tpStore: useTpStore(),
+			};
+		},
+		data() {
+			return {title: 'Tambah Komunitas',
 				titleDesc: 'Menambah komunitas',
 				titleIcon: 'icon-plus3',
 				kelas: 'kombas',

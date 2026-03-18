@@ -1,6 +1,7 @@
 <template>
 	<div>
-		<form @submit.prevent="save" data-vv-scope="formDataLanjut">
+		<VeeForm :form="formDataLanjut" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit, setValues }">
+		<form @submit.prevent="setValues(formDataLanjut) || handleSubmit(onValid)">
 
 		<!-- message -->
 		<message v-if="message.show" @close="messageClose" :title="'Oops terjadi kesalahan'" :errorData="message.content" :showDebug="false">
@@ -110,6 +111,7 @@
 		</div> 
 
 		</form>
+		</VeeForm>
 
 	</div>
 </template>
@@ -124,6 +126,7 @@
 	import wajibBadge from "../../components/wajibBadge.vue";
 	import appImageUpload from '../../components/ImageUpload.vue';
 	import { toMulipartedForm } from '../../helpers/form';
+	import VeeForm from '../../components/VeeForm.vue';
 
 	export default {
 		props: ['mode','selected'],
@@ -131,7 +134,8 @@
 			checkValue,
 			Message,
 			wajibBadge,
-			appImageUpload
+			appImageUpload,
+			VeeForm,
 		},
 		data() {
 			return {
@@ -165,19 +169,20 @@
 			...mapActions(useMonitoringPencapaianCuStore, ['store', 'update']),
 			save(){
 				this.formDataLanjut.id_monitoring_cu = this.$route.params.id;
+				// Trigger form submit which VeeForm handles
+			},
+			onValid() {
+				this.formDataLanjut.id_monitoring_cu = this.$route.params.id;
 				const formData = toMulipartedForm(this.formDataLanjut, this.$route.meta.mode);
-				this.$validator.validateAll('formDataLanjut').then((result) => {
-					if (result) {
-						if (this.mode == 'create') {
-							this.store(formData);
-						} else {
-							this.update([this.formDataLanjut.id, formData]);
-						}
-						this.submited = false;
-					}else{
-						this.submited = true;
-					}	
-				});
+				if (this.mode == 'create') {
+					this.store(formData);
+				} else {
+					this.update([this.formDataLanjut.id, formData]);
+				}
+				this.submited = false;
+			},
+			onInvalid() {
+				this.submited = true;
 			},
 			messageClose(){
 				this.message.show = false;

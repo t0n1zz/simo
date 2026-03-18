@@ -186,7 +186,7 @@
 												Marketplace:</h5>
 
 											<!-- text -->
-											<input type="text" name="marketplace" class="form-control" placeholder="Silahkan masukkan marketplace" data-vv-as="Marketplace" v-model="form.marketplace">
+											<input type="text" name="marketplace" class="form-control" placeholder="Silahkan masukkan marketplace" v-model="form.marketplace">
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.marketplace')">
@@ -365,14 +365,17 @@
 			VeeForm,
 			Field
 		},
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				umkmStore: useUmkmStore(),
-				cuStore: useCuStore(),
-				anggotaCuStore: useAnggotaCuStore(),
-				kubnUsahaStore: useKubnUsahaStore(),
-				title: 'Tambah Umkm',
+			umkmStore: useUmkmStore(),
+			cuStore: useCuStore(),
+			anggotaCuStore: useAnggotaCuStore(),
+			kubnUsahaStore: useKubnUsahaStore(),
+			};
+		},
+		data() {
+			return {title: 'Tambah Umkm',
 				titleDesc: 'Menambah Umkm baru',
 				titleIcon: 'icon-plus3',
 				kelas: 'umkm',

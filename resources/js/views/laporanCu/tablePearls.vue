@@ -27,7 +27,7 @@
 					<td v-if="!columnData[5].hide">
 						<span v-if="props.item.periode < selectData && idCu == 'semua'" class="label label-warning"  v-tooltip:top="'Laporan ini bukanlah laporan periode ' + formatPeriode(selectData)"><i class="icon-alert text-size-base"></i></span>
 						&nbsp;
-						{{ props.item.periode | dateMonth }}
+						{{ $filters.dateMonth(props.item.periode) }}
 					</td>
 					<td v-if="!columnData[6].hide && !columnData[6].disable">
 						<check-value :value="props.item.tp"></check-value>

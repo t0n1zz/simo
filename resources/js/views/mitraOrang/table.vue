@@ -177,9 +177,7 @@
     },
     props: ["title", "kelas"],
     data() {
-      return {
-        mitraOrangStore: useMitraOrangStore(),
-        selectedItem: [],
+      return {selectedItem: [],
         query: {
           order_column: "name",
           order_direction: "asc",

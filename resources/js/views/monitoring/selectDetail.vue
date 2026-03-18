@@ -15,7 +15,7 @@
 							<!-- select -->
 							<select class="form-control" name="idTemuan" v-model="idTemuan" data-width="100%" :disabled="itemDataStat === 'loading'" @change="changeData($event.target.value)" >
 								<option disabled value="">Silahkan pilih Temuan</option>
-								<option v-for="t in itemData" :value="t.id">{{t.name}}</option>
+								<option v-for="t in itemData" :key="t.id" :value="t.id">{{t.name}}</option>
 							</select>
 
 							<!-- reload -->

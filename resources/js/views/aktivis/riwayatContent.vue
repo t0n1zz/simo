@@ -553,11 +553,14 @@
 			identitas,
 			FileSaver
 		},
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				aktivisStore: useAktivisStore(),
-				kelas: 'aktivis',
+			aktivisStore: useAktivisStore(),
+			};
+		},
+		data() {
+			return {kelas: 'aktivis',
 				id_local: '',
 				formState: '',
 				formModel: [],

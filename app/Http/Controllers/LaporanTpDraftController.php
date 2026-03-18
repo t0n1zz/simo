@@ -134,7 +134,7 @@ class LaporanTpDraftController extends Controller{
 
 	public function update(Request $request, $id)
 	{
-		$this->validate($request,LaporanTpDraft::$rules);
+		$request->validate(LaporanTpDraft::$rules);
 
 		$name = $request->name;
 

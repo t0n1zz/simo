@@ -1,8 +1,9 @@
 <?php
 namespace App\Models;
 
+use App\Models\FasilitatorJenisDiklat;
 use Spatie\Activitylog\LogOptions;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Support\Dataviewer;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -12,7 +13,6 @@ class JenisDiklat extends BaseEloquent {
     use Dataviewer, LogsActivity, SoftDeletes;
 
     protected $table = 'jenis_diklat';
-    protected $dates = ['deleted_at'];
 
     public static $rules = [
         'name' => 'required',
@@ -36,7 +36,7 @@ class JenisDiklat extends BaseEloquent {
 
     public function hasFasilitator()
     {
-        return $this->hasMany('App\Models\FasilitatorJenisDiklat','jenis_diklat_id','id');
+        return $this->hasMany(FasilitatorJenisDiklat::class,'jenis_diklat_id','id');
     }
 
     public function getActivitylogOptions(): LogOptions

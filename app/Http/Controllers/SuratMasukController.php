@@ -59,7 +59,7 @@ class SuratMasukController extends Controller{
 	{
 		\DB::beginTransaction(); 
 		try{
-			$this->validate($request,SuratMasuk::$rules);
+			$request->validate(SuratMasuk::$rules);
 
 			$hal = $request->hal;
 			$id_cu = Auth::user()->id_cu;
@@ -134,7 +134,7 @@ class SuratMasukController extends Controller{
 
 	public function update(Request $request, $id)
 	{
-		$this->validate($request,SuratMasuk::$rules);
+		$request->validate(SuratMasuk::$rules);
 
 		$hal = $request->hal;
 

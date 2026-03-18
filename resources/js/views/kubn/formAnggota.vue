@@ -1,6 +1,7 @@
 <template>
 	<div>
-		<form @submit.prevent="save" data-vv-scope="formAnggota">
+		<VeeForm :form="formAnggota" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit, setValues }">
+		<form @submit.prevent="setValues(formAnggota) || handleSubmit(onValid)">
 
 		<div class="card" v-if="formAnggota.anggota_cu_id">
 			<div class="card-header bg-info text-white header-elements-inline">
@@ -76,57 +77,57 @@
 		</data-viewer>
 
 		<!-- jabatan -->
-		<div class="form-group" :class="{'has-error' : errors.has('formAnggota.jabatan')}">
+		<div class="form-group" :class="{'has-error' : errors.has('form.jabatan')}">
 
 			<!-- title -->
-			<h5 :class="{ 'text-danger' : errors.has('formAnggota.jabatan')}">
-				<i class="icon-cross2" v-if="errors.has('formAnggota.jabatan')"></i>
+			<h5 :class="{ 'text-danger' : errors.has('form.jabatan')}">
+				<i class="icon-cross2" v-if="errors.has('form.jabatan')"></i>
 				Jabatan: <wajib-badge></wajib-badge>
 			</h5>
 
-			<input type="text" name="jabatan" class="form-control" placeholder="Silahkan masukkan jabatan" v-validate="'required'" data-vv-as="Jabatan" v-model="formAnggota.jabatan">
+			<Field name="jabatan" rules="required" v-model="formAnggota.jabatan" v-slot="{ field }"><input type="text" class="form-control" placeholder="Silahkan masukkan jabatan" v-bind="field"></Field>
 
 			<!-- error message -->
-			<small class="text-muted text-danger" v-if="errors.has('formAnggota.jabatan')">
-				<i class="icon-arrow-small-right"></i> {{ errors.first('formAnggota.jabatan') }}
+			<small class="text-muted text-danger" v-if="errors.has('form.jabatan')">
+				<i class="icon-arrow-small-right"></i> {{ errors.first('form.jabatan') }}
 			</small>
 			<small class="text-muted" v-else>&nbsp;</small>
 		</div>
 
 		<!-- tanggal mulai -->
-		<div class="form-group" :class="{'has-error' : errors.has('formAnggota.tanggal_mulai')}">
+		<div class="form-group" :class="{'has-error' : errors.has('form.tanggal_mulai')}">
 
 			<!-- title -->
-			<h5 :class="{ 'text-danger' : errors.has('formAnggota.tanggal_mulai')}">
-				<i class="icon-cross2" v-if="errors.has('formAnggota.tanggal_mulai')"></i>
+			<h5 :class="{ 'text-danger' : errors.has('form.tanggal_mulai')}">
+				<i class="icon-cross2" v-if="errors.has('form.tanggal_mulai')"></i>
 				Tanggal Mulai: <wajib-badge></wajib-badge></h5>
 
 			<!-- input -->
 			<date-picker @dateSelected="formAnggota.tanggal_mulai = $event" :defaultDate="formAnggota.tanggal_mulai"></date-picker>	
-			<input v-model="formAnggota.tanggal_mulai" name="tanggal_mulai" v-show="false" v-validate="'required'" data-vv-as="Tanggal mulai"/>
+			<Field name="tanggal_mulai" rules="required" v-model="formAnggota.tanggal_mulai" v-show="false" />
 
 			<!-- error message -->
-			<small class="text-muted text-danger" v-if="errors.has('formAnggota.tanggal_mulai')">
-				<i class="icon-arrow-small-right"></i> {{ errors.first('formAnggota.tanggal_mulai') }}
+			<small class="text-muted text-danger" v-if="errors.has('form.tanggal_mulai')">
+				<i class="icon-arrow-small-right"></i> {{ errors.first('form.tanggal_mulai') }}
 			</small>
 			<small class="text-muted" v-else>&nbsp;</small>
 		</div>
 
 		<!-- tanggal selesai -->
-		<div class="form-group" :class="{'has-error' : errors.has('formAnggota.tanggal_selesai')}">
+		<div class="form-group" :class="{'has-error' : errors.has('form.tanggal_selesai')}">
 
 			<!-- title -->
-			<h5 :class="{ 'text-danger' : errors.has('formAnggota.tanggal_selesai')}">
-				<i class="icon-cross2" v-if="errors.has('formAnggota.tanggal_selesai')"></i>
+			<h5 :class="{ 'text-danger' : errors.has('form.tanggal_selesai')}">
+				<i class="icon-cross2" v-if="errors.has('form.tanggal_selesai')"></i>
 				Tanggal Selesai: </h5>
 
 			<!-- input -->
 			<date-picker @dateSelected="formAnggota.tanggal_selesai = $event" :defaultDate="formAnggota.tanggal_selesai"></date-picker>	
-			<input v-model="formAnggota.tanggal_selesai" name="tanggal_selesai" v-show="false" data-vv-as="Tanggal selesai"/>
+			<input v-model="formAnggota.tanggal_selesai" name="tanggal_selesai" v-show="false" />
 
 			<!-- error message -->
-			<small class="text-muted text-danger" v-if="errors.has('formAnggota.tanggal_selesai')">
-				<i class="icon-arrow-small-right"></i> {{ errors.first('formAnggota.tanggal_selesai') }}
+			<small class="text-muted text-danger" v-if="errors.has('form.tanggal_selesai')">
+				<i class="icon-arrow-small-right"></i> {{ errors.first('form.tanggal_selesai') }}
 			</small>
 			<small class="text-muted" v-else>&nbsp;</small>
 		</div>
@@ -145,7 +146,7 @@
 		</div>
 
 		<!-- message -->
-		<message v-if="errors.any('formAnggota') && submited" :title="'Oops terjadi kesalahan'" :errorItem="errors.items">
+		<message v-if="errors.any('form') && submited" :title="'Oops terjadi kesalahan'" :errorItem="errors.items">
 		</message>
 		<!-- divider -->
 		<hr>
@@ -168,12 +169,15 @@
 				<i class="icon-cross"></i> Tutup</button>
 		</div>
 
-		</form> 
+		</form>
+		</VeeForm>
 
 	</div>
 </template>
 
 <script>
+	import { Field } from 'vee-validate';
+	import VeeForm from '../../components/VeeForm.vue';
 	import { useAuthStore } from '../../stores/auth';
 	import { useAnggotaCuStore } from '../../stores/anggotaCu';
 	import checkValue from '../../components/checkValue.vue';
@@ -185,17 +189,22 @@
 	export default {
 		props: ['id_cu','id_tp','mode','selected'],
 		components: {
+			VeeForm,
+			Field,
 			DataViewer,
 			checkValue,
 			message,
 			DatePicker,
 			wajibBadge
 		},
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				anggotaCuStore: useAnggotaCuStore(),
-				title: '',
+			anggotaCuStore: useAnggotaCuStore(),
+			};
+		},
+		data() {
+			return {title: '',
 				kelas: 'anggotaCu',
 				selectedItem: [],
 				formAnggota:{
@@ -265,19 +274,17 @@
 				this.formAnggota.no_ba = item.no_ba;
 				this.formAnggota.kelamin = item.kelamin;
 			},
-			save(){
-				this.$validator.validateAll('formAnggota').then((result) => {
-					if (result) {
-						if(this.mode == 'edit'){
-							this.$emit('editAnggota',this.formAnggota);
-						}else{
-							this.$emit('createAnggota',this.formAnggota);
-						}
-						this.submited = false;
-					}else{
-						this.submited = true;
-					}	
-				});
+			onValid(values){
+				if(this.mode == 'edit'){
+					this.$emit('editAnggota',this.formAnggota);
+				}else{
+					this.$emit('createAnggota',this.formAnggota);
+				}
+				this.submited = false;
+			},
+			onInvalid(){
+				window.scrollTo(0, 0);
+				this.submited = true;
 			},
 			tutup(){
 				this.$emit('tutup');

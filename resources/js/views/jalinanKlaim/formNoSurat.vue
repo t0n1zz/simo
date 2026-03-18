@@ -1,6 +1,7 @@
 <template>
 	<div>
-     <form @submit.prevent="save" data-vv-scope="formStatus" autocomplete="off">
+     <VeeForm :form="formStatus" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit, setValues }">
+     <form @submit.prevent="setValues(formStatus) || handleSubmit(onValid)" autocomplete="off">
       <!-- nomor surat -->
       <div class="col-md-12">
         <div class="form-group">
@@ -65,6 +66,7 @@
           <i class="icon-cross"></i> Tutup</button>
       </div> 
      </form>
+     </VeeForm>
 
 	</div>
 </template>
@@ -76,6 +78,7 @@
   import formInfo from "../../components/formInfo.vue";
   import checkValue from "../../components/checkValue.vue";
   import infoIcon from "../../components/infoIcon.vue";
+  import VeeForm from '../../components/VeeForm.vue';
 
 	export default {
 		props: ['kelas','selected','tipe'],
@@ -84,6 +87,7 @@
       message,
       checkValue,
       infoIcon,
+      VeeForm,
 		},
 		data() {
 			return {
@@ -102,14 +106,11 @@
 		watch: {},
 		methods: {
       ...mapActions(useJalinanKlaimStore, ['updateNoSurat']),
-      save(){
-        this.$validator.validateAll('formStatus').then((result) => {
-          if (result) {
-            this.updateNoSurat([this.selected.id, this.formStatus]);
-          }else{
-            this.submited = true;
-          }
-        });
+      onValid(){
+        this.updateNoSurat([this.selected.id, this.formStatus]);
+      },
+      onInvalid(){
+        this.submited = true;
       },
 			tutup() {
 				this.$emit('tutup');

@@ -16,7 +16,7 @@
 							<option value="semua">Semua CU</option>
 							<option value="0" v-if="isPus"><span v-if="currentUser.pus">{{currentUser.pus.name}}</span> <span v-else>PUSKOPCUINA</span></option>
 							<option disabled value="">----------------</option>
-							<option v-for="cu in modelCu" :value="cu.id" v-show="cu">{{cu.name}}</option>
+							<option v-for="cu in modelCu" :key="cu.id" :value="cu.id" v-show="cu">{{cu.name}}</option>
 						</select>
 
 						<!-- reload cu -->
@@ -41,7 +41,7 @@
 						<option value="semua">Semua CU</option>
 						<option value="0" v-if="isPus"><span v-if="currentUser.pus">{{currentUser.pus.name}}</span> <span v-else>PUSKOPCUINA</span></option>
 						<option disabled value="">----------------</option>
-						<option v-for="cu in modelCu" :value="cu.id" v-show="cu">{{cu.name}}</option>
+						<option v-for="cu in modelCu" :key="cu.id" :value="cu.id" v-show="cu">{{cu.name}}</option>
 					</select>
 				</div>
 
@@ -63,11 +63,14 @@
 
 	export default {
 		props:['kelas','isPus','path'],
-		data(){
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				cuStore: useCuStore(),
-				idCu: ''
+			cuStore: useCuStore(),
+			};
+		},
+		data(){
+			return {idCu: ''
 			}
 		},
 		created(){

@@ -1,8 +1,13 @@
 <?php
 namespace App\Models;
 
+use App\Models\Cu;
+use App\Models\Kegiatan;
+use App\Models\VotingPilihan;
+use App\Models\VotingSuara;
+use App\Models\VotingTanggapan;
 use Spatie\Activitylog\LogOptions;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use App\Support\Dataviewer;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -13,7 +18,6 @@ class Voting extends Model {
 
     protected $table = 'voting';
 
-    protected $dates = ['deleted_at'];
     
     public static $rules = [
         'name' => 'required'
@@ -43,24 +47,24 @@ class Voting extends Model {
 
     public function Cu()
     {
-        return $this->belongsTo('App\Models\Cu','id_cu','id')->select('id','no_ba','name');
+        return $this->belongsTo(Cu::class,'id_cu','id')->select('id','no_ba','name');
     }
 
     public function kegiatan()
     {
-        return $this->belongsTo('App\Models\Kegiatan','id_kegiatan','id')->select('id','name');
+        return $this->belongsTo(Kegiatan::class,'id_kegiatan','id')->select('id','name');
     }
 
     public function pilihan(){
-        return $this->hasMany('App\Models\VotingPilihan','voting_id','id');
+        return $this->hasMany(VotingPilihan::class,'voting_id','id');
     }
 
     public function tanggapan(){
-        return $this->hasMany('App\Models\VotingTanggapan','voting_id','id');
+        return $this->hasMany(VotingTanggapan::class,'voting_id','id');
     }
 
     public function hasSuara(){
-        return $this->hasMany('App\Models\VotingSuara','voting_id','id');
+        return $this->hasMany(VotingSuara::class,'voting_id','id');
     }
     
 

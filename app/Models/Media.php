@@ -1,8 +1,9 @@
 <?php
 namespace App\Models;
 
+use App\Models\Cu;
 use Spatie\Activitylog\LogOptions;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 use App\Support\Dataviewer;
 
@@ -33,7 +34,7 @@ class Media extends Model {
 
     public function Cu()
     {
-        return $this->belongsTo('App\Models\Cu','id_cu','id')->select('id','no_ba','name');
+        return $this->belongsTo(Cu::class,'id_cu','id')->select('id','no_ba','name');
     }
 
 

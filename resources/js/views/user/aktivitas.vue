@@ -108,11 +108,14 @@
 			aktivitas,
 			checkValue
 		},
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				userStore: useUserStore(),
-				title: 'Aktivitas User',
+			userStore: useUserStore(),
+			};
+		},
+		data() {
+			return {title: 'Aktivitas User',
 				kelas: 'user',
 				level2Title: 'User',
 				titleDesc: 'Melihat aktivitas user',

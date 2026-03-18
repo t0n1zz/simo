@@ -110,10 +110,13 @@
 			VeeForm,
 			Field,
 		},
-		data() {
+		setup() {
 			return {
 				saranStore: useSaranStore(),
-				kelas: 'saran',
+			};
+		},
+		data() {
+			return {kelas: 'saran',
 				form: {
 					id_user: '',
 					content: '',

@@ -1,7 +1,9 @@
 <template>
 	<div>
 
-		<form @submit.prevent="save" data-vv-scope="formModal">
+		<VeeForm :form="formModal" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit, setValues }">
+
+		<form @submit.prevent="setValues(formModal) || handleSubmit(onValid)">
 
 		<div class="row">
 
@@ -15,7 +17,7 @@
 					</h5>
 
 					<!-- text -->
-					<input type="text" name="name" class="form-control" placeholder="Silahkan masukkan nama" v-validate="'required'" data-vv-as="Nama" v-model="formModal.name">
+					<Field name="name" rules="required" v-model="formModal.name" v-slot="{ field }"><input type="text" class="form-control" placeholder="Silahkan masukkan nama" v-bind="field"></Field>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('formModal.name')">
@@ -71,6 +73,8 @@
 
 		</form>
 
+		</VeeForm>
+
 	</div>
 </template>
 
@@ -83,6 +87,8 @@
 	import infoIcon from "../../components/infoIcon.vue";
 	import wajibBadge from "../../components/wajibBadge.vue";
 	import formInfo from "../../components/formInfo.vue";
+	import { Field } from 'vee-validate';
+	import VeeForm from '../../components/VeeForm.vue';
 
 	export default {
 		props: ['kelas','mode','selected'],
@@ -91,7 +97,9 @@
 			Message,
 			infoIcon,
 			wajibBadge,
-			formInfo
+			formInfo,
+			Field,
+			VeeForm
 		},
 		setup() {
 			const authStore = useAuthStore();
@@ -119,18 +127,15 @@
 		},
 		watch: {},
 		methods: {
-			save(){
-				this.$validator.validateAll('formModal').then((result) => {
-					if (result) {
-						if(this.mode == 'tambah'){
-							this.asetTetapLokasiStore.store(this.formModal);
-						}else{
-							this.asetTetapLokasiStore.update([this.selected.id, this.formModal]);
-						}
-					}else{
-						this.submited = true;
-					}	
-				});
+			onValid(values){
+				if(this.mode == 'tambah'){
+					this.asetTetapLokasiStore.store(this.formModal);
+				}else{
+					this.asetTetapLokasiStore.update([this.selected.id, this.formModal]);
+				}
+			},
+			onInvalid(){
+				this.submited = true;
 			},
 			tutup(){
 				this.$emit('tutup');

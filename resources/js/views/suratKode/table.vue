@@ -95,10 +95,13 @@
 			checkValue
 		},
 		props:['title','kelas'],
-		data() {
+		setup() {
 			return {
 				suratKodeStore: useSuratKodeStore(),
-				selectedItem: [],
+			};
+		},
+		data() {
+			return {selectedItem: [],
 				query: {
 					order_column: "name",
 					order_direction: "asc",

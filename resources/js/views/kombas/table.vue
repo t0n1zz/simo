@@ -110,10 +110,13 @@
 			checkValue
 		},
 		props:['title','kelas'],
-		data() {
+		setup() {
 			return {
 				kombasStore: useKombasStore(),
-				selectedItem: [],
+			};
+		},
+		data() {
+			return {selectedItem: [],
 				query: {
 					order_column: "name",
 					order_direction: "asc",

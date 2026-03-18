@@ -1,8 +1,12 @@
 <?php
 namespace App\Models;
 
+use App\Models\AnggotaCu;
+use App\Models\AnggotaProdukCu;
+use App\Models\Cu;
+use App\Models\ProdukCu;
 use App\Support\Dataviewer;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 
 class AnggotaProdukCuDraft extends Model {
 
@@ -27,21 +31,21 @@ class AnggotaProdukCuDraft extends Model {
 
     public function cu()
     {
-        return $this->belongsTo('App\Models\Cu','id_cu','id')->select('id','no_ba','name');
+        return $this->belongsTo(Cu::class,'id_cu','id')->select('id','no_ba','name');
     }
 
     public function anggota_cu()
     {
-        return $this->belongsTo('App\Models\AnggotaCu','anggota_cu_id','id')->select('id','name','nik');
+        return $this->belongsTo(AnggotaCu::class,'anggota_cu_id','id')->select('id','name','nik');
     }
 
     public function produk_cu()
     {
-        return $this->belongsTo('App\Models\ProdukCu','produk_cu_id','id')->select('id','name','id_cu','tipe');
+        return $this->belongsTo(ProdukCu::class,'produk_cu_id','id')->select('id','name','id_cu','tipe');
     }
 
     public function anggota_produk_cu(){
-        return $this->hasOne('App\Models\AnggotaProdukCu',['no_rek','produk_cu_id'],['no_rek','produk_cu_id'])->select('no_rek','produk_cu_id','id','saldo');
+        return $this->hasOne(AnggotaProdukCu::class,['no_rek','produk_cu_id'],['no_rek','produk_cu_id'])->select('no_rek','produk_cu_id','id','saldo');
     }
 
 }

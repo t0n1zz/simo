@@ -66,7 +66,7 @@
 														<span v-else>PUSKOPCUINA</span>
 													</option>
 													<option disabled value="">----------------</option>
-													<option v-for="cu in modelCU" :value="cu.id">{{cu.name}}</option>
+													<option v-for="cu in modelCU" :key="cu.id" :value="cu.id">{{cu.name}}</option>
 												</select>
 											</Field>
 
@@ -148,11 +148,14 @@
 			VeeForm,
 			Field,
 		},
-		data() {
+		setup() {
 			return {
 				dokumenKategoriStore: useDokumenKategoriStore(),
-				cuStore: useCuStore(),
-				title: 'Tambah Kategori Dokumen',
+			cuStore: useCuStore(),
+			};
+		},
+		data() {
+			return {title: 'Tambah Kategori Dokumen',
 				titleDesc: 'Menambah kategori dokumen baru',
 				titleIcon: 'icon-plus3',
 				kelas: 'dokumenKategori',

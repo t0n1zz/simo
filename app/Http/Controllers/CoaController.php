@@ -41,7 +41,7 @@ class CoaController extends Controller{
 
 	public function store(Request $request)
 	{
-		$this->validate($request,Coa::$rules);
+		$request->validate(Coa::$rules);
 
 		\DB::beginTransaction(); 
 		try{

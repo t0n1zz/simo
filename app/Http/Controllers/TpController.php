@@ -68,7 +68,7 @@ class TpController extends Controller{
 
 	public function store(Request $request)
 	{
-		$this->validate($request,Tp::$rules);
+		$request->validate(Tp::$rules);
 
 		$name = $request->name;
 
@@ -103,7 +103,7 @@ class TpController extends Controller{
 
 	public function update(Request $request, $id)
 	{
-		$this->validate($request, Tp::$rules);
+		$request->validate(Tp::$rules);
 
 		$name = $request->name;
 

@@ -1,8 +1,10 @@
 <?php
 namespace App\Models;
 
+use App\Models\AnggotaProdukCu;
+use App\Models\Cu;
 use Spatie\Activitylog\LogOptions;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use App\Support\Dataviewer;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -14,7 +16,6 @@ class ProdukCu extends BaseEloquent {
 
     protected $table = 'produk_cu';
 
-    protected $dates = ['deleted_at'];
     protected $revisionEnabled = true;
     protected $revisionCleanup = true; //Remove old revisions (works only when used with $historyLimit)
     protected $historyLimit = 100; //Maintain a maximum of 100 changes at any point of time, while cleaning up old revisions.
@@ -57,12 +58,12 @@ class ProdukCu extends BaseEloquent {
         
     public function cu()
     {
-        return $this->belongsTo('App\Models\Cu','id_cu','id')->select('id','no_ba','name','escete','tanggal_update_data');
+        return $this->belongsTo(Cu::class,'id_cu','id')->select('id','no_ba','name','escete','tanggal_update_data');
     }
 
     public function anggota_produk_cu()
     {
-        return $this->hasMany('App\Models\AnggotaProdukCu','produk_cu_id','id');
+        return $this->hasMany(AnggotaProdukCu::class,'produk_cu_id','id');
     }
 
 

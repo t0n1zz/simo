@@ -132,10 +132,13 @@
 			checkValue
 		},
 		props:['title','kelas'],
-		data() {
+		setup() {
 			return {
 				tpStore: useTpStore(),
-				selectedItem: [],
+			};
+		},
+		data() {
+			return {selectedItem: [],
 				query: {
 					order_column: "no_tp",
 					order_direction: "asc",

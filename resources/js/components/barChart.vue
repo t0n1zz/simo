@@ -45,7 +45,7 @@
 							<span class="input-group-text">Urutkan</span>
 						</span>
 						<select class="form-control" @input="updateOrderColumn">
-							<option v-for="data in dataShown" :value="data.name" :selected="data && data.name == query.order_column" v-html="data.title">
+							<option v-for="data in dataShown" :key="data.id" :value="data.name" :selected="data && data.name == query.order_column" v-html="data.title">
 							</option>
 						</select>
 					</div>  
@@ -66,7 +66,7 @@
 				</div>
 				
 				<!-- data selection -->
-				<div class="col-md-6 pb-2" :class="checkClass()" v-for="(data,index) in dataShown">
+				<div class="col-md-6 pb-2" :class="checkClass()" v-for="(data,index) in dataShown" :key="data.id">
 					<div class="input-group">
 						<div class="input-group-prepend">
 							<span class="input-group-text">Pilih Data</span>

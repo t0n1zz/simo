@@ -1,8 +1,12 @@
 <?php
 namespace App\Models;
 
+use App\Models\Cu;
+use App\Models\Voting;
+use App\Models\VotingPilihan;
+use App\Models\VotingSuaraAkses;
 use Spatie\Activitylog\LogOptions;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 use App\Support\Dataviewer;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -13,7 +17,6 @@ class VotingSuara extends Model {
 
     protected $table = 'voting_suara';
 
-    protected $dates = ['deleted_at'];
 
     protected $fillable = [
         'voting_id','voting_pilihan_id','id_cu','name','created_at','updated_at','isTanggapan'
@@ -38,22 +41,22 @@ class VotingSuara extends Model {
 
     public function voting()
     {
-        return $this->belongsTo('App\Models\Voting','voting_id','id');
+        return $this->belongsTo(Voting::class,'voting_id','id');
     }
 
     public function pilihan()
     {
-        return $this->belongsTo('App\Models\VotingPilihan','voting_pilihan_id','id');
+        return $this->belongsTo(VotingPilihan::class,'voting_pilihan_id','id');
     }
 
     public function cu()
     {
-        return $this->belongsTo('App\Models\Cu','id_cu','id')->select('id','name');
+        return $this->belongsTo(Cu::class,'id_cu','id')->select('id','name');
     }
 
     public function akses()
     {
-        return $this->belongsTo('App\Models\VotingSuaraAkses','id','voting_suara_id');
+        return $this->belongsTo(VotingSuaraAkses::class,'id','voting_suara_id');
     }
 
 

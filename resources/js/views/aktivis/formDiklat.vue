@@ -207,11 +207,14 @@
 			VeeForm,
 			Field
 		},
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				aktivisStore: useAktivisStore(),
-				kelas: 'aktivis',
+			aktivisStore: useAktivisStore(),
+			};
+		},
+		data() {
+			return {kelas: 'aktivis',
 				form: {
 					tingkat: '',
 					name: '',

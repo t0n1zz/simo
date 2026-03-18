@@ -76,7 +76,7 @@ class KegiatanRekomController extends Controller{
 
 	public function store(Request $request)
 	{
-		$this->validate($request,KegiatanRekom::$rules);
+		$request->validate(KegiatanRekom::$rules);
 
 		$name = $request->name;
 
@@ -92,7 +92,7 @@ class KegiatanRekomController extends Controller{
 
 	public function storeHasil(Request $request)
 	{
-		$this->validate($request,KegiatanRekomHasil::$rules);
+		$request->validate(KegiatanRekomHasil::$rules);
 
 		$kegiatan_rekom_id = $request->kegiatan_rekom_id;
 		$id_cu = $request->id_cu;
@@ -143,7 +143,7 @@ class KegiatanRekomController extends Controller{
 
 	public function update(Request $request, $id)
 	{
-		$this->validate($request, KegiatanRekom::$rules);
+		$request->validate(KegiatanRekom::$rules);
 
 		$name = $request->name;
 
@@ -160,7 +160,7 @@ class KegiatanRekomController extends Controller{
 
 	public function updateHasil(Request $request, $id)
 	{
-		$this->validate($request, KegiatanRekomHasil::$rules);
+		$request->validate(KegiatanRekomHasil::$rules);
 
 		$kelas = KegiatanRekomHasil::findOrFail($id);
 

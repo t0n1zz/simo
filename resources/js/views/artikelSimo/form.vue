@@ -200,11 +200,7 @@
 			return { errors, handleSubmit, setValues };
 		},
 		data() {
-			return {
-				authStore: useAuthStore(),
-				artikelSimoStore: useArtikelSimoStore(),
-				cuStore: useCuStore(),
-				title: 'Tambah Artikel SIMO',
+			return {title: 'Tambah Artikel SIMO',
 				titleDesc: 'Menambah artikel simo baru',
 				titleIcon: 'icon-plus3',
 				level2Title: 'Artikel SIMO',

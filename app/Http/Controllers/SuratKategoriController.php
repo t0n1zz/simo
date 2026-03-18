@@ -60,7 +60,7 @@ class SuratKategoriController extends Controller{
 
 	public function store(Request $request)
 	{
-		$this->validate($request,SuratKategori::$rules);
+		$request->validate(SuratKategori::$rules);
 
 		$name = $request->name;
 
@@ -88,7 +88,7 @@ class SuratKategoriController extends Controller{
 
 	public function update(Request $request, $id)
 	{
-		$this->validate($request,SuratKategori::$rules);
+		$request->validate(SuratKategori::$rules);
 
 		$name = $request->name;
 

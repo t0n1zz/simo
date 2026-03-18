@@ -41,10 +41,7 @@ export default {
 			type: String,
 		},},
     data() {
-		return {
-            authStore: useAuthStore(),
-            fileUploadStore: useFileUploadStore(),
-            message:null,
+		return {message:null,
 			files:[],
 			stat:'',
             count:'',

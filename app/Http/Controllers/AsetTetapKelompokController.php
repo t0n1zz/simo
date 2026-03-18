@@ -54,7 +54,7 @@ class AsetTetapKelompokController extends Controller{
 			$request->request->add(['kode_unik' => $kode_unik]);
 		}
 
-		$this->validate($request,AsetTetapKelompok::$rules);
+		$request->validate(AsetTetapKelompok::$rules);
 
 		$name = $request->name;
 

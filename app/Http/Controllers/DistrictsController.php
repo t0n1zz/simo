@@ -60,7 +60,7 @@ class DistrictsController extends Controller{
 
 	public function store(Request $request)
 	{
-		$this->validate($request,Districts::$rules);
+		$request->validate(Districts::$rules);
 
 		$name = $request->name;
 
@@ -88,7 +88,7 @@ class DistrictsController extends Controller{
 
 	public function update(Request $request, $id)
 	{
-		$this->validate($request,Districts::$rules);
+		$request->validate(Districts::$rules);
 
 		$name = $request->name;
 

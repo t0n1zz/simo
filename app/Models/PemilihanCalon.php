@@ -1,8 +1,11 @@
 <?php
 namespace App\Models;
 
+use App\Models\Aktivis;
+use App\Models\Cu;
+use App\Models\Pemilihan;
 use Spatie\Activitylog\LogOptions;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 use App\Support\Dataviewer;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -13,7 +16,6 @@ class PemilihanCalon extends Model {
 
     protected $table = 'pemilihan_calon';
 
-    protected $dates = ['deleted_at'];
 
     protected $fillable = [
         'no_urut','aktivis_id','pemilihan_id','pengusung_cu_id','skor','created_at','updated_at'
@@ -38,17 +40,17 @@ class PemilihanCalon extends Model {
     
     public function aktivis()
     {
-        return $this->belongsTo('App\Models\Aktivis','aktivis_id','id');
+        return $this->belongsTo(Aktivis::class,'aktivis_id','id');
     }
 
     public function cu()
     {
-        return $this->belongsTo('App\Models\Cu','pengusung_cu_id','id');
+        return $this->belongsTo(Cu::class,'pengusung_cu_id','id');
     }
 
     public function pemilihan()
     {
-        return $this->belongsTo('App\Models\Pemilihan','pemilihan_id','id');
+        return $this->belongsTo(Pemilihan::class,'pemilihan_id','id');
     }
 
     public function getActivitylogOptions(): LogOptions

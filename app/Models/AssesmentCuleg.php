@@ -1,9 +1,22 @@
 <?php
 namespace App\Models;
 
+use App\Models\AssesmentCuleg10;
+use App\Models\AssesmentCuleg11;
+use App\Models\AssesmentCuleg1;
+use App\Models\AssesmentCuleg2;
+use App\Models\AssesmentCuleg3;
+use App\Models\AssesmentCuleg4;
+use App\Models\AssesmentCuleg5;
+use App\Models\AssesmentCuleg6;
+use App\Models\AssesmentCuleg7;
+use App\Models\AssesmentCuleg8;
+use App\Models\AssesmentCuleg9;
+use App\Models\Cu;
+use App\Models\LaporanCu;
 use Spatie\Activitylog\LogOptions;
-use DB;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Support\Dataviewer;
 use App\Support\LaporanCuHelper;
@@ -14,7 +27,6 @@ class AssesmentCuleg extends BaseEloquent {
     use Dataviewer, SoftDeletes;
 
     protected $table = 'assesment_culeg';
-    protected $dates = ['deleted_at'];
 
     public static $rules = [
         'id_cu' => 'required',
@@ -49,17 +61,17 @@ class AssesmentCuleg extends BaseEloquent {
 
     public function Cu()
     {
-        return $this->belongsTo('App\Models\Cu','id_cu','id')->select('id','no_ba','name');
+        return $this->belongsTo(Cu::class,'id_cu','id')->select('id','no_ba','name');
     }
 
     public function LaporanCu()
     {
-        return $this->belongsTo('App\Models\LaporanCu','id_laporan_cu','id')->addSelect(['*',DB::raw(LaporanCuHelper::queryPEARLS())]);
+        return $this->belongsTo(LaporanCu::class,'id_laporan_cu','id')->addSelect(['*',DB::raw(LaporanCuHelper::queryPEARLS())]);
     }
 
     public function p1()
     {
-        return $this->belongsTo('App\Models\AssesmentCuleg1','id_p1','id')
+        return $this->belongsTo(AssesmentCuleg1::class,'id_p1','id')
         ->select(DB::raw('*,
         (IFNULL(a1_cu_penilaian, 0) + IFNULL(a2_cu_penilaian, 0) + 
          IFNULL(a3_cu_penilaian, 0) + IFNULL(a4_cu_penilaian, 0) + 
@@ -80,7 +92,7 @@ class AssesmentCuleg extends BaseEloquent {
 
     public function p2()
     {
-        return $this->belongsTo('App\Models\AssesmentCuleg2','id_p2','id')
+        return $this->belongsTo(AssesmentCuleg2::class,'id_p2','id')
         ->select(DB::raw('*,
         (IFNULL(a1_cu_penilaian, 0) + IFNULL(a2_cu_penilaian, 0) + 
          IFNULL(a3_cu_penilaian, 0) + IFNULL(a4_cu_penilaian, 0) + 
@@ -103,7 +115,7 @@ class AssesmentCuleg extends BaseEloquent {
 
     public function p3()
     {
-        return $this->belongsTo('App\Models\AssesmentCuleg3','id_p3','id')
+        return $this->belongsTo(AssesmentCuleg3::class,'id_p3','id')
         ->select(DB::raw('*,
         (IFNULL(a1_cu_penilaian, 0) + IFNULL(a2_cu_penilaian, 0) + 
          IFNULL(a3_cu_penilaian, 0) + IFNULL(a4_cu_penilaian, 0) + 
@@ -126,7 +138,7 @@ class AssesmentCuleg extends BaseEloquent {
 
     public function p4()
     {
-        return $this->belongsTo('App\Models\AssesmentCuleg4','id_p4','id')
+        return $this->belongsTo(AssesmentCuleg4::class,'id_p4','id')
         ->select(DB::raw('*,
         (IFNULL(a1_cu_penilaian, 0) + IFNULL(a2_cu_penilaian, 0) + 
          IFNULL(a3_cu_penilaian, 0) + IFNULL(a4_cu_penilaian, 0)
@@ -139,7 +151,7 @@ class AssesmentCuleg extends BaseEloquent {
 
     public function p5()
     {
-        return $this->belongsTo('App\Models\AssesmentCuleg5','id_p5','id')
+        return $this->belongsTo(AssesmentCuleg5::class,'id_p5','id')
         ->select(DB::raw('*,
         (IFNULL(a1_cu_penilaian, 0) + IFNULL(a2_cu_penilaian, 0) + 
          IFNULL(a3_cu_penilaian, 0) + IFNULL(a4_cu_penilaian, 0) + 
@@ -172,7 +184,7 @@ class AssesmentCuleg extends BaseEloquent {
 
     public function p6()
     {
-        return $this->belongsTo('App\Models\AssesmentCuleg6','id_p6','id')
+        return $this->belongsTo(AssesmentCuleg6::class,'id_p6','id')
         ->select(DB::raw('*,
         (IFNULL(a1_cu_penilaian, 0) + IFNULL(a2_cu_penilaian, 0) + 
          IFNULL(a3_cu_penilaian, 0) + IFNULL(a4_cu_penilaian, 0) + 
@@ -187,7 +199,7 @@ class AssesmentCuleg extends BaseEloquent {
 
     public function p7()
     {
-        return $this->belongsTo('App\Models\AssesmentCuleg7','id_p7','id')
+        return $this->belongsTo(AssesmentCuleg7::class,'id_p7','id')
         ->select(DB::raw('*,
         (IFNULL(a1_cu_penilaian, 0) + IFNULL(a2_cu_penilaian, 0) + 
          IFNULL(a3_cu_penilaian, 0) + IFNULL(a4_cu_penilaian, 0) + 
@@ -206,7 +218,7 @@ class AssesmentCuleg extends BaseEloquent {
 
     public function p8()
     {
-        return $this->belongsTo('App\Models\AssesmentCuleg8','id_p8','id')
+        return $this->belongsTo(AssesmentCuleg8::class,'id_p8','id')
         ->select(DB::raw('*,
         (IFNULL(a1_cu_penilaian, 0) + IFNULL(a2_cu_penilaian, 0) + 
          IFNULL(a3_cu_penilaian, 0) + IFNULL(a4_cu_penilaian, 0) + 
@@ -221,7 +233,7 @@ class AssesmentCuleg extends BaseEloquent {
 
     public function p9()
     {
-        return $this->belongsTo('App\Models\AssesmentCuleg9','id_p9','id')
+        return $this->belongsTo(AssesmentCuleg9::class,'id_p9','id')
         ->select(DB::raw('*,
         (IFNULL(a1_cu_penilaian, 0) + IFNULL(a2_cu_penilaian, 0) + 
          IFNULL(a3_cu_penilaian, 0) + IFNULL(a4_cu_penilaian, 0) + 
@@ -236,7 +248,7 @@ class AssesmentCuleg extends BaseEloquent {
 
     public function p10()
     {
-        return $this->belongsTo('App\Models\AssesmentCuleg10','id_p10','id')
+        return $this->belongsTo(AssesmentCuleg10::class,'id_p10','id')
         ->select(DB::raw('*,
         (IFNULL(a1_cu_penilaian, 0) + IFNULL(a2_cu_penilaian, 0) + 
          IFNULL(a3_cu_penilaian, 0) + IFNULL(a4_cu_penilaian, 0) + 
@@ -259,7 +271,7 @@ class AssesmentCuleg extends BaseEloquent {
 
     public function p11()
     {
-        return $this->belongsTo('App\Models\AssesmentCuleg11','id_p11','id')
+        return $this->belongsTo(AssesmentCuleg11::class,'id_p11','id')
         ->select(DB::raw('*,
         (IFNULL(a1_cu_penilaian, 0) + IFNULL(a2_cu_penilaian, 0) + 
          IFNULL(a3_cu_penilaian, 0) + IFNULL(a4_cu_penilaian, 0) + 

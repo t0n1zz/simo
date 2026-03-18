@@ -215,7 +215,7 @@ class SuratController extends Controller{
 
 	public function store(Request $request)
 	{
-		$this->validate($request,Surat::$rules);
+		$request->validate(Surat::$rules);
 
 		$name = $request->name;
 		$id_user = Auth::user()->id;
@@ -315,7 +315,7 @@ class SuratController extends Controller{
 
 	public function update(Request $request, $id)
 	{
-		$this->validate($request,Surat::$rules);
+		$request->validate(Surat::$rules);
 
 		$name = $request->name;
 

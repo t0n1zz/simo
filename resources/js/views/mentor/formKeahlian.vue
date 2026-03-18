@@ -76,11 +76,14 @@
 			VeeForm,
 			Field,
 		},
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				keahlianStore: useKeahlianStore(),
-				title: '',
+			keahlianStore: useKeahlianStore(),
+			};
+		},
+		data() {
+			return {title: '',
 				formKeahlian: {
 					id: '',
 					keahlian_id: '',

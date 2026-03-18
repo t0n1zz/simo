@@ -1,8 +1,11 @@
 <?php
 namespace App\Models;
 
+use App\Models\Cu;
+use App\Models\Surat;
+use App\Models\SuratKode;
 use Spatie\Activitylog\LogOptions;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Support\Dataviewer;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -12,7 +15,6 @@ class SuratKategori extends BaseEloquent {
     use Dataviewer, LogsActivity, SoftDeletes;
 
     protected $table = 'surat_kategori';
-    protected $dates = ['deleted_at'];
 
     public static $rules = [
         'id_cu' => 'required',
@@ -31,7 +33,7 @@ class SuratKategori extends BaseEloquent {
     ];
 
     public function surat(){
-        return $this->hasMany('App\Models\Surat','id_surat_kategori','id')
+        return $this->hasMany(Surat::class,'id_surat_kategori','id')
             ->where('status','=','1')
             ->orderBy('created_at','desc')
             ->take(3);
@@ -46,17 +48,17 @@ class SuratKategori extends BaseEloquent {
 
     public function hassurat()
     {
-        return $this->hasMany('App\Models\Surat','id_surat_kategori','id');
+        return $this->hasMany(Surat::class,'id_surat_kategori','id');
     }
 
     public function Cu()
     {
-        return $this->belongsTo('App\Models\Cu','id_cu','id')->select('id','name');
+        return $this->belongsTo(Cu::class,'id_cu','id')->select('id','name');
     }
 
     public function kode()
     {
-        return $this->belongsTo('App\Models\SuratKode','id_surat_kode','id');
+        return $this->belongsTo(SuratKode::class,'id_surat_kode','id');
     }
 
     public function getActivitylogOptions(): LogOptions

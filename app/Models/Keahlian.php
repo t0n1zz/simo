@@ -1,8 +1,9 @@
 <?php
 namespace App\Models;
 
+use App\Models\MentorKeahlian;
 use Spatie\Activitylog\LogOptions;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Support\Dataviewer;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -12,7 +13,6 @@ class Keahlian extends BaseEloquent {
     use Dataviewer, LogsActivity, SoftDeletes;
 
     protected $table = 'keahlian';
-    protected $dates = ['deleted_at'];
 
     public static $rules = [
         'name' => 'required',
@@ -36,7 +36,7 @@ class Keahlian extends BaseEloquent {
 
     public function hasMentor()
     {
-        return $this->hasMany('App\Models\MentorKeahlian','keahlian_id','id');
+        return $this->hasMany(MentorKeahlian::class,'keahlian_id','id');
     }
 
     public function getActivitylogOptions(): LogOptions

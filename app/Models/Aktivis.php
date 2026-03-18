@@ -1,8 +1,18 @@
 <?php
 namespace App\Models;
 
+use App\Models\AktivisAnggotaCu;
+use App\Models\AktivisKeluarga;
+use App\Models\AktivisOrganisasi;
+use App\Models\AktivisPekerjaan;
+use App\Models\AktivisPendidikan;
+use App\Models\KegiatanPeserta;
+use App\Models\Region\Districts;
+use App\Models\Region\Provinces;
+use App\Models\Region\Regencies;
+use App\Models\Region\Villages;
 use Spatie\Activitylog\LogOptions;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Support\Dataviewer;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -13,7 +23,6 @@ class Aktivis extends BaseEloquent {
 
     protected $table = 'aktivis';
 
-    protected $dates = ['deleted_at'];
 
     public static $rules = [
         'name' => 'required',
@@ -55,66 +64,66 @@ class Aktivis extends BaseEloquent {
     }
     
     public function pendidikan(){
-        return $this->hasOne('App\Models\AktivisPendidikan','id_aktivis','id');
+        return $this->hasOne(AktivisPendidikan::class,'id_aktivis','id');
     }
 
     public function pendidikans(){
-        return $this->hasMany('App\Models\AktivisPendidikan','id_aktivis','id');
+        return $this->hasMany(AktivisPendidikan::class,'id_aktivis','id');
     }
 
     public function pendidikan_tertinggi(){
-        return $this->hasOne('App\Models\AktivisPendidikan','id_aktivis','id')->latest('mulai');
+        return $this->hasOne(AktivisPendidikan::class,'id_aktivis','id')->latest('mulai');
     }
 
     public function pekerjaan(){
-        return $this->hasOne('App\Models\AktivisPekerjaan','id_aktivis','id');
+        return $this->hasOne(AktivisPekerjaan::class,'id_aktivis','id');
     }
 
     public function pekerjaans(){
-        return $this->hasMany('App\Models\AktivisPekerjaan','id_aktivis','id')->orderBy('mulai','desc');
+        return $this->hasMany(AktivisPekerjaan::class,'id_aktivis','id')->orderBy('mulai','desc');
     }
 
     public function pekerjaan_aktif(){
-        return $this->hasOne('App\Models\AktivisPekerjaan','id_aktivis','id')->where('status',1)->latest();
+        return $this->hasOne(AktivisPekerjaan::class,'id_aktivis','id')->where('status',1)->latest();
     }
 
     public function pekerjaan_tidak_aktif(){
-        return $this->hasOne('App\Models\AktivisPekerjaan','id_aktivis','id')->where('status',3)->latest();
+        return $this->hasOne(AktivisPekerjaan::class,'id_aktivis','id')->where('status',3)->latest();
     }
 
     public function keluarga(){
-        return $this->hasMany('App\Models\AktivisKeluarga','id_aktivis','id');
+        return $this->hasMany(AktivisKeluarga::class,'id_aktivis','id');
     }
 
     public function anggota_cu(){
-        return $this->hasMany('App\Models\AktivisAnggotaCu','id_aktivis','id');
+        return $this->hasMany(AktivisAnggotaCu::class,'id_aktivis','id');
     }
 
     public function organisasi(){
-        return $this->hasMany('App\Models\AktivisOrganisasi','id_aktivis','id');
+        return $this->hasMany(AktivisOrganisasi::class,'id_aktivis','id');
     }
 
     public function diklat(){
-        return $this->hasMany('App\Models\KegiatanPeserta','aktivis_id','id');
+        return $this->hasMany(KegiatanPeserta::class,'aktivis_id','id');
     }
 
     public function Provinces()
     {
-        return $this->belongsTo('App\Models\Region\Provinces','id_provinces','id')->select('id','name');
+        return $this->belongsTo(Provinces::class,'id_provinces','id')->select('id','name');
     }
 		
     public function Regencies()
     {
-        return $this->belongsTo('App\Models\Region\Regencies','id_regencies','id')->select('id','name');
+        return $this->belongsTo(Regencies::class,'id_regencies','id')->select('id','name');
     }
 		
     public function Districts()
     {
-        return $this->belongsTo('App\Models\Region\Districts','id_districts','id')->select('id','name');
+        return $this->belongsTo(Districts::class,'id_districts','id')->select('id','name');
     }
 		
     public function Villages()
     {
-        return $this->belongsTo('App\Models\Region\Villages','id_villages','id')->select('id','name');
+        return $this->belongsTo(Villages::class,'id_villages','id')->select('id','name');
     }
 }

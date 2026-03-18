@@ -75,10 +75,13 @@
 			VeeForm,
 			Field
 		},
-		data() {
+		setup() {
 			return {
 				dokumenKategoriStore: useDokumenKategoriStore(),
-				kelas: 'dokumenKategori',
+			};
+		},
+		data() {
+			return {kelas: 'dokumenKategori',
 				form: {
 					id_cu: '',
 					name: '',

@@ -47,7 +47,7 @@ class ArtikelSimoController extends Controller{
 
 	public function store(Request $request)
 	{
-		$this->validate($request,ArtikelSimo::$rules);
+		$request->validate(ArtikelSimo::$rules);
 
 		$name = $request->name;
 
@@ -91,7 +91,7 @@ class ArtikelSimoController extends Controller{
 
 	public function update(Request $request, $id)
 	{
-		$this->validate($request,ArtikelSimo::$rules);
+		$request->validate(ArtikelSimo::$rules);
 
 		$name = $request->name;
 

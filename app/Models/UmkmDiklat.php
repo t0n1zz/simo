@@ -11,7 +11,6 @@ class UmkmDiklat extends BaseEloquent {
     use Dataviewer, LogsActivity, SoftDeletes;
 
     protected $table = 'umkm_diklat';
-    protected $dates = ['deleted_at'];
 
     public static $rules = [
         'id_umkm' => 'required',

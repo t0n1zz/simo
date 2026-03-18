@@ -2,7 +2,7 @@
 namespace App\Models;
 
 use Spatie\Activitylog\LogOptions;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 use App\Support\Dataviewer;
 

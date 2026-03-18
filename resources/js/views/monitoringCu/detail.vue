@@ -57,19 +57,17 @@
 									<h5>Rekomendasi:</h5>
 									<div v-if="currentUser.can && currentUser.can['update_monitoring_cu'] && item.aktivis_pemeriksa && currentUser.id_aktivis == item.aktivis_pemeriksa.id">
 										<checkbox 
-											v-for="rk in item.monitoring_rekom"
+											v-for="rk in item.monitoring_rekom" :key="rk.id"
 											:form="rk.status" 
 											:title="rk.rekomendasi"  
-											:key="rk.id"
 											@check="modalOpen('rekomendasi', rk)"
 										></checkbox>
 									</div>
 									<div v-else>
 										<checkbox 
-											v-for="rk in item.monitoring_rekom"
+											v-for="rk in item.monitoring_rekom" :key="rk.id"
 											:form="rk.status" 
 											:title="rk.rekomendasi"  
-											:key="rk.id"
 										></checkbox>
 									</div>
 								</div>

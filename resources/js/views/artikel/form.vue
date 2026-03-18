@@ -374,14 +374,17 @@
 			Field,
 			RichTextEditor,
 		},
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				cuStore: useCuStore(),
-				artikelStore: useArtikelStore(),
-				artikelKategoriStore: useArtikelKategoriStore(),
-				artikelPenulisStore: useArtikelPenulisStore(),
-				title: 'Tambah Artikel',
+			cuStore: useCuStore(),
+			artikelStore: useArtikelStore(),
+			artikelKategoriStore: useArtikelKategoriStore(),
+			artikelPenulisStore: useArtikelPenulisStore(),
+			};
+		},
+		data() {
+			return {title: 'Tambah Artikel',
 				titleDesc: 'Menambah artikel baru',
 				titleIcon: 'icon-plus3',
 				level2Title: 'Artikel',

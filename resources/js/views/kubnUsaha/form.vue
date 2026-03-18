@@ -114,11 +114,14 @@
 			VeeForm,
 			Field,
 		},
-		data() {
+		setup() {
 			return {
 				kubnUsahaStore: useKubnUsahaStore(),
-				cuStore: useCuStore(),
-				title: 'Tambah Usaha',
+			cuStore: useCuStore(),
+			};
+		},
+		data() {
+			return {title: 'Tambah Usaha',
 				titleDesc: 'Menambah usaha baru',
 				titleIcon: 'icon-plus3',
 				kelas: 'kubnUsaha',

@@ -135,10 +135,13 @@
 			checkValue
 		},
 		props:['title','kelas'],
-		data() {
+		setup() {
 			return {
 				suratStore: useSuratStore(),
-				selectedItem: [],
+			};
+		},
+		data() {
+			return {selectedItem: [],
 				query: {
 					order_column: "created_at",
 					order_direction: "desc",

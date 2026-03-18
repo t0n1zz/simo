@@ -2,7 +2,7 @@
 namespace App\Models;
 
 use Spatie\Activitylog\LogOptions;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Support\Dataviewer;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -12,7 +12,6 @@ class CoaSaldo extends Model {
     use Dataviewer, LogsActivity, SoftDeletes;
 
     protected $table = 'coa_saldo';
-    protected $dates = ['deleted_at'];
 
     public static $rules = [
         'id_coa' => 'required',

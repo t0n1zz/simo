@@ -2,8 +2,8 @@
 namespace App\Models;
 
 use Spatie\Activitylog\LogOptions;
-use DB;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Support\Dataviewer;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -13,7 +13,6 @@ class AssesmentAccessP2 extends BaseEloquent {
     use Dataviewer, LogsActivity, SoftDeletes;
 
     protected $table = 'assesment_access_p2';
-    protected $dates = ['deleted_at'];
 
     protected $fillable = [
         'p2a1_cu_penilaian','p2a1_cu_keterangan','p2a1_bkcu_penilaian','p2a1_bkcu_keterangan','p2a1_bkcu_rekomendasi',

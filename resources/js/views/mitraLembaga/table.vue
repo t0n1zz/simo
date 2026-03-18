@@ -148,9 +148,7 @@ export default {
   },
   props: ["title", "kelas"],
   data() {
-    return {
-      mitraLembagaStore: useMitraLembagaStore(),
-      selectedItem: [],
+    return {selectedItem: [],
       query: {
         order_column: "name",
         order_direction: "asc",

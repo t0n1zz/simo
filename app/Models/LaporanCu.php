@@ -1,8 +1,9 @@
 <?php
 namespace App\Models;
 
+use App\Models\Cu;
 use Spatie\Activitylog\LogOptions;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Support\Dataviewer;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -13,7 +14,6 @@ class LaporanCu extends BaseEloquent {
     use Dataviewer, LogsActivity, SoftDeletes;
 
     protected $table = 'laporan_cu';
-    protected $dates = ['deleted_at'];
 
     protected $revisionEnabled = true;
     protected $revisionCleanup = true;
@@ -62,12 +62,12 @@ class LaporanCu extends BaseEloquent {
 
     public function Cu()
     {
-        return $this->belongsTo('App\Models\Cu','id_cu','id')->select('id','no_ba','name','id_provinces')->withTrashed();
+        return $this->belongsTo(Cu::class,'id_cu','id')->select('id','no_ba','name','id_provinces')->withTrashed();
     }
 
     public function hasCu()
     {
-        return $this->hasMany('App\Models\Cu','id','max(id_cu) as id_cu')->select('no_ba');
+        return $this->hasMany(Cu::class,'id','max(id_cu) as id_cu')->select('no_ba');
     }
 
 

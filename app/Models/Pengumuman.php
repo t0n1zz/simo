@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Cu;
 use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Model;
 use App\Support\Dataviewer;
@@ -38,7 +39,7 @@ class Pengumuman extends BaseEloquent
 
     public function cu()
     {
-        return $this->belongsTo('App\Models\Cu','id_cu','id')->select('id','name');
+        return $this->belongsTo(Cu::class,'id_cu','id')->select('id','name');
     }
 
     public function getActivitylogOptions(): LogOptions

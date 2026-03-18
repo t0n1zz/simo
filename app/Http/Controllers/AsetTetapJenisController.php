@@ -54,7 +54,7 @@ class AsetTetapJenisController extends Controller{
 			$request->request->add(['kode_unik' => $kode_unik]);
 		}
 
-		$this->validate($request,AsetTetapJenis::$rules);
+		$request->validate(AsetTetapJenis::$rules);
 
 		$name = $request->name;
 

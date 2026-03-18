@@ -316,14 +316,17 @@
 			VeeForm,
 			Field,
 		},
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				userStore: useUserStore(),
-				aktivisStore: useAktivisStore(),
-				cuStore: useCuStore(),
-				roleStore: useRoleStore(),
-				title: 'Tambah User',
+			userStore: useUserStore(),
+			aktivisStore: useAktivisStore(),
+			cuStore: useCuStore(),
+			roleStore: useRoleStore(),
+			};
+		},
+		data() {
+			return {title: 'Tambah User',
 				titleDesc: 'Menambah user baru',
 				titleIcon: 'icon-plus3',
 				level2Title: 'User',

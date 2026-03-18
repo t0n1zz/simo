@@ -28,7 +28,7 @@ class MonitoringPencapaianCuController extends Controller{
 
 	public function store(Request $request)
 	{
-		$this->validate($request,MonitoringPencapaianCu::$rules);
+		$request->validate(MonitoringPencapaianCu::$rules);
 
 		$name = $request->pencapaian;
 
@@ -55,7 +55,7 @@ class MonitoringPencapaianCuController extends Controller{
 
 	public function update(Request $request, $id)
 	{
-		$this->validate($request, MonitoringPencapaianCu::$rules);
+		$request->validate(MonitoringPencapaianCu::$rules);
 
 		$name = $request->pencapaian;
 

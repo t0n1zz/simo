@@ -125,7 +125,7 @@ class AsetTetapController extends Controller
 
 	public function store(Request $request)
 	{
-		$this->validate($request, AsetTetap::$rules);
+		$request->validate(AsetTetap::$rules);
 		$name = $request->name;
 		$imagepath = $this->imagepath;
 

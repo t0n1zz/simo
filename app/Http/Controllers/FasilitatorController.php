@@ -60,7 +60,7 @@ class FasilitatorController extends Controller{
 
 	public function store(Request $request)
 	{
-		$this->validate($request,Fasilitator::$rules);
+		$request->validate(Fasilitator::$rules);
 
 		$name = $request->name;
 
@@ -109,7 +109,7 @@ class FasilitatorController extends Controller{
 
 	public function update(Request $request, $id)
 	{
-		$this->validate($request,Fasilitator::$rules);
+		$request->validate(Fasilitator::$rules);
 
 		$name = $request->name;
 

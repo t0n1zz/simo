@@ -272,12 +272,15 @@
 			VeeForm,
 			Field
 		},
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				cuStore: useCuStore(),
-				anggotaCuStore: useAnggotaCuStore(),
-				kelas: 'anggotaCu',
+			cuStore: useCuStore(),
+			anggotaCuStore: useAnggotaCuStore(),
+			};
+		},
+		data() {
+			return {kelas: 'anggotaCu',
 				tipeProduk: '',
 				formProduk:{
 					anggota_id: '',

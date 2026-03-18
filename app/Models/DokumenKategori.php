@@ -1,8 +1,10 @@
 <?php
 namespace App\Models;
 
+use App\Models\Cu;
+use App\Models\Dokumen;
 use Spatie\Activitylog\LogOptions;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Support\Dataviewer;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -13,7 +15,6 @@ class DokumenKategori extends BaseEloquent {
     use Dataviewer, LogsActivity, Sluggable, SoftDeletes;
 
     protected $table = 'dokumen_kategori';
-    protected $dates = ['deleted_at'];
 
     public static $rules = [
         'id_cu' => 'required',
@@ -48,12 +49,12 @@ class DokumenKategori extends BaseEloquent {
 
     public function hasDokumen()
     {
-        return $this->hasMany('App\Models\Dokumen','id_dokumen_kategori','id');
+        return $this->hasMany(Dokumen::class,'id_dokumen_kategori','id');
     }
 
     public function Cu()
     {
-        return $this->belongsTo('App\Models\Cu','id_cu','id')->select('id','name');
+        return $this->belongsTo(Cu::class,'id_cu','id')->select('id','name');
     }
 
     public function getActivitylogOptions(): LogOptions

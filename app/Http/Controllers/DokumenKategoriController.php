@@ -62,7 +62,7 @@ class DokumenKategoriController extends Controller{
 
 	public function store(Request $request)
 	{
-		$this->validate($request,DokumenKategori::$rules);
+		$request->validate(DokumenKategori::$rules);
 
 		$name = $request->name;
 
@@ -90,7 +90,7 @@ class DokumenKategoriController extends Controller{
 
 	public function update(Request $request, $id)
 	{
-		$this->validate($request,DokumenKategori::$rules);
+		$request->validate(DokumenKategori::$rules);
 
 		$name = $request->name;
 

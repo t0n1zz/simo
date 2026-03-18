@@ -1,8 +1,9 @@
 <?php
 namespace App\Models;
 
+use App\Models\Coa;
 use Spatie\Activitylog\LogOptions;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Support\Dataviewer;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -12,7 +13,6 @@ class Coa extends Model {
     use Dataviewer, LogsActivity, SoftDeletes;
 
     protected $table = 'coa';
-    protected $dates = ['deleted_at'];
 
     public static $rules = [
         'kode' => 'sometimes|required|unique:coa',
@@ -38,7 +38,7 @@ class Coa extends Model {
 
     public function induk()
     {
-        return $this->belongsTo('App\Models\Coa','id_induk','id');
+        return $this->belongsTo(Coa::class,'id_induk','id');
     }
 
 

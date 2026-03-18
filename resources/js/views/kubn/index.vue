@@ -49,11 +49,14 @@
 			selectCu,
 			tableData,
 		},
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				kubnStore: useKubnStore(),
-				title: 'KUBN',
+			kubnStore: useKubnStore(),
+			};
+		},
+		data() {
+			return {title: 'KUBN',
 				kelas: 'kubn',
 				titleDesc: 'Mengelola data KUBN',
 				titleIcon: 'icon-versions',

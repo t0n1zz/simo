@@ -1,8 +1,21 @@
 <?php
 namespace App\Models;
 
+use App\Models\AktivisPekerjaan;
+use App\Models\AnggotaCuCu;
+use App\Models\Artikel;
+use App\Models\LaporanCu;
+use App\Models\Monitoring;
+use App\Models\MonitoringCu;
+use App\Models\ProdukCu;
+use App\Models\Region\Districts;
+use App\Models\Region\Provinces;
+use App\Models\Region\Regencies;
+use App\Models\Region\Villages;
+use App\Models\Tp;
+use App\Models\User;
 use Spatie\Activitylog\LogOptions;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use App\Support\Dataviewer;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -15,7 +28,6 @@ class Cu extends Model {
 
     protected $table = 'cu';
 
-    protected $dates = ['deleted_at'];
     protected $revisionEnabled = true;
     protected $revisionCleanup = true; //Remove old revisions (works only when used with $historyLimit)
     protected $historyLimit = 100; //Maintain a maximum of 100 changes at any point of time, while cleaning up old revisions.
@@ -82,156 +94,156 @@ class Cu extends Model {
         
     public function LaporanCu()
     {
-        return $this->hasMany('App\Models\LaporanCu','id_cu','id');
+        return $this->hasMany(LaporanCu::class,'id_cu','id');
     }
 
     public function hasTp()
     {
-        return $this->hasMany('App\Models\Tp','id_cu','id')->select('id','id_cu','name');
+        return $this->hasMany(Tp::class,'id_cu','id')->select('id','id_cu','name');
     }
 
     public function hasProduk()
     {
-        return $this->hasMany('App\Models\ProdukCu','id_cu','id')->select('id','id_cu','name', 'tipe');
+        return $this->hasMany(ProdukCu::class,'id_cu','id')->select('id','id_cu','name', 'tipe');
     }
 
     public function hasSimpanan()
     {
-        return $this->hasMany('App\Models\ProdukCu','id_cu','id')->select('id','id_cu','name', 'tipe')->whereIn('tipe',['Simpanan Pokok','Simpanan Wajib','Simpanan Non Saham']);
+        return $this->hasMany(ProdukCu::class,'id_cu','id')->select('id','id_cu','name', 'tipe')->whereIn('tipe',['Simpanan Pokok','Simpanan Wajib','Simpanan Non Saham']);
     }
 
     public function hasSimpananJalinan()
     {
-        return $this->hasMany('App\Models\ProdukCu','id_cu','id')->select('id','id_cu','name', 'tipe','jalinan')->whereIn('tipe',['Simpanan Pokok','Simpanan Wajib','Simpanan Non Saham'])->where('jalinan',1);
+        return $this->hasMany(ProdukCu::class,'id_cu','id')->select('id','id_cu','name', 'tipe','jalinan')->whereIn('tipe',['Simpanan Pokok','Simpanan Wajib','Simpanan Non Saham'])->where('jalinan',1);
     }
 
     public function hasPinjaman()
     {
-        return $this->hasMany('App\Models\ProdukCu','id_cu','id')->select('id','id_cu','name', 'tipe')->whereIn('tipe',['Pinjaman Kapitalisasi','Pinjaman Umum','Pinjaman Produktif']);
+        return $this->hasMany(ProdukCu::class,'id_cu','id')->select('id','id_cu','name', 'tipe')->whereIn('tipe',['Pinjaman Kapitalisasi','Pinjaman Umum','Pinjaman Produktif']);
     }
 
     public function hasPinjamanJalinan()
     {
-        return $this->hasMany('App\Models\ProdukCu','id_cu','id')->select('id','id_cu','name', 'tipe','jalinan')->whereIn('tipe',['Pinjaman Kapitalisasi','Pinjaman Umum','Pinjaman Produktif'])->where('jalinan',1);
+        return $this->hasMany(ProdukCu::class,'id_cu','id')->select('id','id_cu','name', 'tipe','jalinan')->whereIn('tipe',['Pinjaman Kapitalisasi','Pinjaman Umum','Pinjaman Produktif'])->where('jalinan',1);
     }
 
     public function hasUser()
     {
-        return $this->hasMany('App\Models\User','id_cu','id')->select('id','id_cu');
+        return $this->hasMany(User::class,'id_cu','id')->select('id','id_cu');
     }
 
     public function hasArtikel()
     {
-        return $this->hasMany('App\Models\Artikel','id_cu','id')->select('id','id_cu');
+        return $this->hasMany(Artikel::class,'id_cu','id')->select('id','id_cu');
     }
 
     public function hasAnggotaCu()
     {
-        return $this->hasMany('App\Models\AnggotaCuCu','cu_id','id')->select('id','cu_id');
+        return $this->hasMany(AnggotaCuCu::class,'cu_id','id')->select('id','cu_id');
     }
 
     public function hasAktivisCu()
     {
-        return $this->hasMany('App\Models\AktivisPekerjaan','id_tempat','id')->select('id_aktivis','tipe','id_tempat','tingkat','selesai')->where('tipe',1)->where('status',1);
+        return $this->hasMany(AktivisPekerjaan::class,'id_tempat','id')->select('id_aktivis','tipe','id_tempat','tingkat','selesai')->where('tipe',1)->where('status',1);
     }
 
     public function hasAktivisAll()
     {
-        return $this->hasMany('App\Models\AktivisPekerjaan','id_tempat','id')->select('id_aktivis','tipe','id_tempat','tingkat','selesai')->whereIn('tipe',[1,3])->where('status',1);
+        return $this->hasMany(AktivisPekerjaan::class,'id_tempat','id')->select('id_aktivis','tipe','id_tempat','tingkat','selesai')->whereIn('tipe',[1,3])->where('status',1);
     }
 
     public function hasManajemen()
     {
-        return $this->hasMany('App\Models\AktivisPekerjaan','id_tempat','id')->select('id_aktivis','tipe','id_tempat','tingkat','selesai')->where('tipe',1)->whereIn('tingkat',[5,6,7,8,9])->where('status',1);
+        return $this->hasMany(AktivisPekerjaan::class,'id_tempat','id')->select('id_aktivis','tipe','id_tempat','tingkat','selesai')->where('tipe',1)->whereIn('tingkat',[5,6,7,8,9])->where('status',1);
     }
 
     public function hasPengurus()
     {
-        return $this->hasMany('App\Models\AktivisPekerjaan','id_tempat','id')->select('id_aktivis','tipe','id_tempat','tingkat','selesai')->where('tipe',1)->where('tingkat',1)->where('status',1);
+        return $this->hasMany(AktivisPekerjaan::class,'id_tempat','id')->select('id_aktivis','tipe','id_tempat','tingkat','selesai')->where('tipe',1)->where('tingkat',1)->where('status',1);
     }
 
     public function hasPengawas()
     {
-        return $this->hasMany('App\Models\AktivisPekerjaan','id_tempat','id')->select('id_aktivis','tipe','id_tempat','tingkat','selesai')->where('tipe',1)->where('tingkat',2)->where('status',1);
+        return $this->hasMany(AktivisPekerjaan::class,'id_tempat','id')->select('id_aktivis','tipe','id_tempat','tingkat','selesai')->where('tipe',1)->where('tingkat',2)->where('status',1);
     }
 
     public function hasKomite()
     {
-        return $this->hasMany('App\Models\AktivisPekerjaan','id_tempat','id')->select('id_aktivis','tipe','id_tempat','tingkat','selesai')->where('tipe',1)->where('tingkat',3)->where('status',1);
+        return $this->hasMany(AktivisPekerjaan::class,'id_tempat','id')->select('id_aktivis','tipe','id_tempat','tingkat','selesai')->where('tipe',1)->where('tingkat',3)->where('status',1);
     }
 
     public function hasPenasihat()
     {
-        return $this->hasMany('App\Models\AktivisPekerjaan','id_tempat','id')->select('id_aktivis','tipe','id_tempat','tingkat','selesai')->where('tipe',1)->where('tingkat',4)->where('status',1);
+        return $this->hasMany(AktivisPekerjaan::class,'id_tempat','id')->select('id_aktivis','tipe','id_tempat','tingkat','selesai')->where('tipe',1)->where('tingkat',4)->where('status',1);
     }
 
     public function hasSeniorManajer()
     {
-        return $this->hasMany('App\Models\AktivisPekerjaan','id_tempat','id')->select('id_aktivis','tipe','id_tempat','tingkat','selesai')->where('tipe',1)->where('tingkat',5)->where('status',1);
+        return $this->hasMany(AktivisPekerjaan::class,'id_tempat','id')->select('id_aktivis','tipe','id_tempat','tingkat','selesai')->where('tipe',1)->where('tingkat',5)->where('status',1);
     }
 
     public function hasManajer()
     {
-        return $this->hasMany('App\Models\AktivisPekerjaan','id_tempat','id')->select('id_aktivis','tipe','id_tempat','tingkat','selesai')->where('tipe',1)->where('tingkat',6)->where('status',1);
+        return $this->hasMany(AktivisPekerjaan::class,'id_tempat','id')->select('id_aktivis','tipe','id_tempat','tingkat','selesai')->where('tipe',1)->where('tingkat',6)->where('status',1);
     }
 
     public function hasSupervisor()
     {
-        return $this->hasMany('App\Models\AktivisPekerjaan','id_tempat','id')->select('id_aktivis','tipe','id_tempat','tingkat','selesai')->where('tipe',1)->where('tingkat',7)->where('status',1);
+        return $this->hasMany(AktivisPekerjaan::class,'id_tempat','id')->select('id_aktivis','tipe','id_tempat','tingkat','selesai')->where('tipe',1)->where('tingkat',7)->where('status',1);
     }
 
     public function hasStaf()
     {
-        return $this->hasMany('App\Models\AktivisPekerjaan','id_tempat','id')->select('id_aktivis','tipe','id_tempat','tingkat','selesai')->where('tipe',1)->where('tingkat',8)->where('status',1);
+        return $this->hasMany(AktivisPekerjaan::class,'id_tempat','id')->select('id_aktivis','tipe','id_tempat','tingkat','selesai')->where('tipe',1)->where('tingkat',8)->where('status',1);
     }
 
     public function hasKontrak()
     {
-        return $this->hasMany('App\Models\AktivisPekerjaan','id_tempat','id')->select('id_aktivis','tipe','id_tempat','tingkat','selesai')->where('tipe',1)->where('tingkat',9)->where('status',1);
+        return $this->hasMany(AktivisPekerjaan::class,'id_tempat','id')->select('id_aktivis','tipe','id_tempat','tingkat','selesai')->where('tipe',1)->where('tingkat',9)->where('status',1);
     }
 
     public function hasKolektor()
     {
-        return $this->hasMany('App\Models\AktivisPekerjaan','id_tempat','id')->select('id_aktivis','tipe','id_tempat','tingkat','selesai')->where('tipe',1)->where('tingkat',10)->where('status',1);
+        return $this->hasMany(AktivisPekerjaan::class,'id_tempat','id')->select('id_aktivis','tipe','id_tempat','tingkat','selesai')->where('tipe',1)->where('tingkat',10)->where('status',1);
     }
 
     public function hasKelompokInti()
     {
-        return $this->hasMany('App\Models\AktivisPekerjaan','id_tempat','id')->select('id_aktivis','tipe','id_tempat','tingkat','selesai')->where('tipe',1)->where('tingkat',11)->where('status',1);
+        return $this->hasMany(AktivisPekerjaan::class,'id_tempat','id')->select('id_aktivis','tipe','id_tempat','tingkat','selesai')->where('tipe',1)->where('tingkat',11)->where('status',1);
     }
 
     public function hasAktivisTidakAktif()
     {
-        return $this->hasMany('App\Models\AktivisPekerjaan','id_tempat','id')->select('id_aktivis','tipe','id_tempat','tingkat','selesai')->where('tipe',1)->where('status',3);
+        return $this->hasMany(AktivisPekerjaan::class,'id_tempat','id')->select('id_aktivis','tipe','id_tempat','tingkat','selesai')->where('tipe',1)->where('status',3);
     }
 
     public function hasMonitoring()
     {
-        return $this->hasMany('App\Models\Monitoring','id_cu','id')->select('id','id_cu');
+        return $this->hasMany(Monitoring::class,'id_cu','id')->select('id','id_cu');
     }
 
     public function hasMonitoringCu()
     {
-        return $this->hasMany('App\Models\MonitoringCu','id_cu','id')->select('id','id_cu');
+        return $this->hasMany(MonitoringCu::class,'id_cu','id')->select('id','id_cu');
     }
     
     public function Provinces()
     {
-        return $this->belongsTo('App\Models\Region\Provinces','id_provinces','id')->select('id','name');
+        return $this->belongsTo(Provinces::class,'id_provinces','id')->select('id','name');
     }
 		
     public function Regencies()
     {
-        return $this->belongsTo('App\Models\Region\Regencies','id_regencies','id')->select('id','name');
+        return $this->belongsTo(Regencies::class,'id_regencies','id')->select('id','name');
     }
 		
     public function Districts()
     {
-        return $this->belongsTo('App\Models\Region\Districts','id_districts','id')->select('id','name');
+        return $this->belongsTo(Districts::class,'id_districts','id')->select('id','name');
     }
 		
     public function Villages()
     {
-        return $this->belongsTo('App\Models\Region\Villages','id_villages','id')->select('id','name');
+        return $this->belongsTo(Villages::class,'id_villages','id')->select('id','name');
     }
 }

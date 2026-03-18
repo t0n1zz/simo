@@ -11,7 +11,6 @@ class KubnDiklat extends BaseEloquent {
     use Dataviewer, LogsActivity, SoftDeletes;
 
     protected $table = 'kubn_diklat';
-    protected $dates = ['deleted_at'];
 
     public static $rules = [
         'id_kubn' => 'required',

@@ -38,7 +38,7 @@ class LaporanCuDiskusiController extends Controller{
 
 	public function store(Request $request)
 	{
-		$this->validate($request,LaporanCuDiskusi::$rules);
+		$request->validate(LaporanCuDiskusi::$rules);
 		
 		$kelas = LaporanCuDiskusi::create($request->all());	
 
@@ -53,7 +53,7 @@ class LaporanCuDiskusiController extends Controller{
 
 	public function update(Request $request, $id)
 	{
-		$this->validate($request,LaporanCuDiskusi::$rules);
+		$request->validate(LaporanCuDiskusi::$rules);
 
 		$kelas = LaporanCuDiskusi::findOrFail($id);
 		

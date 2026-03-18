@@ -3,7 +3,7 @@
 		<!-- itemdata -->
 		<div v-if="itemDataStat == 'success'">
 			<div v-if="itemData.length > 0">
-				<div class="card card-body border-left-primary rounded-left-0" v-for="(diskusi,index) in itemData" >
+				<div class="card card-body border-left-primary rounded-left-0" v-for="(diskusi,index) in itemData" :key="diskusi.id" >
 					<div class="card-header bg-white header-elements-inline">
 						<h6 class="card-title">
 							<b>{{diskusi.user.name}}</b> 

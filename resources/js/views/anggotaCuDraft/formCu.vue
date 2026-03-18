@@ -212,12 +212,15 @@
 			VeeForm,
 			Field
 		},
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				cuStore: useCuStore(),
-				tpStore: useTpStore(),
-				title: '',
+			cuStore: useCuStore(),
+			tpStore: useTpStore(),
+			};
+		},
+		data() {
+			return {title: '',
 				kelas: 'anggotaCu',
 				formDataCu:{
 					no_ba: '',

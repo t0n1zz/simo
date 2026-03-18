@@ -1,8 +1,9 @@
 <?php
 namespace App\Models;
 
+use App\Models\AnggotaCu;
 use Spatie\Activitylog\LogOptions;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Support\Dataviewer;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -12,7 +13,6 @@ class KubnAnggota extends BaseEloquent {
     use Dataviewer, LogsActivity, SoftDeletes;
 
     protected $table = 'kubn_anggota';
-    protected $dates = ['deleted_at'];
 
     public static $rules = [
         'anggota_cu_id' => 'required',
@@ -37,7 +37,7 @@ class KubnAnggota extends BaseEloquent {
 
     public function anggota_cu()
     {
-        return $this->belongsTo('App\Models\AnggotaCu','anggota_cu_id','id');
+        return $this->belongsTo(AnggotaCu::class,'anggota_cu_id','id');
     }
 
     public function getActivitylogOptions(): LogOptions

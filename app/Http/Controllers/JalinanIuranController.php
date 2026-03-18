@@ -97,7 +97,7 @@ class JalinanIuranController extends Controller{
 
 	public function store(Request $request)
 	{
-		$this->validate($request,JalinanIuran::$rules);
+		$request->validate(JalinanIuran::$rules);
 
 		$periode = $request->periode;
 
@@ -124,7 +124,7 @@ class JalinanIuranController extends Controller{
 
 	public function update(Request $request, $id)
 	{
-		// $this->validate($request,JalinanIuran::$rules);
+		// $request->validate(JalinanIuran::$rules);
 
 		$periode = $request->periode;
 

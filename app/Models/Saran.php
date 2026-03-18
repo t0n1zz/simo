@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use App\Support\Dataviewer;
 
@@ -37,6 +38,6 @@ class Saran extends BaseEloquent
 
     public function user()
     {
-        return $this->belongsTo('App\Models\User','id_user','id')->select('id','id_cu','id_aktivis','username');
+        return $this->belongsTo(User::class,'id_user','id')->select('id','id_cu','id_aktivis','username');
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\SertifikatGenerate;
 use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Model;
 use App\Support\Dataviewer;
@@ -13,7 +14,6 @@ class SertifikatGetNomorPeserta extends Model
     use Dataviewer, LogsActivity, SoftDeletes;
     protected $table = 'sertifikat_get_nomor_peserta';
 
-    protected $dates = ['deleted_at'];
 
     protected $fillable = [
         'sertifikat_get_nomor_id', 'nama', 'keterangan', 'created_at', 'updated_at'
@@ -49,7 +49,7 @@ class SertifikatGetNomorPeserta extends Model
     }
 
     public function hasNomorPeserta(){
-        return $this->hasMany('App\Models\SertifikatGenerate','sertifikat_get_nomor_peserta_id','id');
+        return $this->hasMany(SertifikatGenerate::class,'sertifikat_get_nomor_peserta_id','id');
     }
 
     public function getActivitylogOptions(): LogOptions

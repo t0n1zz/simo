@@ -115,7 +115,7 @@
                 <ul class="dropdown-menu dropdown-menu-right">
                   <li class="dropdown-header">Pencarian berdasarkan</li>
                   <li class="divider"></li>
-                  <li v-for="column in columnData" v-show="column.filter && !column.disable" :class="{'active' : params.search_column == column.key || params.search_column === column.filterKey}">
+                  <li v-for="column in columnData" :key="column" v-show="column.filter && !column.disable" :class="{'active' : params.search_column == column.key || params.search_column === column.filterKey}">
                     <a @click.prevent="searchColumnData(column.key,column.title,column.filterType,column.filterKey)">{{column.title }}</a>
                   </li>
                 </ul>
@@ -130,7 +130,7 @@
                 <ul class="dropdown-menu dropdown-menu-right">
                   <li class="dropdown-header">Operator pencarian</li>
                   <li class="divider"></li>
-                  <li v-for="op in operator" :class="{'active' : params.search_operator === op.key}">
+                  <li v-for="op in operator" :key="op" :class="{'active' : params.search_operator === op.key}">
                     <a @click.prevent="searchOperatorData(op)">{{op.title}}</a>
                   </li>
                 </ul>
@@ -406,8 +406,8 @@
       </div>
     </div>
 
-    <div v-for="(items,index) in groupData" v-else-if="itemDataStat === 'success'">
-      <slot name="item-mobile" v-for="(item,index) in items" :item="item" :index="index"></slot>
+    <div v-for="(items,index) in groupData" :key="index" v-else-if="itemDataStat === 'success'">
+      <slot name="item-mobile" v-for="(item,index) in items" :key="item.id" :item="item" :index="index"></slot>
     </div>
 
     <div v-else-if="itemDataStat === 'fail'">
@@ -427,7 +427,7 @@
             <i class="icon-arrow-left12"></i>
           </a>
         </li>
-        <li v-for="n in pages" :class="{'active' : params.page == n}">
+        <li v-for="n in pages" :key="n" :class="{'active' : params.page == n}">
           <a @click.prevent="goToPage(n)">{{n}}</a>
         </li>
         <li :class="{'disabled' : !itemData.next_page_url}">

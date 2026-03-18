@@ -60,9 +60,7 @@ export default {
 			},
 	},
     data() {
-        return {
-            authStore: useAuthStore(),
-        }
+        return {}
     },
 	methods:{
 		level2Back(){

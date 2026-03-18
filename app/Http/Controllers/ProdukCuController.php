@@ -94,7 +94,7 @@ class ProdukCuController extends Controller
 
     public function store(Request $request)
     {
-        $this->validate($request, ProdukCu::$rules);
+        $request->validate(ProdukCu::$rules);
 
         $name = $request->name;
 
@@ -130,7 +130,7 @@ class ProdukCuController extends Controller
 
     public function update(Request $request, $id)
     {
-        $this->validate($request, ProdukCu::$rules);
+        $request->validate(ProdukCu::$rules);
 
         $name = $request->name;
 

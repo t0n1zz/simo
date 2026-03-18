@@ -11,7 +11,6 @@ class EnterpreneurDiklat extends BaseEloquent {
     use Dataviewer, LogsActivity, SoftDeletes;
 
     protected $table = 'enterpreneur_diklat';
-    protected $dates = ['deleted_at'];
 
     public static $rules = [
         'id_enterpreneur' => 'required',

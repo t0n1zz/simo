@@ -160,11 +160,14 @@
 
 	export default {
 		props:['kelas','isPus','path','itemDataStat'],
-		data(){
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				cuStore: useCuStore(),
-				idCu: '',
+			cuStore: useCuStore(),
+			};
+		},
+		data(){
+			return {idCu: '',
 				tingkat: ''
 			}
 		},

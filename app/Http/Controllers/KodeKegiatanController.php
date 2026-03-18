@@ -41,7 +41,7 @@ class KodeKegiatanController extends Controller
 
     public function store(Request $request)
     {
-        $this->validate($request, KodeKegiatan::$rules);
+        $request->validate(KodeKegiatan::$rules);
 
         $name = $request->name;
 
@@ -68,7 +68,7 @@ class KodeKegiatanController extends Controller
 
     public function update(Request $request, $id)
     {
-        $this->validate($request, KodeKegiatan::$rules);
+        $request->validate(KodeKegiatan::$rules);
 
         $name = $request->name;
         $kelas = KodeKegiatan::findOrFail($id);

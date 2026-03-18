@@ -313,7 +313,7 @@
                 Kelompok {{ group.title }}: <b>{{index}}</b>
               </td>
             </tr>
-            <slot name="item-desktop" v-for="(item,index) in items" :item="item" :index="index"></slot>
+            <slot name="item-desktop" v-for="(item,index) in items" :key="item.id" :item="item" :index="index"></slot>
           </tbody>
 
           <!-- error body -->
@@ -574,7 +574,7 @@
       </div>
 
       <div v-for="(items,index) in groupData" :key="index" v-else-if="itemDataStat === 'success'">
-        <slot name="item-mobile" v-for="(item,index) in items" :item="item" :index="index"></slot>
+        <slot name="item-mobile" v-for="(item,index) in items" :key="item.id" :item="item" :index="index"></slot>
       </div>
 
       <div v-else-if="itemDataStat === 'fail'">

@@ -427,10 +427,7 @@
     },
     props: ['title', 'kelas', 'status', 'itemData', 'itemDataStat', 'isSimple'],
     data() {
-      return {
-        jalinanKlaimStore: useJalinanKlaimStore(),
-        userStore: useUserStore(),
-        selectedItem: [],
+      return {selectedItem: [],
         tipeSurat: '',
         query: {
           order_column: "created_at",

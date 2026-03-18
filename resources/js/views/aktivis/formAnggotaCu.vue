@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div class="row">
-		
+
 			<!-- cu -->
 			<div class="col-md-4" v-if="currentUser.id_cu == 0">
 				<div class="form-group" :class="{'has-error' : errors.has('form.anggota_cu.id_cu')}">
@@ -13,13 +13,13 @@
 					</h6>
 
 					<!-- select -->
-					<select class="form-control" name="id_cu" v-model="form.anggota_cu.id_cu" data-width="100%" v-validate="'required'" data-vv-as="CU" :disabled="modelCu.length == 0">
+					<Field as="select" name="id_cu" rules="required" v-model="form.anggota_cu.id_cu" class="form-control" data-width="100%" :disabled="modelCu.length == 0">
 						<option disabled value="">
 							<span v-if="modelCuStat === 'loading'">Mohon tunggu...</span>
 							<span v-else>Silahkan pilih CU</span>
 						</option>
 						<option v-for="(cu, index) in modelCu" :value="cu.id" :key="index">{{cu.name}}</option>
-					</select>
+					</Field>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('form.anggota_cu.id_cu')">
@@ -39,7 +39,9 @@
 						No. BA:</h6>
 
 					<!-- text -->
-					<input type="text" name="anggota_no_ba" class="form-control" placeholder="Silahkan masukkan no. BA anggota CU" v-validate="'required|min:5'" data-vv-as="No. BA Anggota CU" v-model="form.anggota_cu.no_ba">
+					<Field name="anggota_no_ba" rules="required|min:5" v-model="form.anggota_cu.no_ba" v-slot="{ field }">
+						<input type="text" class="form-control" placeholder="Silahkan masukkan no. BA anggota CU" v-bind="field">
+					</Field>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('form.anggota_cu.no_ba')">
@@ -59,8 +61,8 @@
 					Tgl. Jadi Anggota: </h6>
 
 					<!-- input -->
-					<date-picker @dateSelected="form.anggota_cu = $event" :defaultDate="form.anggota_cu"></date-picker>	
-					<input v-model="form.anggota_cu" v-show="false" v-validate="'required'" data-vv-as="Tgl. Jadi Anggota"/>
+					<date-picker @dateSelected="form.anggota_cu = $event" :defaultDate="form.anggota_cu"></date-picker>
+					<Field name="tanggal_masuk" rules="required" v-model="form.anggota_cu" v-show="false" />
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('form.anggota_cu.tanggal_masuk')">
@@ -77,22 +79,27 @@
 </template>
 
 <script>
+	import { Field } from 'vee-validate';
 	import { useAuthStore } from '../../stores/auth';
 	import Cleave from 'vue-cleave-component';
 	import infoIcon from "../../components/infoIcon.vue";
 	import DatePicker from "../../components/datePicker.vue";
 
 	export default {
-		props:['form','modelCu','modelCuStat'],
+		props:['form','modelCu','modelCuStat','errors'],
 		components: {
+			Field,
 			Cleave,
 			infoIcon,
 			DatePicker
 		},
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				cleaveOption: {
+			};
+		},
+		data() {
+			return {cleaveOption: {
           date:{
             date: true,
             datePattern: ['Y','m','d'],

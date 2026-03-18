@@ -35,11 +35,14 @@
 			formEdit,
 			Cleave,
 		},
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				anggotaCuStore: useAnggotaCuStore(),
-				title: '',
+			anggotaCuStore: useAnggotaCuStore(),
+			};
+		},
+		data() {
+			return {title: '',
 				titleDesc: '',
 				titleIcon: '',
 				kelas: 'anggotaCu',

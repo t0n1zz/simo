@@ -208,9 +208,7 @@
       }
     },
     data(){
-      return {
-        laporanCuStore: useLaporanCuStore(),
-        tabTitle: 'CU',
+      return {tabTitle: 'CU',
         tabTabelName: 'tabelCu',
         isTabelPearls: false,
         isTabelGerakan: false,

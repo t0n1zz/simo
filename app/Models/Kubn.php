@@ -1,6 +1,15 @@
 <?php
 namespace App\Models;
 
+use App\Models\AnggotaCu;
+use App\Models\Cu;
+use App\Models\KubnDiklat;
+use App\Models\KubnUsaha;
+use App\Models\Region\Districts;
+use App\Models\Region\Provinces;
+use App\Models\Region\Regencies;
+use App\Models\Region\Villages;
+use App\Models\Tp;
 use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Support\Dataviewer;
@@ -12,7 +21,6 @@ class Kubn extends BaseEloquent {
     use Dataviewer, LogsActivity, SoftDeletes;
 
     protected $table = 'kubn';
-    protected $dates = ['deleted_at'];
 
     protected $revisionEnabled = true;
     protected $revisionCleanup = true;
@@ -57,46 +65,46 @@ class Kubn extends BaseEloquent {
 
     public function Provinces()
     {
-        return $this->belongsTo('App\Models\Region\Provinces','id_provinces','id')->select('id','name');
+        return $this->belongsTo(Provinces::class,'id_provinces','id')->select('id','name');
     }
 		
     public function Regencies()
     {
-        return $this->belongsTo('App\Models\Region\Regencies','id_regencies','id')->select('id','name');
+        return $this->belongsTo(Regencies::class,'id_regencies','id')->select('id','name');
     }
 		
     public function Districts()
     {
-        return $this->belongsTo('App\Models\Region\Districts','id_districts','id')->select('id','name');
+        return $this->belongsTo(Districts::class,'id_districts','id')->select('id','name');
     }
 		
     public function Villages()
     {
-        return $this->belongsTo('App\Models\Region\Villages','id_villages','id')->select('id','name');
+        return $this->belongsTo(Villages::class,'id_villages','id')->select('id','name');
     }
 
     public function Cu()
     {
-        return $this->belongsTo('App\Models\Cu','id_cu','id')->select('id','no_ba','name','id_provinces')->withTrashed();
+        return $this->belongsTo(Cu::class,'id_cu','id')->select('id','no_ba','name','id_provinces')->withTrashed();
     }
 
     public function Tp()
     {
-        return $this->belongsTo('App\Models\Tp','id_tp','id')->select('id','name')->withTrashed();
+        return $this->belongsTo(Tp::class,'id_tp','id')->select('id','name')->withTrashed();
     }
 
     public function Usaha()
     {
-        return $this->belongsTo('App\Models\KubnUsaha','id_usaha','id')->select('id','name')->withTrashed();
+        return $this->belongsTo(KubnUsaha::class,'id_usaha','id')->select('id','name')->withTrashed();
     }
 
     public function Diklat()
     {
-        return $this->hasMany('App\Models\KubnDiklat','id_kubn','id');
+        return $this->hasMany(KubnDiklat::class,'id_kubn','id');
     }
 
     public function anggota_kubn(){
-        return $this->belongsToMany('App\Models\AnggotaCu','kubn_anggota')->withPivot('jabatan','tanggal_mulai','tanggal_selesai','deskripsi')->withTimestamps();
+        return $this->belongsToMany(AnggotaCu::class,'kubn_anggota')->withPivot('jabatan','tanggal_mulai','tanggal_selesai','deskripsi')->withTimestamps();
     }
 
     public function getActivitylogOptions(): LogOptions

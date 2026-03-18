@@ -238,7 +238,7 @@ class DiklatBKCUController extends Controller{
 
 	public function store(Request $request)
 	{	
-		$this->validate($request,Kegiatan::$rules);
+		$request->validate(Kegiatan::$rules);
 
 		$name = $request->name;
 
@@ -325,7 +325,7 @@ class DiklatBKCUController extends Controller{
 
 	public function update(Request $request, $id)
 	{
-		// $this->validate($request, Kegiatan::$rules);
+		// $request->validate(Kegiatan::$rules);
 
 		$name = $request->name;
 

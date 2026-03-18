@@ -17,7 +17,7 @@
 					<!-- collection -->
 					<div v-if="errorItem">
 						<ul>
-							<li v-for="error in errorItem">{{error.msg}}</li>
+							<li v-for="error in errorItem" :key="error">{{error.msg}}</li>
 						</ul>
 					</div>
 				

@@ -1,8 +1,10 @@
 <?php
 namespace App\Models;
 
+use App\Models\AnggotaCu;
+use App\Models\AnggotaCuCu;
 use Spatie\Activitylog\LogOptions;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use App\Support\Dataviewer;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -13,7 +15,6 @@ class JalinanIuranAnggota extends Model {
 
     protected $table = 'jalinan_iuran_anggota';
 
-    protected $dates = ['deleted_at'];
     
     public static $rules = [
         'jalinan_iuran_id' => 'required',
@@ -44,12 +45,12 @@ class JalinanIuranAnggota extends Model {
 
     public function anggota_cu()
     {
-        return $this->belongsTo('App\Models\AnggotaCu','anggota_cu_id','id')->select('id','nik','name','tanggal_lahir','kelamin','gambar');
+        return $this->belongsTo(AnggotaCu::class,'anggota_cu_id','id')->select('id','nik','name','tanggal_lahir','kelamin','gambar');
     }
 
     public function anggota_cu_cu()
     {
-        return $this->belongsTo('App\Models\AnggotaCuCu','anggota_cu_cu_id','id')->select('id','no_ba');
+        return $this->belongsTo(AnggotaCuCu::class,'anggota_cu_cu_id','id')->select('id','no_ba');
     }
 
     public function usia_lahir()

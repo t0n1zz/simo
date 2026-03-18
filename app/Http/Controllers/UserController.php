@@ -321,7 +321,7 @@ class UserController extends Controller
 	public function store(Request $request)
 	{
 			// validate request
-			$this->validate($request,User::$rules);
+			$request->validate(User::$rules);
 
 			$username = $request->username;
 			$password = $request->password;

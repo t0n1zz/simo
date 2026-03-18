@@ -348,7 +348,7 @@
 											</h5>
 
 											<!-- select -->
-											<select class="form-control"  name="id_regencies" v-model="form.id_regencies" data-width="100%"  data-vv-as="Kabupaten" @change="changeRegencies($event.target.value)" :disabled="modelRegencies.length === 0 || !currentUser.can['update_' + kelas]">
+											<select class="form-control" name="id_regencies" v-model="form.id_regencies" data-width="100%" @change="changeRegencies($event.target.value)" :disabled="modelRegencies.length === 0 || !currentUser.can['update_' + kelas]">
 												<option disabled value="">
 													<span v-if="modelRegenciesStat === 'loading'">Mohon tunggu...</span>
 													<span v-else>Silahkan pilih kabupaten</span>
@@ -375,7 +375,7 @@
 											</h5>
 
 											<!-- select -->
-											<select class="form-control"  name="id_districts" v-model="form.id_districts" data-width="100%" data-vv-as="Kecamatan" :disabled="modelDistricts.length === 0 || !currentUser.can['update_' + kelas]" @change="changeDistricts($event.target.value)">
+											<select class="form-control" name="id_districts" v-model="form.id_districts" data-width="100%" :disabled="modelDistricts.length === 0 || !currentUser.can['update_' + kelas]" @change="changeDistricts($event.target.value)">
 												<option disabled value="">
 													<span v-if="modelDistrictsStat === 'loading'">Mohon tunggu...</span>
 													<span v-else>Silahkan pilih kecamatan</span>
@@ -402,7 +402,7 @@
 											</h5>
 
 											<!-- select -->
-											<select class="form-control"  name="id_villages" v-model="form.id_villages" data-width="100%"  data-vv-as="Kelurahan" :disabled="modelVillages.length === 0 || !currentUser.can['update_' + kelas]">
+											<select class="form-control" name="id_villages" v-model="form.id_villages" data-width="100%" :disabled="modelVillages.length === 0 || !currentUser.can['update_' + kelas]">
 												<option disabled value="">
 													<span v-if="modelVillagesStat === 'loading'">Mohon tunggu... mohon tunggu</span>
 													<span v-else>Silahkan pilih kelurahan</span>
@@ -450,7 +450,7 @@
 											<h5>Koordinat garis lintang (latitude):</h5>
 
 											<!-- text -->
-											<input type="text" name="lat" class="form-control" placeholder="Silahkan masukkan koordinat garis lintang" data-vv-as="Latitude" v-model="form.lat">
+											<input type="text" name="lat" class="form-control" placeholder="Silahkan masukkan koordinat garis lintang" v-model="form.lat">
 
 											<small class="text-muted">&nbsp;</small>
 										</div>
@@ -464,7 +464,7 @@
 											<h5>Koordinat garis bujur (longitude):</h5>
 
 											<!-- text -->
-											<input type="text" name="lng" class="form-control" placeholder="Silahkan masukkan koordinat garis bujur" data-vv-as="Longitude" v-model="form.lng">
+											<input type="text" name="lng" class="form-control" placeholder="Silahkan masukkan koordinat garis bujur" v-model="form.lng">
 
 											<small class="text-muted">&nbsp;</small>
 										</div>

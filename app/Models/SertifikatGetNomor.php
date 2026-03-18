@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\SertifikatGenerate;
 use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Model;
 use App\Support\Dataviewer;
@@ -12,7 +13,6 @@ class SertifikatGetNomor extends Model
  use Dataviewer, LogsActivity, SoftDeletes;
     protected $table = 'sertifikat_get_nomor';
 
-    protected $dates = ['deleted_at'];
 
     protected $fillable = [
         'aktivis_id', 'kegiatan_name', 'jumlah_nomor_sertifikat', 'created_at', 'updated_at'
@@ -50,7 +50,7 @@ class SertifikatGetNomor extends Model
     }
 
     public function hasNomor(){
-        return $this->hasMany('App\Models\SertifikatGenerate','sertifikat_get_nomor_id','id');
+        return $this->hasMany(SertifikatGenerate::class,'sertifikat_get_nomor_id','id');
     }
     public function peserta()
     {

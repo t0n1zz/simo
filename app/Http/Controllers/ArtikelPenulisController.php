@@ -61,7 +61,7 @@ class ArtikelPenulisController extends Controller{
 
 	public function store(Request $request)
 	{
-		$this->validate($request,ArtikelPenulis::$rules);
+		$request->validate(ArtikelPenulis::$rules);
 
 		$name = $request->name;
 
@@ -96,7 +96,7 @@ class ArtikelPenulisController extends Controller{
 
 	public function update(Request $request, $id)
 	{
-		$this->validate($request,ArtikelPenulis::$rules);
+		$request->validate(ArtikelPenulis::$rules);
 
 		$name = $request->name;
 

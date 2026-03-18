@@ -1,8 +1,10 @@
 <?php
 namespace App\Models;
 
+use App\Models\Cu;
+use App\Models\Surat;
 use Spatie\Activitylog\LogOptions;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Support\Dataviewer;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -12,7 +14,6 @@ class SuratKode extends Model {
     use Dataviewer, LogsActivity, SoftDeletes;
 
     protected $table = 'surat_kode';
-    protected $dates = ['deleted_at'];
 
     public static $rules = [
         'id_cu' => 'required',
@@ -38,12 +39,12 @@ class SuratKode extends Model {
 
     public function Cu()
     {
-        return $this->belongsTo('App\Models\Cu','id_cu','id')->select('id','name');
+        return $this->belongsTo(Cu::class,'id_cu','id')->select('id','name');
     }
 
     public function hassurat()
     {
-        return $this->hasMany('App\Models\Surat','id_surat_kode','id');
+        return $this->hasMany(Surat::class,'id_surat_kode','id');
     }
 
     public function getActivitylogOptions(): LogOptions

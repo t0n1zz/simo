@@ -359,12 +359,15 @@ export default {
     checkValue,
   },
   props: ["title", "kelas"],
-  data() {
+  setup() {
     return {
       authStore: useAuthStore(),
       userStore: useUserStore(),
       globalStore: useGlobalStore(),
-      selectedItem: [],
+    };
+  },
+  data() {
+    return {selectedItem: {},
       query: {
         order_column: "login",
         order_direction: "desc",
@@ -503,7 +506,7 @@ export default {
         this.modalTitle = this.updateMessage.message;
         this.modalContent = "";
         this.fetch(this.query);
-        this.selectedItem = [];
+        this.selectedItem = {};
       } else if (value == "fail") {
         this.modalContent = this.updateMessage;
       } else {
@@ -532,10 +535,7 @@ export default {
         this.excelDownloadUrl = this.kelas;
       } else {
         this.disableColumnCu(true);
-        this.userStore.indexCu([
-          params,
-          this.$route.params.cu
-        ]);
+        this.userStore.indexCu(params, this.$route.params.cu);
         this.excelDownloadUrl =
           this.kelas + "/indexCu/" + this.$route.params.cu;
       }
@@ -628,10 +628,7 @@ export default {
           this.selectedItem.id
         );
       } else if (this.state == "akses") {
-        this.userStore.updateHakAkses([
-          this.selectedItem.id,
-          this.modalHakAksesForm
-        ]);
+        this.userStore.updateHakAkses(this.selectedItem.id, this.modalHakAksesForm);
       }
     }
   },

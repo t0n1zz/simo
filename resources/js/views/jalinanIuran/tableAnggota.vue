@@ -109,10 +109,13 @@
 			jsonExcel
 		},
 		props: ['kelas','title','deskripsi','produkData','cu','lokasi'],
-		data() {
+		setup() {
 			return {
 				jalinanIuranStore: useJalinanIuranStore(),
-				selectedItem: [],
+			};
+		},
+		data() {
+			return {selectedItem: [],
 				plafon: 0,
 				query: {
 					order_column: "id",

@@ -246,7 +246,7 @@
 						class="form-control" 
 						:options="cleaveOption.number4"
 						placeholder="Silahkan masukkan jumlah dpd"
-						data-vv-as="Day Past Due" ></cleave>
+						></cleave>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('formProduk.dpd')">

@@ -684,7 +684,7 @@ class KegiatanBKCUController extends Controller
 
 	public function store(Request $request, $kegiatan_tipe)
 	{
-		$this->validate($request, Kegiatan::$rules);
+		$request->validate(Kegiatan::$rules);
 
 			$kodeKegiatan = KodeKegiatan::where('id', $request->id_kode)->first();
 			$name = $kodeKegiatan->name;

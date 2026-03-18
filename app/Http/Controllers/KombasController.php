@@ -59,7 +59,7 @@ class KombasController extends Controller{
 
 	public function store(Request $request)
 	{
-		$this->validate($request,Kombas::$rules);
+		$request->validate(Kombas::$rules);
 
 		$name = $request->name;
 
@@ -93,7 +93,7 @@ class KombasController extends Controller{
 
 	public function update(Request $request, $id)
 	{
-		$this->validate($request,Kombas::$rules);
+		$request->validate(Kombas::$rules);
 
 		$name = $request->name;
 

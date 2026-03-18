@@ -41,7 +41,7 @@
 			<div v-show="tabName == 'cu'">
 				<div class="card-body pb-2">
 					<div class="list-feed overflow-auto" style="max-height: 20rem;" v-if="itemCuStat === 'success'">
-						<div class="list-feed-item cursor-pointer" v-for="item in itemCu" @click.prevent="detail('cu',item.revisionable_id)">
+						<div class="list-feed-item cursor-pointer" v-for="item in itemCu" :key="item.id" @click.prevent="detail('cu',item.revisionable_id)">
 							<div class="text-muted" v-html="$filters.dateTime(item.created_at)"></div>
 							{{ item.user.name }} mengubah <mark>{{ item.key }}</mark> CU {{ item.revisionable.name }} dari 
 							<mark><check-value :value="item.old_value"></check-value></mark>
@@ -64,7 +64,7 @@
 			<div v-show="tabName == 'tp'">
 				<div class="card-body pb-2">
 					<div class="list-feed overflow-auto" style="max-height: 20rem;" v-if="itemTpStat === 'success'">
-						<div class="list-feed-item cursor-pointer" v-for="item in itemTp" @click.prevent="detail('tp',item.revisionable_id)">
+						<div class="list-feed-item cursor-pointer" v-for="item in itemTp" :key="item.id" @click.prevent="detail('tp',item.revisionable_id)">
 							<div class="text-muted" v-html="$filters.dateTime(item.created_at)"></div>
 							{{ item.user.name }} mengubah <mark>{{ item.key }}</mark> CU {{ item.revisionable.name }} dari 
 							<mark><check-value :value="item.old_value"></check-value></mark>
@@ -87,7 +87,7 @@
 			<div v-show="tabName == 'produk_cu'">
 				<div class="card-body pb-2">
 					<div class="list-feed overflow-auto" style="max-height: 20rem;" v-if="itemProdukCuStat === 'success'">
-						<div class="list-feed-item cursor-pointer" v-for="item in itemProdukCu" @click.prevent="detail('produk_cu',item.revisionable_id)">
+						<div class="list-feed-item cursor-pointer" v-for="item in itemProdukCu" :key="item.id" @click.prevent="detail('produk_cu',item.revisionable_id)">
 							<div class="text-muted" v-html="$filters.dateTime(item.created_at)"></div>
 							{{ item.user.name }} mengubah <mark>{{ item.key }}</mark> CU {{ item.revisionable.name }} dari 
 							<mark><check-value :value="item.old_value"></check-value></mark>
@@ -110,7 +110,7 @@
 			<div v-show="tabName == 'aktivis'">
 				<div class="card-body pb-2">
 					<div class="list-feed overflow-auto" style="max-height: 20rem;" v-if="itemAktivisStat === 'success'">
-						<div class="list-feed-item cursor-pointer" v-for="item in itemAktivis" @click.prevent="detail('aktivis',item.revisionable_id)">
+						<div class="list-feed-item cursor-pointer" v-for="item in itemAktivis" :key="item.id" @click.prevent="detail('aktivis',item.revisionable_id)">
 							<div class="text-muted" v-html="$filters.dateTime(item.created_at)"></div>
 							{{ item.user.name }} mengubah <mark>{{ item.key }}</mark> CU {{ item.revisionable.name }} dari 
 							<mark><check-value :value="item.old_value"></check-value></mark>
@@ -133,7 +133,7 @@
 			<div v-show="tabName == 'mitra_orang'">
 				<div class="card-body pb-2">
 					<div class="list-feed overflow-auto" style="max-height: 20rem;" v-if="itemMitraOrangStat === 'success'">
-						<div class="list-feed-item cursor-pointer" v-for="item in itemMitraOrang" @click.prevent="detail('mitra_orang',item.revisionable_id)">
+						<div class="list-feed-item cursor-pointer" v-for="item in itemMitraOrang" :key="item.id" @click.prevent="detail('mitra_orang',item.revisionable_id)">
 							<div class="text-muted" v-html="$filters.dateTime(item.created_at)"></div>
 							{{ item.user.name }} mengubah <mark>{{ item.key }}</mark> CU {{ item.revisionable.name }} dari 
 							<mark><check-value :value="item.old_value"></check-value></mark>
@@ -156,7 +156,7 @@
 			<div v-show="tabName == 'mitra_lembaga'">
 				<div class="card-body pb-2">
 					<div class="list-feed overflow-auto" style="max-height: 20rem;" v-if="itemMitraLembagaStat === 'success'">
-						<div class="list-feed-item cursor-pointer" v-for="item in itemMitraLembaga" @click.prevent="detail('mitra_lembaga',item.revisionable_id)">
+						<div class="list-feed-item cursor-pointer" v-for="item in itemMitraLembaga" :key="item.id" @click.prevent="detail('mitra_lembaga',item.revisionable_id)">
 							<div class="text-muted" v-html="$filters.dateTime(item.created_at)"></div>
 							{{ item.user.name }} mengubah <mark>{{ item.key }}</mark> CU {{ item.revisionable.name }} dari 
 							<mark><check-value :value="item.old_value"></check-value></mark>
@@ -191,10 +191,13 @@
 		components: {
 			checkValue
 		},
-		data(){
-			return{
+		setup() {
+			return {
 				authStore: useAuthStore(),
-				kelas: 'diklatBKCU',
+			};
+		},
+		data(){
+			return{kelas: 'diklatBKCU',
 				selectedItemBaru: [],
 				selectedItemMulai: [],
 				selectedItemBuka: [],

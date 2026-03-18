@@ -2,7 +2,7 @@
 namespace App\Models;
 
 use App\Support\Dataviewer;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 
 class AnggotaCuDraftFailed extends Model {
     

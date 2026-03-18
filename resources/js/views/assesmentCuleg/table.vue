@@ -129,12 +129,15 @@
 			checkValue
 		},
 		props:['title','kelas'],
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				cuStore: useCuStore(),
-				assesmentCulegStore: useAssesmentCulegStore(),
-				selectedItem: [],
+			cuStore: useCuStore(),
+			assesmentCulegStore: useAssesmentCulegStore(),
+			};
+		},
+		data() {
+			return {selectedItem: [],
 				query: {
 					order_column: "periode",
 					order_direction: "desc",

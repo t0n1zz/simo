@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\KegiatanListMateri;
 use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Model;
 use App\Support\Dataviewer;
@@ -41,7 +42,7 @@ class Nilai extends Model
 
     public function listMateri()
     {
-        return $this->belongsTo('App\Models\KegiatanListMateri', 'materi_id', 'id');
+        return $this->belongsTo(KegiatanListMateri::class, 'materi_id', 'id');
     }
 
     public function getActivitylogOptions(): LogOptions

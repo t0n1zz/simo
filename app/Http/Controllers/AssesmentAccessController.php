@@ -147,7 +147,7 @@ class AssesmentAccessController extends Controller{
 
 	public function store(Request $request)
 	{
-		$this->validate($request,AssesmentAccess::$rules);
+		$request->validate(AssesmentAccess::$rules);
 
 		$periode = $request->periode;
 
@@ -208,7 +208,7 @@ class AssesmentAccessController extends Controller{
 	{
 		$cu = \Auth::user()->id_cu;
 
-		$this->validate($request, AssesmentAccess::$rules);
+		$request->validate(AssesmentAccess::$rules);
 
 		$periode = $request->periode;
 

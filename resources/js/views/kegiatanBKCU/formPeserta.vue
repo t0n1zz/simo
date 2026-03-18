@@ -348,7 +348,7 @@
 							Ukuran Baju: 
 						</h5>
 						<select class="form-control" name="ukuran_baju" v-model="formPeserta.ukuran_baju" data-width="100%"
-							 data-vv-as="ukuran_baju" @change="changeBaju($event.target.value)">
+							 @change="changeBaju($event.target.value)">
 							<option disabled value="">Silahkan pilih ukuran baju</option>
 							<option value="XS">XS - L(51 cm) P(72 cm)</option>
 							<option value="S">S - L(53 cm) P(74 cm)</option>
@@ -365,7 +365,7 @@
 					<div class="form-group">
 						<h5>Status Kepesertaan:</h5>
 						<select class="form-control" name="status_kepesertaan" v-model="formPeserta.status_kepesertaan"
-							data-width="100%" data-vv-as="status_kepesertaan"
+							data-width="100%"
 							@change="changeStatusKepesertaan($event.target.value)">
 							<option disabled value="">Silahkan pilih status kepesertaan</option>
 							<option value="Utusan CU Primer">Utusan CU Primer</option>
@@ -385,7 +385,7 @@
 					<div class=" form-group">
 						<h5>Penerimaan Vaksin:</h5>
 						<select class="form-control" name="penerimaan_vaksin" v-model="formPeserta.penerimaan_vaksin"
-							data-width="100%" data-vv-as="penerimaan_vaksin" @change="changeVaksin($event.target.value)">
+							data-width="100%" @change="changeVaksin($event.target.value)">
 							<option disabled value="">Silahkan pilih status penerimaan vaksin</option>
 							<option value="vaksin Tahap 1">Vaksin Tahap 1</option>
 							<option value="vaksin Tahap 2">Vaksin Tahap 2</option>
@@ -400,7 +400,7 @@
 						<!-- title -->
 						<h5>Pilih Riwayat Penyakit:</h5>
 						<select class="form-control" name="riwayat_penyakit" v-model="formPeserta.riwayat_penyakit"
-							data-width="100%" data-vv-as="riwayat_penyakit">
+							data-width="100%">
 							<option disabled value="">Silahkan pilih riwayat penyakit</option>
 							<option value="Vertigo">Vertigo</option>
 							<option value="Maag">Maag</option>

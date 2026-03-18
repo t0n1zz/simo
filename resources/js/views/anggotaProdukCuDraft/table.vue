@@ -154,10 +154,7 @@
     },
     props: ['title', 'kelas', 'itemData', 'itemDataStat'],
     data() {
-      return {
-        authStore: useAuthStore(),
-        anggotaCuStore: useAnggotaCuStore(),
-        anggota_cu: {},
+      return {anggota_cu: {},
         selectedItem: [],
         excelDownloadUrl: '',
         query: {

@@ -32,7 +32,7 @@ class LaporanGerakanController extends Controller{
 
 	public function store(Request $request)
 	{
-		$this->validate($request,LaporanGerakan::$rules);
+		$request->validate(LaporanGerakan::$rules);
 
 		$periode = $request->periode;
 		$cekData = LaporanGerakan::where('periode',$periode)->first();
@@ -69,7 +69,7 @@ class LaporanGerakanController extends Controller{
 
 	public function update(Request $request, $id)
 	{
-		$this->validate($request,LaporanGerakan::$rules);
+		$request->validate(LaporanGerakan::$rules);
 
 		$periode = $request->periode;
 

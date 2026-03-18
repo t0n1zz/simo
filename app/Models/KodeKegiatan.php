@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Kegiatan;
 use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Model;
 use App\Support\Dataviewer;
@@ -38,7 +39,7 @@ class KodeKegiatan extends Model
 
     public function hasKegiatan()
     {
-        return $this->hasMany('App\Models\Kegiatan','id_kode','id');
+        return $this->hasMany(Kegiatan::class,'id_kode','id');
     }
 
 

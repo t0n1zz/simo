@@ -59,7 +59,7 @@ class RoleController extends Controller{
 
 	public function store(Request $request)
 	{
-		$this->validate($request,Role::$rules);
+		$request->validate(Role::$rules);
 
 		$name = $request->name;
 		
@@ -95,7 +95,7 @@ class RoleController extends Controller{
 
 	public function update(Request $request, $id)
 	{
-		$this->validate($request,Role::$rules);
+		$request->validate(Role::$rules);
 
 		$name = $request->name;
 

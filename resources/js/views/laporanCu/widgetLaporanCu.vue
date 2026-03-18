@@ -4,17 +4,17 @@
 		<div class="media mb-3">
 			<div class="media-body">
 				<!-- current value -->
-				<h6 class="font-weight-semibold mb-8" v-if="isPercent">{{ itemData | percentage(2) }}</h6>
-				<h6 class="font-weight-semibold mb-8" v-else>{{ itemData | currency('',0,{ thousandsSeparator: '.'}) }}</h6>
+				<h6 class="font-weight-semibold mb-8" v-if="isPercent">{{ $filters.percentage(itemData, 2) }}</h6>
+				<h6 class="font-weight-semibold mb-8" v-else>{{ $filters.currency(itemData, '',0,{ thousandsSeparator: '.'}) }}</h6>
 
 				<!-- value changes -->
 				<span class="opacity-75" v-if="isPercent">
 					<i :class="{'icon-chevron-up': totalData > 0,
-					'icon-chevron-down': totalData < 0}"></i> {{ Math.abs(totalData) | percentage(2) }}				
+					'icon-chevron-down': totalData < 0}"></i> {{ $filters.percentage(Math.abs(totalData), 2) }}				
 				</span>
 				<span class="opacity-75" v-else>
 					<i :class="{'icon-chevron-up': totalData > 0,
-					'icon-chevron-down': totalData < 0}"></i> {{ Math.abs(totalData) | currency('',0,{ thousandsSeparator: '.'}) }}				
+					'icon-chevron-down': totalData < 0}"></i> {{ $filters.currency(Math.abs(totalData), '',0,{ thousandsSeparator: '.'}) }}				
 				</span>
 			</div>
 
@@ -36,7 +36,7 @@
 			<span class="float-right" v-if="!isPercent">
 				<span v-if="percentageData > 0">+</span>
 				<span v-else-if="percentageData < 0">-</span>
-				{{ Math.abs(percentageData) | percentage(2) }}
+				{{ $filters.percentage(Math.abs(percentageData), 2) }}
 			</span>
 
 			<!-- title -->

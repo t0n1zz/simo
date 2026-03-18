@@ -49,11 +49,14 @@
 			message,
 			selectCu
 		},
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				assesmentCulegStore: useAssesmentCulegStore(),
-				title: 'Self assesment CULEG',
+			assesmentCulegStore: useAssesmentCulegStore(),
+			};
+		},
+		data() {
+			return {title: 'Self assesment CULEG',
 				kelas: 'assesmentCuleg',
 				titleDesc: 'Mengelola data self assesment CULEG',
 				titleIcon: 'icon-bookmark4',

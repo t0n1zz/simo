@@ -1,6 +1,7 @@
 <template>
 	<div>
-		<form @submit.prevent="save" data-vv-scope="formProduk" autocomplete="off">
+		<VeeForm :form="formProduk" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit, setValues }">
+		<form @submit.prevent="setValues(formProduk) || handleSubmit(onValid)" autocomplete="off">
 
 		<!-- message -->
 		<message v-if="message.show" @close="messageClose" :title="'Oops terjadi kesalahan'" :errorData="message.content" :showDebug="false">
@@ -72,13 +73,11 @@
 						<h5>Lama Sisa Pinjaman (Bulan):</h5>
 
 						<!-- text -->
-						<cleave 
-							name="lama_sisa_pinjaman"
-							v-model="formProduk.lama_sisa_pinjaman" 
-							class="form-control" 
+						<Field name="lama_sisa_pinjaman" rules="required" v-model="formProduk.lama_sisa_pinjaman" v-slot="{ field }"><cleave
+							v-bind="field"
+							class="form-control"
 							:options="cleaveOption.number4"
-							placeholder="Silahkan masukkan lama sisa pinjaman"
-							v-validate="'required'" data-vv-as="Lama sisa pinjaman" ></cleave>
+							placeholder="Silahkan masukkan lama sisa pinjaman"></cleave></Field>
 
 					</div>
 				</div>
@@ -91,13 +90,11 @@
 						<h5>Nilai Transaksi:</h5>
 
 						<!-- text -->
-						<cleave 
-							name="saldo"
-							v-model="formProduk.transaksi" 
-							class="form-control" 
+						<Field name="saldo" rules="required" v-model="formProduk.transaksi" v-slot="{ field }"><cleave
+							v-bind="field"
+							class="form-control"
 							:options="cleaveOption.numeric"
-							placeholder="Silahkan masukkan jumlah saldo"
-							v-validate="'required'" data-vv-as="Saldo" ></cleave>
+							placeholder="Silahkan masukkan jumlah saldo"></cleave></Field>
 
 					</div>
 				</div>
@@ -277,6 +274,7 @@
 		
 
 		</form>
+		</VeeForm>
 
 	</div>
 </template>
@@ -293,6 +291,8 @@
 	import infoIcon from "../../components/infoIcon.vue";
 	import DatePicker from "../../components/datePicker.vue";
 	import dataTable from '../../components/datatable.vue';
+	import { Field } from 'vee-validate';
+	import VeeForm from '../../components/VeeForm.vue';
 
 	export default {
 		props: ['selected'],
@@ -302,7 +302,9 @@
 			Cleave,
 			infoIcon,
 			DatePicker,
-			dataTable
+			dataTable,
+			Field,
+			VeeForm
 		},
 		data() {
 			return {
@@ -404,16 +406,14 @@
 		watch: {	},
 		methods: {
 			...mapActions(useAnggotaCuStore, ['updateProduk', 'indexProdukSaldo']),
-			save(){
+			onValid(values){
 				this.formProduk.saldo = this.saldoAkhir;
-				this.$validator.validateAll('formProduk').then((result) => {
-					if (result) {
-						this.updateProduk([this.formProduk.id, this.formProduk]);
-						this.submited = false;
-					}else{
-						this.submited = true;
-					}	
-				});	
+				this.updateProduk([this.formProduk.id, this.formProduk]);
+				this.submited = false;
+			},
+			onInvalid(){
+				window.scrollTo(0, 0);
+				this.submited = true;
 			},
 			fetchProdukSaldo(){
         this.indexProdukSaldo([this.querySaldo, this.selected.id]);

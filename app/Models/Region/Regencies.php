@@ -1,8 +1,9 @@
 <?php
 namespace App\Models\Region;
 
+use App\Models\Region\Provinces;
 use Spatie\Activitylog\LogOptions;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use App\Support\FilterPaginateOrder;
 use Spatie\Activitylog\Traits\LogsActivity;
 
@@ -35,7 +36,7 @@ class Regencies extends Model {
 
     public function Provinces()
     {
-        return $this->belongsTo('App\Models\Region\Provinces','province_id','id')->select('id','name');
+        return $this->belongsTo(Provinces::class,'province_id','id')->select('id','name');
     }
 
     public function getActivitylogOptions(): LogOptions

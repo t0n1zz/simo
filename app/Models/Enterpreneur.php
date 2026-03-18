@@ -1,8 +1,12 @@
 <?php
 namespace App\Models;
 
+use App\Models\AnggotaCu;
+use App\Models\Cu;
+use App\Models\EnterpreneurDiklat;
+use App\Models\KubnUsaha;
 use Spatie\Activitylog\LogOptions;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Support\Dataviewer;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -13,7 +17,6 @@ class Enterpreneur extends BaseEloquent {
     use Dataviewer, LogsActivity, SoftDeletes;
 
     protected $table = 'enterpreneur';
-    protected $dates = ['deleted_at'];
 
     protected $revisionEnabled = true;
     protected $revisionCleanup = true;
@@ -48,22 +51,22 @@ class Enterpreneur extends BaseEloquent {
 
     public function anggota_cu()
     {
-        return $this->belongsTo('App\Models\AnggotaCu','anggota_cu_id','id');
+        return $this->belongsTo(AnggotaCu::class,'anggota_cu_id','id');
     }
 
     public function Cu()
     {
-        return $this->belongsTo('App\Models\Cu','id_cu','id')->select('id','no_ba','name','id_provinces')->withTrashed();
+        return $this->belongsTo(Cu::class,'id_cu','id')->select('id','no_ba','name','id_provinces')->withTrashed();
     }
 
     public function Usaha()
     {
-        return $this->belongsTo('App\Models\KubnUsaha','id_usaha','id')->select('id','name')->withTrashed();
+        return $this->belongsTo(KubnUsaha::class,'id_usaha','id')->select('id','name')->withTrashed();
     }
 
     public function Diklat()
     {
-        return $this->hasMany('App\Models\EnterpreneurDiklat','id_enterpreneur','id');
+        return $this->hasMany(EnterpreneurDiklat::class,'id_enterpreneur','id');
     }
 
     public function getActivitylogOptions(): LogOptions

@@ -65,11 +65,14 @@
 			cariData,
 			Cleave,
 		},
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				aktivisStore: useAktivisStore(),
-				title: '',
+			aktivisStore: useAktivisStore(),
+			};
+		},
+		data() {
+			return {title: '',
 				titleDesc: '',
 				titleIcon: '',
 				kelas: 'aktivis',

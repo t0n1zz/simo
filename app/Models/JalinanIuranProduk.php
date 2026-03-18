@@ -1,8 +1,9 @@
 <?php
 namespace App\Models;
 
+use App\Models\ProdukCu;
 use Spatie\Activitylog\LogOptions;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use App\Support\Dataviewer;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -13,7 +14,6 @@ class JalinanIuranProduk extends Model {
 
     protected $table = 'jalinan_iuran_produk';
 
-    protected $dates = ['deleted_at'];
     
     public static $rules = [
         'jalinan_iuran_id' => 'required',
@@ -45,7 +45,7 @@ class JalinanIuranProduk extends Model {
 
     public function produk()
     {
-        return $this->belongsTo('App\Models\ProdukCu','produk_cu_id','id');
+        return $this->belongsTo(ProdukCu::class,'produk_cu_id','id');
     }
 
     public function getActivitylogOptions(): LogOptions

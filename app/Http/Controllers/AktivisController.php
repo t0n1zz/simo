@@ -596,7 +596,7 @@ class AktivisController extends Controller
     {
         \DB::beginTransaction();
         try {
-            $this->validate($request, Aktivis::$rules);
+            $request->validate(Aktivis::$rules);
 
             $name = $request->name;
 

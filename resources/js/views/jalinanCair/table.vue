@@ -262,9 +262,7 @@
     },
     props: ["title","itemData","itemDataStat"],
     data(){
-      return{
-        jalinanKlaimStore: useJalinanKlaimStore(),
-        selectedItem: {},
+      return{selectedItem: {},
         columnData: [
           { title: 'No.' },
           { title: 'Status' },

@@ -64,7 +64,7 @@
 							class="form-control"
 							:options="cleaveOption.number30"
 							placeholder="Silahkan masukkan no akun"
-							@blur.native="filterInduk"></cleave>
+							@blur="filterInduk"></cleave>
 
 						<!-- error message -->
 						<small class="text-muted text-danger" v-if="errors.has('form.kode')">
@@ -164,10 +164,13 @@
 			VeeForm,
 			Field
 		},
-		data() {
+		setup() {
 			return {
 				coaStore: useCoaStore(),
-				kelas: 'coa',
+			};
+		},
+		data() {
+			return {kelas: 'coa',
 				kode: '',
 				form: {
 					id_induk: '',

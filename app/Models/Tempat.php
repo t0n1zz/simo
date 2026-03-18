@@ -1,8 +1,12 @@
 <?php
 namespace App\Models;
 
+use App\Models\Region\Districts;
+use App\Models\Region\Provinces;
+use App\Models\Region\Regencies;
+use App\Models\Region\Villages;
 use Spatie\Activitylog\LogOptions;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use App\Support\Dataviewer;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -13,7 +17,6 @@ class Tempat extends BaseEloquent {
 
     protected $table = 'kegiatan_tempat';
 
-    protected $dates = ['deleted_at'];
     
     public static $rules = [
         'name' => 'required|between:3,50'
@@ -43,22 +46,22 @@ class Tempat extends BaseEloquent {
         
     public function Provinces()
     {
-        return $this->belongsTo('App\Models\Region\Provinces','id_provinces','id')->select('id','name');
+        return $this->belongsTo(Provinces::class,'id_provinces','id')->select('id','name');
     }
 		
     public function Regencies()
     {
-        return $this->belongsTo('App\Models\Region\Regencies','id_regencies','id')->select('id','name');
+        return $this->belongsTo(Regencies::class,'id_regencies','id')->select('id','name');
     }
 		
     public function Districts()
     {
-        return $this->belongsTo('App\Models\Region\Districts','id_districts','id')->select('id','name');
+        return $this->belongsTo(Districts::class,'id_districts','id')->select('id','name');
     }
 		
     public function Villages()
     {
-        return $this->belongsTo('App\Models\Region\Villages','id_villages','id')->select('id','name');
+        return $this->belongsTo(Villages::class,'id_villages','id')->select('id','name');
     }
 
     public function getActivitylogOptions(): LogOptions

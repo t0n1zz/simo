@@ -168,7 +168,7 @@ class PemilihanController extends Controller{
 
 	public function store(Request $request)
 	{		
-		$this->validate($request,Pemilihan::$rules);
+		$request->validate(Pemilihan::$rules);
 
 		$name = $request->name;
 		$suara = str_replace( ',', '', $request->suara);

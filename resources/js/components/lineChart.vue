@@ -32,7 +32,7 @@
 						</div>
 
 						<!-- order -->
-						<div class="col-md-8 pb-2" :class="checkClass()" v-for="(data,index) in dataShown">
+						<div class="col-md-8 pb-2" :class="checkClass()" v-for="(data,index) in dataShown" :key="data.id">
               <div class="input-group">
 								<div class="input-group-append">
 									<span class="input-group-text">Pilih Data</span>

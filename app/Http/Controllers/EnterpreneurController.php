@@ -60,7 +60,7 @@ class EnterpreneurController extends Controller{
 
 	public function store(Request $request)
 	{
-		$this->validate($request,Enterpreneur::$rules);
+		$request->validate(Enterpreneur::$rules);
 
 		$name = $request->name;
 
@@ -124,7 +124,7 @@ class EnterpreneurController extends Controller{
 
 	public function update(Request $request, $id)
 	{
-		$this->validate($request,Enterpreneur::$rules);
+		$request->validate(Enterpreneur::$rules);
 
 		$name = $request->name;
 

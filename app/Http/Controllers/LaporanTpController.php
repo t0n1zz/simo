@@ -193,7 +193,7 @@ class LaporanTpController extends Controller{
 
 	public function store(Request $request)
 	{
-		$this->validate($request,LaporanTp::$rules);
+		$request->validate(LaporanTp::$rules);
 
 		if($this->checkData($request)){
 			$name = $request->name;
@@ -242,7 +242,7 @@ class LaporanTpController extends Controller{
 
 	public function update(Request $request, $id)
 	{
-		$this->validate($request,LaporanTp::$rules);
+		$request->validate(LaporanTp::$rules);
 
 		$kelas = LaporanTp::findOrFail($id);
 

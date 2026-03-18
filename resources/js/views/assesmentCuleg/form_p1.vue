@@ -950,9 +950,7 @@ export default {
 		wajibBadge
 	},
 	data() {
-		return {
-			laporanCuStore: useLaporanCuStore(),
-			kelas: 'laporanCu',
+		return {kelas: 'laporanCu',
 			cuTabName: 'semua',
 			bkcuTabName: 'semua',
 			modalShow: false,

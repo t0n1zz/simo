@@ -216,7 +216,7 @@
 														<span v-if="modelProvincesStat === 'loading'">Mohon tunggu...</span>
 														<span v-else>Silahkan pilih provinsi</span>
 													</option>
-													<option v-for="provinces in modelProvinces" :value="provinces.id">
+													<option v-for="provinces in modelProvinces" :key="provinces.id" :value="provinces.id">
 														{{provinces.name}}
 													</option>
 												</select>
@@ -241,12 +241,12 @@
 											</h5>
 
 											<!-- select -->
-											<select class="form-control"  name="id_regencies" v-model="form.id_regencies" data-width="100%"  data-vv-as="Kabupaten" @change="changeRegencies($event.target.value)" :disabled="modelRegencies.length === 0">
+											<select class="form-control" name="id_regencies" v-model="form.id_regencies" data-width="100%" @change="changeRegencies($event.target.value)" :disabled="modelRegencies.length === 0">
 												<option disabled value="">
 													<span v-if="modelRegenciesStat === 'loading'">Mohon tunggu...</span>
 													<span v-else>Silahkan pilih kabupaten</span>
 												</option>
-												<option v-for="regencies in modelRegencies" :value="regencies.id">{{regencies.name}}</option>
+												<option v-for="regencies in modelRegencies" :key="regencies.id" :value="regencies.id">{{regencies.name}}</option>
 											</select>
 
 											<!-- error message -->
@@ -268,12 +268,12 @@
 											</h5>
 
 											<!-- select -->
-											<select class="form-control"  name="id_districts" v-model="form.id_districts" data-width="100%" data-vv-as="Kecamatan" :disabled="modelDistricts.length === 0" @change="changeDistricts($event.target.value)">
+											<select class="form-control" name="id_districts" v-model="form.id_districts" data-width="100%" :disabled="modelDistricts.length === 0" @change="changeDistricts($event.target.value)">
 												<option disabled value="">
 													<span v-if="modelDistrictsStat === 'loading'">Mohon tunggu...</span>
 													<span v-else>Silahkan pilih kecamatan</span>
 												</option>
-												<option v-for="districts in modelDistricts" :value="districts.id">{{districts.name}}</option>
+												<option v-for="districts in modelDistricts" :key="districts.id" :value="districts.id">{{districts.name}}</option>
 											</select>
 
 											<!-- error message -->
@@ -295,12 +295,12 @@
 											</h5>
 
 											<!-- select -->
-											<select class="form-control"  name="id_villages" v-model="form.id_villages" data-width="100%"  data-vv-as="Kelurahan" :disabled="modelVillages.length === 0">
+											<select class="form-control" name="id_villages" v-model="form.id_villages" data-width="100%" :disabled="modelVillages.length === 0">
 												<option disabled value="">
 													<span v-if="modelVillagesStat === 'loading'">Mohon tunggu... mohon tunggu</span>
 													<span v-else>Silahkan pilih kelurahan</span>
 												</option>
-												<option v-for="villages in modelVillages" :value="villages.id">{{villages.name}}</option>
+												<option v-for="villages in modelVillages" :key="villages.id" :value="villages.id">{{villages.name}}</option>
 											</select>
 
 											<!-- error message -->
@@ -520,15 +520,18 @@
 			VeeForm,
 			Field,
 		},
-		data() {
+		setup() {
 			return {
 				mitraLembagaStore: useMitraLembagaStore(),
-				cuStore: useCuStore(),
-				provincesStore: useProvincesStore(),
-				regenciesStore: useRegenciesStore(),
-				districtsStore: useDistrictsStore(),
-				villagesStore: useVillagesStore(),
-				title: 'Tambah Lembaga Mitra',
+			cuStore: useCuStore(),
+			provincesStore: useProvincesStore(),
+			regenciesStore: useRegenciesStore(),
+			districtsStore: useDistrictsStore(),
+			villagesStore: useVillagesStore(),
+			};
+		},
+		data() {
+			return {title: 'Tambah Lembaga Mitra',
 				titleDesc: 'Menambah lembaga mitra baru',
 				titleIcon: 'icon-plus3',
 				level: 2,

@@ -73,7 +73,7 @@ class KubnController extends Controller{
 
 	public function store(Request $request)
 	{
-		$this->validate($request,Kubn::$rules);
+		$request->validate(Kubn::$rules);
 
 		$name = $request->name;
 
@@ -174,7 +174,7 @@ class KubnController extends Controller{
 
 	public function update(Request $request, $id)
 	{
-		$this->validate($request,Kubn::$rules);
+		$request->validate(Kubn::$rules);
 
 		$name = $request->name;
 

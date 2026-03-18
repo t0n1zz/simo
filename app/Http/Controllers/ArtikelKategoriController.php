@@ -62,7 +62,7 @@ class ArtikelKategoriController extends Controller
 
     public function store(Request $request)
     {
-        $this->validate($request, ArtikelKategori::$rules);
+        $request->validate(ArtikelKategori::$rules);
 
         $name = $request->name;
 
@@ -89,7 +89,7 @@ class ArtikelKategoriController extends Controller
 
     public function update(Request $request, $id)
     {
-        $this->validate($request, ArtikelKategori::$rules);
+        $request->validate(ArtikelKategori::$rules);
 
         $name = $request->name;
 

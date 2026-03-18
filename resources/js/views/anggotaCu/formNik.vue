@@ -6,7 +6,8 @@
 			</ul>
 		</div>
 
-		<form @submit.prevent="save" data-vv-scope="formData">
+		<VeeForm :form="formData" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit, setValues }">
+		<form @submit.prevent="setValues(formData) || handleSubmit(onValid)">
 
 		<div class="row">
 
@@ -22,13 +23,11 @@
 					</h6>
 
 					<!-- text -->
-					<cleave 
-          name="nik"
-          v-model="formData.nik" 
-          class="form-control" 
+					<Field name="nik" rules="required|min:16" v-model="formData.nik" v-slot="{ field }"><cleave
+          v-bind="field"
+          class="form-control"
           :options="cleaveOption.number16"
-					v-validate="'required|min:16'"
-          placeholder="Silahkan masukkan no. KTP / Nomor Induk Kependudukan (NIK)"></cleave>
+          placeholder="Silahkan masukkan no. KTP / Nomor Induk Kependudukan (NIK)"></cleave></Field>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('formData.nik')">
@@ -64,6 +63,7 @@
 		</div> 
 
 		</form>
+		</VeeForm>
 
 	</div>
 </template>
@@ -78,6 +78,8 @@
 	import produkCuAPI from '../../api/produkCu.js';
 	import infoIcon from "../../components/infoIcon.vue";
 	import wajibBadge from "../../components/wajibBadge.vue";
+	import { Field } from 'vee-validate';
+	import VeeForm from '../../components/VeeForm.vue';
 
 	export default {
 		props: ['anggota_cu'],
@@ -86,7 +88,9 @@
 			Message,
 			Cleave,
 			infoIcon,
-			wajibBadge
+			wajibBadge,
+			Field,
+			VeeForm
 		},
 		data() {
 			return {
@@ -114,14 +118,12 @@
 		watch: {},
 		methods: {
 			...mapActions(useAnggotaCuStore, ['updateNik']),
-			save(){
-				this.$validator.validateAll('formData').then((result) => {
-					if (result) {
-						this.updateNik([this.anggota_cu.id, this.formData]);
-					}else{
-						this.submited = true;
-					}	
-				});
+			onValid(values){
+				this.updateNik([this.anggota_cu.id, this.formData]);
+			},
+			onInvalid(){
+				window.scrollTo(0, 0);
+				this.submited = true;
 			},
 			tutup(){
 				this.$emit('tutup');

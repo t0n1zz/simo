@@ -57,7 +57,7 @@
 														<span v-else>PUSKOPCUINA</span>
 													</option>
 													<option disabled value="">----------------</option>
-													<option v-for="cu in modelCU" :value="cu.id">{{ cu.name }}</option>
+													<option v-for="cu in modelCU" :key="cu.id" :value="cu.id">{{ cu.name }}</option>
 												</select>
 											</Field>
 
@@ -174,12 +174,15 @@ export default {
 		VeeForm,
 		Field,
 	},
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				artikelPenulisStore: useArtikelPenulisStore(),
-				cuStore: useCuStore(),
-				title: 'Tambah Penulis',
+			artikelPenulisStore: useArtikelPenulisStore(),
+			cuStore: useCuStore(),
+			};
+		},
+		data() {
+			return {title: 'Tambah Penulis',
 			titleDesc: 'Menambah penulis artikel baru',
 			titleIcon: 'icon-plus3',
 			kelas: 'artikelPenulis',

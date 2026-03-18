@@ -1,8 +1,10 @@
 <?php
 namespace App\Models;
 
+use App\Models\JalinanIuranAnggota;
+use App\Models\ProdukCu;
 use Spatie\Activitylog\LogOptions;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use App\Support\Dataviewer;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -13,7 +15,6 @@ class JalinanIuranAnggotaTotal extends Model {
 
     protected $table = 'jalinan_iuran_anggota_total';
 
-    protected $dates = ['deleted_at'];
     
     public static $rules = [
         'jalinan_iuran_id' => 'required',
@@ -45,12 +46,12 @@ class JalinanIuranAnggotaTotal extends Model {
 
     public function produk()
     {
-        return $this->belongsTo('App\Models\ProdukCu','produk_cu_id','id');
+        return $this->belongsTo(ProdukCu::class,'produk_cu_id','id');
     }
 
     public function anggota()
     {
-        return $this->hasMany('App\Models\JalinanIuranAnggota','anggota_cu_id','anggota_cu_id');
+        return $this->hasMany(JalinanIuranAnggota::class,'anggota_cu_id','anggota_cu_id');
     }
 
     public function getActivitylogOptions(): LogOptions

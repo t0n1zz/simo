@@ -40,7 +40,7 @@ class JenisDiklatController extends Controller{
 
 	public function store(Request $request)
 	{
-		$this->validate($request,JenisDiklat::$rules);
+		$request->validate(JenisDiklat::$rules);
 
 		$name = $request->name;
 
@@ -67,7 +67,7 @@ class JenisDiklatController extends Controller{
 
 	public function update(Request $request, $id)
 	{
-		$this->validate($request,JenisDiklat::$rules);
+		$request->validate(JenisDiklat::$rules);
 
 		$name = $request->name;
 

@@ -238,7 +238,7 @@
 											</h5>
 
 											<!-- select -->
-											<select class="form-control" name="id_provinces" v-model="form.id_provinces" data-width="100%" data-vv-as="Provinsi" :disabled="modelProvinces.length === 0 || !currentUser.can['update_' + kelas]" @change="changeProvinces($event.target.value)">
+											<select class="form-control" name="id_provinces" v-model="form.id_provinces" data-width="100%" :disabled="modelProvinces.length === 0 || !currentUser.can['update_' + kelas]" @change="changeProvinces($event.target.value)">
 												<option disabled value="">
 													<span v-if="modelProvincesStat === 'loading'">Mohon tunggu...</span>
 													<span v-else>Silahkan pilih provinsi</span>
@@ -265,7 +265,7 @@
 											</h5>
 
 											<!-- select -->
-											<select class="form-control"  name="id_regencies" v-model="form.id_regencies" data-width="100%"  data-vv-as="Kabupaten" @change="changeRegencies($event.target.value)" :disabled="modelRegencies.length === 0 || !currentUser.can['update_' + kelas]">
+											<select class="form-control"  name="id_regencies" v-model="form.id_regencies" data-width="100%" @change="changeRegencies($event.target.value)" :disabled="modelRegencies.length === 0 || !currentUser.can['update_' + kelas]">
 												<option disabled value="">
 													<span v-if="modelRegenciesStat === 'loading'">Mohon tunggu...</span>
 													<span v-else>Silahkan pilih kabupaten</span>
@@ -292,7 +292,7 @@
 											</h5>
 
 											<!-- select -->
-											<select class="form-control"  name="id_districts" v-model="form.id_districts" data-width="100%" data-vv-as="Kecamatan" :disabled="modelDistricts.length === 0 || !currentUser.can['update_' + kelas]" @change="changeDistricts($event.target.value)">
+											<select class="form-control"  name="id_districts" v-model="form.id_districts" data-width="100%" :disabled="modelDistricts.length === 0 || !currentUser.can['update_' + kelas]" @change="changeDistricts($event.target.value)">
 												<option disabled value="">
 													<span v-if="modelDistrictsStat === 'loading'">Mohon tunggu...</span>
 													<span v-else>Silahkan pilih kecamatan</span>
@@ -319,7 +319,7 @@
 											</h5>
 
 											<!-- select -->
-											<select class="form-control"  name="id_villages" v-model="form.id_villages" data-width="100%"  data-vv-as="Kelurahan" :disabled="modelVillages.length === 0 || !currentUser.can['update_' + kelas]">
+											<select class="form-control"  name="id_villages" v-model="form.id_villages" data-width="100%" :disabled="modelVillages.length === 0 || !currentUser.can['update_' + kelas]">
 												<option disabled value="">
 													<span v-if="modelVillagesStat === 'loading'">Mohon tunggu... mohon tunggu</span>
 													<span v-else>Silahkan pilih kelurahan</span>
@@ -596,18 +596,21 @@
 			VeeForm,
 			Field
 		},
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				kubnStore: useKubnStore(),
-				cuStore: useCuStore(),
-				tpStore: useTpStore(),
-				kubnUsahaStore: useKubnUsahaStore(),
-				provincesStore: useProvincesStore(),
-				regenciesStore: useRegenciesStore(),
-				districtsStore: useDistrictsStore(),
-				villagesStore: useVillagesStore(),
-				title: 'Tambah KUBN',
+			kubnStore: useKubnStore(),
+			cuStore: useCuStore(),
+			tpStore: useTpStore(),
+			kubnUsahaStore: useKubnUsahaStore(),
+			provincesStore: useProvincesStore(),
+			regenciesStore: useRegenciesStore(),
+			districtsStore: useDistrictsStore(),
+			villagesStore: useVillagesStore(),
+			};
+		},
+		data() {
+			return {title: 'Tambah KUBN',
 				titleDesc: 'Menambah KUBN baru',
 				titleIcon: 'icon-plus3',
 				kelas: 'kubn',

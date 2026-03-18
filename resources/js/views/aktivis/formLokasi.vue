@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div class="row">
-		
+
 			<!-- Provinsi -->
 			<div class="col-md-4">
 				<div class="form-group">
@@ -13,13 +13,13 @@
 					</h6>
 
 					<!-- select -->
-					<select class="form-control" name="id_provinces" v-model="form.id_provinces" data-width="100%" v-validate="'required'" data-vv-as="Provinsi" :disabled="modelProvinces.length == 0" @change="changeProvinces($event.target.value)">
+					<Field as="select" name="id_provinces" rules="required" v-model="form.id_provinces" class="form-control" data-width="100%" :disabled="modelProvinces.length == 0" @change="changeProvinces($event.target.value)">
 						<option disabled value="">
 							<span v-if="modelProvincesStat === 'loading'">Mohon tunggu...</span>
 							<span v-else>Silahkan pilih provinsi</span>
 						</option>
-						<option v-for="provinces in modelProvinces" :value="provinces.id">{{provinces.name}}</option>
-					</select>
+						<option v-for="provinces in modelProvinces" :key="provinces.id" :value="provinces.id">{{provinces.name}}</option>
+					</Field>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('form.id_provinces')">
@@ -36,17 +36,17 @@
 					<!-- title -->
 					<h6 :class="{ 'text-danger' : errors.has('form.id_regencies')}">
 						<i class="icon-cross2" v-if="errors.has('form.id_regencies')"></i>
-						Kabupaten: 
+						Kabupaten:
 					</h6>
 
 					<!-- select -->
-					<select class="form-control"  name="id_regencies" v-model="form.id_regencies" data-width="100%" v-validate="'required'" data-vv-as="Kabupaten" @change="changeRegencies($event.target.value)" :disabled="modelRegencies.length === 0">
+					<Field as="select" name="id_regencies" rules="required" v-model="form.id_regencies" class="form-control" data-width="100%" @change="changeRegencies($event.target.value)" :disabled="modelRegencies.length === 0">
 						<option disabled value="">
 							<span v-if="modelRegenciesStat === 'loading'">Mohon tunggu...</span>
 							<span v-else>Silahkan pilih kabupaten</span>
 						</option>
-						<option v-for="regencies in modelRegencies" :value="regencies.id">{{regencies.name}}</option>
-					</select>
+						<option v-for="regencies in modelRegencies" :key="regencies.id" :value="regencies.id">{{regencies.name}}</option>
+					</Field>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('form.id_regencies')">
@@ -67,13 +67,13 @@
 					</h6>
 
 					<!-- select -->
-					<select class="form-control"  name="id_districts" v-model="form.id_districts" data-width="100%" v-validate="'required'" data-vv-as="Kabupaten" :disabled="modelDistricts.length === 0" @change="changeDistricts($event.target.value)">
+					<Field as="select" name="id_districts" rules="required" v-model="form.id_districts" class="form-control" data-width="100%" :disabled="modelDistricts.length === 0" @change="changeDistricts($event.target.value)">
 						<option disabled value="">
 							<span v-if="modelDistrictsStat === 'loading'">Mohon tunggu...</span>
 							<span v-else>Silahkan pilih kecamatan</span>
 						</option>
-						<option v-for="districts in modelDistricts" :value="districts.id">{{districts.name}}</option>
-					</select>
+						<option v-for="districts in modelDistricts" :key="districts.id" :value="districts.id">{{districts.name}}</option>
+					</Field>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('form.id_regency')">
@@ -94,13 +94,13 @@
 					</h6>
 
 					<!-- select -->
-					<select class="form-control"  name="id_villages" v-model="form.id_villages" data-width="100%" v-validate="'required'" data-vv-as="Desa" :disabled="modelVillages.length === 0">
+					<Field as="select" name="id_villages" rules="required" v-model="form.id_villages" class="form-control" data-width="100%" :disabled="modelVillages.length === 0">
 						<option disabled value="">
 							<span v-if="modelVillagesStat === 'loading'">Mohon tunggu... mohon tunggu</span>
 							<span v-else>Silahkan pilih kelurahan</span>
 						</option>
-						<option v-for="villages in modelVillages" :value="villages.id">{{villages.name}}</option>
-					</select>
+						<option v-for="villages in modelVillages" :key="villages.id" :value="villages.id">{{villages.name}}</option>
+					</Field>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('form.id_villages')">
@@ -120,7 +120,9 @@
 						Alamat:</h6>
 
 					<!-- text -->
-					<input type="text" name="alamat" class="form-control" placeholder="Silahkan masukkan alamat" v-validate="'required|min:5'" data-vv-as="Alamat" v-model="form.alamat">
+					<Field name="alamat" rules="required|min:5" v-model="form.alamat" v-slot="{ field }">
+						<input type="text" class="form-control" placeholder="Silahkan masukkan alamat" v-bind="field">
+					</Field>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('form.alamat')">
@@ -138,14 +140,14 @@
 					<h6>No. Hp:</h6>
 
 					<!-- text -->
-					<cleave 
-						v-model="form.hp" 
-						class="form-control" 
+					<cleave
+						v-model="form.hp"
+						class="form-control"
 						:options="cleaveOption.number12"
 						placeholder="Silahkan masukkan no hp"></cleave>
 
 					<!-- error message -->
-					<small class="text-muted">&nbsp;</small>	
+					<small class="text-muted">&nbsp;</small>
 				</div>
 			</div>
 
@@ -159,7 +161,9 @@
 						Email:</h6>
 
 					<!-- text -->
-					<input type="text" name="email" class="form-control" placeholder="Silahkan masukkan alamat email" v-validate="'email'" data-vv-as="Email" v-model="form.email">
+					<Field name="email" rules="email" v-model="form.email" v-slot="{ field }">
+						<input type="text" class="form-control" placeholder="Silahkan masukkan alamat email" v-bind="field">
+					</Field>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('form.email')">
@@ -188,6 +192,7 @@
 </template>
 
 <script>
+	import { Field } from 'vee-validate';
 	import Cleave from 'vue-cleave-component';
 	import { useProvincesStore } from '../../stores/provinces';
 	import { useRegenciesStore } from '../../stores/regencies';
@@ -195,8 +200,9 @@
 	import { useVillagesStore } from '../../stores/villages';
 
 	export default {
-		props: ['form'],
+		props: ['form', 'errors'],
 		components: {
+			Field,
 			Cleave,
 		},
 		data() {

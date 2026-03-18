@@ -9,7 +9,7 @@
         <h6 class="card-title">{{selected.name}}</h6>
         <div class="d-none d-sm-block">
           <div class="header-elements">
-            <span class="badge badge-primary">{{ selected.tipe | uppercase }}</span>
+            <span class="badge badge-primary">{{ $filters.uppercase(selected.tipe) }}</span>
             <span class="badge badge-secondary ml-1" v-html="$filters.dateTime(selected.created_at)">
             </span>
           </div>
@@ -30,7 +30,7 @@
       </div>
       <div class="d-block d-sm-none text-center">
         <div class="card-footer">  
-          <span class="badge badge-primary">{{ selected.tipe | uppercase }}</span>
+          <span class="badge badge-primary">{{ $filters.uppercase(selected.tipe) }}</span>
           <span class="badge badge-secondary" v-html="$filters.dateTime(selected.created_at)">
           </span>
         </div>

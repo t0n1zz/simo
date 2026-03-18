@@ -178,13 +178,16 @@
 			VeeForm,
 			Field
 		},
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				cuStore: useCuStore(),
-				aktivisStore: useAktivisStore(),
-				userStore: useUserStore(),
-				kelas: 'user',
+			cuStore: useCuStore(),
+			aktivisStore: useAktivisStore(),
+			userStore: useUserStore(),
+			};
+		},
+		data() {
+			return {kelas: 'user',
 				formData:{},
 				selectedItem: [],
 				query: {

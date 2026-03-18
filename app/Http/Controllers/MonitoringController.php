@@ -334,7 +334,7 @@ class MonitoringController extends Controller{
 	{
 		\DB::beginTransaction(); 
 		try{
-			$this->validate($request,Monitoring::$rules);
+			$request->validate(Monitoring::$rules);
 
 			$name = $request->name;
 
@@ -381,7 +381,7 @@ class MonitoringController extends Controller{
 	{
 		\DB::beginTransaction(); 
 		try{
-			$this->validate($request, Monitoring::$rules);
+			$request->validate(Monitoring::$rules);
 
 			$name = $request->name;
 

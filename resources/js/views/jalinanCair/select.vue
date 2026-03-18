@@ -19,7 +19,7 @@
 								<slot></slot>
 								<template v-for="pencairan in modelPencairan" :key="pencairan ? pencairan.tanggal_pencairan : undefined">
 								<option v-if="pencairan" :value="pencairan.tanggal_pencairan">
-									{{ pencairan.tanggal_pencairan | dateMonth }}
+									{{ $filters.dateMonth(pencairan.tanggal_pencairan) }}
 								</option>
 							</template>
 							</select>
@@ -45,11 +45,14 @@
 	import { useJalinanKlaimStore } from '../../stores/jalinanKlaim';
 
 	export default {
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				jalinanKlaimStore: useJalinanKlaimStore(),
-				pencairan: '',
+			jalinanKlaimStore: useJalinanKlaimStore(),
+			};
+		},
+		data() {
+			return {pencairan: '',
 			};
 		},
 		created() {

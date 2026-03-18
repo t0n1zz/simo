@@ -39,7 +39,7 @@
             <br/>
           </div>
         </div>
-        <div class="media mt-0 mb-3" v-for="vr in itemData" v-else>
+        <div class="media mt-0 mb-3" v-for="vr in itemData" :key="vr" v-else>
           <div class="mr-3 mb-2 mb-0">
             <div class="card-img-actions">
               <img

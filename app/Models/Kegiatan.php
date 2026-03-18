@@ -1,8 +1,21 @@
 <?php
 namespace App\Models;
 
+use App\Models\Aktivis;
+use App\Models\Cu;
+use App\Models\KegiatanMateri;
+use App\Models\KegiatanPeserta;
+use App\Models\KodeKegiatan;
+use App\Models\MitraLembaga;
+use App\Models\MitraOrang;
+use App\Models\Region\Districts;
+use App\Models\Region\Provinces;
+use App\Models\Region\Regencies;
+use App\Models\Region\Villages;
+use App\Models\Sasaran;
+use App\Models\Tempat;
 use Spatie\Activitylog\LogOptions;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use App\Support\Dataviewer;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -14,7 +27,6 @@ class Kegiatan extends Model {
 
     protected $table = 'kegiatan';
 
-    protected $dates = ['deleted_at'];
     
     public static $rules = [
         // 'name' => 'required'
@@ -54,46 +66,46 @@ class Kegiatan extends Model {
         
     public function Provinces()
     {
-        return $this->belongsTo('App\Models\Region\Provinces','id_provinces','id')->select('id','name');
+        return $this->belongsTo(Provinces::class,'id_provinces','id')->select('id','name');
     }
 		
     public function Regencies()
     {
-        return $this->belongsTo('App\Models\Region\Regencies','id_regencies','id')->select('id','name');
+        return $this->belongsTo(Regencies::class,'id_regencies','id')->select('id','name');
     }
 		
     public function Districts()
     {
-        return $this->belongsTo('App\Models\Region\Districts','id_districts','id')->select('id','name');
+        return $this->belongsTo(Districts::class,'id_districts','id')->select('id','name');
     }
 		
     public function Villages()
     {
-        return $this->belongsTo('App\Models\Region\Villages','id_villages','id')->select('id','name');
+        return $this->belongsTo(Villages::class,'id_villages','id')->select('id','name');
     }
         
     public function tempat(){
-        return $this->belongsTo('App\Models\Tempat','id_tempat','id');
+        return $this->belongsTo(Tempat::class,'id_tempat','id');
     }
 
     public function sasaran(){
-        return $this->belongsToMany('App\Models\Sasaran','kegiatan_sasaran')->withTimestamps();
+        return $this->belongsToMany(Sasaran::class,'kegiatan_sasaran')->withTimestamps();
     }
 
     public function sasaranCu(){
-        return $this->belongsToMany('App\Models\Cu', 'kegiatan_sasaran_cu')->withTimestamps();
+        return $this->belongsToMany(Cu::class, 'kegiatan_sasaran_cu')->withTimestamps();
     }
     
     public function panitia_dalam(){
-        return $this->belongsToMany('App\Models\Aktivis','kegiatan_panitia')->where('asal','dalam')->withPivot('peran','keterangan','asal', 'isGetSertifikat')->withTimestamps();
+        return $this->belongsToMany(Aktivis::class,'kegiatan_panitia')->where('asal','dalam')->withPivot('peran','keterangan','asal', 'isGetSertifikat')->withTimestamps();
     }
 
     public function panitia_luar(){
-        return $this->belongsToMany('App\Models\MitraOrang','kegiatan_panitia','kegiatan_id','aktivis_id')->where('asal','luar')->withPivot('peran','keterangan','asal', 'isGetSertifikat')->withTimestamps();
+        return $this->belongsToMany(MitraOrang::class,'kegiatan_panitia','kegiatan_id','aktivis_id')->where('asal','luar')->withPivot('peran','keterangan','asal', 'isGetSertifikat')->withTimestamps();
     }
 
     public function panitia_luar_lembaga(){
-        return $this->belongsToMany('App\Models\MitraLembaga','kegiatan_panitia','kegiatan_id','aktivis_id')->where('asal','luar lembaga')->withPivot('peran','keterangan','asal', 'isGetSertifikat')->withTimestamps();
+        return $this->belongsToMany(MitraLembaga::class,'kegiatan_panitia','kegiatan_id','aktivis_id')->where('asal','luar lembaga')->withPivot('peran','keterangan','asal', 'isGetSertifikat')->withTimestamps();
     }
 
     public function peserta(){
@@ -101,16 +113,16 @@ class Kegiatan extends Model {
     }
 
     public function hasPeserta(){
-        return $this->hasMany('App\Models\KegiatanPeserta','kegiatan_id','id');
+        return $this->hasMany(KegiatanPeserta::class,'kegiatan_id','id');
     }
 
     public function hasMateri(){
-        return $this->hasMany('App\Models\KegiatanMateri','kegiatan_id','id');
+        return $this->hasMany(KegiatanMateri::class,'kegiatan_id','id');
     }
 
     public function kode()
     {
-        return $this->belongsTo('App\Models\KodeKegiatan', 'id_kode', 'id')->select('id', 'kode');
+        return $this->belongsTo(KodeKegiatan::class, 'id_kode', 'id')->select('id', 'kode');
     }
 
     public function getActivitylogOptions(): LogOptions

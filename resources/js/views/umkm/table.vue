@@ -109,13 +109,16 @@
 			checkValue
 		},
 		props:['title','kelas'],
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				globalStore: useGlobalStore(),
-				cuStore: useCuStore(),
-				umkmStore: useUmkmStore(),
-				selectedItem: [],
+			globalStore: useGlobalStore(),
+			cuStore: useCuStore(),
+			umkmStore: useUmkmStore(),
+			};
+		},
+		data() {
+			return {selectedItem: [],
 				query: {
 					order_column: "created_at",
 					order_direction: "asc",

@@ -51,7 +51,8 @@
 						<!-- form iuran -->
 						<transition enter-active-class="animated fadeIn" mode="out-in">
 							<div v-show="tabName == 'iuran'">
-								<form @submit.prevent="save" data-vv-scope="form">
+								<VeeForm :form="form" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit, setValues }">
+							<form @submit.prevent="setValues(form) || handleSubmit(onValid)">
 									<div class="row">
 										<!-- tunas -->
 										<div class="col-lg-6">
@@ -467,7 +468,8 @@
 											:isSingleButton=true
 											@cancelClick="back" v-else></form-button>
 									</div>
-								</form>	
+								</form>
+								</VeeForm>
 							</div>
 						</transition>
 
@@ -681,6 +683,7 @@
 	import DatePicker from "../../components/datePicker.vue";
 	import checkValue from "../../components/checkValue.vue";
 	import tableAnggota from "./tableAnggota.vue";
+	import VeeForm from '../../components/VeeForm.vue';
 
 	export default {
 		components: {
@@ -694,14 +697,18 @@
 			wajibBadge,
 			DatePicker,
 			checkValue,
-			tableAnggota
+			tableAnggota,
+			VeeForm,
 		},
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				cuStore: useCuStore(),
-				jalinanIuranStore: useJalinanIuranStore(),
-				title: 'Detail Setoran Solidaritas Jalinan',
+			cuStore: useCuStore(),
+			jalinanIuranStore: useJalinanIuranStore(),
+			};
+		},
+		data() {
+			return {title: 'Detail Setoran Solidaritas Jalinan',
 				titleDesc: 'Detail iuran Jalinan',
 				titleIcon: 'icon-stack2',
 				level: 2,
@@ -778,19 +785,15 @@
 			fetch(){
 				this.jalinanIuranStore.edit(this.$route.params.id);	
 			},
-			save() {
+			onValid() {
 				this.form.id_cu = this.idCu;
 				this.state = '';
-				
-				this.$validator.validateAll('form').then((result) => {
-					if (result) {
-						this.jalinanIuranStore.update([this.$route.params.id, this.form]);
-						this.submited = false;
-					}else{
-						window.scrollTo(0, 0);
-						this.submited = true;
-					}
-				});
+				this.jalinanIuranStore.update([this.$route.params.id, this.form]);
+				this.submited = false;
+			},
+			onInvalid() {
+				window.scrollTo(0, 0);
+				this.submited = true;
 			},
 			back(){
 				if(this.currentUser.id_cu == 0){

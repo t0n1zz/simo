@@ -60,7 +60,7 @@ class VillagesController extends Controller{
 
 	public function store(Request $request)
 	{
-		$this->validate($request,Villages::$rules);
+		$request->validate(Villages::$rules);
 
 		$name = $request->name;
 
@@ -88,7 +88,7 @@ class VillagesController extends Controller{
 
 	public function update(Request $request, $id)
 	{
-		$this->validate($request,Villages::$rules);
+		$request->validate(Villages::$rules);
 
 		$name = $request->name;
 

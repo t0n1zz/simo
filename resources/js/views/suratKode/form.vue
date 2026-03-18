@@ -154,11 +154,14 @@
 			VeeForm,
 			Field
 		},
-		data() {
+		setup() {
 			return {
 				suratKodeStore: useSuratKodeStore(),
-				cuStore: useCuStore(),
-				title: 'Tambah Kode Surat',
+			cuStore: useCuStore(),
+			};
+		},
+		data() {
+			return {title: 'Tambah Kode Surat',
 				titleDesc: 'Menambah kode surat keluar baru',
 				titleIcon: 'icon-plus3',
 				kelas: 'suratKode',

@@ -49,11 +49,14 @@
 			selectCu,
 			tableData,
 		},
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				umkmStore: useUmkmStore(),
-				title: 'Umkm',
+			umkmStore: useUmkmStore(),
+			};
+		},
+		data() {
+			return {title: 'Umkm',
 				kelas: 'umkm',
 				titleDesc: 'Mengelola data Umkm',
 				titleIcon: 'icon-store2',

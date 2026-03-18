@@ -8,12 +8,14 @@
 			<div class="content-wrapper">
 				<div class="content">
 
+					<VeeForm :form="form" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit, setValues }">
+
 					<!-- message -->
 					<message v-if="errors.any('form') && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors.items">
 					</message>
 
 					<!-- main panel -->
-					<form @submit.prevent="save" enctype="multipart/form-data"  data-vv-scope="form">
+					<form @submit.prevent="setValues(form) || handleSubmit(onValid)" enctype="multipart/form-data">
 
 						<!-- main form -->
 						<div class="card">
@@ -145,13 +147,13 @@
 											<div class="input-group">
 
 												<!-- select -->
-													<select class="form-control" name="golongan" v-model="form.aset_tetap_golongan_id" data-width="100%" v-validate="'required'" data-vv-as="Golongan" :disabled="modelGolongan.length == 0" @change="changeGolongan($event.target.value)">
+													<Field as="select" name="golongan" rules="required" v-model="form.aset_tetap_golongan_id" class="form-control" data-width="100%" :disabled="modelGolongan.length == 0" @change="changeGolongan($event.target.value)">
 													<option disabled value="">
 														<span v-if="modelGolonganStat === 'loading'">Mohon tunggu...</span>
 														<span v-else>Silahkan pilih golongan</span>
 													</option>
 													<option v-for="(datas, index) in modelGolongan" :value="datas.id" :key="index">{{datas.kode + ' | ' + datas.name}}</option>
-												</select>
+												</Field>
 
 												<!-- button -->
 												<div class="input-group-append" v-if="currentUser.can && currentUser.can['create_aset_tetap_jenis']">
@@ -183,13 +185,13 @@
 											<div class="input-group">
 
 												<!-- select -->
-													<select class="form-control" name="kelompok" v-model="form.aset_tetap_kelompok_id" data-width="100%" v-validate="'required'" data-vv-as="Kelompok" :disabled="modelKelompok.length == 0" @change="changeKelompok($event.target.value)">
+													<Field as="select" name="kelompok" rules="required" v-model="form.aset_tetap_kelompok_id" class="form-control" data-width="100%" :disabled="modelKelompok.length == 0" @change="changeKelompok($event.target.value)">
 													<option disabled value="">
 														<span v-if="modelKelompokStat === 'loading'">Mohon tunggu...</span>
 														<span v-else>Silahkan pilih kelompok</span>
 													</option>
 													<option v-for="(datas, index) in modelKelompok" :value="datas.id" :key="index">{{datas.kode + ' | ' + datas.name}}</option>
-												</select>
+												</Field>
 
 												<!-- button -->
 												<div class="input-group-append" v-if="currentUser.can && currentUser.can['create_aset_tetap_jenis']">
@@ -221,13 +223,13 @@
 											<div class="input-group">
 
 												<!-- select -->
-													<select class="form-control" name="jenis" v-model="form.aset_tetap_jenis_id" data-width="100%" v-validate="'required'" data-vv-as="Jenis" :disabled="modelJenis.length == 0" @change="changeJenis($event.target.value)">
+													<Field as="select" name="jenis" rules="required" v-model="form.aset_tetap_jenis_id" class="form-control" data-width="100%" :disabled="modelJenis.length == 0" @change="changeJenis($event.target.value)">
 													<option disabled value="">
 														<span v-if="modelJenisStat === 'loading'">Mohon tunggu...</span>
 														<span v-else>Silahkan pilih jenis</span>
 													</option>
 													<option v-for="(datas, index) in modelJenis" :value="datas.id" :key="index">{{datas.kode + ' | ' + datas.name}}</option>
-												</select>
+												</Field>
 
 												<!-- button -->
 												<div class="input-group-append" v-if="currentUser.can && currentUser.can['create_aset_tetap_jenis']">
@@ -263,14 +265,12 @@
 												Kode: <wajib-badge></wajib-badge></h6>
 
 											<!-- text -->
-											<cleave 
-												name="kode"
-												v-model="form.kode" 
-												class="form-control" 
+											<Field name="kode" rules="required" v-model="form.kode" v-slot="{ field }"><cleave
+												v-bind="field"
+												class="form-control"
 												:options="cleaveOption.number15"
 												placeholder="Silahkan masukkan kode"
-												v-validate="'required'" data-vv-as="Kode"
-												readonly></cleave>	
+												readonly></cleave></Field>	
 											
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.kode')">
@@ -290,7 +290,7 @@
 												Nama: <wajib-badge></wajib-badge></h5>
 
 											<!-- text -->
-											<input type="text" name="name" class="form-control" placeholder="Silahkan masukkan nama kategori artikel" v-validate="'required'" data-vv-as="Nama" v-model="form.name">
+											<Field name="name" rules="required" v-model="form.name" v-slot="{ field }"><input type="text" class="form-control" placeholder="Silahkan masukkan nama kategori artikel" v-bind="field"></Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.name')">
@@ -310,7 +310,7 @@
 												Merk: <wajib-badge></wajib-badge></h5>
 
 											<!-- text -->
-											<input type="text" name="merk" class="form-control" placeholder="Silahkan masukkan merk" v-validate="'required'" data-vv-as="Merk" v-model="form.merk">
+											<Field name="merk" rules="required" v-model="form.merk" v-slot="{ field }"><input type="text" class="form-control" placeholder="Silahkan masukkan merk" v-bind="field"></Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.merk')">
@@ -330,7 +330,7 @@
 												Tipe: <wajib-badge></wajib-badge></h5>
 
 											<!-- text -->
-											<input type="text" name="tipe" class="form-control" placeholder="Silahkan masukkan tipe" v-validate="'required'" data-vv-as="Tipe" v-model="form.tipe">
+											<Field name="tipe" rules="required" v-model="form.tipe" v-slot="{ field }"><input type="text" class="form-control" placeholder="Silahkan masukkan tipe" v-bind="field"></Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.tipe')">
@@ -353,13 +353,13 @@
 											<div class="input-group">
 
 												<!-- select -->
-													<select class="form-control" name="lokasi" v-model="form.aset_tetap_lokasi_id" data-width="100%" v-validate="'required'" data-vv-as="Lokasi" :disabled="modelLokasi.length == 0">
+													<Field as="select" name="lokasi" rules="required" v-model="form.aset_tetap_lokasi_id" class="form-control" data-width="100%" :disabled="modelLokasi.length == 0">
 													<option disabled value="">
 														<span v-if="modelLokasiStat === 'loading'">Mohon tunggu...</span>
 														<span v-else>Silahkan pilih lokasi</span>
 													</option>
 													<option v-for="(datas, index) in modelLokasi" :value="datas.id" :key="index">{{datas.name}}</option>
-												</select>
+												</Field>
 
 												<!-- button -->
 												<div class="input-group-append" v-if="currentUser.can && currentUser.can['create_aset_tetap_lokasi']">
@@ -389,13 +389,13 @@
 											</h6>
 
 											<!-- select -->
-											<select class="form-control" name="penanggungjawab" v-model="form.aktivis_id" data-width="100%" v-validate="'required'" data-vv-as="Penangungjawab" :disabled="modelAktivis.length == 0">
+											<Field as="select" name="penanggungjawab" rules="required" v-model="form.aktivis_id" class="form-control" data-width="100%" :disabled="modelAktivis.length == 0">
 												<option disabled value="">
 													<span v-if="modelAktivisStat === 'loading'">Mohon tunggu...</span>
 													<span v-else>Silahkan pilih penangungjawab</span>
 												</option>
 												<option v-for="(datas, index) in modelAktivis" :value="datas.id" :key="index">{{datas.name}}</option>
-											</select>
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.aktivis_id')">
@@ -416,7 +416,7 @@
 											</h6>
 
 											<!-- select -->
-											<select class="form-control" name="kondisi" v-model="form.kondisi" data-width="100%" v-validate="'required'" data-vv-as="Kondisi">
+											<Field as="select" name="kondisi" rules="required" v-model="form.kondisi" class="form-control" data-width="100%">
 												<option disabled value="">Silahkan pilih kondisi</option>
 												<option value="Baik">Baik</option>
 												<option value="Diperbaiki">Diperbaiki</option>
@@ -424,7 +424,7 @@
 												<option value="Dijual">Dijual</option>
 												<option value="Hilang">Hilang</option>
 												<option value="Disewa">Disewa</option>
-											</select>
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.kondisi')">
@@ -448,7 +448,7 @@
 											</h6>
 
 											<!-- select -->
-											<select class="form-control" name="pembeli" v-model="form.aktivis_id_pembeli" data-width="100%" v-validate="'required'" data-vv-as="Pembeli" :disabled="modelAktivis.length == 0">
+											<Field as="select" name="pembeli" rules="required" v-model="form.aktivis_id_pembeli" class="form-control" data-width="100%" :disabled="modelAktivis.length == 0">
 												<option disabled value="">
 													<span v-if="modelAktivisStat === 'loading'">Mohon tunggu...</span>
 													<span v-else>Silahkan pilih pembeli</span>
@@ -456,7 +456,7 @@
 												<option value="0">Mitra</option>
 												<option disabled value="">----------------</option>
 												<option v-for="(datas, index) in modelAktivis" :value="datas.id" :key="index">{{datas.name}}</option>
-											</select>
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.aktivis_id_pembeli')">
@@ -477,7 +477,7 @@
 
 											<!-- input -->
 											<date-picker @dateSelected="form.tanggal = $event" :defaultDate="form.tanggal"></date-picker>	
-											<input v-model="form.tanggal" v-show="false" v-validate="'required'" data-vv-as="Tanggal pembelian"/>
+											<Field name="tanggal" rules="required" v-model="form.tanggal" v-show="false" />
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.tanggal')">
@@ -498,13 +498,11 @@
 												Harga: <wajib-badge></wajib-badge></h5>
 
 											<!-- text -->
-											<cleave 
-												v-model="form.harga" 
-												class="form-control" 
-												name="harga"
+											<Field name="harga" rules="required" v-model="form.harga" v-slot="{ field }"><cleave
+												v-bind="field"
+												class="form-control"
 												:options="cleaveOption.numeric"
-												v-validate="'required'" data-vv-as="Harga"
-												placeholder="Silahkan masukkan harga"></cleave>
+												placeholder="Silahkan masukkan harga"></cleave></Field>
 												
 
 											<!-- error message -->
@@ -524,15 +522,11 @@
 												Harga Perolehan / Pokok Penyusutan: <wajib-badge></wajib-badge></h5>
 
 											<!-- text -->
-											<cleave 
-												v-model="form.pokok_penyusutan" 
-												class="form-control" 
-												name="pokok_penyusutan"
+											<Field name="pokok_penyusutan" rules="required" v-model="form.pokok_penyusutan" v-slot="{ field }"><cleave
+												v-bind="field"
+												class="form-control"
 												:options="cleaveOption.numeric"
-												v-validate="'required'" data-vv-as="pokok_penyusutan"
-												placeholder="Silahkan masukkan jumlah pokok penyusutan"
-												>
-											</cleave>
+												placeholder="Silahkan masukkan jumlah pokok penyusutan"></cleave></Field>
 										</div>
 									</div>
 
@@ -545,13 +539,11 @@
 												Bulan Penyusutan: <wajib-badge></wajib-badge></h5>
 
 											<!-- text -->
-											<cleave 
-												v-model="form.bulan_penyusutan" 
-												class="form-control" 
-												name="bulan_penyusutan"
+											<Field name="bulan_penyusutan" rules="required" v-model="form.bulan_penyusutan" v-slot="{ field }"><cleave
+												v-bind="field"
+												class="form-control"
 												:options="cleaveOption.numeric"
-												v-validate="'required'" data-vv-as="bulan_penyusutan"
-												placeholder="Silahkan masukkan lama bulan penyusutan"></cleave>											
+												placeholder="Silahkan masukkan lama bulan penyusutan"></cleave></Field>											
 										</div>
 									</div>
 									
@@ -566,11 +558,11 @@
 											</h6>
 
 											<!-- select -->
-											<select class="form-control" name="sesuaikan" v-model="form.sesuaikan" data-width="100%" v-validate="'required'" data-vv-as="Sesuaikan">
+											<Field as="select" name="sesuaikan" rules="required" v-model="form.sesuaikan" class="form-control" data-width="100%">
 												<option disabled value="">Silahkan pilih sesuaikan</option>
 												<option value="Tidak">Tidak</option>
 												<option value="Sesuaikan">Sesuaikan</option>
-											</select>
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.sesuaikan')">
@@ -589,13 +581,11 @@
 												Sisa Penyusutan: </h5>
 
 											<!-- text -->
-											<cleave 
-												v-model="form.sisa_penyusutan" 
-												class="form-control" 
-												name="sisa_penyusutan"
+											<Field name="sisa_penyusutan" rules="required" v-model="form.sisa_penyusutan" v-slot="{ field }"><cleave
+												v-bind="field"
+												class="form-control"
 												:disabled="true"
-												:options="cleaveOption.numeric"
-												v-validate="'required'" data-vv-as="sisa_penyusutan"></cleave>
+												:options="cleaveOption.numeric"></cleave></Field>
 
 										</div>
 									</div>
@@ -607,13 +597,11 @@
 											<h5>
 												Sisa Bulan Penyusutan: </h5>
 											<!-- text -->
-											<cleave 
-												v-model="form.sisa_bulan_penyusutan" 
-												class="form-control" 
-												name="sisa_bulan_penyusutan"
+											<Field name="sisa_bulan_penyusutan" rules="required" v-model="form.sisa_bulan_penyusutan" v-slot="{ field }"><cleave
+												v-bind="field"
+												class="form-control"
 												:disabled="true"
-												:options="cleaveOption.numeric"
-												v-validate="'required'" data-vv-as="sisa_bulan_penyusutan"></cleave>
+												:options="cleaveOption.numeric"></cleave></Field>
 										</div>
 									</div>
 
@@ -664,6 +652,8 @@
 						</div>
 
 					</form>
+
+				</VeeForm>
 				</div>
 			</div>
 		</div>
@@ -716,6 +706,8 @@
 	import DataViewer from '../../components/dataviewer2.vue';
 	import checkValue from '../../components/checkValue.vue';
 	import DatePicker from "../../components/datePicker.vue";
+	import { Field } from 'vee-validate';
+	import VeeForm from '../../components/VeeForm.vue';
 
 	export default {
 		components: {
@@ -735,7 +727,9 @@
 			infoIcon,
 			checkValue,
 			cardData,
-			DatePicker
+			DatePicker,
+			Field,
+			VeeForm
 		},
 		setup() {
 			const authStore = useAuthStore();
@@ -1004,21 +998,18 @@
 				if(this.itemDataStat != 'success')
 					this.fetchAset(this.query);
 			},
-			save() {
+			onValid(values) {
 				const formData = toMulipartedForm(this.form, this.$route.meta.mode);
-				this.$validator.validateAll('form').then((result) => {
-					if (result) {
-						if(this.$route.meta.mode == 'edit'){
-							this.asetTetapStore.update([this.$route.params.id, formData]);
-						}else{
-							this.asetTetapStore.store(formData);
-						}
-						this.submited = false;
-					}else{
-						window.scrollTo(0, 0);
-						this.submited = true;
-					}
-				});
+				if(this.$route.meta.mode == 'edit'){
+					this.asetTetapStore.update([this.$route.params.id, formData]);
+				}else{
+					this.asetTetapStore.store(formData);
+				}
+				this.submited = false;
+			},
+			onInvalid() {
+				window.scrollTo(0, 0);
+				this.submited = true;
 			},
 			back(){
 				this.$router.push({name: this.kelas});

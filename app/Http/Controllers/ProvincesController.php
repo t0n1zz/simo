@@ -41,7 +41,7 @@ class ProvincesController extends Controller{
 
 	public function store(Request $request)
 	{
-		$this->validate($request,Provinces::$rules);
+		$request->validate(Provinces::$rules);
 
 		$name = $request->name;
 
@@ -69,7 +69,7 @@ class ProvincesController extends Controller{
 
 	public function update(Request $request, $id)
 	{
-		$this->validate($request,Provinces::$rules);
+		$request->validate(Provinces::$rules);
 
 		$name = $request->name;
 

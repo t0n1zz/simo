@@ -44,7 +44,7 @@
 								<option disabled value="">Silahkan pilih periode laporan</option>
 								<slot></slot>
 								<template v-for="periode in modelPeriode" :key="periode ? periode.periode : undefined">
-								<option v-if="periode" :value="periode.periode">{{periode.periode | dateMonth}}</option>
+								<option v-if="periode" :value="periode.periode">{{ $filters.dateMonth(periode.periode) }}</option>
 							</template>
 							</select>
 

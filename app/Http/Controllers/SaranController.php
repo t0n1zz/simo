@@ -32,7 +32,7 @@ class SaranController extends Controller{
 
 	public function store(Request $request)
 	{
-		$this->validate($request,Saran::$rules);
+		$request->validate(Saran::$rules);
 	
 		$kelas = Saran::create($request->all());
 

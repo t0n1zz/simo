@@ -178,10 +178,13 @@
 			checkValue
 		},
 		props:['title','kelas'],
-		data() {
+		setup() {
 			return {
 				assesmentAccessStore: useAssesmentAccessStore(),
-				selectedItem: [],
+			};
+		},
+		data() {
+			return {selectedItem: [],
 				query: {
 					order_column: "periode",
 					order_direction: "desc",

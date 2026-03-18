@@ -8,17 +8,19 @@
 			<div class="content-wrapper">
 				<div class="content">
 
+					<VeeForm :form="form" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit, setValues }">
+
 					<!-- message -->
 					<message v-if="errors.any('form') && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors.items">
 					</message>
 
 					<!-- main panel -->
-					<form @submit.prevent="save" data-vv-scope="form">
+					<form @submit.prevent="setValues(form) || handleSubmit(onValid)">
 
 						<!-- main form -->
 						<div class="card">
 							<div class="card-body">
-								
+
 								<div class="row">
 
 									<!-- temuan -->
@@ -31,7 +33,7 @@
 												Temuan: <wajib-badge></wajib-badge></h5>
 
 											<!-- text -->
-											<input type="text" name="name" class="form-control" placeholder="Silahkan masukkan temuan artikel" v-validate="'required'" data-vv-as="Temuan" v-model="form.name">
+											<Field name="name" rules="required" v-model="form.name" v-slot="{ field }"><input type="text" class="form-control" placeholder="Silahkan masukkan temuan artikel" v-bind="field"></Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.name')">
@@ -52,13 +54,13 @@
 											</h5>
 
 											<!-- select -->
-											<select class="form-control" name="id_cu" v-model="form.id_cu" data-width="100%" v-validate="'required'" data-vv-as="CU" :disabled="modelCU.length === 0" @change="changeCU($event.target.value)">
+											<Field as="select" name="id_cu" rules="required" v-model="form.id_cu" class="form-control" data-width="100%" :disabled="modelCU.length === 0" @change="changeCU($event.target.value)">
 												<option disabled value="">
 													<span v-if="modelCUStat === 'loading'">Mohon tunggu...</span>
 													<span v-else>Silahkan pilih CU</span>
 												</option>
 												<option v-for="(cu, index) in modelCU" :value="cu.id" :key="index">{{cu.name}}</option>
-											</select>
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.id_cu')">
@@ -79,14 +81,14 @@
 											</h5>
 
 											<!-- select -->
-											<select class="form-control" name="id_tp" v-model="form.id_tp" data-width="100%" v-validate="'required'" data-vv-as="TP" :disabled="modelTP.length === 0">
+											<Field as="select" name="id_tp" rules="required" v-model="form.id_tp" class="form-control" data-width="100%" :disabled="modelTP.length === 0">
 												<option disabled value="">
 													<span v-if="modelTPStat === 'loading'">Mohon tunggu...</span>
 													<span v-else>Silahkan pilih TP</span>
 												</option>
 												<option value="0">Semua</option>
 												<option v-for="(tp, index) in modelTP" :value="tp.id" :key="index">{{tp.name}}</option>
-											</select>
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.id_tp')">
@@ -107,13 +109,13 @@
 											</h5>
 
 											<!-- select -->
-											<select class="form-control" name="id_aktivis_pic" v-model="form.id_aktivis_pic" data-width="100%" v-validate="'required'" data-vv-as="PIC" :disabled="modelAktivisCU.length === 0">
+											<Field as="select" name="id_aktivis_pic" rules="required" v-model="form.id_aktivis_pic" class="form-control" data-width="100%" :disabled="modelAktivisCU.length === 0">
 												<option disabled value="">
 													<span v-if="modelAktivisCUStat === 'loading'">Mohon tunggu...</span>
 													<span v-else>Silahkan pilih PIC</span>
 												</option>
 												<option v-for="(ac, index) in modelAktivisCU" :key="index" :value="ac.id">{{ac.name}} {{ac.pekerjaan_aktif ? ' - ' + ac.pekerjaan_aktif.name : ''}}</option>
-											</select>
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.id_aktivis_pic')">
@@ -134,13 +136,13 @@
 											</h5>
 
 											<!-- select -->
-											<select class="form-control" name="id_aktivis_pemeriksa" v-model="form.id_aktivis_pemeriksa" data-width="100%" v-validate="'required'" data-vv-as="Pemeriksa" :disabled="modelAktivisCU.length === 0">
+											<Field as="select" name="id_aktivis_pemeriksa" rules="required" v-model="form.id_aktivis_pemeriksa" class="form-control" data-width="100%" :disabled="modelAktivisCU.length === 0">
 												<option disabled value="">
 													<span v-if="modelAktivisCUStat === 'loading'">Mohon tunggu...</span>
 													<span v-else>Silahkan pilih Pemeriksa</span>
 												</option>
 												<option v-for="(ac, index) in modelAktivisCU" :key="index" :value="ac.id">{{ac.name}} {{ac.pekerjaan_aktif ? ' - ' + ac.pekerjaan_aktif.name : ''}}</option>
-											</select>
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.id_aktivis_pemeriksa')">
@@ -149,7 +151,7 @@
 											<small class="text-muted" v-else>&nbsp;</small>
 										</div>
 									</div>
-									
+
 									<!-- tanggal -->
 									<div class="col-md-4">
 										<div class="form-group" :class="{'has-error' : errors.has('form.tanggal')}">
@@ -161,8 +163,8 @@
 											</h5>
 
 											<!-- input -->
-											<date-picker @dateSelected="form.tanggal = $event" :defaultDate="form.tanggal"></date-picker>	
-											<input v-model="form.tanggal" v-show="false" name="tanggal" v-validate="'required'" data-vv-as="Tanggal"/>
+											<date-picker @dateSelected="form.tanggal = $event" :defaultDate="form.tanggal"></date-picker>
+											<Field name="tanggal" rules="required" v-model="form.tanggal" v-show="false" />
 
 											<!-- error message -->
 											<br/>
@@ -185,11 +187,11 @@
 											</h5>
 
 											<!-- select -->
-											<select name="jenis" data-width="100%" class="form-control" v-model="form.jenis" v-validate="'required'" data-vv-as="Jenis">
+											<Field as="select" name="jenis" rules="required" v-model="form.jenis" class="form-control" data-width="100%">
 												<option disabled value="">Silahkan pilih jenis</option>
 												<option value="MAYOR">MAYOR</option>
 												<option value="MINOR">MINOR</option>
-											</select>
+											</Field>
 
 											<!-- error message -->
 											<br/>
@@ -212,13 +214,13 @@
 											</h5>
 
 											<!-- select -->
-											<select name="aspek" data-width="100%" class="form-control" v-model="form.aspek" v-validate="'required'" data-vv-as="Aspek">
+											<Field as="select" name="aspek" rules="required" v-model="form.aspek" class="form-control" data-width="100%">
 												<option disabled value="">Silahkan pilih aspek</option>
 												<option value="KEUANGAN">KEUANGAN</option>
 												<option value="SOSIAL">SOSIAL</option>
 												<option value="OPERASIONAL">OPERASIONAL</option>
 												<option value="KEPATUHAN">KEPATUHAN</option>
-											</select>
+											</Field>
 
 											<!-- error message -->
 											<br/>
@@ -228,7 +230,7 @@
 											<small class="text-muted" v-else>&nbsp;
 											</small>
 										</div>
-									</div> 
+									</div>
 								
 
 								</div>
@@ -289,6 +291,8 @@
 						
 					</form>
 
+				</VeeForm>
+
 				</div>
 			</div>
 		</div>
@@ -337,6 +341,8 @@
 	import formRekom from "./formRekom.vue";
 	import Cleave from 'vue-cleave-component';
 	import DatePicker from "../../components/datePicker.vue";
+	import { Field } from 'vee-validate';
+	import VeeForm from '../../components/VeeForm.vue';
 
 	export default {
 		components: {
@@ -350,7 +356,9 @@
 			dataTable,
 			formRekom,
 			Cleave,
-			DatePicker
+			DatePicker,
+			Field,
+			VeeForm
 		},
 		data() {
 			return {
@@ -466,21 +474,18 @@
 					}
 				}
 			},
-			save() {
+			onValid(values) {
 				this.form.rekomendasi = this.itemDataRekom;
-				this.$validator.validateAll('form').then((result) => {
-					if (result) {
-						if(this.$route.meta.mode === 'edit'){
-							this.update([this.$route.params.id, this.form]);
-						}else{
-							this.store(this.form);
-						}
-						this.submited = false;
-					}else{
-						window.scrollTo(0, 0);
-						this.submited = true;
-					}
-				});
+				if(this.$route.meta.mode === 'edit'){
+					this.update([this.$route.params.id, this.form]);
+				}else{
+					this.store(this.form);
+				}
+				this.submited = false;
+			},
+			onInvalid() {
+				window.scrollTo(0, 0);
+				this.submited = true;
 			},
 			changeCU(id){
 				this.getCu(id);	

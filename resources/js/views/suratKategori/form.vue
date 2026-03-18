@@ -161,12 +161,15 @@
 			VeeForm,
 			Field,
 		},
-		data() {
+		setup() {
 			return {
 				suratKategoriStore: useSuratKategoriStore(),
-				suratKodeStore: useSuratKodeStore(),
-				cuStore: useCuStore(),
-				title: 'Tambah Kategori Surat',
+			suratKodeStore: useSuratKodeStore(),
+			cuStore: useCuStore(),
+			};
+		},
+		data() {
+			return {title: 'Tambah Kategori Surat',
 				titleDesc: 'Menambah kategori surat keluar baru',
 				titleIcon: 'icon-plus3',
 				kelas: 'suratKategori',

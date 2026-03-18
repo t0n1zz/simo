@@ -1,8 +1,9 @@
 <?php
 namespace App\Models;
 
+use App\Models\User;
 use Spatie\Activitylog\LogOptions;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 class LaporanTpDiskusi extends BaseEloquent {
@@ -18,7 +19,7 @@ class LaporanTpDiskusi extends BaseEloquent {
     protected $fillable = ['id_laporan','id_user','content'];
 
     public function User(){
-        return $this->belongsTo('App\Models\User','id_user','id');
+        return $this->belongsTo(User::class,'id_user','id');
     }
 
     public function getActivitylogOptions(): LogOptions

@@ -150,10 +150,13 @@
 			formRekomHasil
 		},
 		props: ['kelas', 'selected', 'tipeUser'],
-		data() {
+		setup() {
 			return {
 				kegiatanRekomStore: useKegiatanRekomStore(),
-				title: 'Hasil Rekomendasi',
+			};
+		},
+		data() {
+			return {title: 'Hasil Rekomendasi',
 				selectedItem: [],
 				itemData: [],
 				excelDownloadUrl: '',

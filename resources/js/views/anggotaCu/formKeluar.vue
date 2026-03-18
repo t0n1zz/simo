@@ -8,7 +8,8 @@
 			</ul>
 		</div>
 
-		<form @submit.prevent="save" data-vv-scope="formDataCu">
+		<VeeForm :form="formDataCu" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit, setValues }">
+		<form @submit.prevent="setValues(formDataCu) || handleSubmit(onValid)">
 
 		<div class="row">
 
@@ -21,8 +22,8 @@
 					Tgl. Keluar: <wajib-badge></wajib-badge></h6>
 
 					<!-- text -->
-					<date-picker @dateSelected="formDataCu.tanggal_keluar = $event" :defaultDate="formDataCu.tanggal_keluar"></date-picker>	
-					<input v-model="formDataCu.tanggal_keluar" v-show="false" v-validate="'required'" data-vv-as="Tgl. keluar anggota"/>
+					<date-picker @dateSelected="formDataCu.tanggal_keluar = $event" :defaultDate="formDataCu.tanggal_keluar"></date-picker>
+					<Field name="tanggal_keluar" rules="required" v-model="formDataCu.tanggal_keluar" v-show="false" />
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('formDataCu.tanggal_keluar')">
@@ -70,6 +71,7 @@
 		</div> 
 
 		</form>
+		</VeeForm>
 
 	</div>
 </template>
@@ -87,6 +89,8 @@
 	import infoIcon from "../../components/infoIcon.vue";
 	import wajibBadge from "../../components/wajibBadge.vue";
 	import DatePicker from "../../components/datePicker.vue";
+	import { Field } from 'vee-validate';
+	import VeeForm from '../../components/VeeForm.vue';
 
 	export default {
 		props: ['anggota_cu'],
@@ -96,7 +100,9 @@
 			Cleave,
 			infoIcon,
 			wajibBadge,
-			DatePicker
+			DatePicker,
+			Field,
+			VeeForm
 		},
 		data() {
 			return {
@@ -133,14 +139,12 @@
 		watch: {},
 		methods: {
 			...mapActions(useAnggotaCuStore, ['updateKeluar']),
-			save(){
-				this.$validator.validateAll('formDataCu').then((result) => {
-					if (result) {
-						this.updateKeluar([this.anggota_cu.id, this.formDataCu]);
-					}else{
-						this.submited = true;
-					}	
-				});
+			onValid(values){
+				this.updateKeluar([this.anggota_cu.id, this.formDataCu]);
+			},
+			onInvalid(){
+				window.scrollTo(0, 0);
+				this.submited = true;
 			},
 			tutup(){
 				this.$emit('tutup');

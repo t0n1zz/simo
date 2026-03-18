@@ -128,7 +128,7 @@ class AssesmentCulegController extends Controller{
 
 	public function store(Request $request)
 	{
-		$this->validate($request,AssesmentCuleg::$rules);
+		$request->validate(AssesmentCuleg::$rules);
 
 		$periode = $request->periode;
 
@@ -203,7 +203,7 @@ class AssesmentCulegController extends Controller{
 	{
 		$cu = \Auth::user()->id_cu;
 
-		$this->validate($request, AssesmentCuleg::$rules);
+		$request->validate(AssesmentCuleg::$rules);
 
 		$periode = $request->periode;
 

@@ -1,8 +1,11 @@
 <?php
 namespace App\Models;
 
+use App\Models\ArtikelKategori;
+use App\Models\ArtikelPenulis;
+use App\Models\Cu;
 use Spatie\Activitylog\LogOptions;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Support\Dataviewer;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -13,7 +16,6 @@ class Artikel extends BaseEloquent {
     use Dataviewer, LogsActivity, Sluggable, SoftDeletes;
 
     protected $table = 'artikel';
-    protected $dates = ['deleted_at'];
 
     public static $rules = [
         'id_cu' => 'required',
@@ -68,16 +70,16 @@ class Artikel extends BaseEloquent {
 
     public function kategori()
     {
-        return $this->belongsTo('App\Models\ArtikelKategori','id_artikel_kategori','id')->select('id','name','slug','created_at');
+        return $this->belongsTo(ArtikelKategori::class,'id_artikel_kategori','id')->select('id','name','slug','created_at');
     }
 
     public function penulis()
     {
-        return $this->belongsTo('App\Models\ArtikelPenulis','id_artikel_penulis','id');
+        return $this->belongsTo(ArtikelPenulis::class,'id_artikel_penulis','id');
     }
 
     public function Cu()
     {
-        return $this->belongsTo('App\Models\Cu','id_cu','id')->select('id','no_ba','name');
+        return $this->belongsTo(Cu::class,'id_cu','id')->select('id','no_ba','name');
     }
 }

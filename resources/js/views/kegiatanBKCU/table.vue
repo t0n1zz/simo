@@ -412,7 +412,7 @@
               <hr v-if="props.item.gambar" />
               <h5 class="text-primary">{{ props.item.name }}</h5>
 
-              <!-- <p class="mb-3" v-if="props.item.keterangan">{{ props.item.keterangan | trimString }}</p> -->
+              <!-- <p class="mb-3" v-if="props.item.keterangan">{{ $filters.trimString(props.item.keterangan) }}</p> -->
 
               <hr />
 
@@ -874,12 +874,10 @@ export default {
       this.$router.push({ name: this.kelas + "Detail", params: { id: id, tipe:this.$route.params.tipe } });
     },
     saveStatus() {
-      this.$validator.validateAll("formStatus").then((result) => {
-        this.updateStatus([
-          this.selectedItem.id,
-          this.formStatus,
-        ]);
-      });
+      this.updateStatus([
+        this.selectedItem.id,
+        this.formStatus,
+      ]);
     },
     modalConfirmOpen(state, isMobile, itemMobile) {
       this.modalShow = true;

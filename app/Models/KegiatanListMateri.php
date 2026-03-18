@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\Nilai;
 use Spatie\Activitylog\LogOptions;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 use App\Support\Dataviewer;
 
@@ -27,7 +28,7 @@ class KegiatanListMateri extends Model
 
     public function nilai()
     {
-        return $this->hasMany('App\Models\Nilai', 'materi_id', 'id');
+        return $this->hasMany(Nilai::class, 'materi_id', 'id');
     }
 
     public function getActivitylogOptions(): LogOptions

@@ -1,8 +1,10 @@
 <?php
 namespace App\Models;
 
+use App\Models\Kegiatan;
+use App\Models\KegiatanRekomHasil;
 use Spatie\Activitylog\LogOptions;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 use App\Support\Dataviewer;
 
@@ -29,11 +31,11 @@ class KegiatanRekom extends Model {
     ];
 
     public function Kegiatan(){
-        return $this->belongsTo('App\Models\Kegiatan','kegiatan_id','id');
+        return $this->belongsTo(Kegiatan::class,'kegiatan_id','id');
     }
 
     public function hasil(){
-        return $this->hasMany('App\Models\KegiatanRekomHasil','kegiatan_rekom_id','id');
+        return $this->hasMany(KegiatanRekomHasil::class,'kegiatan_rekom_id','id');
     }
 
     public function getActivitylogOptions(): LogOptions

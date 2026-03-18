@@ -383,7 +383,7 @@ class AnggotaCuController extends Controller{
 	{
 		\DB::beginTransaction(); 
 		try{
-			$this->validate($request,AnggotaCu::$rules);
+			$request->validate(AnggotaCu::$rules);
 
 			$nik = '';
 

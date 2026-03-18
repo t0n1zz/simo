@@ -86,8 +86,8 @@
                           <span v-else>Silahkan pilih periode</span>
                         </option>
                         <option
-                          v-for="(periode, index) in modelPeriode"
-                          :value="periode.id" :key="index"
+                          v-for="(periode, index) in modelPeriode" :key="index"
+                          :value="periode.id"
                         >{{periode.periode}}</option>
                       </select>
                     </Field>
@@ -153,11 +153,11 @@
                     <ul class="list-inline mb-0">
                       <li>
                         Skor CU: {{ nilaiSkorCUP1A + nilaiSkorCUP1B + nilaiSkorCUP1C + nilaiSkorCUP1D + nilaiSkorCUP1E + nilaiSkorCUP1F }}
-                        / Bobot Skor CU: {{ (nilaiBobotCUP1A + nilaiBobotCUP1B + nilaiBobotCUP1C + nilaiBobotCUP1D + nilaiBobotCUP1E + nilaiBobotCUP1F) | round(2) }}%
+                        / Bobot Skor CU: {{ $filters.round((nilaiBobotCUP1A + nilaiBobotCUP1B + nilaiBobotCUP1C + nilaiBobotCUP1D + nilaiBobotCUP1E + nilaiBobotCUP1F), 2) }}%
                       </li>
                       <li>
                         Skor PUSKOPCUINA: {{ nilaiSkorBKCUP1A + nilaiSkorBKCUP1B + nilaiSkorBKCUP1C + nilaiSkorBKCUP1D + nilaiSkorBKCUP1E + nilaiSkorBKCUP1F }}
-                        / Bobot Skor PUSKOPCUINA: {{ (nilaiBobotBKCUP1A + nilaiBobotBKCUP1B + nilaiBobotBKCUP1C + nilaiBobotBKCUP1D + nilaiBobotBKCUP1E + nilaiBobotBKCUP1F) | round(2) }}%
+                        / Bobot Skor PUSKOPCUINA: {{ $filters.round((nilaiBobotBKCUP1A + nilaiBobotBKCUP1B + nilaiBobotBKCUP1C + nilaiBobotBKCUP1D + nilaiBobotBKCUP1E + nilaiBobotBKCUP1F), 2) }}%
                       </li>
                     </ul>
                   </div>
@@ -176,8 +176,8 @@
                     >2. PERSPEKTIF ANGGOTA/PELANGGAN</a>
                     <hr class="mt-1 mb-1" />
                     <ul class="list-inline mb-0">
-                      <li>Skor CU: {{ nilaiSkorCUP2A + nilaiSkorCUP2B }} / Bobot Skor CU: {{ (nilaiBobotCUP2A + nilaiBobotCUP2B) | round(2) }}%</li>
-                      <li>Skor PUSKOPCUINA: {{ nilaiSkorBKCUP2A + nilaiSkorBKCUP2B }} / Bobot Skor PUSKOPCUINA: {{ (nilaiBobotBKCUP2A + nilaiBobotBKCUP2B) | round(2) }}%</li>
+                      <li>Skor CU: {{ nilaiSkorCUP2A + nilaiSkorCUP2B }} / Bobot Skor CU: {{ $filters.round((nilaiBobotCUP2A + nilaiBobotCUP2B), 2) }}%</li>
+                      <li>Skor PUSKOPCUINA: {{ nilaiSkorBKCUP2A + nilaiSkorBKCUP2B }} / Bobot Skor PUSKOPCUINA: {{ $filters.round((nilaiBobotBKCUP2A + nilaiBobotBKCUP2B), 2) }}%</li>
                     </ul>
                   </div>
                 </li>
@@ -195,8 +195,8 @@
                     >3. PERSPEKTIF BISNIS INTERNAL</a>
                     <hr class="mt-1 mb-1" />
                     <ul class="list-inline mb-0">
-                      <li>Skor CU: {{ nilaiSkorCUP3A + nilaiSkorCUP3B }} / Bobot Skor CU: {{ (nilaiBobotCUP3A + nilaiBobotCUP3B) | round(2) }}%</li>
-                      <li>Skor PUSKOPCUINA: {{ nilaiSkorBKCUP3A + nilaiSkorBKCUP3B }} / Bobot Skor PUSKOPCUINA: {{ (nilaiBobotBKCUP3A + nilaiBobotBKCUP3B) | round(2) }}%</li>
+                      <li>Skor CU: {{ nilaiSkorCUP3A + nilaiSkorCUP3B }} / Bobot Skor CU: {{ $filters.round((nilaiBobotCUP3A + nilaiBobotCUP3B), 2) }}%</li>
+                      <li>Skor PUSKOPCUINA: {{ nilaiSkorBKCUP3A + nilaiSkorBKCUP3B }} / Bobot Skor PUSKOPCUINA: {{ $filters.round((nilaiBobotBKCUP3A + nilaiBobotBKCUP3B), 2) }}%</li>
                     </ul>
                   </div>
                 </li>
@@ -214,8 +214,8 @@
                     >4. PERSPEKTIF PEMBELAJARAN</a>
                     <hr class="mt-1 mb-1" />
                     <ul class="list-inline mb-0">
-                      <li>Skor CU: {{ nilaiSkorCUP4A + nilaiSkorCUP4B }} / Bobot Skor CU: {{ (nilaiBobotCUP4A + nilaiBobotCUP4B) | round(2) }}%</li>
-                      <li>Skor PUSKOPCUINA: {{ nilaiSkorBKCUP4A + nilaiSkorBKCUP4B }} / Bobot Skor PUSKOPCUINA: {{ (nilaiBobotBKCUP4A + nilaiBobotBKCUP4B) | round(2) }}%</li>
+                      <li>Skor CU: {{ nilaiSkorCUP4A + nilaiSkorCUP4B }} / Bobot Skor CU: {{ $filters.round((nilaiBobotCUP4A + nilaiBobotCUP4B), 2) }}%</li>
+                      <li>Skor PUSKOPCUINA: {{ nilaiSkorBKCUP4A + nilaiSkorBKCUP4B }} / Bobot Skor PUSKOPCUINA: {{ $filters.round((nilaiBobotBKCUP4A + nilaiBobotBKCUP4B), 2) }}%</li>
                     </ul>
                   </div>
                 </li>
@@ -626,12 +626,7 @@ export default {
     kesimpulan
   },
   data() {
-    return {
-      authStore: useAuthStore(),
-      assesmentAccessStore: useAssesmentAccessStore(),
-      cuStore: useCuStore(),
-      laporanCuStore: useLaporanCuStore(),
-      title: "Self Assesment ACCESS Branding",
+    return {title: "Self Assesment ACCESS Branding",
       titleDesc: "Menambah self assesment ACCESS branding",
       titleIcon: "icon-plus3",
       level2Title: "Assesment Access",

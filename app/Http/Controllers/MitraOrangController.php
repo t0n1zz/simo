@@ -107,7 +107,7 @@ class MitraOrangController extends Controller
 
 	public function store(Request $request)
 	{
-		$this->validate($request, MitraOrang::$rules);
+		$request->validate(MitraOrang::$rules);
 
 		$name = $request->name;
 
@@ -142,7 +142,7 @@ class MitraOrangController extends Controller
 
 	public function update(Request $request, $id)
 	{
-		$this->validate($request, MitraOrang::$rules);
+		$request->validate(MitraOrang::$rules);
 
 		$name = $request->name;
 

@@ -1,6 +1,8 @@
 <template>
 	<div>
-		<form @submit.prevent="save" data-vv-scope="formDataRekom">
+		<VeeForm :form="formDataRekom" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit, setValues }">
+
+		<form @submit.prevent="setValues(formDataRekom) || handleSubmit(onValid)">
 
 		<!-- message -->
 		<message v-if="message.show" @close="messageClose" :title="'Oops terjadi kesalahan'" :errorData="message.content" :showDebug="false">
@@ -16,8 +18,8 @@
 					<h6>Rekomendasi: <wajib-badge></wajib-badge></h6>
 
 					<!-- text -->
-					<input type="text" name="rekomendasi" class="form-control" placeholder="Silahkan masukkan rekomendasi" v-validate="'required'" data-vv-as="Rekomendasi" v-model="formDataRekom.rekomendasi">
-					
+					<Field name="rekomendasi" rules="required" v-model="formDataRekom.rekomendasi" v-slot="{ field }"><input type="text" class="form-control" placeholder="Silahkan masukkan rekomendasi" v-bind="field"></Field>
+
 				</div>
 			</div>
 
@@ -25,7 +27,7 @@
 
 		<!-- divider -->
 		<hr>
-		
+
 		<!-- tombol desktop-->
 		<div class="text-center d-none d-md-block">
 			<button type="button" class="btn btn-light" @click.prevent="tutup">
@@ -33,7 +35,7 @@
 
 			<button type="submit" class="btn btn-primary" :disabled="formDataRekom.cu_id == ''">
 				<i class="icon-floppy-disk"></i> Simpan</button>
-		</div>  
+		</div>
 
 		<!-- tombol mobile-->
 		<div class="d-block d-md-none">
@@ -42,9 +44,11 @@
 
 			<button type="button" class="btn btn-light btn-block pb-2" @click.prevent="tutup">
 				<i class="icon-cross"></i> Tutup</button>
-		</div> 
+		</div>
 
 		</form>
+
+		</VeeForm>
 
 	</div>
 </template>
@@ -56,13 +60,17 @@
 	import checkValue from '../../components/checkValue.vue';
 	import Message from "../../components/message.vue";
 	import wajibBadge from "../../components/wajibBadge.vue";
+	import { Field } from 'vee-validate';
+	import VeeForm from '../../components/VeeForm.vue';
 
 	export default {
 		props: ['mode','selected'],
 		components: {
 			checkValue,
 			Message,
-			wajibBadge
+			wajibBadge,
+			Field,
+			VeeForm
 		},
 		data() {
 			return {
@@ -86,21 +94,18 @@
 		},
 		watch: {},
 		methods: {
-			save(){
+			onValid(values){
 				if(!this.formDataRekom.status){
 					this.formDataRekom.status = 0;
 				}
-				this.$validator.validateAll('formDataRekom').then((result) => {
-					if (result) {
-						if(this.mode == 'edit'){
-							this.$emit('editRekom',this.formDataRekom);
-						}else{
-							this.$emit('createRekom',this.formDataRekom);
-						}
-					}else{
-						this.submited = true;
-					}	
-				});
+				if(this.mode == 'edit'){
+					this.$emit('editRekom',this.formDataRekom);
+				}else{
+					this.$emit('createRekom',this.formDataRekom);
+				}
+			},
+			onInvalid(){
+				this.submited = true;
 			},
 			messageClose(){
 				this.message.show = false;

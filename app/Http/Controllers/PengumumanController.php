@@ -43,7 +43,7 @@ class PengumumanController extends Controller{
 
 	public function store(Request $request)
 	{
-		$this->validate($request,Pengumuman::$rules);
+		$request->validate(Pengumuman::$rules);
 
 		$name = $request->name;
 	
@@ -79,7 +79,7 @@ class PengumumanController extends Controller{
 
 	public function update(Request $request, $id)
 	{
-		$this->validate($request,Pengumuman::$rules);
+		$request->validate(Pengumuman::$rules);
 
 		$name = $request->name;
 

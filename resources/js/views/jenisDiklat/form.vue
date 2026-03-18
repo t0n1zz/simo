@@ -123,11 +123,14 @@
 			VeeForm,
 			Field,
 		},
-			data() {
+			setup() {
 			return {
 				jenisDiklatStore: useJenisDiklatStore(),
-				cuStore: useCuStore(),
-				title: 'Tambah Jenis diklat',
+			cuStore: useCuStore(),
+			};
+		},
+		data() {
+			return {title: 'Tambah Jenis diklat',
 				titleDesc: 'Menambah jenis diklat baru',
 				titleIcon: 'icon-plus3',
 				kelas: 'jenisDiklat',

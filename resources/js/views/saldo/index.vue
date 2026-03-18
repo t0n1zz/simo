@@ -47,7 +47,7 @@
 					
 					<!-- produk -->
 					<ul class="nav nav-tabs nav-tabs-solid nav-justified rounded bg-light" v-if="itemDataStat == 'success'">
-						<li class="nav-item" v-for="cu in itemDataCu">
+						<li class="nav-item" v-for="cu in itemDataCu" :key="cu.id">
 							<a href="#" class="nav-link rounded-left" :class="{'active': tabName == cu.cu_id}" @click.prevent="changeTab(cu)">
 								<b>{{'Anggota CU ' + cu.cu.name}}</b> <br/> 
 								{{ 'No. BA: ' + cu.no_ba }} <br/> 
@@ -63,7 +63,7 @@
 
 								<div class="nav-tabs-responsive bg-light border-top" >
 									<ul class="nav nav-tabs nav-tabs-solid bg-light">
-										<li class="nav-item" v-for="produk in produks">
+										<li class="nav-item" v-for="produk in produks" :key="produk.id">
 											<a href="#" class="nav-link" :class="{'active': tabName2 == produk[0].id}" @click.prevent="changeTab2(produk[0].id)">
 												<b>{{ produk[0].name }}</b> <br/>
 												<b>Kode:</b> {{ produk[0].kode_produk }} <br/>

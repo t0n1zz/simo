@@ -82,7 +82,7 @@ class DokumenController extends Controller
 
     public function store(Request $request)
     {
-        $this->validate($request, Dokumen::$rules);
+        $request->validate(Dokumen::$rules);
 
         $name = $request->name;
         $format = $request->format;
@@ -140,7 +140,7 @@ class DokumenController extends Controller
 
     public function update(Request $request, $id)
     {
-        $this->validate($request, Dokumen::$rules);
+        $request->validate(Dokumen::$rules);
 
         $name = $request->name;
 

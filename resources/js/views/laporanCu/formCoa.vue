@@ -6,7 +6,8 @@
 		</message>
 
 		<!-- main panel -->
-		<form @submit.prevent="save" enctype="multipart/form-data" data-vv-scope="form">
+		<VeeForm :form="form" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit, setValues }">
+		<form @submit.prevent="setValues(form) || handleSubmit(onValid)">
 
 		<div class="timeline timeline-left">
 			<div class="timeline-container">
@@ -40,7 +41,7 @@
 									readonly></cleave>
 							</div>
 
-							<template v-for="(formCoaAnak, index) in modelCoa" >
+							<template v-for="(formCoaAnak, index) in modelCoa" :key="index" >
 								<div class="col-lg-4 col-md-6" v-if="formCoaAnak.id_induk == formCoaInduk.id && formCoaAnak.tipe == 'P'" :key="index">
 									<div class="card card-body mt-3 mb-0" :key="index">
 
@@ -56,7 +57,7 @@
 											class="form-control" 
 											:options="cleaveOption.numeric"
 											:placeholder="'Silahkan masukkan ' + formCoaAnak.name"
-											@blur.native="calculate(formCoaAnak.id, formCoa[formCoaAnak.id])"
+											@blur="calculate(formCoaAnak.id, formCoa[formCoaAnak.id])"
 											></cleave>
 
 									</div>
@@ -123,7 +124,8 @@
 			</div>
 
 		</form>
-					
+		</VeeForm>
+
 		<!-- modal -->
 		<app-modal :show="modalShow" :state="modalState" :title="modalTitle" :content="modalContent" :color="modalColor" @batal="modalTutup" @tutup="modalTutup" @successOk="modalTutup" @failOk="modalTutup"  @backgroundClick="modalBackgroundClick">
 			
@@ -148,6 +150,7 @@
 	import Cleave from 'vue-cleave-component';
 	import wajibBadge from "../../components/wajibBadge.vue";
 	import DatePicker from "../../components/datePicker.vue";
+	import VeeForm from '../../components/VeeForm.vue';
 
 	export default {
 		props: ['modelCoa','modelCoaStat'],
@@ -159,7 +162,8 @@
 			infoIcon,
 			wajibBadge,
 			DatePicker,
-			appModal
+			appModal,
+			VeeForm,
 		},
 		data() {
 			return {
@@ -219,33 +223,30 @@
     },
 		methods: {
 			...mapActions(useLaporanCuStore, ['store', 'storeTp', 'update', 'updateTp', 'updateDraft', 'updateTpDraft']),
-			save() {
+			onValid() {
 				if(this.currentUser.id_cu != 0){
 					this.form.id_cu = this.currentUser.id_cu;
 				}
-				this.$validator.validateAll('form').then((result) => {
-					if (result) {
-					if(this.$route.meta.mode === 'edit'){
-							this.update([this.$route.params.id, this.form]);
-						}else if(this.$route.meta.mode === 'editTp'){
-							this.updateTp([this.$route.params.id, this.form]);
-						}else if(this.$route.meta.mode === 'editDraft'){
-							this.updateDraft([this.$route.params.id, this.form]);
-						}else if(this.$route.meta.mode === 'editTpDraft'){
-							this.updateTpDraft([this.$route.params.id, this.form]);
-						}else{
-							if(this.form.id_tp == 'konsolidasi'){
-								this.store(this.form);
-							}else{
-								this.storeTp(this.form);
-							}
-						}
-						this.submited = false;
+				if(this.$route.meta.mode === 'edit'){
+					this.update([this.$route.params.id, this.form]);
+				}else if(this.$route.meta.mode === 'editTp'){
+					this.updateTp([this.$route.params.id, this.form]);
+				}else if(this.$route.meta.mode === 'editDraft'){
+					this.updateDraft([this.$route.params.id, this.form]);
+				}else if(this.$route.meta.mode === 'editTpDraft'){
+					this.updateTpDraft([this.$route.params.id, this.form]);
+				}else{
+					if(this.form.id_tp == 'konsolidasi'){
+						this.store(this.form);
 					}else{
-						window.scrollTo(0, 0);
-						this.submited = true;
+						this.storeTp(this.form);
 					}
-				});
+				}
+				this.submited = false;
+			},
+			onInvalid() {
+				window.scrollTo(0, 0);
+				this.submited = true;
 			},
 			calculate(id, increment){
 				// for (const [key, itemCoaInduk] of Object.entries(this.modelCoa)) {

@@ -36,10 +36,13 @@
 			pageHeader,
 			riwayatContent
 		},
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				title: 'Riwayat',
+			};
+		},
+		data() {
+			return {title: 'Riwayat',
 				titleDesc: 'Menambah atau mengubah riwayat yang dimiliki aktivis',
 				titleIcon: 'icon-list2',
 				kelas: 'aktivis',

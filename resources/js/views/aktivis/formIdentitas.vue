@@ -11,7 +11,7 @@
 					<!-- imageupload -->
 					<app-image-upload :image_loc="'/images/aktivis/'" :image_temp="form.gambar" v-model="form.gambar"></app-image-upload>
 				</div>
-			</div>  
+			</div>
 
 			<!-- nik -->
 			<div class="col-md-4">
@@ -23,14 +23,15 @@
 						No. KTP:</h6>
 
 					<!-- text -->
-					<cleave 
-						name="nik"
-						v-model="form.nik" 
-						class="form-control" 
-						:options="cleaveOption.number16"
-						placeholder="Silahkan masukkan no KTP"
-						v-validate="'required'" data-vv-as="No. KTP" readonly></cleave>
-					
+					<Field name="nik" rules="required" v-model="form.nik" v-slot="{ field }">
+						<cleave
+							v-bind="field"
+							class="form-control"
+							:options="cleaveOption.number16"
+							placeholder="Silahkan masukkan no KTP"
+							readonly></cleave>
+					</Field>
+
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('form.nik')">
@@ -49,10 +50,10 @@
 						NIM Lembaga:</h6>
 
 					<!-- text -->
-					<cleave 
+					<cleave
 						name="nik"
-						v-model="form.nim_cu" 
-						class="form-control" 
+						v-model="form.nim_cu"
+						class="form-control"
 						:options="cleaveOption.number24"
 						placeholder="Silahkan masukkan no induk manajemen lembaga"></cleave>
 
@@ -69,7 +70,9 @@
 						Nama:</h6>
 
 					<!-- text -->
-					<input type="text" name="name" class="form-control" placeholder="Silahkan masukkan nama" v-validate="'required'" data-vv-as="Nama" v-model="form.name">
+					<Field name="name" rules="required" v-model="form.name" v-slot="{ field }">
+						<input type="text" class="form-control" placeholder="Silahkan masukkan nama" v-bind="field">
+					</Field>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('form.name')">
@@ -90,11 +93,11 @@
 					</h6>
 
 					<!-- select -->
-					<select class="form-control" name="kelamin" v-model="form.kelamin" data-width="100%" v-validate="'required'" data-vv-as="Gender">
+					<Field as="select" name="kelamin" rules="required" v-model="form.kelamin" class="form-control" data-width="100%">
 						<option disabled value="">Silahkan pilih gender</option>
 						<option value="Pria">Pria</option>
 						<option value="Wanita">Wanita</option>
-					</select>
+					</Field>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('form.kelamin')">
@@ -134,13 +137,13 @@
 						Tinggi <small>(cm)</small>:</h6>
 
 					<!-- text -->
-					<cleave 
+					<cleave
 						name="tinggi"
-						v-model="form.tinggi" 
-						class="form-control" 
+						v-model="form.tinggi"
+						class="form-control"
 						:options="cleaveOption.number3"
 						placeholder="Silahkan masukkan tinggi"></cleave>
-					
+
 				</div>
 			</div>
 
@@ -217,14 +220,16 @@
 </template>
 
 <script>
+	import { Field } from 'vee-validate';
 	import Cleave from 'vue-cleave-component';
 	import appImageUpload from '../../components/ImageUpload.vue';
 	import infoIcon from "../../components/infoIcon.vue";
 	import DatePicker from "../../components/datePicker.vue";
 
 	export default {
-		props:['form'],
+		props:['form','errors'],
 		components: {
+			Field,
 			appImageUpload,
 			Cleave,
 			infoIcon,

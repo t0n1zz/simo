@@ -1,7 +1,12 @@
 <?php
 namespace App\Models;
 
-use illuminate\Database\Eloquent\Model;
+use App\Models\AnggotaCuCu;
+use App\Models\AnggotaCuDraft;
+use App\Models\AnggotaProdukCuDraft;
+use App\Models\Cu;
+use App\Models\Tp;
+use Illuminate\Database\Eloquent\Model;
 
 class AnggotaCuCuDraft extends Model {
 
@@ -15,25 +20,25 @@ class AnggotaCuCuDraft extends Model {
 
     public function anggotaCu()
     {
-        return $this->belongsTo('App\Models\AnggotaCuDraft','anggota_cu_draft_id','id');
+        return $this->belongsTo(AnggotaCuDraft::class,'anggota_cu_draft_id','id');
     }
 
     public function cu()
     {
-        return $this->belongsTo('App\Models\Cu','cu_id','id');
+        return $this->belongsTo(Cu::class,'cu_id','id');
     }
 
     public function tp()
     {
-        return $this->belongsTo('App\Models\Tp','tp_id','id');
+        return $this->belongsTo(Tp::class,'tp_id','id');
     }
 
     public function rekening(){
-        return $this->hasMany('App\Models\AnggotaProdukCuDraft','no_ba','no_ba');
+        return $this->hasMany(AnggotaProdukCuDraft::class,'no_ba','no_ba');
     }
     
     public function anggota(){
-        return $this->hasOne('App\Models\AnggotaCuCu',['no_ba','cu_id'],['no_ba','cu_id'])->select('no_ba','id','keterangan_masuk','cu_id');
+        return $this->hasOne(AnggotaCuCu::class,['no_ba','cu_id'],['no_ba','cu_id'])->select('no_ba','id','keterangan_masuk','cu_id');
     }
     
     public function sp(){

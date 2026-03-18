@@ -54,7 +54,7 @@
 
 			<!-- input -->
 			<date-picker @dateSelected="formDiklat.tanggal_selesai = $event" :defaultDate="formDiklat.tanggal_selesai"></date-picker>	
-			<input v-model="formDiklat.tanggal_selesai" name="tanggal_selesai" v-show="false" data-vv-as="Tanggal selesai"/>
+			<input v-model="formDiklat.tanggal_selesai" name="tanggal_selesai" v-show="false" />
 
 			<!-- error message -->
 			<small class="text-muted text-danger" v-if="errors.has('formDiklat.tanggal_selesai')">
@@ -69,7 +69,7 @@
 			<!-- title -->
 			<h5>Nama Fasilitator: </h5>
 
-			<input type="text" name="fasilitator" class="form-control" placeholder="Silahkan masukkan nama fasilitator" data-vv-as="Nama Fasilitator" v-model="formDiklat.fasilitator">
+			<input type="text" name="fasilitator" class="form-control" placeholder="Silahkan masukkan nama fasilitator" v-model="formDiklat.fasilitator">
 
 		</div>
 
@@ -79,7 +79,7 @@
 			<!-- title -->
 			<h5>Tempat: </h5>
 
-			<input type="text" name="tempat" class="form-control" placeholder="Silahkan masukkan nama tempat" data-vv-as="Nama Tempat" v-model="formDiklat.tempat">
+			<input type="text" name="tempat" class="form-control" placeholder="Silahkan masukkan nama tempat" v-model="formDiklat.tempat">
 
 		</div>
 
@@ -143,10 +143,13 @@
 			VeeForm,
 			Field
 		},
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				title: '',
+			};
+		},
+		data() {
+			return {title: '',
 				kelas: 'kubnDiklat',
 				formDiklat:{
 					name: '',

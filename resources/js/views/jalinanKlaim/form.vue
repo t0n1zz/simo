@@ -9,6 +9,8 @@
 			<div class="content-wrapper">
 				<div class="content">
 
+					<VeeForm :form="form" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit, setValues }">
+
 					<!-- message -->
 					<message v-if="errors.any('form') && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors.items">
 					</message>
@@ -43,7 +45,7 @@
 						</div>
 
 						<!-- form -->
-						<form @submit.prevent="save" data-vv-scope="form">
+						<form @submit.prevent="setValues(form) || handleSubmit(onValid)">
 
 							<!-- check data -->
 							<div class="card card-body" >
@@ -182,7 +184,7 @@
 														</h6>
 
 														<!-- select -->
-														<select class="form-control" name="kategori_penyakit" v-model="form.kategori_penyakit" data-width="100%" v-validate="'required'" data-vv-as="Kategori penyakit">
+														<Field as="select" name="kategori_penyakit" rules="required" v-model="form.kategori_penyakit" class="form-control" data-width="100%">
 															<option disabled value="">Silahkan pilih kategori penyakit</option>
 															<option value="asma">Asma</option>
 															<option value="demam berdarah">Demam Berdarah</option>
@@ -203,7 +205,7 @@
 															<option value="kecelakaan">Kecelakaan</option>
 															<option value="komplikasi">Komplikasi</option>
 															<option value="lain-lain">Lain-lain</option>
-														</select>
+														</Field>
 
 														<!-- error message -->
 														<small class="text-muted text-danger" v-if="errors.has('form.kategori_penyakit')">
@@ -225,7 +227,7 @@
 
 														<!-- input -->
 														<date-picker @dateSelected="form.tanggal_mati = $event" :defaultDate="form.tanggal_mati"></date-picker>	
-														<input v-model="form.tanggal_mati" v-show="false" v-validate="'required'" data-vv-as="Tgl. cacat/meninggal"/>
+														<Field name="tanggal_mati" rules="required" v-model="form.tanggal_mati" v-show="false" />
 
 														<!-- error message -->
 														<small class="text-muted text-danger" v-if="errors.has('form.tanggal_mati')">
@@ -272,13 +274,11 @@
 														<h5>Nilai pengajuan bantuan solidaritas TUNAS <wajib-badge></wajib-badge></h5>
 
 														<!-- text -->
-														<cleave 
-															name="tunas_diajukan"
-															v-model="form.tunas_diajukan" 
-															class="form-control" 
+														<Field name="tunas_diajukan" rules="required" v-model="form.tunas_diajukan" v-slot="{ field }"><cleave
+															v-bind="field"
+															class="form-control"
 															:options="cleaveOption.numeric"
-															placeholder="Silahkan masukkan jumlah nilai pengajuan bantuan solidaritas TUNAS"
-															v-validate="'required'" data-vv-as="Nilai pengajuan bantuan solidaritas TUNAS"></cleave>
+															placeholder="Silahkan masukkan jumlah nilai pengajuan bantuan solidaritas TUNAS"></cleave></Field>
 
 														<!-- error message -->
 														<small class="text-muted text-danger" v-if="errors.has('form.tunas_diajukan')">
@@ -296,13 +296,11 @@
 														<h5>Nilai pengajuan bantuan solidaritas LINTANG <wajib-badge></wajib-badge></h5>
 
 														<!-- text -->
-														<cleave 
-															name="lintang_diajukan"
-															v-model="form.lintang_diajukan" 
-															class="form-control" 
+														<Field name="lintang_diajukan" rules="required" v-model="form.lintang_diajukan" v-slot="{ field }"><cleave
+															v-bind="field"
+															class="form-control"
 															:options="cleaveOption.numeric"
-															placeholder="Silahkan masukkan jumlah nilai pengajuan bantuan solidaritas LINTANG"
-															v-validate="'required'" data-vv-as="Nilai pengajuan bantuan solidaritas LINTANG"></cleave>
+															placeholder="Silahkan masukkan jumlah nilai pengajuan bantuan solidaritas LINTANG"></cleave></Field>
 
 														<!-- error message -->
 														<small class="text-muted text-danger" v-if="errors.has('form.lintang_diajukan')">
@@ -580,12 +578,13 @@
 							</div>
 
 						</form>
-					
+
 					</div>
-					
+
+				</VeeForm>
 				</div>
 			</div>
-		</div>		
+		</div>
 
 		<!-- modal -->
 		<app-modal :show="modalShow" :state="modalState" :title="modalTitle" :content="modalContent" :color="modalColor"
@@ -637,6 +636,8 @@
 	import appImageUpload from '../../components/ImageUpload.vue';
 	import { toMulipartedForm } from '../../helpers/form';
 	import DatePicker from "../../components/datePicker.vue";
+	import { Field } from 'vee-validate';
+	import VeeForm from '../../components/VeeForm.vue';
 
 	export default {
 		components: {
@@ -654,14 +655,19 @@
 			identitas,
 			dataTable,
 			appImageUpload,
-			DatePicker
+			DatePicker,
+			Field,
+			VeeForm
 		},
-		data() {
+		setup() {
 			return {
 				jalinanKlaimStore: useJalinanKlaimStore(),
-				anggotaCuStore: useAnggotaCuStore(),
-				cuStore: useCuStore(),
-				title: 'Tambah Bantuan Solidaritas Jalinan',
+			anggotaCuStore: useAnggotaCuStore(),
+			cuStore: useCuStore(),
+			};
+		},
+		data() {
+			return {title: 'Tambah Bantuan Solidaritas Jalinan',
 				titleDesc: 'Menambah bantuan solidaritas Jalinan',
 				titleIcon: 'icon-plus3',
 				level2Title: 'Bantuan Solidaritas Jalinan',
@@ -892,30 +898,27 @@
 					return 'col-12';
 				}
 			},
-			save() {
+			onValid(values) {
 				this.form.anggota_cu_id = this.itemData.id;
 				this.form.anggota_cu_cu_id = this.anggota_cu_cu_id;
 				this.form.tipe = this.tipe;
 				this.form.cu_id = this.cu_id;
-				
+
 				if(this.tipe == 'CACAT'){
 					this.form.tunas_diajukan = 0;
 				}
-				
+
 				const formData = toMulipartedForm(this.form, this.$route.meta.mode);
-				this.$validator.validateAll('form').then((result) => {
-					if (result) {
-						if (this.form.id) {
-							this.jalinanKlaimStore.update([this.form.id, formData]);
-						} else {
-							this.jalinanKlaimStore.store(formData);
-						}
-						this.submited = false;
-					}else{
-						window.scrollTo(0, 0);
-						this.submited = true;
-					}
-				});
+				if (this.form.id) {
+					this.jalinanKlaimStore.update([this.form.id, formData]);
+				} else {
+					this.jalinanKlaimStore.store(formData);
+				}
+				this.submited = false;
+			},
+			onInvalid() {
+				window.scrollTo(0, 0);
+				this.submited = true;
 			},
 			back() {
 				if(this.currentUser.id_cu == 0){

@@ -19,7 +19,7 @@
 								<option value="semua">Semua CU</option>
 								<option value="0" v-if="isPus"><span v-if="currentUser.pus">{{currentUser.pus.name}}</span> <span v-else>PUSKOPCUINA</span></option>
 								<option disabled value="">----------------</option>
-								<option v-for="cu in modelCu" :value="cu.id" v-show="cu">{{cu.name}}</option>
+								<option v-for="cu in modelCu" :key="cu.id" :value="cu.id" v-show="cu">{{cu.name}}</option>
 							</select>
 
 							<!-- reload cu -->
@@ -43,7 +43,7 @@
 								<option disabled value="">Silahkan pilih TP/KP</option>
 								<option value="semua">Semua Tp</option>
 								<option disabled value="">----------------</option>
-								<option v-for="tp in modelTp" :value="tp.id" v-show="tp">{{tp.name}}</option>
+								<option v-for="tp in modelTp" :key="tp.id" :value="tp.id" v-show="tp">{{tp.name}}</option>
 							</select>
 
 							<!-- reload -->
@@ -69,12 +69,15 @@
 
 	export default {
 		props: ['kelas', 'isPus', 'path'],
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				cuStore: useCuStore(),
-				tpStore: useTpStore(),
-				cu_id: '',
+			cuStore: useCuStore(),
+			tpStore: useTpStore(),
+			};
+		},
+		data() {
+			return {cu_id: '',
 				tp_id: '',
 			};
 		},

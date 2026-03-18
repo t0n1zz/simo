@@ -76,11 +76,14 @@
 			VeeForm,
 			Field,
 		},
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				jenisDiklatStore: useJenisDiklatStore(),
-				title: '',
+			jenisDiklatStore: useJenisDiklatStore(),
+			};
+		},
+		data() {
+			return {title: '',
 				formJenisDiklat: {
 					id: '',
 					jenis_diklat_id: '',

@@ -91,7 +91,7 @@ class SertifikatController extends Controller
 
   public function store(Request $request)
   {
-    $this->validate($request, Sertifikat::$rules);
+    $request->validate(Sertifikat::$rules);
     $name = $request->name;
     if (!empty($request->gambar_depan)) {
       $imagepath = $this->imagepathSertifikat;

@@ -46,7 +46,7 @@
 												Kode & Nama Kegiatan: <wajib-badge></wajib-badge></h5>
 
 											<!-- text -->
-											<select class="form-control" name="id_kode" v-model="form.id_kode" data-width="100%" data-vv-as="KodeKegiatan" @change="changeKodeKegiatan($event.target.value)" :disabled="itemKodeKegiatanStat.length === 0">
+											<select class="form-control" name="id_kode" v-model="form.id_kode" data-width="100%" @change="changeKodeKegiatan($event.target.value)" :disabled="itemKodeKegiatanStat.length === 0">
 												<option disabled value="">
 													<span v-if="itemKodeKegiatanStat === 'loading'">Mohon tunggu...</span>
 													<span v-else>Silahkan pilih kode</span>
@@ -107,7 +107,7 @@
 												:raw="false" 
 												:options="cleaveOption.year" 
 												placeholder="Silahkan masukkan tahun buku"
-												data-vv-as="Tahun Buku"></cleave>
+												></cleave>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors && errors.has && errors.has('form.tahun_buku')">
@@ -282,7 +282,7 @@
 											<input type="text" name="tema" 
 											class="form-control" 
 											placeholder="Silahkan masukkan tema kegiatan" 
-											data-vv-as="Tema" v-model="form.tema">
+											v-model="form.tema">
 
 						
 										</div>
@@ -399,8 +399,7 @@
 														@change="selectAllCu">Semua CU
 												</label>
 											</div>
-											<div class="form-check form-check-inline" v-for="(cu, index) in modelCu"
-												:key="index">
+											<div class="form-check form-check-inline" v-for="(cu, index) in modelCu" :key="cu.id">
 												<label class="form-check-label">
 													<input type="checkbox" class="form-check-input" :value="cu.id"
 														v-model="sasaranCu" :checked="formAllCu"
@@ -469,7 +468,7 @@
 											</h5>
 
 											<!-- select -->
-											<select class="form-control" name="id_provinces" v-model="form.id_provinces" data-width="100%" data-vv-as="Provinsi" :disabled="modelProvinces.length === 0" @change="changeProvinces($event.target.value)">
+											<select class="form-control" name="id_provinces" v-model="form.id_provinces" data-width="100%" :disabled="modelProvinces.length === 0" @change="changeProvinces($event.target.value)">
 												<option disabled value="">
 													<span v-if="modelProvincesStat === 'loading'">Mohon tunggu...</span>
 													<span v-else>Silahkan pilih provinsi</span>
@@ -497,7 +496,7 @@
 											</h5>
 
 											<!-- select -->
-											<select class="form-control"  name="id_regencies" v-model="form.id_regencies" data-width="100%" data-vv-as="Kabupaten" @change="changeRegencies($event.target.value)" :disabled="modelRegencies.length === 0">
+											<select class="form-control"  name="id_regencies" v-model="form.id_regencies" data-width="100%" @change="changeRegencies($event.target.value)" :disabled="modelRegencies.length === 0">
 												<option disabled value="">
 													<span v-if="modelRegenciesStat === 'loading'">Mohon tunggu...</span>
 													<span v-else>Silahkan pilih kabupaten</span>
@@ -526,7 +525,7 @@
 
 											<div class="input-group">
 												<!-- select -->
-												<select class="form-control" name="id_tempat" v-model="form.id_tempat"  data-vv-as="Tempat" :disabled="!form.id_regencies" @change="changeTempat($event.target.value)">
+												<select class="form-control" name="id_tempat" v-model="form.id_tempat" :disabled="!form.id_regencies" @change="changeTempat($event.target.value)">
 													<option disabled value="">
 														<span v-if="modelTempatStat === 'loading'">Mohon tunggu...</span>
 														<span v-else>Silahkan pilih tempat</span>
@@ -745,7 +744,7 @@
 
 							<div class="card-body">
 								<div class="row col-md-12">
-									<select class="form-control"  name="id_sertifikat" v-model="form.id_sertifikatPanitia" data-width="100%" data-vv-as="Sertifikat" @change="changeSertifikatPanitia($event.target.value)" :disabled="itemDataStat.length === 0">
+									<select class="form-control"  name="id_sertifikat" v-model="form.id_sertifikatPanitia" data-width="100%" @change="changeSertifikatPanitia($event.target.value)" :disabled="itemDataStat.length === 0">
 										<option disabled value="">
 											<span v-if="itemDataStat === 'loading'">Mohon tunggu...</span>
 											<span v-else>Silahkan pilih sertifikat</span>
@@ -764,7 +763,7 @@
 
 							<div class="card-body">
 								<div class="row col-md-12">
-									<select class="form-control"  name="id_sertifikat" v-model="form.id_sertifikat" data-width="100%" data-vv-as="Sertifikat" @change="changeSertifikat($event.target.value)" :disabled="itemDataStat.length === 0">
+									<select class="form-control"  name="id_sertifikat" v-model="form.id_sertifikat" data-width="100%" @change="changeSertifikat($event.target.value)" :disabled="itemDataStat.length === 0">
 										<option disabled value="">
 											<span v-if="itemDataStat === 'loading'">Mohon tunggu...</span>
 											<span v-else>Silahkan pilih sertifikat</span>

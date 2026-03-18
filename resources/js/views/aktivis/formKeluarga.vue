@@ -10,7 +10,9 @@
 					Nama:</h5>
 
 				<!-- text -->
-				<input type="text" name="keluarga_name" class="form-control" placeholder="Silahkan masukkan nama keluarga" v-validate="'required|min:5'" data-vv-as="Nama Keluarga" v-model="form.keluarga.name">
+				<Field name="keluarga_name" rules="required|min:5" v-model="form.keluarga.name" v-slot="{ field }">
+					<input type="text" class="form-control" placeholder="Silahkan masukkan nama keluarga" v-bind="field">
+				</Field>
 
 				<!-- error message -->
 				<small class="text-muted text-danger" v-if="errors.has('form.keluarga.name')">
@@ -30,13 +32,13 @@
 					Sebagai:</h5>
 
 				<!-- select -->
-				<select class="form-control" name="pekerjaan_tingkat" v-model="form.keluarga.tipe" data-width="100%" v-validate="'required'" data-vv-as="Tipe keluarga">
+				<Field as="select" name="pekerjaan_tingkat" rules="required" v-model="form.keluarga.tipe" class="form-control" data-width="100%">
 					<option disabled value="">Silahkan pilih tipe keluarga</option>
 					<option value="Ayah">Ayah</option>
 					<option value="Ibu">Ibu</option>
 					<option value="Pasangan">Pasangan</option>
 					<option value="Anak">Anak</option>
-				</select>
+				</Field>
 
 				<!-- error message -->
 				<small class="text-muted text-danger" v-if="errors.has('form.keluarga.tipe')">
@@ -50,12 +52,14 @@
 </template>
 
 <script>
+	import { Field } from 'vee-validate';
 	import Cleave from 'vue-cleave-component';
 	import { useUserStore } from '../../stores/user';
 
 	export default {
-		props: ['form', 'modelCu'],
+		props: ['form', 'modelCu', 'errors'],
 		components: {
+			Field,
 			Cleave,
 		},
 		data() {

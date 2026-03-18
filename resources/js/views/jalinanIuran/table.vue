@@ -54,7 +54,7 @@
 						<span v-else class="badge badge-danger">Belum Bayar</span>
 					</td>
 					<td v-if="!columnData[2].hide">
-						{{ props.item.periode | dateMonth }}
+						{{ $filters.dateMonth(props.item.periode) }}
 					</td>
 					<td v-if="!columnData[3].hide && !columnData[3].disable">
 						<check-value :value="props.item.cu.name" v-if="props.item.cu"></check-value>
@@ -104,11 +104,14 @@
 			formCreate,
 		},
 		props:['title','kelas'],
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				jalinanIuranStore: useJalinanIuranStore(),
-				selectedItem: [],
+			jalinanIuranStore: useJalinanIuranStore(),
+			};
+		},
+		data() {
+			return {selectedItem: [],
 				query: {
 					order_column: "periode",
 					order_direction: "asc",

@@ -1,9 +1,10 @@
 <?php
 namespace App\Models;
 
+use App\Models\Tp;
 use Spatie\Activitylog\LogOptions;
 use App\Support\Dataviewer;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -13,7 +14,6 @@ class LaporanTp extends BaseEloquent {
     use Dataviewer, LogsActivity, SoftDeletes;
 
     protected $table = 'laporan_tp';
-    protected $dates = ['deleted_at'];
 
     protected $revisionEnabled = true;
     protected $revisionCleanup = true; //Remove old revisions (works only when used with $historyLimit)
@@ -66,7 +66,7 @@ class LaporanTp extends BaseEloquent {
 
     public function Tp()
     {
-        return $this->belongsTo('App\Models\Tp','id_tp','id')->select('id','id_cu','no_tp','name','id_provinces');
+        return $this->belongsTo(Tp::class,'id_tp','id')->select('id','id_cu','no_tp','name','id_provinces');
     }
 
 

@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\Aktivis;
+use App\Models\Cu;
+use App\Models\Pus;
 use Spatie\Activitylog\LogOptions;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -24,7 +27,6 @@ class User extends Authenticatable
     protected static $logAttributes = ['id_pus','id_cu','id_aktivis','name', 'email', 'username','status','gambar'];
     protected static $ignoreChangedAttributes = ['login','updated_at'];
 
-    protected $dates = ['deleted_at'];
 
     /**
      * The accessors to append to the model's array form.
@@ -91,15 +93,15 @@ class User extends Authenticatable
     }
 
     public function pus(){
-        return $this->belongsTo('App\Models\Pus','id_pus','id')->select('id','name');
+        return $this->belongsTo(Pus::class,'id_pus','id')->select('id','name');
     }
 
     public function cu(){
-        return $this->belongsTo('App\Models\Cu','id_cu','id')->select('id','name');
+        return $this->belongsTo(Cu::class,'id_cu','id')->select('id','name');
     }
 
     public function aktivis(){
-        return $this->belongsTo('App\Models\Aktivis','id_aktivis','id')->select('id','name','gambar');
+        return $this->belongsTo(Aktivis::class,'id_aktivis','id')->select('id','name','gambar');
     }
 
     public function Role(){

@@ -33,7 +33,8 @@
 		<!-- identitas -->
 		<transition enter-active-class="animated fadeIn" mode="out-in">
 			<div v-show="tabName == 'identitas'">
-				<form @submit.prevent="saveIdentitas" enctype="multipart/form-data" data-vv-scope="form">
+				<VeeForm :form="form" :on-invalid-submit="onInvalidIdentitas" v-slot="{ errors, handleSubmit, setValues }">
+				<form @submit.prevent="setValues(form) || handleSubmit(onValidIdentitas)">
 
 					<!-- desktop -->
 					<div class="card">
@@ -69,8 +70,9 @@
 							@cancelClick="back"></form-button>
 					</div>
 				</form>
+				</VeeForm>
 			</div>
-		</transition>	
+		</transition>
 
 		<!-- riwayat pekerjaan -->
 		<transition enter-active-class="animated fadeIn" mode="out-in">
@@ -333,8 +335,9 @@
 
 				 <!-- pekerjaan -->
 				 <div v-if="tabName == 'riwayatPekerjaan'">
-					<form @submit.prevent="savePekerjaan" data-vv-scope="form"> 
-						
+					<VeeForm :form="formRiwayat" :on-invalid-submit="onInvalidRiwayat" v-slot="{ errors, handleSubmit, setValues }">
+					<form @submit.prevent="setValues(formRiwayat) || handleSubmit(onValidPekerjaan)">
+
 						<form-pekerjaan :form="formRiwayat" :modelCu="modelCu" :modelTp="modelTp" v-if="formRiwayat.pekerjaan"></form-pekerjaan>
 
 						<div class="row">
@@ -346,16 +349,18 @@
 									:cancelState="cancelState"
 									:formValidation="'form'"
 								@cancelClick="cancelClick"></form-button>
-							</div>	
+							</div>
 						</div>
-							
+
 					</form>
+					</VeeForm>
 				 </div>
 
 				 <!-- pendidikan -->
 				 <div v-if="tabName == 'riwayatPendidikan'">
-					<form @submit.prevent="savePendidikan" data-vv-scope="form"> 
-						
+					<VeeForm :form="formRiwayat" :on-invalid-submit="onInvalidRiwayat" v-slot="{ errors, handleSubmit, setValues }">
+					<form @submit.prevent="setValues(formRiwayat) || handleSubmit(onValidPendidikan)">
+
 						<form-pendidikan :form="formRiwayat" :modelCu="modelCu" v-if="formRiwayat.pendidikan"></form-pendidikan>
 
 						<div class="row">
@@ -369,14 +374,16 @@
 									@cancelClick="cancelClick"></form-button>
 							</div>
 						</div>
-						
+
 					</form>
+					</VeeForm>
 				 </div>
 
 				 <!-- organisasi -->
 				 <div v-if="tabName == 'riwayatOrganisasi'">
-					<form @submit.prevent="saveOrganisasi" data-vv-scope="form"> 
-						
+					<VeeForm :form="formRiwayat" :on-invalid-submit="onInvalidRiwayat" v-slot="{ errors, handleSubmit, setValues }">
+					<form @submit.prevent="setValues(formRiwayat) || handleSubmit(onValidOrganisasi)">
+
 						<form-organisasi :form="formRiwayat" :isAktif="false" :modelCu="modelCu" v-if="formRiwayat.organisasi"></form-organisasi>
 
 						<div class="row">
@@ -390,14 +397,16 @@
 									@cancelClick="cancelClick"></form-button>
 							</div>
 						</div>
-						
+
 					</form>
+					</VeeForm>
 				 </div>
 
-				 <!-- organisasi -->
+				 <!-- keluarga -->
 				 <div v-if="tabName == 'keluarga'">
-					<form @submit.prevent="saveKeluarga" data-vv-scope="form"> 
-						
+					<VeeForm :form="formRiwayat" :on-invalid-submit="onInvalidRiwayat" v-slot="{ errors, handleSubmit, setValues }">
+					<form @submit.prevent="setValues(formRiwayat) || handleSubmit(onValidKeluarga)">
+
 						<form-keluarga :form="formRiwayat" :isAktif="false" :modelCu="modelCu" v-if="formRiwayat.keluarga"></form-keluarga>
 
 						<div class="row">
@@ -411,14 +420,16 @@
 									@cancelClick="cancelClick"></form-button>
 							</div>
 						</div>
-						
+
 					</form>
+					</VeeForm>
 				 </div>
 
 				  <!-- anggotacu -->
 				 <div v-if="tabName == 'anggotaCu'">
-					<form @submit.prevent="saveAnggotaCu" data-vv-scope="form"> 
-						
+					<VeeForm :form="formRiwayat" :on-invalid-submit="onInvalidRiwayat" v-slot="{ errors, handleSubmit, setValues }">
+					<form @submit.prevent="setValues(formRiwayat) || handleSubmit(onValidAnggotaCu)">
+
 						<form-anggota-cu :form="formRiwayat" :modelCu="modelCu" v-if="formRiwayat.anggota_cu"></form-anggota-cu>
 
 						<div class="row">
@@ -432,8 +443,9 @@
 									@cancelClick="cancelClick"></form-button>
 							</div>
 						</div>
-						
+
 					</form>
+					</VeeForm>
 				 </div>
 				 
 			 </template>
@@ -465,8 +477,9 @@
 	import formPekerjaan from "./formPekerjaan.vue";
 	import formPendidikan from "./formPendidikan.vue";
 	import formOrganisasi from "./formOrganisasi.vue";	
-	import formKeluarga from "./formKeluarga.vue";	
-	
+	import formKeluarga from "./formKeluarga.vue";
+	import VeeForm from '../../components/VeeForm.vue';
+
 	export default {
 		props: ['mode','id_props'],
 		components: {
@@ -483,18 +496,22 @@
 			formPendidikan,
 			formOrganisasi,
 			formKeluarga,
+			VeeForm,
 		},
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				aktivisStore: useAktivisStore(),
-				cuStore: useCuStore(),
-				tpStore: useTpStore(),
-				regenciesStore: useRegenciesStore(),
-				districtsStore: useDistrictsStore(),
-				villagesStore: useVillagesStore(),
-				provincesStore: useProvincesStore(),
-				kelas: 'aktivis',
+			aktivisStore: useAktivisStore(),
+			cuStore: useCuStore(),
+			tpStore: useTpStore(),
+			regenciesStore: useRegenciesStore(),
+			districtsStore: useDistrictsStore(),
+			villagesStore: useVillagesStore(),
+			provincesStore: useProvincesStore(),
+			};
+		},
+		data() {
+			return {kelas: 'aktivis',
 				tabName: 'identitas',
 				id_local: '',
 				selectedItemPekerjaan: {},
@@ -617,72 +634,38 @@
 			back(){
 				this.$router.push({name: this.kelas + 'Cu', params:{cu: this.currentUser.id_cu, tingkat: 'semua'}});
 			},
-			saveIdentitas() {
+			onValidIdentitas() {
 				const formData = toMulipartedForm(this.form, this.$route.meta.mode);
-				this.$validator.validateAll('form').then((result) => {
-					if (result) {
-						this.aktivisStore.updateIdentitas([this.id_local, formData]);
-						this.submited = false;
-					}else{
-						window.scrollTo(0, 0);
-						this.submited = true;
-					}
-				});
+				this.aktivisStore.updateIdentitas([this.id_local, formData]);
+				this.submited = false;
 			},
-			savePekerjaan(){
-				this.$validator.validateAll('form.pekerjaan').then((result) => {
-					if (result) {
-						this.aktivisStore.savePekerjaan([this.id_local, this.formRiwayat]);
-						this.submited = false;
-					}else{
-						window.scrollTo(0, 0);
-						this.submited = true;
-					}
-				});
+			onInvalidIdentitas() {
+				window.scrollTo(0, 0);
+				this.submited = true;
 			},
-			savePendidikan(){
-				this.$validator.validateAll('form.pendidikan').then((result) => {
-					if (result) {
-						this.aktivisStore.savePendidikan([this.id_local, this.formRiwayat]);
-						this.submited = false;
-					}else{
-						window.scrollTo(0, 0);
-						this.submited = true;
-					}
-				});
+			onValidPekerjaan() {
+				this.aktivisStore.savePekerjaan([this.id_local, this.formRiwayat]);
+				this.submited = false;
 			},
-			saveOrganisasi(){
-				this.$validator.validateAll('form.organisasi').then((result) => {
-					if (result) {
-						this.aktivisStore.saveOrganisasi([this.id_local, this.formRiwayat]);
-						this.submited = false;
-					}else{
-						window.scrollTo(0, 0);
-						this.submited = true;
-					}
-				});
+			onValidPendidikan() {
+				this.aktivisStore.savePendidikan([this.id_local, this.formRiwayat]);
+				this.submited = false;
 			},
-			saveKeluarga(){
-				this.$validator.validateAll('form.keluarga').then((result) => {
-					if (result) {
-						this.aktivisStore.saveKeluarga([this.id_local, this.formRiwayat]);
-						this.submited = false;
-					}else{
-						window.scrollTo(0, 0);
-						this.submited = true;
-					}
-				});
+			onValidOrganisasi() {
+				this.aktivisStore.saveOrganisasi([this.id_local, this.formRiwayat]);
+				this.submited = false;
 			},
-			saveAnggotaCu(){
-				this.$validator.validateAll('form.anggota_cu').then((result) => {
-					if (result) {
-						this.aktivisStore.saveAnggotaCu([this.id_local, this.formRiwayat]);
-						this.submited = false;
-					}else{
-						window.scrollTo(0, 0);
-						this.submited = true;
-					}
-				});
+			onValidKeluarga() {
+				this.aktivisStore.saveKeluarga([this.id_local, this.formRiwayat]);
+				this.submited = false;
+			},
+			onValidAnggotaCu() {
+				this.aktivisStore.saveAnggotaCu([this.id_local, this.formRiwayat]);
+				this.submited = false;
+			},
+			onInvalidRiwayat() {
+				window.scrollTo(0, 0);
+				this.submited = true;
 			},
 			changeProvinces(id){
 				this.regenciesStore.indexProvinces(id);

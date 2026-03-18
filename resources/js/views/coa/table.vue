@@ -111,10 +111,13 @@
 			formData,
 		},
 		props:['title','kelas'],
-		data() {
+		setup() {
 			return {
 				coaStore: useCoaStore(),
-				selectedItem: [],
+			};
+		},
+		data() {
+			return {selectedItem: [],
 				query: {
 					order_column: "kode",
 					order_direction: "asc",

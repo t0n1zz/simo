@@ -1,8 +1,10 @@
 <?php
 namespace App\Models;
 
+use App\Models\Cu;
+use App\Models\Tp;
 use Spatie\Activitylog\LogOptions;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Support\Dataviewer;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -12,7 +14,6 @@ class Kombas extends BaseEloquent {
     use Dataviewer, LogsActivity, SoftDeletes;
 
     protected $table = 'kombas';
-    protected $dates = ['deleted_at'];
 
     public static $rules = [
         'name' => 'required',
@@ -40,12 +41,12 @@ class Kombas extends BaseEloquent {
 
     public function Cu()
     {
-        return $this->belongsTo('App\Models\Cu','id_cu','id')->select('id','no_ba','name','id_provinces')->withTrashed();
+        return $this->belongsTo(Cu::class,'id_cu','id')->select('id','no_ba','name','id_provinces')->withTrashed();
     }
 
     public function Tp()
     {
-        return $this->belongsTo('App\Models\Tp','id_tp','id')->select('id','name')->withTrashed();
+        return $this->belongsTo(Tp::class,'id_tp','id')->select('id','name')->withTrashed();
     }
 
     public function getActivitylogOptions(): LogOptions

@@ -268,13 +268,16 @@
 			VeeForm,
 			Field
 		},
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				aktivisStore: useAktivisStore(),
-				cuStore: useCuStore(),
-				tpStore: useTpStore(),
-				kelas: 'aktivis',
+			aktivisStore: useAktivisStore(),
+			cuStore: useCuStore(),
+			tpStore: useTpStore(),
+			};
+		},
+		data() {
+			return {kelas: 'aktivis',
 				form:{
 					anggota_id: '',
 					id_tempat: '',

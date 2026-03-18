@@ -1,8 +1,9 @@
 <?php
 namespace App\Models;
 
+use App\Models\Voting;
 use Spatie\Activitylog\LogOptions;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 use App\Support\Dataviewer;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -13,7 +14,6 @@ class PemilihanSuaraAkses extends Model {
 
     protected $table = 'pemilihan_suara_akses';
 
-    protected $dates = ['deleted_at'];
 
     protected $fillable = [
         'pemilihan_id','pemilihan_suara_id','created_at','updated_at'
@@ -36,7 +36,7 @@ class PemilihanSuaraAkses extends Model {
 
     public function pemilihan()
     {
-        return $this->belongsTo('App\Models\Voting','pemilihan_id','id');
+        return $this->belongsTo(Voting::class,'pemilihan_id','id');
     }
 
 

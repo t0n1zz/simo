@@ -6,7 +6,7 @@
 				<div class="card card-body" :class="{'bg-primary': itemData.p1 >= 1, 'bg-danger': itemData.p1 < 1}" @click.prevent="modalBuka(itemData,'p1')" style="cursor:pointer;">
 					<div class="media mb-3">
 						<div class="media-body">
-							<h6 class="font-weight-semibold mb-8">{{ itemData.p1 | percentage(2) }}</h6>
+							<h6 class="font-weight-semibold mb-8">{{ $filters.percentage(itemData.p1, 2) }}</h6>
 							<span class="opacity-75" v-if="itemData.p1 >= 1">
 								IDEAL
 							</span>
@@ -38,7 +38,7 @@
 				<div class="card card-body" :class="{'bg-primary': itemData.p2 > 0.35, 'bg-danger': itemData.p2 <= 0.35}" @click.prevent="modalBuka(itemData,'p2')" style="cursor:pointer;">
 					<div class="media no-margin-top content-group">
 						<div class="media-body">
-							<h6 class="font-weight-semibold mb-8">{{ itemData.p2 | percentage(2) }}</h6>
+							<h6 class="font-weight-semibold mb-8">{{ $filters.percentage(itemData.p2, 2) }}</h6>
 							<span class="opacity-75" v-if="itemData.p2 > 0.35">
 								IDEAL
 							</span>
@@ -70,7 +70,7 @@
 				<div class="card card-body" :class="{'bg-primary': itemData.e1 >= 0.7 && itemData.e1 <= 0.8, 'bg-danger': itemData.e1 < 0.7 || itemData.e1 > 0.8}" @click.prevent="modalBuka(itemData,'e1')" style="cursor:pointer;">
 					<div class="media no-margin-top content-group">
 						<div class="media-body">
-							<h6 class="font-weight-semibold mb-8">{{ itemData.e1 | percentage(2) }}</h6>
+							<h6 class="font-weight-semibold mb-8">{{ $filters.percentage(itemData.e1, 2) }}</h6>
 							<span class="opacity-75" v-if="itemData.e1 >= 0.7 && itemData.e1 <= 0.8">
 								IDEAL
 							</span>
@@ -102,7 +102,7 @@
 				<div class="card card-body" :class="{'bg-primary': itemData.e5 >= 0.7 && itemData.e5 <= 0.8, 'bg-danger': itemData.e5 < 0.7 || itemData.e5 > 0.8}" @click.prevent="modalBuka(itemData,'e5')" style="cursor:pointer;">
 					<div class="media no-margin-top content-group">
 						<div class="media-body">
-							<h6 class="font-weight-semibold mb-8">{{ itemData.e5 | percentage(2) }}</h6>
+							<h6 class="font-weight-semibold mb-8">{{ $filters.percentage(itemData.e5, 2) }}</h6>
 							<span class="opacity-75" v-if="itemData.e5 >= 0.7 && itemData.e5 <= 0.8">
 								IDEAL
 							</span>
@@ -137,7 +137,7 @@
 				<div class="card card-body" :class="{'bg-primary': itemData.e6 <= 0.05, 'bg-danger': itemData.e6 > 0.05}" @click.prevent="modalBuka(itemData,'e6')" style="cursor:pointer;">
 					<div class="media no-margin-top content-group">
 						<div class="media-body">
-							<h6 class="font-weight-semibold mb-8">{{ itemData.e6 | percentage(2) }}</h6>
+							<h6 class="font-weight-semibold mb-8">{{ $filters.percentage(itemData.e6, 2) }}</h6>
 							<span class="opacity-75" v-if="itemData.e6 <= 0.05">
 								IDEAL
 							</span>
@@ -169,7 +169,7 @@
 				<div class="card card-body" :class="{'bg-primary': itemData.e7 >= 0.1 && itemData.e7 <= 0.2, 'bg-danger': itemData.e7 < 0.1 || itemData.e7 > 0.2}" @click.prevent="modalBuka(itemData,'e7')" style="cursor:pointer;">
 					<div class="media no-margin-top content-group">
 						<div class="media-body">
-							<h6 class="font-weight-semibold mb-8">{{ itemData.e7 | percentage(2) }}</h6>
+							<h6 class="font-weight-semibold mb-8">{{ $filters.percentage(itemData.e7, 2) }}</h6>
 							<span class="opacity-75" v-if="itemData.e7 >= 0.1 && itemData.e7 <= 0.2">
 								IDEAL
 							</span>
@@ -201,7 +201,7 @@
 				<div class="card card-body" :class="{'bg-primary': itemData.e9 >= 0.1, 'bg-danger': itemData.e9 < 0.1}" @click.prevent="modalBuka(itemData,'e9')" style="cursor:pointer;">
 					<div class="media no-margin-top content-group">
 						<div class="media-body">
-							<h6 class="font-weight-semibold mb-8">{{ itemData.e9 | percentage(2) }}</h6>
+							<h6 class="font-weight-semibold mb-8">{{ $filters.percentage(itemData.e9, 2) }}</h6>
 							<span class="opacity-75" v-if="itemData.e9 >= 0.1">
 								IDEAL
 							</span>
@@ -233,7 +233,7 @@
 				<div class="card card-body" :class="{'bg-primary': itemData.a1 <= 0.05, 'bg-danger': itemData.a1 > 0.05}" @click.prevent="modalBuka(itemData,'a1')" style="cursor:pointer;">
 					<div class="media no-margin-top content-group">
 						<div class="media-body">
-							<h6 class="font-weight-semibold mb-8">{{ itemData.a1 | percentage(2) }}</h6>
+							<h6 class="font-weight-semibold mb-8">{{ $filters.percentage(itemData.a1, 2) }}</h6>
 							<span class="opacity-75" v-if="itemData.a1 <= 0.05">
 								IDEAL
 							</span>
@@ -268,7 +268,7 @@
 				<div class="card card-body" :class="{'bg-primary': itemData.a2 < 0.05, 'bg-danger': itemData.a2 >= 0.05}" @click.prevent="modalBuka(itemData,'a2')" style="cursor:pointer;">
 					<div class="media no-margin-top content-group">
 						<div class="media-body">
-							<h6 class="font-weight-semibold mb-8">{{ itemData.a2 | percentage(2) }}</h6>
+							<h6 class="font-weight-semibold mb-8">{{ $filters.percentage(itemData.a2, 2) }}</h6>
 							<span class="opacity-75" v-if="itemData.a2 < 0.05">
 								IDEAL
 							</span>
@@ -300,7 +300,7 @@
 				<div class="card card-body" :class="{'bg-primary': itemData.r7_1 == itemData.harga_pasar, 'bg-danger': itemData.r7_1 != itemData.harga_pasar}" @click.prevent="modalBuka(itemData,'r7')" style="cursor:pointer;">
 					<div class="media no-margin-top content-group">
 						<div class="media-body">
-							<h6 class="font-weight-semibold mb-8">{{ itemData.r7_1 | percentage(2) }} / {{ itemData.r7_2 | percentage(2) }}</h6>
+							<h6 class="font-weight-semibold mb-8">{{ $filters.percentage(itemData.r7_1, 2) }} / {{ $filters.percentage(itemData.r7_2, 2) }}</h6>
 							<span class="opacity-75" v-if="itemData.r7_1 == itemData.harga_pasar">
 								IDEAL / 
 							</span>
@@ -338,7 +338,7 @@
 				<div class="card card-body" :class="{'bg-primary': itemData.r9 <= 0.05,'bg-danger': itemData.r9 > 0.05}" @click.prevent="modalBuka(itemData,'r9')" style="cursor:pointer;">
 					<div class="media no-margin-top content-group">
 						<div class="media-body">
-							<h6 class="font-weight-semibold mb-8">{{ itemData.r9 | percentage(2) }}</h6>
+							<h6 class="font-weight-semibold mb-8">{{ $filters.percentage(itemData.r9, 2) }}</h6>
 							<span class="opacity-75" v-if="itemData.r9 <= 0.05">
 								IDEAL
 							</span>
@@ -370,7 +370,7 @@
 				<div class="card card-body" :class="{'bg-primary': itemData.l1 >= 0.15 && itemData.l1 <= 0.2, 'bg-danger': itemData.l1 < 0.15 || itemData.l1 > 0.2}" @click.prevent="modalBuka(itemData,'l1')" style="cursor:pointer;">
 					<div class="media no-margin-top content-group">
 						<div class="media-body">
-							<h6 class="font-weight-semibold mb-8">{{ itemData.l1 | percentage(2) }}</h6>
+							<h6 class="font-weight-semibold mb-8">{{ $filters.percentage(itemData.l1, 2) }}</h6>
 							<span class="opacity-75" v-if="itemData.l1 >= 0.15 && itemData.l1 <= 0.2">
 								IDEAL
 							</span>
@@ -405,7 +405,7 @@
 				<div class="card card-body" :class="{'bg-primary': itemData.l2 >= 0.15 && itemData.l2 <= 0.2, 'bg-danger': itemData.l2 < 0.15 || itemData.l2 > 0.2}" @click.prevent="modalBuka(itemData,'l2')" style="cursor:pointer;">
 					<div class="media no-margin-top content-group">
 						<div class="media-body">
-							<h6 class="font-weight-semibold mb-8">{{ itemData.l2 | percentage(2) }}</h6>
+							<h6 class="font-weight-semibold mb-8">{{ $filters.percentage(itemData.l2, 2) }}</h6>
 							<span class="opacity-75" v-if="itemData.l2 >= 0.15 && itemData.l2 <= 0.2">
 								IDEAL
 							</span>
@@ -437,7 +437,7 @@
 				<div class="card card-body" :class="{'bg-primary': itemData.s10 > 0.12, 'bg-danger': itemData.s10 <= 0.12}" @click.prevent="modalBuka(itemData,'s10')" style="cursor:pointer;">
 					<div class="media no-margin-top content-group">
 						<div class="media-body">
-							<h6 class="font-weight-semibold mb-8">{{ itemData.s10 | percentage(2) }}</h6>
+							<h6 class="font-weight-semibold mb-8">{{ $filters.percentage(itemData.s10, 2) }}</h6>
 							<span class="opacity-75" v-if="itemData.s10 >= 0.12">
 								IDEAL
 							</span>
@@ -469,7 +469,7 @@
 				<div class="card card-body" :class="{'bg-primary': itemData.s11 > (0.1 + itemData.laju_inflasi), 'bg-danger': itemData.s11 <= (0.1 + itemData.laju_inflasi)}" @click.prevent="modalBuka(itemData,'s11')" style="cursor:pointer;">
 					<div class="media no-margin-top content-group">
 						<div class="media-body">
-							<h6 class="font-weight-semibold mb-8">{{ itemData.s11 | percentage(2) }}</h6>
+							<h6 class="font-weight-semibold mb-8">{{ $filters.percentage(itemData.s11, 2) }}</h6>
 							<span class="opacity-75" v-if="itemData.s11 > (0.1 + itemData.laju_inflasi)">
 								IDEAL
 							</span>

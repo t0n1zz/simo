@@ -2,8 +2,12 @@
 
 namespace App\Models;
 
+use App\Models\Aktivis;
+use App\Models\Kegiatan;
+use App\Models\MitraOrang;
+use App\Models\SertifikatGenerate;
 use Spatie\Activitylog\LogOptions;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 use App\Support\Dataviewer;
 
@@ -48,21 +52,21 @@ class KegiatanPeserta extends Model
 
     public function aktivis()
     {
-        return $this->belongsTo('App\Models\Aktivis', 'aktivis_id', 'id');
+        return $this->belongsTo(Aktivis::class, 'aktivis_id', 'id');
     }
 
     public function mitra_orang()
     {
-        return $this->belongsTo('App\Models\MitraOrang', 'mitra_orang_id', 'id');
+        return $this->belongsTo(MitraOrang::class, 'mitra_orang_id', 'id');
     }
 
     public function kegiatan()
     {
-        return $this->belongsTo('App\Models\Kegiatan', 'kegiatan_id', 'id');
+        return $this->belongsTo(Kegiatan::class, 'kegiatan_id', 'id');
     }
 
     public function sertifikat_generate(){
-        return $this->hasOne('App\Models\SertifikatGenerate', 'kegiatan_peserta_id','id');
+        return $this->hasOne(SertifikatGenerate::class, 'kegiatan_peserta_id','id');
     }
 
     public function getActivitylogOptions(): LogOptions

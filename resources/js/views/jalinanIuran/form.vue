@@ -13,7 +13,8 @@
 					</message>
 
 					<!-- main panel -->
-					<form @submit.prevent="save" enctype="multipart/form-data" data-vv-scope="form">
+					<VeeForm :form="form" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit, setValues }">
+					<form @submit.prevent="setValues(form) || handleSubmit(onValid)">
 
 						<!-- select -->
 						<div class="card">
@@ -543,6 +544,7 @@
 						</div>
 
 					</form>
+					</VeeForm>
 				</div>
 			</div>
 		</div>
@@ -580,6 +582,7 @@
 	import dataTable from '../../components/datatable.vue';
 	import DatePicker from "../../components/datePicker.vue";
 	import checkValue from "../../components/checkValue.vue";
+	import VeeForm from '../../components/VeeForm.vue';
 
 	export default {
 		components: {
@@ -593,14 +596,18 @@
 			infoIcon,
 			wajibBadge,
 			DatePicker,
-			checkValue
+			checkValue,
+			VeeForm,
 		},
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				jalinanIuranStore: useJalinanIuranStore(),
-				cuStore: useCuStore(),
-				title: 'Tambah Setoran Solidaritas Jalinan',
+			jalinanIuranStore: useJalinanIuranStore(),
+			cuStore: useCuStore(),
+			};
+		},
+		data() {
+			return {title: 'Tambah Setoran Solidaritas Jalinan',
 				titleDesc: 'Menambah iuran Jalinan baru',
 				titleIcon: 'icon-plus3',
 				level: 2,
@@ -702,23 +709,19 @@
 					this.cuStore.getHeader();
 				}
 			},
-			save() {
+			onValid() {
 				this.form.id_cu = this.idCu;
 				this.state = '';
-				
-				this.$validator.validateAll('form').then((result) => {
-					if (result) {
-						if(this.$route.meta.mode == 'edit'){
-							this.jalinanIuranStore.update([this.$route.params.id, this.form]);
-						}else{
-							this.jalinanIuranStore.store(this.form);
-					}
-						this.submited = false;
-					}else{
-						window.scrollTo(0, 0);
-						this.submited = true;
-					}
-				});
+				if(this.$route.meta.mode == 'edit'){
+					this.jalinanIuranStore.update([this.$route.params.id, this.form]);
+				}else{
+					this.jalinanIuranStore.store(this.form);
+				}
+				this.submited = false;
+			},
+			onInvalid() {
+				window.scrollTo(0, 0);
+				this.submited = true;
 			},
 			back(){
 				this.$router.push({name: this.kelas });

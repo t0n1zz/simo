@@ -38,7 +38,7 @@
 			<div v-show="tabName == 'daftar'">
 				<div class="card-body">
 					<ul class="media-list" v-if="itemDaftarStat === 'success'">
-						<li class="media cursor-pointer" v-for="item in itemDaftar" @click.prevent="detail(item.kegiatan.id)">
+						<li class="media cursor-pointer" v-for="item in itemDaftar" :key="item.id" @click.prevent="detail(item.kegiatan.id)">
 							<div class="mr-3 position-relative">
 								<img :src="'/images/aktivis/' + item.aktivis.gambar + 'n.jpg'" class="rounded-circle" v-if="item.aktivis.gambar" width="36" jeight="36">
 								<img :src="'/images/no_image_man.jpg'" class="rounded-circle" width="36" height="36" v-else>
@@ -68,7 +68,7 @@
 			<div v-show="tabName == 'menunggu'">
 				<div class="card-body">
 					<ul class="media-list" v-if="itemMenungguStat === 'success'">
-						<li class="media cursor-pointer" v-for="item in itemMenunggu" @click.prevent="detail(item.kegiatan.id)">
+						<li class="media cursor-pointer" v-for="item in itemMenunggu" :key="item.id" @click.prevent="detail(item.kegiatan.id)">
 							<div class="mr-3 position-relative">
 								<img :src="'/images/aktivis/' + item.aktivis.gambar + 'n.jpg'" class="rounded-circle" v-if="item.aktivis.gambar" width="36" jeight="36">
 								<img :src="'/images/no_image_man.jpg'" class="rounded-circle" width="36" height="36" v-else>
@@ -98,7 +98,7 @@
 			<div v-show="tabName == 'ikut'">
 				<div class="card-body">
 					<ul class="media-list" v-if="itemIkutStat === 'success'">
-						<li class="media cursor-pointer" v-for="item in itemIkut" @click.prevent="detail(item.kegiatan.id)">
+						<li class="media cursor-pointer" v-for="item in itemIkut" :key="item.id" @click.prevent="detail(item.kegiatan.id)">
 							<div class="mr-3 position-relative">
 								<img :src="'/images/aktivis/' + item.aktivis.gambar + 'n.jpg'" class="rounded-circle" v-if="item.aktivis.gambar" width="36" jeight="36">
 								<img :src="'/images/no_image_man.jpg'" class="rounded-circle" width="36" height="36" v-else>
@@ -128,7 +128,7 @@
 			<div v-show="tabName == 'batal'">
 				<div class="card-body">
 					<ul class="media-list" v-if="itemBatalStat === 'success'">
-						<li class="media cursor-pointer" v-for="item in itemBatal" @click.prevent="detail(item.kegiatan.id)">
+						<li class="media cursor-pointer" v-for="item in itemBatal" :key="item.id" @click.prevent="detail(item.kegiatan.id)">
 							<div class="mr-3 position-relative">
 								<img :src="'/images/aktivis/' + item.aktivis.gambar + 'n.jpg'" class="rounded-circle" v-if="item.aktivis.gambar" width="36" jeight="36">
 								<img :src="'/images/no_image_man.jpg'" class="rounded-circle" width="36" height="36" v-else>
@@ -165,10 +165,13 @@
 		components: {
 			checkValue
 		},
-		data(){
-			return{
+		setup() {
+			return {
 				authStore: useAuthStore(),
-				kelas: 'diklatBKCU',
+			};
+		},
+		data(){
+			return{kelas: 'diklatBKCU',
 				tabName: 'daftar',
 				isIkut: false,
 				isMenunggu: false,

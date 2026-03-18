@@ -23,7 +23,8 @@
     <!-- pengajuan -->
     <transition enter-active-class="animated fadeIn" mode="out-in">
 			<div v-show="tabName == 'pengajuan'">
-        <form @submit.prevent="save" data-vv-scope="formStatus" autocomplete="off">
+        <VeeForm :form="formStatus" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit, setValues }">
+        <form @submit.prevent="setValues(formStatus) || handleSubmit(onValid)" autocomplete="off">
         <!-- message -->
         <message v-if="errors.any('formStatus') && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors.items">
         </message>
@@ -347,7 +348,7 @@
 
                     <!-- input -->
                     <date-picker @dateSelected="formStatus.tanggal_pencairan = $event" :defaultDate="formStatus.tanggal_pencairan" v-show="tipe != 'selesai'"></date-picker>	
-                    <input v-model="formStatus.tanggal_pencairan"  :readonly="tipe == 'selesai'" v-show="tipe == selesai" v-validate="'required'" data-vv-as="Tgl. pencairan"/>
+                    <Field name="tanggal_pencairan" rules="required" v-model="formStatus.tanggal_pencairan" :readonly="tipe == 'selesai'" v-show="tipe == selesai" />
 
                     <!-- error message -->
                     <small class="text-muted text-danger" v-if="errors.has('formStatus.tanggal_pencairan')">
@@ -380,14 +381,12 @@
                     </div>
 
                     <!-- text -->
-                    <cleave 
-                      name="tunas_disetujui"
-                      v-model="formStatus.tunas_disetujui" 
-                      class="form-control" 
+                    <Field name="tunas_disetujui" rules="required" v-model="formStatus.tunas_disetujui" v-slot="{ field }"><cleave
+                      v-bind="field"
+                      class="form-control"
                       :options="cleaveOption.numeric"
                       :readonly="tipe == 'selesai'"
-                      placeholder="Silahkan masukkan jumlah nilai pengajuan bantuan solidaritas TUNAS yang disetujui"
-                      v-validate="'required'" data-vv-as="Nilai pengajuan bantuan solidaritas TUNAS yang disetujui"></cleave>
+                      placeholder="Silahkan masukkan jumlah nilai pengajuan bantuan solidaritas TUNAS yang disetujui"></cleave></Field>
 
                     <!-- error message -->
                     <small class="text-muted text-danger" v-if="errors.has('formStatus.tunas_disetujui')">
@@ -419,14 +418,12 @@
                     </div>
 
                     <!-- text -->
-                    <cleave 
-                      name="lintang_disetujui"
-                      v-model="formStatus.lintang_disetujui" 
-                      class="form-control" 
+                    <Field name="lintang_disetujui" rules="required" v-model="formStatus.lintang_disetujui" v-slot="{ field }"><cleave
+                      v-bind="field"
+                      class="form-control"
                       :options="cleaveOption.numeric"
                       :readonly="tipe == 'selesai'"
-                      placeholder="Silahkan masukkan jumlah nilai pengajuan bantuan solidaritas LINTANG yang disetujui"
-                      v-validate="'required'" data-vv-as="Nilai pengajuan bantuan solidaritas LINTANG yang disetujui"></cleave>
+                      placeholder="Silahkan masukkan jumlah nilai pengajuan bantuan solidaritas LINTANG yang disetujui"></cleave></Field>
 
                     <!-- error message -->
                     <small class="text-muted text-danger" v-if="errors.has('formStatus.lintang_disetujui')">
@@ -558,6 +555,7 @@
         </div> 
 
         </form>
+        </VeeForm>
 			</div>
     </transition>
     <!-- pengajuan -->
@@ -876,6 +874,8 @@
   import dokumen from "./dokumen.vue";
   import riwayatKlaim from "./riwayatKlaim.vue";
   import DatePicker from "../../components/datePicker.vue";
+  import { Field } from 'vee-validate';
+  import VeeForm from '../../components/VeeForm.vue';
 
 	export default {
 		props: ['kelas','selected','tipe'],
@@ -884,13 +884,15 @@
       message,
       identitas,
       checkValue,
-      Cleave, 
+      Cleave,
       dataTable,
       infoIcon,
       verifikator,
       dokumen,
       DatePicker,
-      riwayatKlaim
+      riwayatKlaim,
+      Field,
+      VeeForm
 		},
 		data() {
 			return {
@@ -1003,7 +1005,7 @@
           this.selectedData.verifikasi_pengurus,this.selectedData.verifikasi_pengawas,this.selectedData.verifikasi_manajemen
         ]);
       },
-      save(){
+      onValid(values){
         if(this.formStatus != '1'){
           this.tunas_disetujui = '';
           this.lintang_disetujui = '';
@@ -1018,14 +1020,11 @@
         }else if(this.tipe == 'verifikasi'){
           this.updateVerifikasi([this.selected.id, this.currentUser]);
         }else{
-          this.$validator.validateAll('formStatus').then((result) => {
-            if (result) {
-              this.updateStatus([this.selected.id, this.formStatus]);
-            }else{
-              this.submited = true;
-            }
-          });
+          this.updateStatus([this.selected.id, this.formStatus]);
         }
+      },
+      onInvalid(){
+        this.submited = true;
       },
 			tutup() {
 				this.$emit('tutup');

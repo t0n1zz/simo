@@ -48,7 +48,7 @@ class MitraLembagaController extends Controller{
 
 	public function store(Request $request)
 	{
-		$this->validate($request,MitraLembaga::$rules);
+		$request->validate(MitraLembaga::$rules);
 
 		$name = $request->name;
 
@@ -83,7 +83,7 @@ class MitraLembagaController extends Controller{
 
 	public function update(Request $request, $id)
 	{
-		$this->validate($request, MitraLembaga::$rules);
+		$request->validate(MitraLembaga::$rules);
 
 		$name = $request->name;
 

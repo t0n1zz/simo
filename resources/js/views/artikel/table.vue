@@ -135,6 +135,12 @@
 		props:['title','kelas'],
 		setup() {
 			return {
+				authStore: useAuthStore(),
+				globalStore: useGlobalStore(),
+				cuStore: useCuStore(),
+				artikelStore: useArtikelStore(),
+				artikelKategoriStore: useArtikelKategoriStore(),
+				artikelPenulisStore: useArtikelPenulisStore(),
 				// Filters
 				$filters: {
 					dateTime,
@@ -143,14 +149,7 @@
 			}
 		},
 		data() {
-			return {
-				authStore: useAuthStore(),
-				globalStore: useGlobalStore(),
-				cuStore: useCuStore(),
-				artikelStore: useArtikelStore(),
-				artikelKategoriStore: useArtikelKategoriStore(),
-				artikelPenulisStore: useArtikelPenulisStore(),
-				selectedItem: [],
+			return {selectedItem: [],
 				query: {
 					order_column: "name",
 					order_direction: "asc",

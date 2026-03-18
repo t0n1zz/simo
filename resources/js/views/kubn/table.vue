@@ -147,12 +147,15 @@
 			checkValue
 		},
 		props:['title','kelas'],
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				kubnStore: useKubnStore(),
-				cuStore: useCuStore(),
-				selectedItem: [],
+			kubnStore: useKubnStore(),
+			cuStore: useCuStore(),
+			};
+		},
+		data() {
+			return {selectedItem: [],
 				query: {
 					order_column: "name",
 					order_direction: "asc",

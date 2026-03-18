@@ -96,11 +96,14 @@
 			checkValue,
 			pagination: Bootstrap4Pagination
 		},
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				userStore: useUserStore(),
-				title: 'Activity Log',
+			userStore: useUserStore(),
+			};
+		},
+		data() {
+			return {title: 'Activity Log',
 				kelas: 'user',
 				titleDesc: 'Melihat semua aktivitas user',
 				titleIcon: 'icon-eye2',

@@ -171,7 +171,7 @@ class VotingController extends Controller{
 
 	public function store(Request $request)
 	{		
-		$this->validate($request,Voting::$rules);
+		$request->validate(Voting::$rules);
 
 		$name = $request->name;
 		$suara = str_replace( ',', '', $request->suara);

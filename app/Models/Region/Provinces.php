@@ -1,8 +1,9 @@
 <?php
 namespace App\Models\Region;
 
+use App\Models\Cu;
 use Spatie\Activitylog\LogOptions;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use App\Support\FilterPaginateOrder;
 use Spatie\Activitylog\Traits\LogsActivity;
 
@@ -34,7 +35,7 @@ class Provinces extends Model {
 
     public function hasCu()
     {
-        return $this->hasMany('App\Models\Cu','id_provinces','id')->select('id','id_provinces','name');
+        return $this->hasMany(Cu::class,'id_provinces','id')->select('id','id_provinces','name');
     }
 
     public function getActivitylogOptions(): LogOptions

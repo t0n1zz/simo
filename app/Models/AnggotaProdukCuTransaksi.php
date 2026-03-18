@@ -2,7 +2,7 @@
 namespace App\Models;
 
 use Spatie\Activitylog\LogOptions;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Support\Dataviewer;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -12,7 +12,6 @@ class AnggotaProdukCuTransaksi extends BaseEloquent {
     use Dataviewer, LogsActivity, SoftDeletes;
 
     protected $table = 'anggota_produk_cu_transaksi';
-    protected $dates = ['deleted_at'];
 
     public static $rules = [
         'anggota_produk_cu_id' => 'required',

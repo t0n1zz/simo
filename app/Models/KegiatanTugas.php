@@ -1,8 +1,11 @@
 <?php
 namespace App\Models;
 
+use App\Models\Cu;
+use App\Models\KegiatanTugasJawaban;
+use App\Models\User;
 use Spatie\Activitylog\LogOptions;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 use App\Support\Dataviewer;
 
@@ -24,16 +27,16 @@ class KegiatanTugas extends Model {
     protected $orderable = ['kegiatan_id','user.username','user.aktivis.name','cu.name','created_at','updated_at','name'];
 
     public function cu(){
-        return $this->belongsTo('App\Models\Cu','id_cu','id')->select('id','name','no_ba');;
+        return $this->belongsTo(Cu::class,'id_cu','id')->select('id','name','no_ba');;
     }
 
     public function user(){
-        return $this->belongsTo('App\Models\User','id_user','id')->select('id','id_cu','id_aktivis','username');;
+        return $this->belongsTo(User::class,'id_user','id')->select('id','id_cu','id_aktivis','username');;
     }
 
     public function hasjawaban()
     {
-        return $this->hasMany('App\Models\KegiatanTugasJawaban','kegiatan_tugas_id','id');
+        return $this->hasMany(KegiatanTugasJawaban::class,'kegiatan_tugas_id','id');
     }
 
     public function getActivitylogOptions(): LogOptions

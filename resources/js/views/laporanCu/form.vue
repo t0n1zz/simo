@@ -7,15 +7,17 @@
 			<div class="content-wrapper">
 				<div class="content">
 
+				<VeeForm :form="form" v-slot="{ errors }">
+
 					<!-- message -->
 					<message v-if="errors.any('form') && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors.items">
 					</message>
 
 					<div class="card" v-if="$route.meta.mode == 'editTp'">
-						<div class="card-body"> 
+						<div class="card-body">
 							<div class="alert bg-info alert-styled-left">
 								<p>Laporan ini merupakan bagian dari laporan konsolidasi, maka anda dapat melihat/mengubah laporan TP lain yang juga termasuk dalam laporan konsolidasi pada CU ini sesuai periode laporannya.</p>
-							</div> 
+							</div>
 							<div class="input-group">
 								<div class="input-group-prepend">
 									<span class="input-group-text">Pilih Laporan</span>
@@ -49,10 +51,10 @@
 										</h5>
 
 										<!-- select -->
-										<select class="form-control" name="id_cu" v-model="form.id_cu" data-width="100%" @change="changeCu($event.target.value)" v-validate="'required'" data-vv-as="CU" :disabled="modelCU.length === 0">
+										<Field as="select" name="id_cu" rules="required" v-model="form.id_cu" class="form-control" data-width="100%" @change="changeCu($event.target.value)" :disabled="modelCU.length === 0">
 											<option disabled value="0">Silahkan pilih CU</option>
 											<option v-for="(cu, index) in modelCU" :value="cu.id" :key="index">{{cu.name}}</option>
-										</select>
+										</Field>
 
 										<!-- error message -->
 										<small class="text-muted text-danger" v-if="errors.has('form.id_cu')">
@@ -73,7 +75,7 @@
 										</h5>
 
 										<!-- select -->
-									<select class="form-control" name="id_tp" v-model="form.id_tp" data-width="100%" v-validate="'required'" data-vv-as="TP" @change="changeTp($event.target.value)" :disabled="!isModelTp">
+									<Field as="select" name="id_tp" rules="required" v-model="form.id_tp" class="form-control" data-width="100%" @change="changeTp($event.target.value)" :disabled="!isModelTp">
 										<option disabled value="">
 											<span v-if="modelTpStat === 'loading'">Mohon tunggu...</span>
 											<span v-else>Silahkan pilih TP/KP</span>
@@ -81,7 +83,7 @@
 										<option value="konsolidasi" v-if="$route.meta.mode != 'editTp'">Konsolidasi</option>
 										<option disabled value="">----------------</option>
 										<option v-for="(tp, index) in modelTp" :value="tp.id" :key="index">{{tp.name}}</option>
-									</select>
+									</Field>
 
 										<!-- error message -->
 										<small class="text-muted text-danger" v-if="errors.has('form.id_tp')">
@@ -102,8 +104,8 @@
 										</h5>
 
 										<!-- input -->
-										<date-picker @dateSelected="form.periode = $event" :defaultDate="form.periode"></date-picker>	
-										<input name="periode" v-model="form.periode" v-show="false" v-validate="'required'" data-vv-as="Periode"/>
+										<date-picker @dateSelected="form.periode = $event" :defaultDate="form.periode"></date-picker>
+										<Field name="periode" rules="required" v-model="form.periode" v-show="false" />
 
 										<!-- error message -->
 										<small class="text-muted text-danger" v-if="errors.has('form.periode')">
@@ -147,7 +149,8 @@
 					</transition> -->
 
 					<form-konsolidasi @back="back"></form-konsolidasi>
-					
+
+				</VeeForm>
 				</div>
 			</div>
 		</div>
@@ -174,6 +177,8 @@
 	import DatePicker from "../../components/datePicker.vue";
 	import formKonsolidasi from "./formKonsolidasi.vue";
 	import formCoa from "./formCoa.vue";
+	import { Field } from 'vee-validate';
+	import VeeForm from '../../components/VeeForm.vue';
 
 	export default {
 		components: {
@@ -185,7 +190,9 @@
 			wajibBadge,
 			DatePicker,
 			formKonsolidasi,
-			formCoa
+			formCoa,
+			Field,
+			VeeForm
 		},
 		data() {
 			return {

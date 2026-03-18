@@ -40,7 +40,7 @@ class PekerjaanController extends Controller{
 
 	public function store(Request $request)
 	{
-		$this->validate($request,Pekerjaan::$rules);
+		$request->validate(Pekerjaan::$rules);
 
 		$name = $request->name;
 
@@ -68,7 +68,7 @@ class PekerjaanController extends Controller{
 
 	public function update(Request $request, $id)
 	{
-		$this->validate($request,Pekerjaan::$rules);
+		$request->validate(Pekerjaan::$rules);
 
 		$name = $request->name;
 

@@ -3,8 +3,7 @@
     <!-- Single visible slide (carousel) -->
     <div class="slider-track" :style="trackStyle">
       <div
-        v-for="(item, index) in sliderItem"
-        :key="index"
+        v-for="(item, index) in sliderItem" :key="item.id"
         class="slider-slide card card-body"
         :class="{ 'slider-slide--active': index === currentIndex }"
         :style="item.style"
@@ -47,8 +46,7 @@
       </button>
       <div class="slider-dots">
         <button
-          v-for="(item, index) in sliderItem"
-          :key="'dot-' + index"
+          v-for="(item, index) in sliderItem" :key="item.id"
           type="button"
           class="slider-dot"
           :class="{ 'slider-dot--active': index === currentIndex }"
@@ -68,10 +66,13 @@
 	export default{
 		components: {
 		},
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				birthdayData: [],
+			};
+		},
+		data() {
+			return {birthdayData: [],
 				birthdayDataStat: '',
 				newsData: [],
 				newsDataStat: '',

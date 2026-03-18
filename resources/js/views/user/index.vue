@@ -52,11 +52,14 @@
 			selectCu,
 			tableData,
 		},
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				userStore: useUserStore(),
-				title: 'User',
+			userStore: useUserStore(),
+			};
+		},
+		data() {
+			return {title: 'User',
 				kelas: 'user',
 				titleDesc: 'Mengelola data user',
 				titleIcon: 'icon-users',

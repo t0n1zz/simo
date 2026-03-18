@@ -38,7 +38,7 @@ class LaporanTpDiskusiController extends Controller{
 
 	public function store(Request $request)
 	{
-		$this->validate($request,LaporanTpDiskusi::$rules);
+		$request->validate(LaporanTpDiskusi::$rules);
 
 		$kelas = LaporanTpDiskusi::create($request->all());	
 
@@ -53,7 +53,7 @@ class LaporanTpDiskusiController extends Controller{
 
 	public function update(Request $request, $id)
 	{
-		$this->validate($request,LaporanTpDiskusi::$rules);
+		$request->validate(LaporanTpDiskusi::$rules);
 
 		$kelas = LaporanTpDiskusi::findOrFail($id);
 

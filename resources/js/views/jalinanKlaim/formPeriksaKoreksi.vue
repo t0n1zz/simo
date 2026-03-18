@@ -1,7 +1,8 @@
 <template>
 	<div>
 
-    <form @submit.prevent="save" data-vv-scope="formKoreksi">
+    <VeeForm :form="formKoreksi" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit, setValues }">
+    <form @submit.prevent="setValues(formKoreksi) || handleSubmit(onValid)">
     <!-- message -->
     <message v-if="errors.any('formKoreksi') && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors.items">
     </message>
@@ -308,6 +309,7 @@
     </div> 
 
     </form>
+    </VeeForm>
 
 	</div>
 </template>
@@ -326,6 +328,7 @@
   import dataTable from '../../components/datatable.vue';
   import infoIcon from "../../components/infoIcon.vue";
   import dokumen from "./dokumen.vue";
+  import VeeForm from '../../components/VeeForm.vue';
 
 	export default {
 		props: ['kelas','selected'],
@@ -334,10 +337,11 @@
       message,
       identitas,
       checkValue,
-      Cleave, 
+      Cleave,
       dataTable,
       infoIcon,
-      dokumen
+      dokumen,
+      VeeForm,
 		},
 		data() {
 			return {
@@ -433,18 +437,14 @@
           this.selectedData.verifikasi_pengurus,this.selectedData.verifikasi_pengawas,this.selectedData.verifikasi_manajemen
         ]);
       },
-      save(){
+      onValid(){
         this.formKoreksi.status = 1;
         this.formKoreksi.tunas_diajukan = this.selectedData.tunas_diajukan - this.itemDataJalinan.tunas_diajukan;
         this.formKoreksi.lintang_diajukan = this.selectedData.lintang_diajukan - this.itemDataJalinan.lintang_diajukan;
-
-        this.$validator.validateAll('formKoreksi').then((result) => {
-          if (result) {
-            this.periksaKoreksi([this.selected.id, this.formKoreksi]);
-          }else{
-            this.submited = true;
-          }
-        });
+        this.periksaKoreksi([this.selected.id, this.formKoreksi]);
+      },
+      onInvalid(){
+        this.submited = true;
       },
 			tutup() {
 				this.$emit('tutup');

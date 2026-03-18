@@ -49,11 +49,14 @@
 			selectCu,
 			tableData,
 		},
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				artikelKategoriStore: useArtikelKategoriStore(),
-				title: 'Kategori Artikel',
+			artikelKategoriStore: useArtikelKategoriStore(),
+			};
+		},
+		data() {
+			return {title: 'Kategori Artikel',
 				kelas: 'artikelKategori',
 				titleDesc: 'Mengelola data kategori artikel',
 				titleIcon: 'icon-grid6',

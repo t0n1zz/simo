@@ -1,8 +1,10 @@
 <?php
 namespace App\Models;
 
+use App\Models\Aktivis;
+use App\Models\Kegiatan;
 use Spatie\Activitylog\LogOptions;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Support\Dataviewer;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -12,7 +14,6 @@ class AktivisDiklat extends BaseEloquent {
     use Dataviewer, LogsActivity, SoftDeletes;
 
     protected $table = 'aktivis_diklat';
-    protected $dates = ['deleted_at'];
 
     protected $fillable = [
         'id_aktivis','id_kegiatan','name','tempat','lembaga','mulai','selesai'
@@ -30,11 +31,11 @@ class AktivisDiklat extends BaseEloquent {
     }
 
     public function aktivis(){
-        return $this->belongsTo('App\Models\Aktivis','id_aktivis','id');
+        return $this->belongsTo(Aktivis::class,'id_aktivis','id');
     }
 
     public function kegiatan(){
-        return $this->belongsTo('App\Models\Kegiatan','id_kegiatan','id');
+        return $this->belongsTo(Kegiatan::class,'id_kegiatan','id');
     }
 
 

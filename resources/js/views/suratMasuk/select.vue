@@ -64,11 +64,14 @@
 
 	export default {
 		props: ['kelas'],
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				suratMasukStore: useSuratMasukStore(),
-				periode: '',
+			suratMasukStore: useSuratMasukStore(),
+			};
+		},
+		data() {
+			return {periode: '',
 			};
 		},
 		created() {

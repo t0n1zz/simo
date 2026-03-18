@@ -1,8 +1,12 @@
 <?php
 namespace App\Models;
 
+use App\Models\Aktivis;
+use App\Models\Cu;
+use App\Models\PemilihanCalon;
+use App\Models\PemilihanSuara;
 use Spatie\Activitylog\LogOptions;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use App\Support\Dataviewer;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -13,7 +17,6 @@ class Pemilihan extends Model {
 
     protected $table = 'pemilihan';
 
-    protected $dates = ['deleted_at'];
     
     public static $rules = [
         'name' => 'required'
@@ -43,19 +46,19 @@ class Pemilihan extends Model {
 
     public function Cu()
     {
-        return $this->belongsTo('App\Models\Cu','id_cu','id')->select('id','no_ba','name');
+        return $this->belongsTo(Cu::class,'id_cu','id')->select('id','no_ba','name');
     }
 
     public function calon(){
-        return $this->belongsToMany('App\Models\Aktivis','pemilihan_calon')->withPivot('id','no_urut','skor','pengusung_cu_id')->withTimestamps();
+        return $this->belongsToMany(Aktivis::class,'pemilihan_calon')->withPivot('id','no_urut','skor','pengusung_cu_id')->withTimestamps();
     }
 
     public function hasCalon(){
-        return $this->hasMany('App\Models\PemilihanCalon','pemilihan_id','id');
+        return $this->hasMany(PemilihanCalon::class,'pemilihan_id','id');
     }
 
     public function hasSuara(){
-        return $this->hasMany('App\Models\PemilihanSuara','pemilihan_id','id');
+        return $this->hasMany(PemilihanSuara::class,'pemilihan_id','id');
     }
 
     public function getActivitylogOptions(): LogOptions

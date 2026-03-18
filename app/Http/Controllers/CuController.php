@@ -142,7 +142,7 @@ class CuController extends Controller{
 
 	public function store(Request $request)
 	{
-		$this->validate($request,Cu::$rules);
+		$request->validate(Cu::$rules);
 
 		$name = $request->name;
 
@@ -194,7 +194,7 @@ class CuController extends Controller{
 
 	public function update(Request $request, $id)
 	{
-		$this->validate($request, Cu::$rules);
+		$request->validate(Cu::$rules);
 
 		$name = $request->name;
 

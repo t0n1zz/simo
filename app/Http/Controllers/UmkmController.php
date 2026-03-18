@@ -60,7 +60,7 @@ class UmkmController extends Controller{
 
 	public function store(Request $request)
 	{
-		$this->validate($request,Umkm::$rules);
+		$request->validate(Umkm::$rules);
 
 		$name = $request->name;
 
@@ -124,7 +124,7 @@ class UmkmController extends Controller{
 
 	public function update(Request $request, $id)
 	{
-		$this->validate($request,Umkm::$rules);
+		$request->validate(Umkm::$rules);
 
 		$name = $request->name;
 

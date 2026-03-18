@@ -57,7 +57,7 @@ class ArtikelController extends Controller
 
     public function store(Request $request)
     {
-        $this->validate($request, Artikel::$rules);
+        $request->validate(Artikel::$rules);
         $this->sanitizeRequestContent($request, ['content']);
 
         $name = $request->name;
@@ -103,7 +103,7 @@ class ArtikelController extends Controller
 
     public function update(Request $request, $id)
     {
-        $this->validate($request, Artikel::$rules);
+        $request->validate(Artikel::$rules);
         $this->sanitizeRequestContent($request, ['content']);
 
         $name = $request->name;

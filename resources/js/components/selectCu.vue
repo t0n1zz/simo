@@ -62,11 +62,14 @@
 
 	export default {
 		props:['kelas','isPus','path'],
-		data(){
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				cuStore: useCuStore(),
-				idCu: ''
+			cuStore: useCuStore(),
+			};
+		},
+		data(){
+			return {idCu: ''
 			}
 		},
 		created(){

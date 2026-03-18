@@ -78,7 +78,7 @@
 										<span v-else>-</span>
 									</td>
 									<td><check-value :value="props.item.no_tp"></check-value></td>
-									<td>{{ props.item.periode | dateMonth }}</td>
+									<td>{{ $filters.dateMonth(props.item.periode) }}</td>
 									<td>
 										<check-value :value="props.item.l_biasa" valueType="currency"></check-value>
 									</td>

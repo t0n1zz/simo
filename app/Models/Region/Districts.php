@@ -1,8 +1,9 @@
 <?php
 namespace App\Models\Region;
 
+use App\Models\Region\Regencies;
 use Spatie\Activitylog\LogOptions;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use App\Support\FilterPaginateOrder;
 use Spatie\Activitylog\Traits\LogsActivity;
 
@@ -35,7 +36,7 @@ class Districts extends Model {
 
     public function Regencies()
     {
-        return $this->belongsTo('App\Models\Region\Regencies','regency_id','id')->select('id','name');
+        return $this->belongsTo(Regencies::class,'regency_id','id')->select('id','name');
     }
 
     public function getActivitylogOptions(): LogOptions

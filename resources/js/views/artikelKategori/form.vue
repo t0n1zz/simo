@@ -156,12 +156,15 @@
 			VeeForm,
 			Field,
 		},
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				artikelKategoriStore: useArtikelKategoriStore(),
-				cuStore: useCuStore(),
-				title: 'Tambah Kategori Artikel',
+			artikelKategoriStore: useArtikelKategoriStore(),
+			cuStore: useCuStore(),
+			};
+		},
+		data() {
+			return {title: 'Tambah Kategori Artikel',
 				titleDesc: 'Menambah kategori artikel baru',
 				titleIcon: 'icon-plus3',
 				kelas: 'artikelKategori',

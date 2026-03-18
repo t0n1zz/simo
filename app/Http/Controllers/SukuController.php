@@ -40,7 +40,7 @@ class SukuController extends Controller{
 
 	public function store(Request $request)
 	{
-		$this->validate($request,Suku::$rules);
+		$request->validate(Suku::$rules);
 
 		$name = $request->name;
 
@@ -68,7 +68,7 @@ class SukuController extends Controller{
 
 	public function update(Request $request, $id)
 	{
-		$this->validate($request,Suku::$rules);
+		$request->validate(Suku::$rules);
 
 		$name = $request->name;
 

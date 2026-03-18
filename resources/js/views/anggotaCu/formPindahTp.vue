@@ -9,7 +9,8 @@
 			</ul>
 		</div>
 
-		<form @submit.prevent="save" data-vv-scope="formDataCu">
+		<VeeForm :form="formDataCu" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit, setValues }">
+		<form @submit.prevent="setValues(formDataCu) || handleSubmit(onValid)">
 
 		<div class="row">
 
@@ -24,10 +25,10 @@
 					</h6>
 
 					<!-- select -->
-					<select class="form-control" name="id_tp" v-model="formDataCu.tp_id" data-width="100%" v-validate="'required'" data-vv-as="TP/KP">
+					<Field as="select" name="id_tp" rules="required" v-model="formDataCu.tp_id" class="form-control" data-width="100%">
 						<option disabled value="">Silahkan pilih TP/KP</option>
 						<option v-for="(tp, index) in modelTp" :key="index" :value="tp.id">{{tp.name}}</option>
-					</select>
+					</Field>
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('formDataCu.tp_id')">
@@ -47,8 +48,8 @@
 					Tgl. Pindah: <wajib-badge></wajib-badge></h6>
 
 					<!-- text -->
-					<date-picker @dateSelected="formDataCu.tanggal_pindah = $event" :defaultDate="formDataCu.tanggal_pindah"></date-picker>	
-					<input v-model="formDataCu.tanggal_pindah" v-show="false" v-validate="'required'" data-vv-as="Tgl. keluar anggota"/>
+					<date-picker @dateSelected="formDataCu.tanggal_pindah = $event" :defaultDate="formDataCu.tanggal_pindah"></date-picker>
+					<Field name="tanggal_pindah" rules="required" v-model="formDataCu.tanggal_pindah" v-show="false" />
 
 					<!-- error message -->
 					<small class="text-muted text-danger" v-if="errors.has('formDataCu.tanggal_pindah')">
@@ -83,6 +84,7 @@
 		</div> 
 
 		</form>
+		</VeeForm>
 
 	</div>
 </template>
@@ -100,6 +102,8 @@
 	import infoIcon from "../../components/infoIcon.vue";
 	import wajibBadge from "../../components/wajibBadge.vue";
 	import DatePicker from "../../components/datePicker.vue";
+	import { Field } from 'vee-validate';
+	import VeeForm from '../../components/VeeForm.vue';
 
 	export default {
 		props: ['anggota_cu'],
@@ -109,7 +113,9 @@
 			Cleave,
 			infoIcon,
 			wajibBadge,
-			DatePicker
+			DatePicker,
+			Field,
+			VeeForm
 		},
 		data() {
 			return {
@@ -153,14 +159,12 @@
 			fetchTp(value){
 				this.getTpCu(value);
 			},
-			save(){
-				this.$validator.validateAll('formDataCu').then((result) => {
-					if (result) {
-						this.updatePindahTp([this.anggota_cu.id, this.formDataCu]);
-					}else{
-						this.submited = true;
-					}	
-				});
+			onValid(values){
+				this.updatePindahTp([this.anggota_cu.id, this.formDataCu]);
+			},
+			onInvalid(){
+				window.scrollTo(0, 0);
+				this.submited = true;
 			},
 			tutup(){
 				this.$emit('tutup');

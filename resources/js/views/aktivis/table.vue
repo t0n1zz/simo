@@ -228,13 +228,16 @@
 			checkValue
 		},
 		props:['title','kelas','status','itemData','itemDataStat'],
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				aktivisStore: useAktivisStore(),
-				globalStore: useGlobalStore(),
-				cuStore: useCuStore(),
-				selectedItem: [],
+			aktivisStore: useAktivisStore(),
+			globalStore: useGlobalStore(),
+			cuStore: useCuStore(),
+			};
+		},
+		data() {
+			return {selectedItem: [],
 				query: {
 					order_column: "name",
 					order_direction: "asc",

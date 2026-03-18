@@ -150,10 +150,13 @@
 			VeeForm,
 			Field
 		},
-		data() {
+		setup() {
 			return {
 				aktivisStore: useAktivisStore(),
-				kelas: 'aktivis',
+			};
+		},
+		data() {
+			return {kelas: 'aktivis',
 				form: {
 					name: '',
 					tempat: '',

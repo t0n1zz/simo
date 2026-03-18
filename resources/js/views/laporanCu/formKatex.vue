@@ -36,7 +36,7 @@
 		</template>
 
 		<!-- ubah -->
-		<form @submit.prevent="save" data-vv-scope="form">
+		<form @submit.prevent="save">
 		<hr v-if="modalKatex.isUbah && currentUser.can && currentUser.can['update_laporan_cu']">
 		<div class="row" v-if="modalKatex.isUbah && currentUser.can && currentUser.can['update_laporan_cu']">
 				<template v-for="(form, fi) in modalKatex.form" :key="fi">
@@ -111,12 +111,15 @@
 			Cleave,
 		},
 		props: ['modalKatex', 'kelas'],
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				laporanTpStore: useLaporanTpStore(),
-				laporanCuStore: useLaporanCuStore(),
-				cleaveOption: {
+			laporanTpStore: useLaporanTpStore(),
+			laporanCuStore: useLaporanCuStore(),
+			};
+		},
+		data() {
+			return {cleaveOption: {
 					numeric: {
 						numeral: true,
 						numeralThousandsGroupStyle: 'thousand',

@@ -1,8 +1,14 @@
 <?php
 namespace App\Models;
 
+use App\Models\AnggotaCu;
+use App\Models\AnggotaProdukCu;
+use App\Models\Cu;
+use App\Models\JalinanKlaim;
+use App\Models\ProdukCu;
+use App\Models\Tp;
 use Spatie\Activitylog\LogOptions;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Support\Dataviewer;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -14,7 +20,6 @@ class AnggotaCuCu extends Model {
     use \Awobaz\Compoships\Compoships;
 
     protected $table = 'anggota_cu_cu';
-    protected $dates = ['deleted_at'];
 
     protected $revisionEnabled = true;
     protected $revisionCleanup = true;
@@ -54,37 +59,37 @@ class AnggotaCuCu extends Model {
 
     public function anggota_cu()
     {
-        return $this->belongsTo('App\Models\AnggotaCu','anggota_cu_id','id');
+        return $this->belongsTo(AnggotaCu::class,'anggota_cu_id','id');
     }
 
     public function anggota_cu_simple()
     {
-        return $this->belongsTo('App\Models\AnggotaCu','anggota_cu_id','id')->select('id','status_jalinan','tanggal_lahir');
+        return $this->belongsTo(AnggotaCu::class,'anggota_cu_id','id')->select('id','status_jalinan','tanggal_lahir');
     }
 
     public function cu()
     {
-        return $this->belongsTo('App\Models\Cu','cu_id','id')->select('id','no_ba','name','id_villages','id_districts','id_regencies','id_provinces','escete');
+        return $this->belongsTo(Cu::class,'cu_id','id')->select('id','no_ba','name','id_villages','id_districts','id_regencies','id_provinces','escete');
     }
 
     public function tp()
     {
-        return $this->belongsTo('App\Models\Tp','tp_id','id')->select('id','no_tp','name');
+        return $this->belongsTo(Tp::class,'tp_id','id')->select('id','no_tp','name');
     }
 
     public function jalinan_klaim()
     {
-        return $this->belongsTo('App\Models\JalinanKlaim','id','anggota_cu_cu_id');
+        return $this->belongsTo(JalinanKlaim::class,'id','anggota_cu_cu_id');
     }
 
     public function produk_cu()
     {
-        return $this->hasMany('App\Models\ProdukCu','id_cu','cu_id')->select('id','id_cu','name','tipe');
+        return $this->hasMany(ProdukCu::class,'id_cu','cu_id')->select('id','id_cu','name','tipe');
     }
 
     public function anggota_produk_cu()
     {
-        return $this->hasMany('App\Models\AnggotaProdukCu','anggota_cu_cu_id','id');
+        return $this->hasMany(AnggotaProdukCu::class,'anggota_cu_cu_id','id');
     }
 
     public function usia()

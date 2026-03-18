@@ -8,12 +8,14 @@
 			<div class="content-wrapper">
 				<div class="content">
 
+					<VeeForm :form="form" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit, setValues }">
+
 					<!-- message -->
 					<message v-if="errors.any('form') && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors.items">
 					</message>
 
 					<!-- main panel -->
-					<form @submit.prevent="save" data-vv-scope="form">
+					<form @submit.prevent="setValues(form) || handleSubmit(onValid)">
 
 						<!-- main form -->
 						<div class="card">
@@ -28,7 +30,7 @@
 											<h5>Kode:</h5>
 
 											<!-- text -->
-											<input type="text" name="name" class="form-control" placeholder="Silahkan masukkan kode" data-vv-as="Kode" v-model="form.name">
+											<input type="text" name="name" class="form-control" placeholder="Silahkan masukkan kode" v-model="form.name">
 
 											<!-- error message -->
 											<small class="text-muted">&nbsp;</small>
@@ -45,7 +47,7 @@
 												Judul Surat: <wajib-badge></wajib-badge></h5>
 
 											<!-- text -->
-											<input type="text" name="hal" class="form-control" placeholder="Silahkan masukkan judul surat"  v-validate="'required'" data-vv-as="judul surat" v-model="form.hal">
+											<Field name="hal" rules="required" v-model="form.hal" v-slot="{ field }"><input type="text" class="form-control" placeholder="Silahkan masukkan judul surat" v-bind="field"></Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.hal')">
@@ -65,14 +67,12 @@
 												Periode: <wajib-badge></wajib-badge> <info-icon :message="'Format: tahun. Contoh: 2019'"></info-icon></h5>
 
 											<!-- input -->
-											<cleave 
-												name="periode"
-												v-model="form.periode" 
-												class="form-control" 
-												:raw="false" 
-												:options="cleaveOption.year" 
-												placeholder="Silahkan masukkan periode"
-												v-validate="'required'" data-vv-as="Periode"></cleave>
+											<Field name="periode" rules="required" v-model="form.periode" v-slot="{ field }"><cleave
+												v-bind="field"
+												class="form-control"
+												:raw="false"
+												:options="cleaveOption.year"
+												placeholder="Silahkan masukkan periode"></cleave></Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.periode')">
@@ -90,7 +90,7 @@
 											<h5>Keterangan:</h5>
 
 											<!-- text -->
-											<input type="text" name="perihal" class="form-control" placeholder="Silahkan masukkan keterangan" data-vv-as="keterangan" v-model="form.keterangan">
+											<input type="text" name="perihal" class="form-control" placeholder="Silahkan masukkan keterangan" v-model="form.keterangan">
 
 											<!-- error message -->
 											<small class="text-muted">&nbsp;</small>
@@ -105,7 +105,7 @@
 											<h5>Pengirim:</h5>
 
 											<!-- text -->
-											<input type="text" name="pengirim" class="form-control" placeholder="Silahkan masukkan pengirim" data-vv-as="pengirim" v-model="form.pengirim">
+											<input type="text" name="pengirim" class="form-control" placeholder="Silahkan masukkan pengirim" v-model="form.pengirim">
 											
 											<!-- error message -->
 											<small class="text-muted">&nbsp;</small>
@@ -120,7 +120,7 @@
 											<h5>Diterima Melalui:</h5>
 
 											<!-- text -->
-											<input type="text" name="terima_melalui" class="form-control" placeholder="Silahkan masukkan diterima melalui" data-vv-as="diterima melalui" v-model="form.terima_melalui">
+											<input type="text" name="terima_melalui" class="form-control" placeholder="Silahkan masukkan diterima melalui" v-model="form.terima_melalui">
 
 											<!-- error message -->
 											<small class="text-muted">&nbsp;</small>
@@ -152,7 +152,7 @@
 											<h5>Tujuan:</h5>
 
 											<!-- text -->
-											<input type="text" name="tujuan" class="form-control" placeholder="Silahkan masukkan tujuan" data-vv-as="tujuan" v-model="form.tujuan">
+											<input type="text" name="tujuan" class="form-control" placeholder="Silahkan masukkan tujuan" v-model="form.tujuan">
 
 											<!-- error message -->
 											<small class="text-muted">&nbsp;</small>
@@ -173,11 +173,11 @@
 											</h5>
 
 											<!-- select -->
-											<select class="form-control" name="format" v-model="form.format" data-width="100%" v-validate="'required'" data-vv-as="format">
+											<Field as="select" name="format" rules="required" v-model="form.format" class="form-control" data-width="100%">
 												<option disabled value="">Silahkan pilih format</option>
 												<option value="upload">Upload</option>
 												<option value="link">Link</option>
-											</select>
+											</Field>
 
 											<!-- error message -->
 											<small class="text-muted text-danger" v-if="errors.has('form.format')">
@@ -230,6 +230,8 @@
 						</div>
 
 					</form>
+
+					</VeeForm>
 				</div>
 			</div>
 		</div>
@@ -242,6 +244,8 @@
 </template>
 
 <script>
+	import { Field } from 'vee-validate';
+	import VeeForm from '../../components/VeeForm.vue';
 	import { mapState } from 'pinia';
 	import { useAuthStore } from '../../stores/auth';
 	import { useSuratMasukStore } from '../../stores/suratMasuk';
@@ -260,6 +264,8 @@
 
 	export default {
 		components: {
+			VeeForm,
+			Field,
 			pageHeader,
 			appModal,
 			appImageUpload,
@@ -271,11 +277,14 @@
 			infoIcon,
 			DatePicker
 		},
-		data() {
+		setup() {
 			return {
 				suratMasukStore: useSuratMasukStore(),
-				cuStore: useCuStore(),
-				title: 'Tambah Surat Masuk',
+			cuStore: useCuStore(),
+			};
+		},
+		data() {
+			return {title: 'Tambah Surat Masuk',
 				titleDesc: 'Menambah surat masuk baru',
 				titleIcon: 'icon-plus3',
 				kelas: 'suratMasuk',
@@ -385,22 +394,19 @@
 					return
 				this.form.content = files[0];
 			},
-			save() {
+			onValid(values) {
 				const formData = toMulipartedForm(this.form, this.$route.meta.mode);
 
-				this.$validator.validateAll('form').then((result) => {
-					if (result) {
-						if(this.$route.meta.mode == 'edit'){
-							this.suratMasukStore.update([this.$route.params.id, formData]);
-						}else{
-							this.suratMasukStore.store(formData);
-						}
-						this.submited = false;
-					}else{
-						window.scrollTo(0, 0);
-						this.submited = true;
-					}
-				});
+				if(this.$route.meta.mode == 'edit'){
+					this.suratMasukStore.update([this.$route.params.id, formData]);
+				}else{
+					this.suratMasukStore.store(formData);
+				}
+				this.submited = false;
+			},
+			onInvalid() {
+				window.scrollTo(0, 0);
+				this.submited = true;
 			},
 			back(){
 				this.$router.push({name: this.kelas + 'Cu', params:{cu: this.currentUser.id_cu,tipe: 'semua', periode: this.momentYear() }});

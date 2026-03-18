@@ -8,7 +8,7 @@
 
         <!-- search row -->
         <div class="row">
-          <div class="col-md-12" v-for="(f, i, index) in filterCandidates">
+          <div class="col-md-12" v-for="(f, i, index) in filterCandidates" :key="index">
             <div class="row">
               <div class="col-md-3 pb-2" v-show="false">
                 <div class="input-group">
@@ -17,7 +17,7 @@
                   </span>
                   <select class="form-control" @input="selectColumn(f, i, $event)">
                     <option disabled value="">Silahkan masukkan kolom pencarian</option>
-                    <option v-for="x in columnData" :value="JSON.stringify(x)" :selected="f.column && x.name === f.column.name"
+                    <option v-for="x in columnData" :key="x" :value="JSON.stringify(x)" :selected="f.column && x.name === f.column.name"
                       v-if="x.filter && !x.disable">
                       {{x.title}}
                     </option>
@@ -31,7 +31,7 @@
                     <span class="input-group-text">Operator</span>
                   </span>
                   <select class="form-control" @input="selectOperator(f, i, $event)">
-                    <option v-for="y in fetchOperators(f)" :value="JSON.stringify(y)" :selected="f.operator && y.name === f.operator.name">
+                    <option v-for="y in fetchOperators(f)" :key="y" :value="JSON.stringify(y)" :selected="f.operator && y.name === f.operator.name">
                       {{y.title}}
                     </option>
                   </select>

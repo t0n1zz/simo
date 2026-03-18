@@ -1,8 +1,10 @@
 <?php
 namespace App\Models;
 
+use App\Models\AnggotaProdukCuTransaksi;
+use App\Models\ProdukCu;
 use Spatie\Activitylog\LogOptions;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Support\Dataviewer;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -13,7 +15,6 @@ class AnggotaProdukCu extends BaseEloquent {
     use \Awobaz\Compoships\Compoships;
 
     protected $table = 'anggota_produk_cu';
-    protected $dates = ['deleted_at'];
 
     public static $rules = [
         'anggota_cu_id' => 'required',
@@ -49,11 +50,11 @@ class AnggotaProdukCu extends BaseEloquent {
 
     public function produk_cu()
     {
-        return $this->belongsTo('App\Models\ProdukCu','produk_cu_id','id')->select('id','name','id_cu','tipe');
+        return $this->belongsTo(ProdukCu::class,'produk_cu_id','id')->select('id','name','id_cu','tipe');
     }
 
     public function transaksi(){
-        return $this->hasMany('App\Models\AnggotaProdukCuTransaksi','anggota_produk_cu_id','id');
+        return $this->hasMany(AnggotaProdukCuTransaksi::class,'anggota_produk_cu_id','id');
     }
 
     public function usia($tanggal_lahir)

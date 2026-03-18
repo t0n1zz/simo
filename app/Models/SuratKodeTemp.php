@@ -1,9 +1,11 @@
 <?php
 namespace App\Models;
 
+use App\Models\Surat;
+use App\Models\User;
 use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use App\Support\Dataviewer;
 use Spatie\Activitylog\Traits\LogsActivity;
 
@@ -12,7 +14,6 @@ class SuratKodeTemp extends Model {
     use Dataviewer, LogsActivity, SoftDeletes;
 
     protected $table = 'surat_kode_temp';
-    protected $dates = ['deleted_at'];
 
     public static $rules = [
         'kode' => 'required',
@@ -30,12 +31,12 @@ class SuratKodeTemp extends Model {
 
     public function surat()
     {
-        return $this->belongsTo('App\Models\Surat','id_surat','id')->select('id','kode');
+        return $this->belongsTo(Surat::class,'id_surat','id')->select('id','kode');
     }
 
     public function user()
     {
-        return $this->belongsTo('App\Models\User','id_user','id')->select('id','username');
+        return $this->belongsTo(User::class,'id_user','id')->select('id','username');
     }
 
     public function getActivitylogOptions(): LogOptions

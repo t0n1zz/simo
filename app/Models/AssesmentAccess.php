@@ -1,9 +1,15 @@
 <?php
 namespace App\Models;
 
+use App\Models\AssesmentAccessP1;
+use App\Models\AssesmentAccessP2;
+use App\Models\AssesmentAccessP3;
+use App\Models\AssesmentAccessP4;
+use App\Models\Cu;
+use App\Models\LaporanCu;
 use Spatie\Activitylog\LogOptions;
-use DB;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Support\Dataviewer;
 use App\Support\LaporanCuHelper;
@@ -14,7 +20,6 @@ class AssesmentAccess extends BaseEloquent {
     use Dataviewer, SoftDeletes;
 
     protected $table = 'assesment_access';
-    protected $dates = ['deleted_at'];
 
     public static $rules = [
         'id_cu' => 'required',
@@ -49,17 +54,17 @@ class AssesmentAccess extends BaseEloquent {
 
     public function Cu()
     {
-        return $this->belongsTo('App\Models\Cu','id_cu','id')->select('id','no_ba','name');
+        return $this->belongsTo(Cu::class,'id_cu','id')->select('id','no_ba','name');
     }
 
     public function LaporanCu()
     {
-        return $this->belongsTo('App\Models\LaporanCu','id_laporan_cu','id')->addSelect(['*',DB::raw(LaporanCuHelper::queryPEARLS())]);
+        return $this->belongsTo(LaporanCu::class,'id_laporan_cu','id')->addSelect(['*',DB::raw(LaporanCuHelper::queryPEARLS())]);
     }
 
     public function p1()
     {
-        return $this->belongsTo('App\Models\AssesmentAccessP1','id_p1','id')
+        return $this->belongsTo(AssesmentAccessP1::class,'id_p1','id')
         ->select(DB::raw('*,
         (IFNULL(p1a1_cu_penilaian, 0) + IFNULL(p1a2_cu_penilaian, 0) + 
          IFNULL(p1b3_cu_penilaian, 0) + IFNULL(p1b4_cu_penilaian, 0) + 
@@ -82,7 +87,7 @@ class AssesmentAccess extends BaseEloquent {
 
     public function p2()
     {
-        return $this->belongsTo('App\Models\AssesmentAccessP2','id_p2','id')
+        return $this->belongsTo(AssesmentAccessP2::class,'id_p2','id')
         ->select(DB::raw('*,
         (IFNULL(p2a1_cu_penilaian, 0) + IFNULL(p2a2_cu_penilaian, 0) + 
          IFNULL(p2a3_cu_penilaian, 0) + IFNULL(p2a4_cu_penilaian, 0) + 
@@ -119,7 +124,7 @@ class AssesmentAccess extends BaseEloquent {
 
     public function p3()
     {
-        return $this->belongsTo('App\Models\AssesmentAccessP3','id_p3','id')
+        return $this->belongsTo(AssesmentAccessP3::class,'id_p3','id')
         ->select(DB::raw('*,
         (IFNULL(p3a1_cu_penilaian, 0) + IFNULL(p3a2_cu_penilaian, 0) + 
          IFNULL(p3a3_cu_penilaian, 0) + IFNULL(p3a4_cu_penilaian, 0) + 
@@ -154,7 +159,7 @@ class AssesmentAccess extends BaseEloquent {
 
     public function p4()
     {
-        return $this->belongsTo('App\Models\AssesmentAccessP4','id_p4','id')
+        return $this->belongsTo(AssesmentAccessP4::class,'id_p4','id')
         ->select(DB::raw('*,
         (IFNULL(p4a1_cu_penilaian, 0) + IFNULL(p4a2_cu_penilaian, 0) + 
          IFNULL(p4a3_cu_penilaian, 0) + IFNULL(p4a4_cu_penilaian, 0) + 

@@ -1,8 +1,11 @@
 <?php
 namespace App\Models;
 
+use App\Models\AnggotaCu;
+use App\Models\Cu;
+use App\Models\Keahlian;
 use Spatie\Activitylog\LogOptions;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Support\Dataviewer;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -13,7 +16,6 @@ class Mentor extends BaseEloquent {
     use Dataviewer, LogsActivity, SoftDeletes;
 
     protected $table = 'mentor';
-    protected $dates = ['deleted_at'];
 
     protected $revisionEnabled = true;
     protected $revisionCleanup = true;
@@ -48,16 +50,16 @@ class Mentor extends BaseEloquent {
 
     public function anggota_cu()
     {
-        return $this->belongsTo('App\Models\AnggotaCu','anggota_cu_id','id');
+        return $this->belongsTo(AnggotaCu::class,'anggota_cu_id','id');
     }
 
     public function Cu()
     {
-        return $this->belongsTo('App\Models\Cu','id_cu','id')->select('id','no_ba','name','id_provinces')->withTrashed();
+        return $this->belongsTo(Cu::class,'id_cu','id')->select('id','no_ba','name','id_provinces')->withTrashed();
     }
 
     public function keahlian(){
-        return $this->belongsToMany('App\Models\Keahlian','mentor_keahlian')->withPivot('id','keahlian_id','mentor_id')->withTimestamps();
+        return $this->belongsToMany(Keahlian::class,'mentor_keahlian')->withPivot('id','keahlian_id','mentor_id')->withTimestamps();
     }
 
     public function getActivitylogOptions(): LogOptions

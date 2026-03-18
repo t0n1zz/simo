@@ -46,7 +46,7 @@ class AsetTetapGolonganController extends Controller{
 
 	public function store(Request $request)
 	{
-		$this->validate($request,AsetTetapGolongan::$rules);
+		$request->validate(AsetTetapGolongan::$rules);
 
 		$name = $request->name;
 

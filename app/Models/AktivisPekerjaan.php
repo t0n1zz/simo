@@ -1,8 +1,11 @@
 <?php
 namespace App\Models;
 
+use App\Models\Aktivis;
+use App\Models\Cu;
+use App\Models\Tp;
 use Spatie\Activitylog\LogOptions;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Support\Dataviewer;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -12,7 +15,6 @@ class AktivisPekerjaan extends Model {
     use Dataviewer, LogsActivity, SoftDeletes;
 
     protected $table = 'aktivis_pekerjaan';
-    protected $dates = ['deleted_at'];
 
     protected $fillable = [
         'id_aktivis','id_tempat','id_tp','lembaga_lain','tipe','name','tingkat','mulai','selesai','status','keterangan_tidak_aktif'
@@ -30,7 +32,7 @@ class AktivisPekerjaan extends Model {
     }
 
     public function aktivis(){
-        return $this->belongsTo('App\Models\Aktivis','id_aktivis','id');
+        return $this->belongsTo(Aktivis::class,'id_aktivis','id');
     }
 
     public function lembaga(){
@@ -38,11 +40,11 @@ class AktivisPekerjaan extends Model {
     }
 
     public function cu(){
-        return $this->belongsTo('App\Models\Cu','id_tempat','id')->select('id','no_ba','name')->withTrashed();
+        return $this->belongsTo(Cu::class,'id_tempat','id')->select('id','no_ba','name')->withTrashed();
     }
 
     public function tp(){
-        return $this->belongsTo('App\Models\Tp','id_tp','id')->select('id','name')->withTrashed();
+        return $this->belongsTo(Tp::class,'id_tp','id')->select('id','name')->withTrashed();
     }
 
 

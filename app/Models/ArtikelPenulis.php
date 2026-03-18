@@ -1,8 +1,10 @@
 <?php
 namespace App\Models;
 
+use App\Models\Artikel;
+use App\Models\Cu;
 use Spatie\Activitylog\LogOptions;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Support\Dataviewer;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -13,7 +15,6 @@ class ArtikelPenulis extends BaseEloquent {
     use Dataviewer, LogsActivity, Sluggable, SoftDeletes;
     
     protected $table = 'artikel_penulis';
-    protected $dates = ['deleted_at'];
 
     public static $rules = [
         'id_cu' => 'required',
@@ -41,7 +42,7 @@ class ArtikelPenulis extends BaseEloquent {
     ];
 
     public function artikel(){
-        return $this->hasMany('App\Models\Artikel','id_artikel_penulis','id')
+        return $this->hasMany(Artikel::class,'id_artikel_penulis','id')
                     ->where('status','=','1')
                     ->orderBy('created_at','desc')
                     ->take(3);
@@ -56,12 +57,12 @@ class ArtikelPenulis extends BaseEloquent {
 
     public function hasArtikel()
     {
-        return $this->hasMany('App\Models\Artikel','id_artikel_penulis','id');
+        return $this->hasMany(Artikel::class,'id_artikel_penulis','id');
     }
 
     public function Cu()
     {
-        return $this->belongsTo('App\Models\Cu','id_cu','id')->select('id','name');
+        return $this->belongsTo(Cu::class,'id_cu','id')->select('id','name');
     }
 
     public function getActivitylogOptions(): LogOptions

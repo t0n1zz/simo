@@ -1,6 +1,8 @@
 <template>
 	<div>
 
+		<VeeForm :form="form" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit, setValues }">
+
 		<!-- message -->
 		<message v-if="errors.any('form') && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors.items">
 		</message>
@@ -9,7 +11,7 @@
 		</message>
 
 		<!-- main panel -->
-		<form @submit.prevent="save" enctype="multipart/form-data" data-vv-scope="form">
+		<form @submit.prevent="setValues(form) || handleSubmit(onValid)" enctype="multipart/form-data">
 
 			<!-- if create_old -->
 			<div class="card" v-if="!canEditIdentitas">
@@ -25,7 +27,7 @@
 			</div>
 
 			<div class="card card-body" v-if="canEditIdentitas && mode == 'create_old'">
-				<button type="button" class="btn btn-light btn-block" @click.prevent="ubahCanEdit()"> <i class="icon-cross"></i> Batal Edit Identitas</button>	
+				<button type="button" class="btn btn-light btn-block" @click.prevent="ubahCanEdit()"> <i class="icon-cross"></i> Batal Edit Identitas</button>
 			</div>
 
 			<!-- identitas -->
@@ -58,21 +60,21 @@
 									No. KTP: <wajib-badge></wajib-badge></h6>
 
 								<!-- text -->
-								<cleave 
-									name="nik"
-									v-model="form.nik" 
-									class="form-control" 
-									:options="cleaveOption.number16"
-									placeholder="Silahkan masukkan no KTP"
-									v-validate="'required'" data-vv-as="No. KTP"></cleave>
-								
+								<Field name="nik" rules="required" v-model="form.nik" v-slot="{ field }">
+									<cleave
+										v-bind="field"
+										class="form-control"
+										:options="cleaveOption.number16"
+										placeholder="Silahkan masukkan no KTP"></cleave>
+								</Field>
+
 								<!-- error message -->
 								<small class="text-muted text-danger" v-if="errors.has('form.nik')">
 									<i class="icon-arrow-small-right"></i> {{ errors.first('form.nik') }}
 								</small>
 								<small class="text-muted" v-else>&nbsp;</small>
 							</div>
-						</div>  
+						</div>
 
 						<!-- nim_cu -->
 						<div class="col-md-4">
@@ -83,16 +85,16 @@
 									NIM Lembaga:</h6>
 
 								<!-- text -->
-								<cleave 
+								<cleave
 									name="nik"
-									v-model="form.nim_cu" 
-									class="form-control" 
+									v-model="form.nim_cu"
+									class="form-control"
 									:options="cleaveOption.number24"
 									placeholder="Silahkan masukkan no induk manajemen lembaga"></cleave>
 
 							</div>
 						</div>
-						
+
 						<!-- npwp -->
 						<div class="col-md-4">
 							<div class="form-group">
@@ -102,10 +104,10 @@
 									NPWP:</h6>
 
 								<!-- text -->
-								<cleave 
+								<cleave
 									name="nik"
-									v-model="form.npwp" 
-									class="form-control" 
+									v-model="form.npwp"
+									class="form-control"
 									:options="cleaveOption.number24"
 									placeholder="Silahkan masukkan npwp"></cleave>
 
@@ -122,7 +124,9 @@
 									Nama: <wajib-badge></wajib-badge></h6>
 
 								<!-- text -->
-								<input type="text" name="name" class="form-control" placeholder="Silahkan masukkan nama" v-validate="'required'" data-vv-as="Nama" v-model="form.name">
+								<Field name="name" rules="required" v-model="form.name" v-slot="{ field }">
+									<input type="text" class="form-control" placeholder="Silahkan masukkan nama" v-bind="field">
+								</Field>
 
 								<!-- error message -->
 								<small class="text-muted text-danger" v-if="errors.has('form.name')">
@@ -143,11 +147,11 @@
 								</h6>
 
 								<!-- select -->
-								<select class="form-control" name="kelamin" v-model="form.kelamin" data-width="100%" v-validate="'required'" data-vv-as="Gender">
+								<Field as="select" name="kelamin" rules="required" v-model="form.kelamin" class="form-control" data-width="100%">
 									<option disabled value="">Silahkan pilih gender</option>
 									<option value="LAKI-LAKI">Laki-laki</option>
 									<option value="PEREMPUAN">Perempuan</option>
-								</select>
+								</Field>
 
 								<!-- error message -->
 								<small class="text-muted text-danger" v-if="errors.has('form.kelamin')">
@@ -167,15 +171,15 @@
 									Tgl. Lahir: <wajib-badge></wajib-badge></h6>
 
 								<!-- input -->
-								<date-picker @dateSelected="form.tanggal_lahir = $event" :defaultDate="form.tanggal_lahir"></date-picker>	
-								<input v-model="form.tanggal_lahir" v-show="false" v-validate="'required'" data-vv-as="Tanggal Lahir"/>
-									
+								<date-picker @dateSelected="form.tanggal_lahir = $event" :defaultDate="form.tanggal_lahir"></date-picker>
+								<Field name="tanggal_lahir" rules="required" v-model="form.tanggal_lahir" v-show="false" />
+
 
 								<!-- error message -->
 								<small class="text-muted text-danger" v-if="errors.has('form.tanggal_lahir')">
 									<i class="icon-arrow-small-right"></i> {{ errors.first('form.tanggal_lahir') }}
 								</small>
-								<small class="text-muted" v-else>&nbsp;</small>	
+								<small class="text-muted" v-else>&nbsp;</small>
 
 							</div>
 						</div>
@@ -189,7 +193,9 @@
 									<i class="icon-cross2" v-if="errors.has('form.tempat_lahir')"></i>Tempat Lahir: <wajib-badge></wajib-badge></h6>
 
 								<!-- text -->
-								<input type="text" name="tempat_lahir" class="form-control" placeholder="Silahkan masukkan tempat lahir" v-model="form.tempat_lahir" v-validate="'required'" data-vv-as="Tempat Lahir">
+								<Field name="tempat_lahir" rules="required" v-model="form.tempat_lahir" v-slot="{ field }">
+									<input type="text" class="form-control" placeholder="Silahkan masukkan tempat lahir" v-bind="field">
+								</Field>
 
 								<!-- error message -->
 								<small class="text-muted text-danger" v-if="errors.has('form.tempat_lahir')">
@@ -230,13 +236,13 @@
 									Tinggi <small>(cm)</small>:</h6>
 
 								<!-- text -->
-								<cleave 
+								<cleave
 									name="tinggi"
-									v-model="form.tinggi" 
-									class="form-control" 
+									v-model="form.tinggi"
+									class="form-control"
 									:options="cleaveOption.number3"
 									placeholder="Silahkan masukkan tinggi"></cleave>
-								
+
 							</div>
 						</div>
 
@@ -276,7 +282,7 @@
 				</div>
 				<div class="card-body">
 
-					<form-lokasi :form="form"></form-lokasi>
+					<form-lokasi :form="form" :errors="errors"></form-lokasi>
 
 				</div>
 			</div>
@@ -350,7 +356,7 @@
 								<!-- error message -->
 							</div>
 						</div>
-						
+
 						<!-- anak -->
 						<template v-if="form.status == 'MENIKAH' || form.status == 'Duda/Janda'">
 							<div class="col-md-4"  v-for="(anak,index) in formAnak" :key="index">
@@ -362,7 +368,7 @@
 									<div class="input-group">
 										<!-- text -->
 										<input type="text" name="anak" class="form-control" placeholder="Silahkan masukkan nama anak" v-model="anak.name">
-										
+
 										<div class="input-group-btn">
 											<button class="btn btn-light" @click.prevent="removeAnak(index)">
 												<i class="icon-cross"></i>
@@ -377,13 +383,13 @@
 
 						<!-- punya anak -->
 						<div class="col-md-12" v-if="form.status == 'MENIKAH' || form.status == 'JANDA/DUDA'">
-							<button class="btn btn-light btn-block" @click.prevent="addAnak()"><i class="icon-plus3"></i> 
+							<button class="btn btn-light btn-block" @click.prevent="addAnak()"><i class="icon-plus3"></i>
 								<span v-if="formAnak.length == 0">Punya Anak</span>
 								<span v-else>Tambah Anak</span>
 							</button>
 						</div>
 
-					</div>	
+					</div>
 				</div>
 			</div>
 
@@ -457,7 +463,7 @@
 										<h6>Tgl. Jadi Anggota CU {{ index + 1}}:</h6>
 
 										<!-- text -->
-										<date-picker @dateSelected="cu.tanggal_masuk = $event" :defaultDate="cu.tanggal_masuk"></date-picker>	
+										<date-picker @dateSelected="cu.tanggal_masuk = $event" :defaultDate="cu.tanggal_masuk"></date-picker>
 
 									</div>
 								</div>
@@ -465,18 +471,18 @@
 								<div class="col-md-12">
 									<hr/>
 								</div>
-							</div> 
+							</div>
 						</div>
 
 						<div class="col-md-12">
 							<button class="btn btn-light btn-block" @click.prevent="addCU()"><i class="icon-plus3"></i>Tambah Keanggotan di CU
 							</button>
-						</div>	
+						</div>
 
 					</div>
 				</div>
 			</div>
-			
+
 			<!-- pekerjaan -->
 			<div class="card" v-if="mode == 'create_new'">
 				<div class="card-header bg-white">
@@ -496,14 +502,14 @@
 								</h6>
 
 								<!-- select -->
-								<select class="form-control" name="id_tempat" v-model="form.pekerjaan.id_tempat" data-width="100%" v-validate="'required'" data-vv-as="Tempat pekerjaan" :disabled="modelCu.length == 0" @change="changeLembagaPekerjaan($event.target.value)">
+								<Field as="select" name="pekerjaan.id_tempat" rules="required" v-model="form.pekerjaan.id_tempat" class="form-control" data-width="100%" :disabled="modelCu.length == 0" @change="changeLembagaPekerjaan($event.target.value)">
 									<option disabled value="">
 										<span v-if="modelCuStat === 'loading'">Mohon tunggu...</span>
 										<span v-else>Silahkan pilih tempat bekerja</span>
 									</option>
 									<option value="0">PUSKOPCUINA</option>
 									<option v-for="(cu, index) in modelCu" :value="cu.id" :key="index">{{cu.name}}</option>
-								</select>
+								</Field>
 
 								<!-- error message -->
 								<small class="text-muted text-danger" v-if="errors.has('form.pekerjaan.id_tempat')">
@@ -545,7 +551,7 @@
 								</h6>
 
 								<!-- select -->
-								<select class="form-control" name="pekerjaan_tingkat" v-model="form.pekerjaan.tingkat" data-width="100%" v-validate="'required'" data-vv-as="Tingkat Pekerjaan">
+								<Field as="select" name="pekerjaan.tingkat" rules="required" v-model="form.pekerjaan.tingkat" class="form-control" data-width="100%">
 									<option disabled value="">Silahkan pilih tingkat pekerjaan</option>
 									<option value="1" v-if="form.pekerjaan.id_tempat != 'lain'">Pengurus</option>
 									<option value="2" v-if="form.pekerjaan.id_tempat != 'lain'">Pengawas</option>
@@ -560,7 +566,7 @@
 									<option value="11">Kelompok Inti</option>
 									<option value="12">Supporting Unit</option>
 									<option value="13">Vendor sMartCU</option>
-								</select>
+								</Field>
 
 								<!-- error message -->
 								<small class="text-muted text-danger" v-if="errors.has('form.pekerjaan.tingkat')">
@@ -579,7 +585,9 @@
 									Jabatan: <wajib-badge></wajib-badge></h6>
 
 								<!-- text -->
-								<input type="text" name="jabatan" class="form-control" placeholder="Silahkan masukkan nama jabatan" v-validate="'required|min:5'" data-vv-as="Jabatan pekerjaan" v-model="form.pekerjaan.name">
+								<Field name="pekerjaan.name" rules="required|min:5" v-model="form.pekerjaan.name" v-slot="{ field }">
+									<input type="text" class="form-control" placeholder="Silahkan masukkan nama jabatan" v-bind="field">
+								</Field>
 
 								<!-- error message -->
 								<small class="text-muted text-danger" v-if="errors.has('form.pekerjaan.name')">
@@ -600,7 +608,7 @@
 								</h6>
 
 								<!-- select -->
-								<select class="form-control" name="id_tp" v-model="form.pekerjaan.id_tp" data-width="100%" v-validate="'required'" data-vv-as="TP/KP">
+								<Field as="select" name="pekerjaan.id_tp" rules="required" v-model="form.pekerjaan.id_tp" class="form-control" data-width="100%">
 									<option disabled value="">
 										<span v-if="modelTpStat === 'loading'">Mohon tunggu...</span>
 										<span v-else>Silahkan pilih TP/KP</span>
@@ -609,7 +617,7 @@
 									<template v-if="modelTp">
 										<option v-for="(tp, index) in modelTp" :value="tp.id" :key="index" >{{tp.name}}</option>
 									</template>
-								</select>
+								</Field>
 
 								<!-- error message -->
 								<small class="text-muted text-danger" v-if="errors.has('form.pekerjaan.id_tp')">
@@ -629,8 +637,8 @@
 									Tgl. Mulai: <wajib-badge></wajib-badge></h6>
 
 								<!-- input -->
-								<date-picker @dateSelected="form.pekerjaan.mulai = $event" :defaultDate="form.pekerjaan.mulai"></date-picker>	
-								<input v-model="form.pekerjaan.mulai" v-show="false" v-validate="'required'" data-vv-as="Tgl. mulai"/>
+								<date-picker @dateSelected="form.pekerjaan.mulai = $event" :defaultDate="form.pekerjaan.mulai"></date-picker>
+								<Field name="pekerjaan.mulai" rules="required" v-model="form.pekerjaan.mulai" v-show="false" />
 
 								<!-- error message -->
 								<small class="text-muted text-danger" v-if="errors.has('form.pekerjaan.mulai')">
@@ -672,7 +680,7 @@
 			</div>
 
 			<!-- form info -->
-			<form-info></form-info>	
+			<form-info></form-info>
 			<br/>
 
 			<!-- form button -->
@@ -692,6 +700,8 @@
 
 		</form>
 
+		</VeeForm>
+
 		<!-- modal -->
 		<app-modal :show="modalShow" :state="modalState" :title="modalTitle" :content="modalContent" :color="modalColor" @batal="modalTutup" @tutup="modalTutup" @successOk="modalTutup" @failOk="modalTutup"  @backgroundClick="modalBackgroundClick">
 		</app-modal>
@@ -700,6 +710,8 @@
 </template>
 
 <script>
+	import { Field } from 'vee-validate';
+	import VeeForm from '../../components/VeeForm.vue';
 	import { useAuthStore } from '../../stores/auth';
 	import { useAktivisStore } from '../../stores/aktivis';
 	import { useCuStore } from '../../stores/cu';
@@ -722,7 +734,7 @@
 	import appImageUpload from '../../components/ImageUpload.vue';
 	import identitas from "../../components/identitas2.vue";
 	import DatePicker from "../../components/datePicker.vue";
-	
+
 	export default {
 		props: ['mode','nik','id_aktivis'],
 		components: {
@@ -738,19 +750,24 @@
 			infoIcon,
 			wajibBadge,
 			identitas,
-			DatePicker
+			DatePicker,
+			Field,
+			VeeForm
 		},
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				aktivisStore: useAktivisStore(),
-				cuStore: useCuStore(),
-				tpStore: useTpStore(),
-				regenciesStore: useRegenciesStore(),
-				districtsStore: useDistrictsStore(),
-				villagesStore: useVillagesStore(),
-				provincesStore: useProvincesStore(),
-				kelas: 'aktivis',
+			aktivisStore: useAktivisStore(),
+			cuStore: useCuStore(),
+			tpStore: useTpStore(),
+			regenciesStore: useRegenciesStore(),
+			districtsStore: useDistrictsStore(),
+			villagesStore: useVillagesStore(),
+			provincesStore: useProvincesStore(),
+			};
+		},
+		data() {
+			return {kelas: 'aktivis',
 				confirmIcon: 'icon-arrow-right14',
 				confirmTitle: 'Lanjut ke riwayat',
 				canEditIdentitas: true,
@@ -867,11 +884,11 @@
 
 				if(this.mode == 'edit' || this.mode == 'createEdit'){
 					this.aktivisStore.edit(this.$route.params.id);
-				} 
+				}
 
 				if(this.mode == 'edit_profile'){
 					this.aktivisStore.edit(this.id_aktivis);
-				} 
+				}
 
 				if(this.modelCuStat != 'success'){
 					this.cuStore.getHeader();
@@ -884,14 +901,14 @@
 				}else if(this.mode == 'create_new'){
 					this.form.nik = this.nik;
 				}
-				
+
 				if(this.currentUser.id_cu != 0 && this.mode == 'create_new'){
 					this.form.pekerjaan.id_tempat = this.currentUser.id_cu;
 					this.changeLembagaPekerjaan(this.currentUser.id_cu);
 				}
 			},
 			loadData(){
-				if(this.form.keluarga){	
+				if(this.form.keluarga){
 					var valData;
 					var keluarga = {};
 					this.formAnak = [];
@@ -919,7 +936,7 @@
 					this.formCU = this.form.anggota_cu;
 				}
 			},
-			save() {
+			onValid(values) {
 				this.form.anak = this.formAnak;
 				this.form.anak_removed = this.formAnakRemoved;
 				this.form.anggota_cu = this.formCU;
@@ -936,7 +953,7 @@
 						this.form.pekerjaan.id_tempat = this.currentUser.id_cu;
 					}
 				}
-				
+
 				if(this.mode == 'edit' || this.mode == 'edit_profile' || (this.mode == 'create_old' && this.canEditIdentitas)){
 					if(this.form.ayah){
 						this.form.ayah.name = this.form.keluarga.ayah;
@@ -948,26 +965,23 @@
 						this.form.pasangan.name = this.form.keluarga.pasangan;
 					}
 				}
-				
+
 				const formData = toMulipartedForm(this.form, this.$route.meta.mode);
-				this.$validator.validateAll('form').then((result) => {
-					if (result) {
-						if(this.mode == 'create_new'){
-							if(this.form.pekerjaan.tipe != ''){
-								this.aktivisStore.store(formData);
-							}else{
-								this.message.show = true;
-								this.message.content = 'Silahkan melengkapi informasi jabatan saat ini terlebih dahulu.';
-							}
-						}else{
-								this.aktivisStore.update([this.form.id, formData]);	
-						}
-						this.submited = false;
+				if(this.mode == 'create_new'){
+					if(this.form.pekerjaan.tipe != ''){
+						this.aktivisStore.store(formData);
 					}else{
-						window.scrollTo(0, 0);
-						this.submited = true;
+						this.message.show = true;
+						this.message.content = 'Silahkan melengkapi informasi jabatan saat ini terlebih dahulu.';
 					}
-				});
+				}else{
+						this.aktivisStore.update([this.form.id, formData]);
+				}
+				this.submited = false;
+			},
+			onInvalid() {
+				window.scrollTo(0, 0);
+				this.submited = true;
 			},
 			changeLembagaPekerjaan(value){
 				if(value == 0){

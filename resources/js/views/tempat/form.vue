@@ -65,7 +65,7 @@
 												<!-- select -->
 												<select class="form-control" name="id_provinces" v-model="form.id_provinces" data-width="100%" :disabled="!modelProvinces || modelProvinces.length === 0" @change="changeProvinces($event.target.value)">
 													<option disabled value="">Silahkan pilih Provinsi</option>
-													<option v-for="provinces in modelProvinces" :value="provinces.id">{{provinces.name}}</option>
+													<option v-for="provinces in modelProvinces" :key="provinces.id" :value="provinces.id">{{provinces.name}}</option>
 												</select>
 
 												<!-- error message -->
@@ -92,7 +92,7 @@
 														<span v-if="modelRegenciesStat === 'loading'"><i class="icon-spinner spinner"></i></span>
 														<span v-else>Silahkan pilih kabupaten</span>
 													</option>
-													<option v-for="regencies in modelRegencies" :value="regencies.id">{{regencies.name}}</option>
+													<option v-for="regencies in modelRegencies" :key="regencies.id" :value="regencies.id">{{regencies.name}}</option>
 												</select>
 
 												<!-- error message -->
@@ -119,7 +119,7 @@
 														<span v-if="modelDistrictsStat === 'loading'"><i class="icon-spinner spinner"></i></span>
 														<span v-else>Silahkan pilih kecamatan</span>
 													</option>
-													<option v-for="districts in modelDistricts" :value="districts.id">{{districts.name}}</option>
+													<option v-for="districts in modelDistricts" :key="districts.id" :value="districts.id">{{districts.name}}</option>
 												</select>
 
 												<!-- error message -->
@@ -146,7 +146,7 @@
 														<span v-if="modelVillagesStat === 'loading'"><i class="icon-spinner spinner"></i> mohon tunggu</span>
 														<span v-else>Silahkan pilih kelurahan</span>
 													</option>
-													<option v-for="villages in modelVillages" :value="villages.id">{{villages.name}}</option>
+													<option v-for="villages in modelVillages" :key="villages.id" :value="villages.id">{{villages.name}}</option>
 												</select>
 
 												<!-- error message -->

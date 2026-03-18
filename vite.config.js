@@ -28,7 +28,7 @@ export default defineConfig({
             '@': fileURLToPath(new URL('./resources/js', import.meta.url)),
             '@components': fileURLToPath(new URL('./resources/js/components', import.meta.url)),
             '@views': fileURLToPath(new URL('./resources/js/views', import.meta.url)),
-            '@store': fileURLToPath(new URL('./resources/js/store', import.meta.url)),
+            '@stores': fileURLToPath(new URL('./resources/js/stores', import.meta.url)),
             '@api': fileURLToPath(new URL('./resources/js/api', import.meta.url)),
             '@helpers': fileURLToPath(new URL('./resources/js/helpers', import.meta.url)),
             'vue': 'vue/dist/vue.esm-bundler.js',

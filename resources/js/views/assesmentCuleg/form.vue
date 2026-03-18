@@ -568,12 +568,7 @@ export default {
     kesimpulan
   },
   data() {
-    return {
-      authStore: useAuthStore(),
-      assesmentCulegStore: useAssesmentCulegStore(),
-      cuStore: useCuStore(),
-      laporanCuStore: useLaporanCuStore(),
-      title: "Self Assesment CULEG",
+    return {title: "Self Assesment CULEG",
       titleDesc: "Menambah self assesment CULEG",
       titleIcon: "icon-plus3",
       level2Title: "Assesment Culeg",

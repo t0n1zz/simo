@@ -51,11 +51,14 @@
 			selectCu,
 			tableData,
 		},
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				artikelPenulisStore: useArtikelPenulisStore(),
-				title: 'Penulis Artikel',
+			artikelPenulisStore: useArtikelPenulisStore(),
+			};
+		},
+		data() {
+			return {title: 'Penulis Artikel',
 				kelas: 'artikelPenulis',
 				titleDesc: 'Mengelola data penulis artikel',
 				titleIcon: 'icon-pencil6',

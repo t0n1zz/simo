@@ -48,7 +48,7 @@ class TempatController extends Controller{
 
 	public function store(Request $request)
 	{
-		$this->validate($request,Tempat::$rules);
+		$request->validate(Tempat::$rules);
 
 		$name = $request->name;
 
@@ -83,7 +83,7 @@ class TempatController extends Controller{
 
 	public function update(Request $request, $id)
 	{
-		$this->validate($request,Tempat::$rules);
+		$request->validate(Tempat::$rules);
 
 		$name = $request->name;
 

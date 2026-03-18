@@ -28,7 +28,7 @@
 
             <!-- search row -->
             <div class="row">
-              <div class="col-md-12" v-for="(f, i, index) in filterCandidates">
+              <div class="col-md-12" v-for="(f, i, index) in filterCandidates" :key="index">
                 <div class="row">
 
                   <div class="col-md-3 pb-2">

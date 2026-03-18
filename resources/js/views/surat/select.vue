@@ -135,12 +135,15 @@
 
 	export default {
 		props: ['kelas'],
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				suratStore: useSuratStore(),
-				suratKodeStore: useSuratKodeStore(),
-				tipe: '',
+			suratStore: useSuratStore(),
+			suratKodeStore: useSuratKodeStore(),
+			};
+		},
+		data() {
+			return {tipe: '',
 				periode: '',
 			};
 		},

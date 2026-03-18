@@ -38,14 +38,15 @@
 		<div class="page-content pt-0">
 			<div class="content-wrapper">
 				<div class="content">
-					<form @submit.prevent="save" enctype="multipart/form-data" data-vv-scope="form">
+					<VeeForm :form="form" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit, setValues }">
+					<form @submit.prevent="setValues(form) || handleSubmit(onValid)" enctype="multipart/form-data">
 
 						<div class="card card-body">
 							<div class="row">
 								<div class="col-md-12">
 									<div class="form-group">
 										<h5>Silahkan masukan kode voting</h5>
-										<input type="text" name="kode" class="form-control" placeholder="Silahkan masukkan kode voting" v-validate="'required'" data-vv-as="kode" v-model="form.kode">
+										<Field name="kode" rules="required" v-model="form.kode" v-slot="{ field }"><input type="text" class="form-control" placeholder="Silahkan masukkan kode voting" v-bind="field"></Field>
 									</div>
 								</div>
 								<div class="col-md-12">
@@ -57,6 +58,7 @@
 						</div>
 
 					</form>
+					</VeeForm>
 				</div>
 			</div>
 		</div>
@@ -65,12 +67,16 @@
 </template>
 
 <script>
+	import { Field } from 'vee-validate';
+	import VeeForm from '../../components/VeeForm.vue';
 	import message from "../../components/message.vue";
 	import appModal from '../../components/modal.vue';
 	import checkValue from '../../components/checkValue.vue';
 
 	export default {
 		components: {
+			VeeForm,
+			Field,
 			message,
 			appModal,
 			checkValue,
@@ -98,8 +104,11 @@
 		watch: {
 		},
 		methods: {
-			save(){
+			onValid(values){
 				window.location.href = window.location.origin + '/admins/voting/pilih/' + this.form.kode;
+			},
+			onInvalid(){
+				window.scrollTo(0, 0);
 			},
 		},
 		computed: {

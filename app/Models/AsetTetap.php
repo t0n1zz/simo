@@ -2,9 +2,15 @@
 
 namespace App\Models;
 
+use App\Models\Aktivis;
+use App\Models\AsetTetap;
+use App\Models\AsetTetapGolongan;
+use App\Models\AsetTetapJenis;
+use App\Models\AsetTetapKelompok;
+use App\Models\AsetTetapLokasi;
 use Spatie\Activitylog\LogOptions;
-use DB;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Support\Dataviewer;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -15,7 +21,6 @@ class AsetTetap extends BaseEloquent
     use Dataviewer, LogsActivity, SoftDeletes;
 
     protected $table = 'aset_tetap';
-    protected $dates = ['deleted_at'];
 
     public static $rules = [
         'name' => 'required',
@@ -61,42 +66,42 @@ class AsetTetap extends BaseEloquent
 
     public function aset()
     {
-        return $this->belongsTo('App\Models\AsetTetap', 'aset_id', 'id');
+        return $this->belongsTo(AsetTetap::class, 'aset_id', 'id');
     }
 
     public function hasAset()
     {
-        return $this->hasMany('App\Models\AsetTetap', 'aset_id', 'id');
+        return $this->hasMany(AsetTetap::class, 'aset_id', 'id');
     }
 
     public function aktivis()
     {
-        return $this->belongsTo('App\Models\Aktivis', 'aktivis_id', 'id');
+        return $this->belongsTo(Aktivis::class, 'aktivis_id', 'id');
     }
 
     public function pembeli()
     {
-        return $this->belongsTo('App\Models\Aktivis', 'aktivis_id_pembeli', 'id');
+        return $this->belongsTo(Aktivis::class, 'aktivis_id_pembeli', 'id');
     }
 
     public function golongan()
     {
-        return $this->belongsTo('App\Models\AsetTetapGolongan', 'aset_tetap_golongan_id', 'id');
+        return $this->belongsTo(AsetTetapGolongan::class, 'aset_tetap_golongan_id', 'id');
     }
 
     public function kelompok()
     {
-        return $this->belongsTo('App\Models\AsetTetapKelompok', 'aset_tetap_kelompok_id', 'id');
+        return $this->belongsTo(AsetTetapKelompok::class, 'aset_tetap_kelompok_id', 'id');
     }
 
     public function jenis()
     {
-        return $this->belongsTo('App\Models\AsetTetapJenis', 'aset_tetap_jenis_id', 'id');
+        return $this->belongsTo(AsetTetapJenis::class, 'aset_tetap_jenis_id', 'id');
     }
 
     public function lokasi()
     {
-        return $this->belongsTo('App\Models\AsetTetapLokasi', 'aset_tetap_lokasi_id', 'id');
+        return $this->belongsTo(AsetTetapLokasi::class, 'aset_tetap_lokasi_id', 'id');
     }
 
     public function getActivitylogOptions(): LogOptions

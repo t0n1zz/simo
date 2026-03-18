@@ -112,13 +112,16 @@
 			Cleave,
 			singleFileUpload
 		},
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				anggotaCuImportEsceteStore: useAnggotaCuImportEsceteStore(),
-				fileUploadStore: useFileUploadStore(),
-				cuStore: useCuStore(),
-				// tipe:'single',
+			anggotaCuImportEsceteStore: useAnggotaCuImportEsceteStore(),
+			fileUploadStore: useFileUploadStore(),
+			cuStore: useCuStore(),
+			};
+		},
+		data() {
+			return {// tipe:'single',
 				// cekTipe:true,
 				isLoading:true,
 				selectedItem:null,

@@ -155,7 +155,7 @@
 													:options="cleaveOption.number3" 
 													placeholder="Silahkan masukkan pemilihan minimum"
 													v-bind="field"
-													@blur.native="min"
+													@blur="min"
 												></cleave>
 											</Field>
 
@@ -188,7 +188,7 @@
 													:options="cleaveOption.number3" 
 													placeholder="Silahkan masukkan pemilihan maximum"
 													v-bind="field"
-													@blur.native="max"
+													@blur="max"
 												></cleave>
 											</Field>
 

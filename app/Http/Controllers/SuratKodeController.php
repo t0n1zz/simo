@@ -81,7 +81,7 @@ class SuratKodeController extends Controller{
 
 	public function store(Request $request)
 	{
-		$this->validate($request,SuratKode::$rules);
+		$request->validate(SuratKode::$rules);
 
 		$name = $request->name;
 		
@@ -108,7 +108,7 @@ class SuratKodeController extends Controller{
 
 	public function update(Request $request, $id)
 	{
-		$this->validate($request,SuratKode::$rules);
+		$request->validate(SuratKode::$rules);
 
 		$name = $request->name;
 

@@ -1,12 +1,14 @@
 <template>
 	<div>
 
+		<VeeForm :form="form" :on-invalid-submit="onInvalid" v-slot="{ errors, handleSubmit, setValues }">
+
 		<!-- message -->
 		<message v-if="errors.any('form') && submited" :title="'Oops, terjadi kesalahan'" :errorItem="errors.items">
 		</message>
 
 		<!-- main panel -->
-		<form @submit.prevent="save" data-vv-scope="form">
+		<form @submit.prevent="setValues(form) || handleSubmit(onValid)">
 
 			<!-- if create_old -->
 			<div class="card" v-if="mode == 'create_old'">
@@ -76,7 +78,7 @@
 									No. KTP: <wajib-badge></wajib-badge></h6>
 
 								<!-- text -->
-								<input type="text" name="nik" class="form-control" placeholder="Silahkan masukkan no. KTP" v-validate="'required'" data-vv-as="No. KTP" v-model="form.nik" readonly>
+								<Field name="nik" rules="required" v-model="form.nik" v-slot="{ field }"><input type="text" class="form-control" placeholder="Silahkan masukkan no. KTP" v-bind="field" readonly></Field>
 								
 								<!-- error message -->
 								<small class="text-muted text-danger" v-if="errors.has('form.nik')">
@@ -133,8 +135,7 @@
 									Nama: <wajib-badge></wajib-badge></h6>
 
 								<!-- text -->
-								<input type="text" name="name" class="form-control" placeholder="Silahkan masukkan nama" v-validate="'required'"
-									data-vv-as="Nama" v-model="form.name" :disabled="isESCETE">
+								<Field name="name" rules="required" v-model="form.name" v-slot="{ field }"><input type="text" class="form-control" placeholder="Silahkan masukkan nama" v-bind="field" :disabled="isESCETE"></Field>
 
 								<!-- error message -->
 								<small class="text-muted text-danger" v-if="errors.has('form.name')">
@@ -154,8 +155,7 @@
 									Nama Ahli Waris: <wajib-badge></wajib-badge></h6>
 
 								<!-- text -->
-								<input type="text" name="ahli_waris" class="form-control" placeholder="Silahkan masukkan nama ahli waris" v-validate="'required'"
-									data-vv-as="Nama ahli waris" v-model="form.ahli_waris" :disabled="isESCETE">
+								<Field name="ahli_waris" rules="required" v-model="form.ahli_waris" v-slot="{ field }"><input type="text" class="form-control" placeholder="Silahkan masukkan nama ahli waris" v-bind="field" :disabled="isESCETE"></Field>
 
 								<!-- error message -->
 								<small class="text-muted text-danger" v-if="errors.has('form.ahli_waris')">
@@ -189,12 +189,11 @@
 								</h6>
 
 								<!-- select -->
-								<select class="form-control" name="kelamin" v-model="form.kelamin" data-width="100%" v-validate="'required'" :disabled="isESCETE"
-									data-vv-as="Gender">
+								<Field as="select" name="kelamin" rules="required" v-model="form.kelamin" class="form-control" data-width="100%" :disabled="isESCETE">
 									<option disabled value="">Silahkan pilih gender</option>
 									<option value="LAKI-LAKI">Laki-laki</option>
 									<option value="PEREMPUAN">Perempuan</option>
-								</select>
+								</Field>
 
 								<!-- error message -->
 								<small class="text-muted text-danger" v-if="errors.has('form.kelamin')">
@@ -215,11 +214,11 @@
 
 								<!-- input -->
 								 <template v-if="isESCETE">
-										<input v-model="form.tanggal_lahir" class="form-control" name="tanggal_lahir" v-validate="'required'" data-vv-as="Tanggal lahir" :disabled="isESCETE"/>
+										<Field name="tanggal_lahir" rules="required" v-model="form.tanggal_lahir" v-slot="{ field }"><input class="form-control" v-bind="field" :disabled="isESCETE"/></Field>
 								 </template>
 								 <template v-else>
-									 <date-picker @dateSelected="form.tanggal_lahir = $event" :defaultDate="form.tanggal_lahir"></date-picker>	
-									 <input v-model="form.tanggal_lahir" name="tanggal_lahir" v-show="false" v-validate="'required'" data-vv-as="Tanggal lahir"/>
+									 <date-picker @dateSelected="form.tanggal_lahir = $event" :defaultDate="form.tanggal_lahir"></date-picker>
+									 <Field name="tanggal_lahir" rules="required" v-model="form.tanggal_lahir" v-show="false" />
 								 </template>
 
 								<!-- error message -->
@@ -240,7 +239,7 @@
 									<i class="icon-cross2" v-if="errors.has('form.tempat_lahir')"></i>Tempat Lahir: <wajib-badge></wajib-badge></h6>
 
 								<!-- text -->
-								<input type="text" name="tempat_lahir" class="form-control" placeholder="Silahkan masukkan tempat lahir" v-model="form.tempat_lahir" v-validate="'required'" data-vv-as="Tempat Lahir" :disabled="isESCETE">
+								<Field name="tempat_lahir" rules="required" v-model="form.tempat_lahir" v-slot="{ field }"><input type="text" class="form-control" placeholder="Silahkan masukkan tempat lahir" v-bind="field" :disabled="isESCETE"></Field>
 
 								<!-- error message -->
 								<small class="text-muted text-danger" v-if="errors.has('form.tempat_lahir')">
@@ -497,10 +496,10 @@
 								</h6>
 
 								<!-- select -->
-								<select class="form-control" name="id_provinces" v-model="form.id_provinces" data-width="100%" v-validate="'required'" data-vv-as="Provinsi" :disabled="modelProvinces.length == 0 || isESCETE" @change="changeProvinces($event.target.value)">
+								<Field as="select" name="id_provinces" rules="required" v-model="form.id_provinces" class="form-control" data-width="100%" :disabled="modelProvinces.length == 0 || isESCETE" @change="changeProvinces($event.target.value)">
 									<option disabled value="">Silahkan pilih provinsi</option>
 									<option v-for="(provinces, index) in modelProvinces" :key="index" :value="provinces.id">{{provinces.name}}</option>
-								</select>
+								</Field>
 
 								<!-- error message -->
 								<small class="text-muted text-danger" v-if="errors.has('form.id_provinces')">
@@ -521,13 +520,13 @@
 								</h6>
 
 								<!-- select -->
-								<select class="form-control"  name="id_regencies" v-model="form.id_regencies" data-width="100%" v-validate="'required'" data-vv-as="Kabupaten" @change="changeRegencies($event.target.value)" :disabled="modelRegencies.length === 0 || isESCETE">
+								<Field as="select" name="id_regencies" rules="required" v-model="form.id_regencies" class="form-control" data-width="100%" @change="changeRegencies($event.target.value)" :disabled="modelRegencies.length === 0 || isESCETE">
 									<option disabled value="">
 										<span v-if="modelRegenciesStat === 'loading'">Mohon tunggu...</span>
 										<span v-else>Silahkan pilih kabupaten</span>
 									</option>
 									<option v-for="(regencies, index) in modelRegencies" :key="index" :value="regencies.id">{{regencies.name}}</option>
-								</select>
+								</Field>
 
 								<!-- error message -->
 								<small class="text-muted text-danger" v-if="errors.has('form.id_regencies')">
@@ -548,13 +547,13 @@
 								</h6>
 
 								<!-- select -->
-								<select class="form-control"  name="id_districts" v-model="form.id_districts" data-width="100%" v-validate="'required'" data-vv-as="Kabupaten" :disabled="modelDistricts.length === 0 || isESCETE" @change="changeDistricts($event.target.value)">
+								<Field as="select" name="id_districts" rules="required" v-model="form.id_districts" class="form-control" data-width="100%" :disabled="modelDistricts.length === 0 || isESCETE" @change="changeDistricts($event.target.value)">
 									<option disabled value="">
 										<span v-if="modelDistrictsStat === 'loading'">Mohon tunggu...</span>
 										<span v-else>Silahkan pilih kecamatan</span>
 									</option>
 									<option v-for="(districts, index) in modelDistricts" :key="index" :value="districts.id">{{districts.name}}</option>
-								</select>
+								</Field>
 
 								<!-- error message -->
 								<small class="text-muted text-danger" v-if="errors.has('form.id_regency')">
@@ -575,13 +574,13 @@
 								</h6>
 
 								<!-- select -->
-								<select class="form-control"  name="id_villages" v-model="form.id_villages" data-width="100%" v-validate="'required'" data-vv-as="Desa" :disabled="modelVillages.length === 0 || isESCETE">
+								<Field as="select" name="id_villages" rules="required" v-model="form.id_villages" class="form-control" data-width="100%" :disabled="modelVillages.length === 0 || isESCETE">
 									<option disabled value="">
 										<span v-if="modelVillagesStat === 'loading'">Mohon tunggu... mohon tunggu</span>
 										<span v-else>Silahkan pilih kelurahan</span>
 									</option>
 									<option v-for="(villages, index) in modelVillages" :key="index" :value="villages.id">{{villages.name}}</option>
-								</select>
+								</Field>
 
 								<!-- error message -->
 								<small class="text-muted text-danger" v-if="errors.has('form.id_villages')">
@@ -642,7 +641,7 @@
 									Alamat: <wajib-badge></wajib-badge></h6>
 
 								<!-- text -->
-								<input type="text" name="alamat" class="form-control" placeholder="Silahkan masukkan alamat" v-validate="'required|min:5'" data-vv-as="Alamat" v-model="form.alamat" :disabled="isESCETE">
+								<Field name="alamat" rules="required|min:5" v-model="form.alamat" v-slot="{ field }"><input type="text" class="form-control" placeholder="Silahkan masukkan alamat" v-bind="field" :disabled="isESCETE"></Field>
 
 								<!-- error message -->
 								<small class="text-muted text-danger" v-if="errors.has('form.alamat')">
@@ -683,7 +682,7 @@
 									Email:</h6>
 
 								<!-- text -->
-								<input type="text" name="email" class="form-control" placeholder="Silahkan masukkan alamat email" v-validate="'email'" data-vv-as="Email" v-model="form.email" :disabled="isESCETE">
+								<Field name="email" rules="email" v-model="form.email" v-slot="{ field }"><input type="text" class="form-control" placeholder="Silahkan masukkan alamat email" v-bind="field" :disabled="isESCETE"></Field>
 
 								<!-- error message -->
 								<small class="text-muted text-danger" v-if="errors.has('form.email')">
@@ -775,10 +774,10 @@
 										</h6>
 
 										<!-- select -->
-										<select class="form-control" name="id_tp" v-model="form.tp_id" data-width="100%" v-validate="'required'" data-vv-as="TP/KP" :disabled="isESCETE">
+										<Field as="select" name="id_tp" rules="required" v-model="form.tp_id" class="form-control" data-width="100%" :disabled="isESCETE">
 											<option disabled value="">Silahkan pilih TP/KP</option>
 											<option v-for="(tp, index) in modelTp" :key="index" :value="tp.id">{{tp.name}}</option>
-										</select>
+										</Field>
 
 										<!-- error message -->
 										<small class="text-muted text-danger" v-if="errors.has('form.tp_id')">
@@ -798,14 +797,12 @@
 										No. BA: <wajib-badge></wajib-badge></h6>
 
 										<!-- text -->
-										<cleave 
-										name="no_ba"
-										v-model="form.no_ba" 
-										class="form-control" 
+										<Field name="no_ba" rules="required" v-model="form.no_ba" v-slot="{ field }"><cleave
+										v-bind="field"
+										class="form-control"
 										:options="cleaveOption.number16"
 										placeholder="Silahkan masukkan no buku anggota"
-										v-validate="'required'" data-vv-as="No. Buku Anggota"
-										:disabled="isESCETE"></cleave>
+										:disabled="isESCETE"></cleave></Field>
 
 										<!-- error message -->
 										<small class="text-muted text-danger" v-if="errors.has('form.no_ba')">
@@ -827,11 +824,11 @@
 
 										<!-- text -->
 										<template v-if="isESCETE">
-											<input v-model="form.tanggal_masuk" class="form-control" v-validate="'required'" data-vv-as="Tgl. Jadi Anggota" :disabled="isESCETE"/>
+											<Field name="tanggal_masuk" rules="required" v-model="form.tanggal_masuk" v-slot="{ field }"><input class="form-control" v-bind="field" :disabled="isESCETE"/></Field>
 										</template>
 										<template v-else>
-											<date-picker @dateSelected="form.tanggal_masuk = $event" :defaultDate="form.tanggal_masuk"></date-picker>	
-											<input v-model="form.tanggal_masuk" v-show="false" v-validate="'required'" data-vv-as="Tgl. Jadi Anggota"/>
+											<date-picker @dateSelected="form.tanggal_masuk = $event" :defaultDate="form.tanggal_masuk"></date-picker>
+											<Field name="tanggal_masuk" rules="required" v-model="form.tanggal_masuk" v-show="false" />
 										</template>
 
 										<!-- error message -->
@@ -931,6 +928,8 @@
 
 		</form>
 
+		</VeeForm>
+
 		<!-- modal -->
 		<app-modal :show="modalShow" :state="modalState" :title="modalTitle" :content="modalContent" :color="modalColor"
 		 @batal="modalTutup" @confirmOk="modalConfirmOk" @tutup="modalTutup" @successOk="modalTutup" @failOk="modalTutup" @backgroundClick="modalBackgroundClick">
@@ -982,6 +981,8 @@
 	import wajibBadge from "../../components/wajibBadge.vue";
 	import identitas from "../../components/identitas.vue";
 	import DatePicker from "../../components/datePicker.vue";
+	import { Field } from 'vee-validate';
+	import VeeForm from '../../components/VeeForm.vue';
 
 	export default {
 		props: ['mode','nik','statusNIK'],
@@ -998,7 +999,9 @@
 			infoIcon,
 			wajibBadge,
 			identitas,
-			DatePicker
+			DatePicker,
+			Field,
+			VeeForm
 		},
 		data() {
 			return {
@@ -1200,7 +1203,7 @@
 				this.itemDataCu.push(value);
 				this.modalTutup(); 
 			},
-			save() {
+			onValid(values) {
 				if(this.currentUser.id_cu == 0){
 					this.form.anggota_cu_cu = this.itemDataCu;
 				}else{
@@ -1212,21 +1215,18 @@
 				}
 
 				const formData = toMulipartedForm(this.form, this.$route.meta.mode);
-				this.$validator.validateAll('form').then((result) => {
-					if (result) {
-						if(this.mode == 'create_new' || this.mode == 'create_jalinan'){
-							this.store(formData);
-						}else if(this.mode == 'create_old' || this.mode == 'create_edit' || this.mode == 'edit_jalinan'){
-							this.update([this.form.id,formData]);
-						}else if(this.mode == 'edit' ){
-							this.update([this.$route.params.id,formData]);
-						}
-						this.submited = false;
-					} else {
-						window.scrollTo(0, 0);
-						this.submited = true;
-					}
-				});
+				if(this.mode == 'create_new' || this.mode == 'create_jalinan'){
+					this.store(formData);
+				}else if(this.mode == 'create_old' || this.mode == 'create_edit' || this.mode == 'edit_jalinan'){
+					this.update([this.form.id,formData]);
+				}else if(this.mode == 'edit' ){
+					this.update([this.$route.params.id,formData]);
+				}
+				this.submited = false;
+			},
+			onInvalid() {
+				window.scrollTo(0, 0);
+				this.submited = true;
 			},
 			changeProvinces(id){
 				this.getRegenciesInProvinces(id);

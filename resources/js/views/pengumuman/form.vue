@@ -107,11 +107,14 @@
 			VeeForm,
 			Field,
 		},
-		data() {
+		setup() {
 			return {
 				pengumumanStore: usePengumumanStore(),
-				cuStore: useCuStore(),
-				kelas: 'pengumuman',
+			cuStore: useCuStore(),
+			};
+		},
+		data() {
+			return {kelas: 'pengumuman',
 				submited: false,
 				cancelTitle: 'Tutup',
 				cancelIcon: 'icon-cross',

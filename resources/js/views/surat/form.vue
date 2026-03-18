@@ -144,7 +144,7 @@
 													Kode: <wajib-badge></wajib-badge></h5>
 
 												<!-- text -->
-												<input type="text" name="name" class="form-control" placeholder="Silahkan masukkan kode" data-vv-as="name" v-model="form.name" readonly>
+												<input type="text" name="name" class="form-control" placeholder="Silahkan masukkan kode" v-model="form.name" readonly>
 
 												<!-- error message -->
 												<small class="text-muted text-danger" v-if="errors.has('form.name')">
@@ -164,7 +164,7 @@
 													Judul Surat:</h5>
 
 												<!-- text -->
-												<input type="text" name="hal" class="form-control" placeholder="Silahkan masukkan judul surat" data-vv-as="Judul Surat" v-model="form.hal">
+												<input type="text" name="hal" class="form-control" placeholder="Silahkan masukkan judul surat" v-model="form.hal">
 
 												<!-- error message -->
 												<small class="text-muted text-danger" v-if="errors.has('form.hal')">
@@ -182,7 +182,7 @@
 												<h5>Keterangan:</h5>
 
 												<!-- text -->
-												<input type="text" name="keterangan" class="form-control" placeholder="Silahkan masukkan keterangan" data-vv-as="keterangan" v-model="form.keterangan">
+												<input type="text" name="keterangan" class="form-control" placeholder="Silahkan masukkan keterangan" v-model="form.keterangan">
 
 												<!-- error message -->
 												<small class="text-muted">&nbsp;</small>
@@ -200,7 +200,7 @@
 													Tujuan:</h5>
 
 												<!-- text -->
-												<input type="text" name="tujuan" class="form-control" placeholder="Silahkan masukkan tujuan" data-vv-as="tujuan" v-model="form.tujuan">
+												<input type="text" name="tujuan" class="form-control" placeholder="Silahkan masukkan tujuan" v-model="form.tujuan">
 
 												<!-- error message -->
 												<small class="text-muted text-danger" v-if="errors.has('form.tujuan')">
@@ -352,12 +352,15 @@
 			VeeForm,
 			Field
 		},
-		data() {
+		setup() {
 			return {
 				suratStore: useSuratStore(),
-				suratKodeStore: useSuratKodeStore(),
-				cuStore: useCuStore(),
-				title: 'Tambah Surat',
+			suratKodeStore: useSuratKodeStore(),
+			cuStore: useCuStore(),
+			};
+		},
+		data() {
+			return {title: 'Tambah Surat',
 				titleDesc: 'Menambah surat keluar baru',
 				titleIcon: 'icon-plus3',
 				level2Title: 'Surat',

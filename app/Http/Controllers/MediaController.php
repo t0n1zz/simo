@@ -52,7 +52,7 @@ class MediaController extends Controller
 
     public function store(Request $request)
     {
-        $this->validate($request, Media::$rules);
+        $request->validate(Media::$rules);
 
         $name = $request->name;
 
@@ -96,7 +96,7 @@ class MediaController extends Controller
 
     public function update(Request $request, $id)
     {
-        $this->validate($request, Media::$rules);
+        $request->validate(Media::$rules);
 
         $name = $request->name;
 

@@ -1,8 +1,10 @@
 <?php
 namespace App\Models;
 
+use App\Models\Cu;
+use App\Models\Dokumen;
 use Spatie\Activitylog\LogOptions;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Support\Dataviewer;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -12,7 +14,6 @@ class SuratMasuk extends Model {
     use Dataviewer, LogsActivity, SoftDeletes;
 
     protected $table = 'surat_masuk';
-    protected $dates = ['deleted_at'];
 
     public static $rules = [
         'id_cu' => 'required',
@@ -37,12 +38,12 @@ class SuratMasuk extends Model {
 
     public function Cu()
     {
-        return $this->belongsTo('App\Models\Cu','id_cu','id')->select('id','name');
+        return $this->belongsTo(Cu::class,'id_cu','id')->select('id','name');
     }
 
     public function dokumen()
     {
-        return $this->belongsTo('App\Models\Dokumen','id_dokumen','id');
+        return $this->belongsTo(Dokumen::class,'id_dokumen','id');
     }
 
 

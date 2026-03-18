@@ -1,8 +1,13 @@
 <?php
 namespace App\Models;
 
+use App\Models\Cu;
+use App\Models\Dokumen;
+use App\Models\SuratKategori;
+use App\Models\SuratKode;
+use App\Models\SuratKodeTemp;
 use Spatie\Activitylog\LogOptions;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use App\Support\Dataviewer;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -13,7 +18,6 @@ class Surat extends Model {
 
     protected $table = 'surat';
 
-    protected $dates = ['deleted_at'];
     
     public static $rules = [
         'id_surat_kode' => 'required',
@@ -45,27 +49,27 @@ class Surat extends Model {
 
     public function kategori()
     {
-        return $this->belongsTo('App\Models\SuratKategori','id_surat_kategori','id');
+        return $this->belongsTo(SuratKategori::class,'id_surat_kategori','id');
     }
 
     public function tipe()
     {
-        return $this->belongsTo('App\Models\SuratKode','id_surat_kode','id');
+        return $this->belongsTo(SuratKode::class,'id_surat_kode','id');
     }
 
     public function Cu()
     {
-        return $this->belongsTo('App\Models\Cu','id_cu','id')->select('id','no_ba','name');
+        return $this->belongsTo(Cu::class,'id_cu','id')->select('id','no_ba','name');
     }
 
     public function temp()
     {
-        return $this->belongsTo('App\Models\SuratKodeTemp','id','id_surat');
+        return $this->belongsTo(SuratKodeTemp::class,'id','id_surat');
     }
 
     public function dokumen()
     {
-        return $this->belongsTo('App\Models\Dokumen','id_dokumen','id');
+        return $this->belongsTo(Dokumen::class,'id_dokumen','id');
     }
     
 

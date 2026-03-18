@@ -89,7 +89,7 @@
 													<option disabled value="">Silahkan pilih CU</option>
 													<option value="0"><span v-if="currentUser.pus">{{currentUser.pus.name}}</span> <span v-else>PUSKOPCUINA</span></option>
 													<option disabled value="">----------------</option>
-													<option v-for="cu in modelCU" :value="cu.id">{{cu.name}}</option>
+													<option v-for="cu in modelCU" :key="cu.id" :value="cu.id">{{cu.name}}</option>
 												</Field>
 
 												<!-- error message -->
@@ -172,12 +172,15 @@
 			VeeForm,
 			Field,
 		},
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				artikelPenulisStore: useArtikelPenulisStore(),
-				cuStore: useCuStore(),
-				title: 'Tambah Penulis',
+			artikelPenulisStore: useArtikelPenulisStore(),
+			cuStore: useCuStore(),
+			};
+		},
+		data() {
+			return {title: 'Tambah Penulis',
 				titleDesc: 'Menambah penulis artikel baru',
 				titleIcon: 'icon-plus3',
 				kelas: 'artikelPenulis',

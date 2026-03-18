@@ -486,8 +486,8 @@
 															tunggu</span>
 														<span v-else>Silahkan pilih kelurahan</span>
 													</option>
-													<option v-for="(villages, index) in modelVillages" :value="villages.id"
-														:key="index">{{villages.name}}</option>
+													<option v-for="(villages, index) in modelVillages" :key="villages.id" :value="villages.id"
+														>{{villages.name}}</option>
 												</select>
 											</Field>
 
@@ -637,15 +637,18 @@
 			VeeForm,
 			Field,
 		},
-		data() {
+		setup() {
 			return {
 				mitraOrangStore: useMitraOrangStore(),
-				cuStore: useCuStore(),
-				provincesStore: useProvincesStore(),
-				regenciesStore: useRegenciesStore(),
-				districtsStore: useDistrictsStore(),
-				villagesStore: useVillagesStore(),
-				title: 'Tambah Mitra Perorangan',
+			cuStore: useCuStore(),
+			provincesStore: useProvincesStore(),
+			regenciesStore: useRegenciesStore(),
+			districtsStore: useDistrictsStore(),
+			villagesStore: useVillagesStore(),
+			};
+		},
+		data() {
+			return {title: 'Tambah Mitra Perorangan',
 				titleDesc: 'Menambah mitra perorangan baru',
 				titleIcon: 'icon-plus3',
 				kelas: 'mitraOrang',

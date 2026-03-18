@@ -1,8 +1,9 @@
 <?php
 namespace App\Models;
 
+use App\Models\PemilihanCalon;
 use Spatie\Activitylog\LogOptions;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 class PemilihanCalonCount extends Model {
@@ -32,7 +33,7 @@ class PemilihanCalonCount extends Model {
 
     public function calon()
     {
-        return $this->belongsTo('App\Models\PemilihanCalon','pemilihan_calon_id','id');
+        return $this->belongsTo(PemilihanCalon::class,'pemilihan_calon_id','id');
     }
 
     public function getActivitylogOptions(): LogOptions

@@ -1,9 +1,17 @@
 <?php
 namespace App\Models;
 
+use App\Models\AnggotaCuCu;
+use App\Models\Cu;
+use App\Models\JalinanKlaim;
+use App\Models\ProdukCu;
+use App\Models\Region\Districts;
+use App\Models\Region\Provinces;
+use App\Models\Region\Regencies;
+use App\Models\Region\Villages;
 use Spatie\Activitylog\LogOptions;
-use Auth;
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Support\Dataviewer;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -15,7 +23,6 @@ class AnggotaCu extends Model {
     use \Awobaz\Compoships\Compoships;
 
     protected $table = 'anggota_cu';
-    protected $dates = ['deleted_at'];
 
     protected $revisionEnabled = true;
     protected $revisionCleanup = true;
@@ -66,31 +73,31 @@ class AnggotaCu extends Model {
         $cu = \Auth::user()->id_cu;
 
         if($cu != 0){
-            return $this->hasMany('App\Models\AnggotaCuCu','anggota_cu_id','id')->where('cu_id',$cu);
+            return $this->hasMany(AnggotaCuCu::class,'anggota_cu_id','id')->where('cu_id',$cu);
         }else{
-            return $this->hasMany('App\Models\AnggotaCuCu','anggota_cu_id','id');
+            return $this->hasMany(AnggotaCuCu::class,'anggota_cu_id','id');
         }
     }
 
     public function anggota_cu_cu_not_keluar(){
-        return $this->hasMany('App\Models\AnggotaCuCu','anggota_cu_id','id')->whereNull('tanggal_keluar');
+        return $this->hasMany(AnggotaCuCu::class,'anggota_cu_id','id')->whereNull('tanggal_keluar');
     }
 
     public function anggota_cu_cu_not_keluar_single(){
-        return $this->belongsTo('App\Models\AnggotaCuCu','id','anggota_cu_id')->whereNull('tanggal_keluar')->select('id','anggota_cu_id','tanggal_masuk','tanggal_keluar','no_ba','cu_id');
+        return $this->belongsTo(AnggotaCuCu::class,'id','anggota_cu_id')->whereNull('tanggal_keluar')->select('id','anggota_cu_id','tanggal_masuk','tanggal_keluar','no_ba','cu_id');
     }
 
     public function anggota_cu_cu_keluar(){
-        return $this->hasMany('App\Models\AnggotaCuCu','anggota_cu_id','id')->whereNotNull('tanggal_keluar');
+        return $this->hasMany(AnggotaCuCu::class,'anggota_cu_id','id')->whereNotNull('tanggal_keluar');
     }
 
     public function anggota_cu(){
         $id = Auth::user()->getIdCu();
 
         if($id == 0){
-            return $this->belongsToMany('App\Models\Cu','anggota_cu_cu')->withPivot('id','cu_id','no_ba','tanggal_masuk','tanggal_keluar','keterangan_masuk','keterangan_keluar')->withTimestamps();
+            return $this->belongsToMany(Cu::class,'anggota_cu_cu')->withPivot('id','cu_id','no_ba','tanggal_masuk','tanggal_keluar','keterangan_masuk','keterangan_keluar')->withTimestamps();
         }else{
-            return $this->belongsToMany('App\Models\Cu','anggota_cu_cu')->where('cu.id',$id)->withPivot('id','cu_id','no_ba','tanggal_masuk','tanggal_keluar','keterangan_masuk','keterangan_keluar')->withTimestamps();
+            return $this->belongsToMany(Cu::class,'anggota_cu_cu')->where('cu.id',$id)->withPivot('id','cu_id','no_ba','tanggal_masuk','tanggal_keluar','keterangan_masuk','keterangan_keluar')->withTimestamps();
         }
     }
 
@@ -98,9 +105,9 @@ class AnggotaCu extends Model {
         $id = Auth::user()->getIdCu();
 
         if($id == 0){
-            return $this->belongsToMany('App\Models\Cu','anggota_cu_cu')->withPivot('id','cu_id','tp_id','no_ba','tanggal_masuk','tanggal_keluar','keterangan_masuk','keterangan_keluar')->whereNull('tanggal_keluar')->select('cu.id','cu.name','anggota_cu_cu.*')->withTimestamps();
+            return $this->belongsToMany(Cu::class,'anggota_cu_cu')->withPivot('id','cu_id','tp_id','no_ba','tanggal_masuk','tanggal_keluar','keterangan_masuk','keterangan_keluar')->whereNull('tanggal_keluar')->select('cu.id','cu.name','anggota_cu_cu.*')->withTimestamps();
         }else{
-            return $this->belongsToMany('App\Models\Cu','anggota_cu_cu')->where('cu.id',$id)->withPivot('id','cu_id','tp_id','no_ba','tanggal_masuk','tanggal_keluar','keterangan_masuk','keterangan_keluar')->select('cu.id','cu.name','anggota_cu_cu.*')->whereNull('tanggal_keluar')->withTimestamps();
+            return $this->belongsToMany(Cu::class,'anggota_cu_cu')->where('cu.id',$id)->withPivot('id','cu_id','tp_id','no_ba','tanggal_masuk','tanggal_keluar','keterangan_masuk','keterangan_keluar')->select('cu.id','cu.name','anggota_cu_cu.*')->whereNull('tanggal_keluar')->withTimestamps();
         }
     }
 
@@ -108,9 +115,9 @@ class AnggotaCu extends Model {
         $id = Auth::user()->getIdCu();
 
         if($id == 0){
-            return $this->belongsToMany('App\Models\Cu','anggota_cu_cu')->withPivot('id','cu_id','tp_id','no_ba','tanggal_masuk','tanggal_keluar','keterangan_masuk','keterangan_keluar')->whereNotNull('tanggal_keluar')->select('cu.id','cu.name','anggota_cu_cu.*')->withTimestamps();
+            return $this->belongsToMany(Cu::class,'anggota_cu_cu')->withPivot('id','cu_id','tp_id','no_ba','tanggal_masuk','tanggal_keluar','keterangan_masuk','keterangan_keluar')->whereNotNull('tanggal_keluar')->select('cu.id','cu.name','anggota_cu_cu.*')->withTimestamps();
         }else{
-            return $this->belongsToMany('App\Models\Cu','anggota_cu_cu')->where('cu.id',$id)->withPivot('id','cu_id','tp_id','no_ba','tanggal_masuk','tanggal_keluar','keterangan_masuk','keterangan_keluar')->select('cu.id','cu.name','anggota_cu_cu.*')->whereNotNull('tanggal_keluar')->withTimestamps();
+            return $this->belongsToMany(Cu::class,'anggota_cu_cu')->where('cu.id',$id)->withPivot('id','cu_id','tp_id','no_ba','tanggal_masuk','tanggal_keluar','keterangan_masuk','keterangan_keluar')->select('cu.id','cu.name','anggota_cu_cu.*')->whereNotNull('tanggal_keluar')->withTimestamps();
         }
     }
 
@@ -118,43 +125,43 @@ class AnggotaCu extends Model {
         $id = Auth::user()->getIdCu();
 
         if($id == 0){
-            return $this->belongsToMany('App\Models\ProdukCu','anggota_produk_cu')->select('produk_cu.id','anggota_produk_cu.id','id_cu','kode_produk','name','jalinan','tipe')->withPivot('id','no_rek','tanggal','lama_pinjaman')->orderBy('anggota_produk_cu.tanggal','desc')->withTimestamps();
+            return $this->belongsToMany(ProdukCu::class,'anggota_produk_cu')->select('produk_cu.id','anggota_produk_cu.id','id_cu','kode_produk','name','jalinan','tipe')->withPivot('id','no_rek','tanggal','lama_pinjaman')->orderBy('anggota_produk_cu.tanggal','desc')->withTimestamps();
         }else{
-            return $this->belongsToMany('App\Models\ProdukCu','anggota_produk_cu')->select('produk_cu.id','anggota_produk_cu.id','id_cu','kode_produk','name','jalinan','tipe')->where('id_cu',$id)->withPivot('id','no_rek','tanggal','lama_pinjaman')->orderBy('anggota_produk_cu.tanggal','desc')->withTimestamps();
+            return $this->belongsToMany(ProdukCu::class,'anggota_produk_cu')->select('produk_cu.id','anggota_produk_cu.id','id_cu','kode_produk','name','jalinan','tipe')->where('id_cu',$id)->withPivot('id','no_rek','tanggal','lama_pinjaman')->orderBy('anggota_produk_cu.tanggal','desc')->withTimestamps();
         }
     }
     
     public function anggota_cu_cu_informasi(){
-        return $this->hasMany('App\Models\AnggotaCuCu','anggota_cu_id','id');
+        return $this->hasMany(AnggotaCuCu::class,'anggota_cu_id','id');
     }
 
     public function anggota_produk_cu_informasi(){
-        return $this->belongsToMany('App\Models\ProdukCu','anggota_produk_cu')->select('produk_cu.id','anggota_produk_cu.id','id_cu','kode_produk','name','jalinan','tipe')->withPivot('id','no_rek','tanggal','kolekbi','dpd')->orderBy('anggota_produk_cu.tanggal','desc')->withTimestamps();
+        return $this->belongsToMany(ProdukCu::class,'anggota_produk_cu')->select('produk_cu.id','anggota_produk_cu.id','id_cu','kode_produk','name','jalinan','tipe')->withPivot('id','no_rek','tanggal','kolekbi','dpd')->orderBy('anggota_produk_cu.tanggal','desc')->withTimestamps();
     }
 
     public function status_jalinan()
     {
-        return $this->belongsTo('App\Models\JalinanKlaim','id','anggota_cu_id')->select('anggota_cu_id','status_klaim');
+        return $this->belongsTo(JalinanKlaim::class,'id','anggota_cu_id')->select('anggota_cu_id','status_klaim');
     }
 
     public function Provinces()
     {
-        return $this->belongsTo('App\Models\Region\Provinces','id_provinces','id')->select('id','name');
+        return $this->belongsTo(Provinces::class,'id_provinces','id')->select('id','name');
     }
 		
     public function Regencies()
     {
-        return $this->belongsTo('App\Models\Region\Regencies','id_regencies','id')->select('id','name');
+        return $this->belongsTo(Regencies::class,'id_regencies','id')->select('id','name');
     }
 		
     public function Districts()
     {
-        return $this->belongsTo('App\Models\Region\Districts','id_districts','id')->select('id','name');
+        return $this->belongsTo(Districts::class,'id_districts','id')->select('id','name');
     }
 		
     public function Villages()
     {
-        return $this->belongsTo('App\Models\Region\Villages','id_villages','id')->select('id','name');
+        return $this->belongsTo(Villages::class,'id_villages','id')->select('id','name');
     }
 
     public function usia()

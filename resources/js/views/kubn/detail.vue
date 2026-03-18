@@ -281,11 +281,14 @@
 			dataTable,
 			appModal
 		},
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				kubnStore: useKubnStore(),
-				title: 'Detail KUBn',
+			kubnStore: useKubnStore(),
+			};
+		},
+		data() {
+			return {title: 'Detail KUBn',
 				titleDesc: 'Detail informasi KUBn',
 				titleIcon: 'icon-users4',
 				kelas: 'kubn',

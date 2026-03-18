@@ -176,8 +176,8 @@
 														<span v-if="modelProvincesStat === 'loading'">Mohon tunggu...</span>
 														<span v-else>Silahkan pilih provinsi</span>
 													</option>
-													<option v-for="(provinces, index) in modelProvinces" :value="provinces.id"
-														:key="index">{{provinces.name}}</option>
+													<option v-for="(provinces, index) in modelProvinces" :key="provinces.id" :value="provinces.id"
+														>{{provinces.name}}</option>
 												</select>
 											</Field>
 
@@ -209,8 +209,8 @@
 														<span v-if="modelRegenciesStat === 'loading'">Mohon tunggu...</span>
 														<span v-else>Silahkan pilih kabupaten</span>
 													</option>
-													<option v-for="(regencies, index) in modelRegencies" :value="regencies.id"
-														:key="index">{{regencies.name}}</option>
+													<option v-for="(regencies, index) in modelRegencies" :key="regencies.id" :value="regencies.id"
+														>{{regencies.name}}</option>
 												</select>
 											</Field>
 
@@ -242,8 +242,8 @@
 														<span v-if="modelDistrictsStat === 'loading'">Mohon tunggu...</span>
 														<span v-else>Silahkan pilih kecamatan</span>
 													</option>
-													<option v-for="(districts, index) in modelDistricts" :value="districts.id"
-														:key="index">{{districts.name}}</option>
+													<option v-for="(districts, index) in modelDistricts" :key="districts.id" :value="districts.id"
+														>{{districts.name}}</option>
 												</select>
 											</Field>
 
@@ -274,8 +274,8 @@
 														<span v-if="modelVillagesStat === 'loading'">Mohon tunggu...</span>
 														<span v-else>Silahkan pilih kelurahan</span>
 													</option>
-													<option v-for="(villages, index) in modelVillages" :value="villages.id"
-														:key="index">{{villages.name}}</option>
+													<option v-for="(villages, index) in modelVillages" :key="villages.id" :value="villages.id"
+														>{{villages.name}}</option>
 												</select>
 											</Field>
 
@@ -320,7 +320,7 @@
 											<h5>Koordinat garis lintang (latitude):</h5>
 
 											<!-- text -->
-											<input type="text" name="lat" class="form-control" placeholder="Silahkan masukkan koordinat garis lintang" data-vv-as="Latitude" v-model="form.lat">
+											<input type="text" name="lat" class="form-control" placeholder="Silahkan masukkan koordinat garis lintang" v-model="form.lat">
 
 											<small class="text-muted">&nbsp;</small>
 										</div>
@@ -334,7 +334,7 @@
 											<h5>Koordinat garis bujur (longitude):</h5>
 
 											<!-- text -->
-											<input type="text" name="lng" class="form-control" placeholder="Silahkan masukkan koordinat garis bujur" data-vv-as="Longitude" v-model="form.lng">
+											<input type="text" name="lng" class="form-control" placeholder="Silahkan masukkan koordinat garis bujur" v-model="form.lng">
 
 											<small class="text-muted">&nbsp;</small>
 										</div>
@@ -531,15 +531,18 @@
 			VeeForm,
 			Field,
 		},
-		data() {
+		setup() {
 			return {
 				tpStore: useTpStore(),
-				cuStore: useCuStore(),
-				provincesStore: useProvincesStore(),
-				regenciesStore: useRegenciesStore(),
-				districtsStore: useDistrictsStore(),
-				villagesStore: useVillagesStore(),
-				title: '',
+			cuStore: useCuStore(),
+			provincesStore: useProvincesStore(),
+			regenciesStore: useRegenciesStore(),
+			districtsStore: useDistrictsStore(),
+			villagesStore: useVillagesStore(),
+			};
+		},
+		data() {
+			return {title: '',
 				titleDesc: '',
 				titleIcon: '',
 				kelas: 'tp',

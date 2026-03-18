@@ -107,10 +107,13 @@
 			formPengumuman
 		},
 		props:['title','kelas'],
-		data() {
+		setup() {
 			return {
 				pengumumanStore: usePengumumanStore(),
-				selectedItem: [],
+			};
+		},
+		data() {
+			return {selectedItem: [],
 				query: {
 					order_column: "created_at",
 					order_direction: "desc",

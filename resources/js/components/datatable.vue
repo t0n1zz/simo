@@ -24,7 +24,7 @@
 
 			<!-- success -->
 			<tbody v-else-if="itemDataStat === 'success'"> 
-				<slot name="item-desktop" v-for="(item,index) in items" :item="item" :index="index"></slot>
+				<slot name="item-desktop" v-for="(item,index) in items" :key="item.id" :item="item" :index="index"></slot>
 				<tr v-if="items && items.length == 0">
 					<td :colspan="columnData.length">Belum terdapat data...</td>
 				</tr>
