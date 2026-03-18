@@ -17,10 +17,10 @@
 
 					<div class="nav-tabs-responsive">
 						<ul class="nav nav-tabs nav-tabs-solid bg-light">
-							<li class="nav-item" v-if="currentUser.id_aktivis">
+							<li class="nav-item" v-if="hasAktivisProfile">
 								<a href="#" class="nav-link" :class="{'active' : tabName == 'riwayat'}" @click.prevent="changeTab('riwayat')"><i class="icon-list2 mr-2"></i> Riwayat</a>
 							</li>
-							<li class="nav-item" v-if="currentUser.id_aktivis">
+							<li class="nav-item" v-if="hasAktivisProfile">
 								<a href="#" class="nav-link" :class="{'active' : tabName == 'identitas'}" @click.prevent="changeTab('identitas')"><i class="icon-user-tie mr-2"></i> Ubah Identitas</a>
 							</li>
 							<li class="nav-item">
@@ -132,7 +132,7 @@
 					<transition enter-active-class="animated fadeIn" mode="out-in">
 						<div v-if="tabName == 'identitas'">
 
-							<form-identitas :mode="'edit_profile'" :id_aktivis="currentUser.id_aktivis"></form-identitas>
+							<form-identitas :mode="'edit_profile'" :id_aktivis="aktivisId"></form-identitas>
 							
 						</div>
 					</transition>
@@ -142,7 +142,7 @@
 
 							<form-riwayat 
 								:mode="'edit_profile'" 
-								:id_aktivis="currentUser.id_aktivis" :id_cu="currentUser.id_cu"
+								:id_aktivis="aktivisId" :id_cu="currentUser.id_cu"
 							></form-riwayat>
 							
 						</div>
@@ -202,11 +202,14 @@
 			formRiwayat,
 			wajibBadge
 		},
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				userStore: useUserStore(),
-				title: 'Profile',
+			userStore: useUserStore(),
+			};
+		},
+		data() {
+			return {title: 'Profile',
 				kelas: 'user',
 				titleDesc: 'Mengelola data profile',
 				titleIcon: 'icon-user',
@@ -230,6 +233,9 @@
 			this.formFoto.gambar = this.currentUser.gambar;
 			this.formIdentitas.name = this.currentUser.name;
 			this.formIdentitas.email = this.currentUser.email;
+			if (!this.hasAktivisProfile) {
+				this.tabName = 'aktivitas';
+			}
 		},
 		watch: {
 			updateStat(value){
@@ -293,6 +299,12 @@
 			}
 		},
 		computed:{
+			hasAktivisProfile() {
+				return !!(this.currentUser?.id_aktivis || this.currentUser?.aktivis?.id);
+			},
+			aktivisId() {
+				return this.currentUser?.id_aktivis || this.currentUser?.aktivis?.id || null;
+			},
 			currentUser() {
 				return this.authStore.currentUser;
 			},

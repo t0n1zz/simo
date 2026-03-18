@@ -5,8 +5,9 @@
 	<div class="page-header-content header-elements-md-inline">
 		<div class="page-title d-flex">
 			<h4><i class="icon-screen3 mr-2"></i>Halo 
-				<span class="font-weight-semibold" v-if="currentUser.aktivis">{{ currentUser.aktivis.name + ',' }}</span>
-				<span class="font-weight-semibold" v-else>{{ currentUser.name + ',' }}</span>
+				<span class="font-weight-semibold" v-if="currentUser?.aktivis">{{ currentUser.aktivis.name + ',' }}</span>
+				<span class="font-weight-semibold" v-else-if="currentUser">{{ currentUser.name + ',' }}</span>
+				<span class="font-weight-semibold" v-else>Pengguna,</span>
 				 Apa kabarnya hari ini?
 			</h4>
 		</div>
@@ -17,7 +18,7 @@
 <div class="page-content pt-0">
 	<div class="content-wrapper"> 
 
-		<div class="row align-items-stretch">
+		<div v-if="hasCurrentUser" class="row align-items-stretch">
 
 			<div class="col-lg-12">
 				<!-- news carousel -->
@@ -37,7 +38,7 @@
 
 				<history-organisasi-widget v-if="currentUser.id_cu == 0"></history-organisasi-widget>
 
-				<grafik-laporan-cu-widget v-if="currentUser.can && currentUser.can['index_laporan_cu']" :id_cu="currentUser.id_cu" :columnData="columnData" :columnDataPearls="columnDataPearls"></grafik-laporan-cu-widget>
+				<!-- <grafik-laporan-cu-widget v-if="currentUser.can && currentUser.can['index_laporan_cu']" :id_cu="currentUser.id_cu" :columnData="columnData" :columnDataPearls="columnDataPearls"></grafik-laporan-cu-widget> -->
 			</div>
 
 			<div class="col-lg-4">
@@ -45,9 +46,15 @@
 
 				<!-- <count-organisasi-widget></count-organisasi-widget> -->
 
-				<table-laporan-cu-widget v-if="currentUser.can && currentUser.can['index_laporan_cu']"  :id_cu="currentUser.id_cu" :columnData="columnData" :columnDataPearls="columnDataPearls"></table-laporan-cu-widget>
+				<!-- <table-laporan-cu-widget v-if="currentUser.can && currentUser.can['index_laporan_cu']"  :id_cu="currentUser.id_cu" :columnData="columnData" :columnDataPearls="columnDataPearls"></table-laporan-cu-widget> -->
 			</div>
 		
+		</div>
+
+		<div v-else class="card">
+			<div class="card-body text-center py-4">
+				<i class="icon-spinner2 spinner mr-2"></i>Memuat dashboard...
+			</div>
 		</div>
 
 	</div>
@@ -78,15 +85,21 @@
 			historyOrganisasiWidget,
 			countOrganisasiWidget,
 		},
-		data() {
+		setup() {
 			return {
 				authStore: useAuthStore(),
-				laporanCuStore: useLaporanCuStore(),
-			}
+			laporanCuStore: useLaporanCuStore(),
+			};
+		},
+		data() {
+			return {}
 		},
 		computed: {
 			currentUser() {
 				return this.authStore.currentUser;
+			},
+			hasCurrentUser() {
+				return !!this.currentUser;
 			},
 			columnData() {
 				return this.laporanCuStore.columnData;

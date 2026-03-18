@@ -89,7 +89,7 @@
 													<span v-else-if="notif.data.tipe == 'klaimJALINAN'"><i class="icon-accessibility2"></i> Bantuan Solidaritas Jalinan</span>
 													<span v-else><i class="icon-bubble-notification"></i> Notifikasi</span>
 												</span>
-												<span class="float-right font-size-sm">{{notif.created_at | relativeHour}}</span>
+												<span class="float-right font-size-sm">{{ $filters.relativeHour(notif.created_at) }}</span>
 											</div>
 											<span :class="{'text-muted' : notif.read_at != null}">{{notif.data.message}}</span>
 											<hr v-if="index + 1 < notification.length" class="mb-0 mt-1"/>
@@ -115,15 +115,9 @@
 
 					<!-- user -->
 					<li class="nav-item dropdown dropdown-user" @mouseenter="showDropdown('user')" @mouseleave="hideDropdown('user')">
-						<a href="#" class="navbar-nav-link dropdown-toggle" @click.prevent.stop v-if="currentUser.aktivis == null">
-							<img :src="'/images/user/' + currentUser.gambar + '.jpg'" alt="user image" class="rounded-circle" v-if="currentUser && currentUser.gambar" width="36" height="36">
-							<img src="/images/no_image_man.jpg" alt="user image" class="rounded-circle" width="36" height="36" v-else>
-							<span>{{ currentUser ? currentUser.name : "" }}</span>
-						</a>
-						<a href="#" class="navbar-nav-link dropdown-toggle" @click.prevent.stop v-else>
-							<img :src="'/images/aktivis/' + currentUser.aktivis.gambar + '.jpg'" alt="user image" class="rounded-circle" v-if="currentUser && currentUser.aktivis.gambar" width="36" height="36">
-							<img src="/images/no_image_man.jpg" alt="user image" class="rounded-circle" width="36" height="36" v-else>
-							<span>{{ currentUser.aktivis ? currentUser.aktivis.name : "" }}</span>
+						<a href="#" class="navbar-nav-link dropdown-toggle d-flex align-items-center text-nowrap header-user-link" @click.prevent.stop>
+							<img :src="displayUserImage" alt="user image" class="rounded-circle flex-shrink-0" width="36" height="36" @error="handleUserImageError">
+							<span class="header-user-name">{{ displayUserName }}</span>
 						</a>
 
 						<div class="dropdown-menu dropdown-menu-right" :class="{'show': activeDropdown === 'user'}">
@@ -221,7 +215,7 @@
 									<!-- divider -->
 									<div class="dropdown-divider"></div> 
 
-									<template v-for="(cu, index) in modelCu">
+									<template v-for="(cu, index) in modelCu" :key="cu.id">
 										<router-link :to="{ name: 'artikelCu', params:{cu: cu.id} }" class="dropdown-item" active-class="active" exact v-if="cu" :key="index">
 											CU {{ cu.name }}
 										</router-link>
@@ -1736,9 +1730,24 @@
 	.navbar-menu {
 		display: none !important;
 	}
-	.navbar-menu.is-open {
+.navbar-menu.is-open {
 		display: block !important;
 	}
+}
+
+.header-user-link {
+	display: flex !important;
+	align-items: center;
+	white-space: nowrap;
+}
+
+.header-user-link > img {
+	flex-shrink: 0;
+}
+
+.header-user-name {
+	display: inline-block;
+	padding-left: 0.625rem;
 }
 
 @media (min-width: 992px) {
@@ -1791,6 +1800,7 @@ navbarMenuOpen: false,
 				modalContent: '',
 				modalColor: '',
 				modalButton: '',
+				userImageLoadFailed: false,
 			}
 		},
 		created(){
@@ -1833,9 +1843,22 @@ navbarMenuOpen: false,
 					this.modalTitle = 'Oops terjadi kesalahan :(';
 					this.modalContent = this.updateSaranResponse.message;
 				}
+			},
+			currentUser: {
+				handler() {
+					this.userImageLoadFailed = false;
+				},
+				deep: true
 			}
 		},
 		methods: {
+			handleUserImageError(event) {
+				if (this.userImageLoadFailed) {
+					return;
+				}
+				this.userImageLoadFailed = true;
+				event.target.src = '/images/no_image_man.jpg';
+			},
 			listenNotif(){
  				PusherAuth();
  				if(JSON.parse(localStorage.getItem('user')).token) {
@@ -2021,6 +2044,24 @@ navbarMenuOpen: false,
 			currentUser() {
 				const authStore = useAuthStore();
 				return authStore.getCurrentUser;
+			},
+			displayUserName() {
+				if (!this.currentUser) {
+					return '';
+				}
+				return this.currentUser.aktivis?.name || this.currentUser.name || this.currentUser.username || '';
+			},
+			displayUserImage() {
+				if (this.userImageLoadFailed) {
+					return '/images/no_image_man.jpg';
+				}
+				if (this.currentUser?.aktivis?.gambar) {
+					return `/images/aktivis/${this.currentUser.aktivis.gambar}.jpg`;
+				}
+				if (this.currentUser?.gambar) {
+					return `/images/user/${this.currentUser.gambar}.jpg`;
+				}
+				return '/images/no_image_man.jpg';
 			},
 			isTokenExpired() {
 				const authStore = useAuthStore();
